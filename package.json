@@ -1,0 +1,14 @@
+{
+  "name": "@manzoomeh-negaran/webserver",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "dev": "node --openssl-legacy-provider index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "dayjs": "^1.11.6"
+  }
+}
