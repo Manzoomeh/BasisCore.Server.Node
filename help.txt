@@ -1,0 +1,1 @@
+https://depth-first.com/articles/2021/10/20/types-without-typescript/

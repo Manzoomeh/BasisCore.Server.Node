@@ -1,5 +1,5 @@
 const http2 = require("http2");
-const fs = require("fs");
+
 const SecureHttpHostEndPoint = require("./SecureHttpHostEndPoint");
 
 class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
@@ -7,35 +7,41 @@ class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
    *
    * @param {string} ip
    * @param {number} port
+   * @param {RequestDispatcher} dispatcher
+   * @param {import("tls").SecureContextOptions} options
    */
-  constructor(ip, port) {
-    super(ip, port);
+  constructor(ip, port, dispatcher, options) {
+    super(ip, port, dispatcher);
+    this._options = options;
   }
 
   /**
    *
-   * @param {http2.IncomingHttpHeaders} headers
+   * @param {string} urlStr
+   * @param {string} method
+   * @param {http.IncomingHttpHeaders} requestHeaders
    * @param {Socket} socket
+   * @returns {RequestCms}
    */
-  _createCmsObject(headers, socket) {
-    const cms = super._createCmsObject(headers, socket);
-    cms.cms.request["methode"] = headers[":method"].toLowerCase();
-    cms.cms.request["rawurl"] = headers["url"] = headers[":path"].substring(1);
-    cms.cms.request["full-url"] = `${headers[":authority"]}${headers[":path"]}`;
+  _createCmsObject(urlStr, method, requestHeaders, socket) {
+    const cms = super._createCmsObject(urlStr, method, requestHeaders, socket);
+    cms.request[
+      "full-url"
+    ] = `${requestHeaders[":authority"]}${requestHeaders[":path"]}`;
     return cms;
   }
 
   _createServer() {
-    const server = http2.createSecureServer({
-      key: fs.readFileSync("test-cert/server.key"),
-      cert: fs.readFileSync("test-cert/server.cert"),
-      //pfx: fs.readFileSync("namayeshgah.ir.pfx"),
-      //passphrase: "namayeshgah.ir",
-    });
+    const server = http2.createSecureServer(this._options);
     server.on("stream", async (stream, headers) => {
       try {
-        var cms = this._createCmsObject(headers, stream.session.socket);
-        var result = this._processRequest(cms);
+        var cms = this._createCmsObject(
+          headers[":path"],
+          headers[":method"],
+          headers,
+          stream.session.socket
+        );
+        var result = this._dispatcher(cms);
         stream.respond({
           ":status": 200,
         });

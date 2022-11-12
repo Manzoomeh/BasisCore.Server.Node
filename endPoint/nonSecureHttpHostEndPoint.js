@@ -6,25 +6,25 @@ class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
    *
    * @param {string} ip
    * @param {number} port
+   * @param {*} dispatcher
    */
-  constructor(ip, port) {
-    super(ip, port);
+  constructor(ip, port, dispatcher) {
+    super(ip, port, dispatcher);
   }
 
   _createServer() {
-    /**
-     *
-     * @param {http.IncomingMessage} req
-     * @param {http.ServerResponse} res
-     */
-    //const owner = this;
-    const requestListener = (req, res) => {
-      var cms = this._createCmsObject(req.headers, req.socket);
-      var result = this._processRequest(cms);
+    return http.createServer((req, res) => {
+      var cms = this._createCmsObject(
+        req.url,
+        req.method,
+        req.headers,
+        req.socket
+      );
+      var result = this._dispatcher(cms);
       res.writeHead(200);
       res.end(JSON.stringify(result));
-    };
-    return http.createServer(requestListener);
+    });
   }
 }
+
 module.exports = NonSecureHttpHostEndPoint;
