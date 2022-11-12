@@ -10,9 +10,13 @@ class EdgeMessage {
    * @param {Buffer} payload
    */
   constructor(messageType, sessionId, payload) {
-    this.MessageType = messageType;
-    this.SessionId = sessionId;
-    this.Payload = payload;
+    this._messageType = messageType;
+    this._sessionId = sessionId;
+    this._payload = payload;
+  }
+
+  get payload() {
+    return this._payload;
   }
 
   /**
@@ -20,13 +24,13 @@ class EdgeMessage {
    * @param {net.Socket} socket
    */
   writeTo(socket) {
-    socket.write(Buffer.from([this.MessageType]));
-    const guidBuffer = Buffer.from(this.SessionId);
+    socket.write(Buffer.from([this._messageType]));
+    const guidBuffer = Buffer.from(this._sessionId);
     const guidLenBuffer = EdgeMessage._getInt32Bytes(guidBuffer.length);
     socket.write(guidLenBuffer);
     socket.write(guidBuffer);
-    socket.write(EdgeMessage._getInt32Bytes(this.Payload.length));
-    socket.write(this.Payload);
+    socket.write(EdgeMessage._getInt32Bytes(this._payload.length));
+    socket.write(this._payload);
   }
 
   /**

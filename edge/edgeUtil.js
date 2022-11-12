@@ -11,7 +11,7 @@ class EdgeUtil {
           const data = Buffer.concat(buffer);
           try {
             var msg = EdgeMessage.createFromBuffer(data);
-            resolve(JSON.parse(msg.Payload));
+            resolve(JSON.parse(msg.payload));
           } catch (e) {
             reject(e);
           }
