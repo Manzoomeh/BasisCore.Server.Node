@@ -7,6 +7,7 @@
     "test": "node --openssl-legacy-provider test.js",
     "dev": "node --openssl-legacy-provider index.js"
   },
+  "type": "module",
   "author": "",
   "license": "ISC",
   "dependencies": {

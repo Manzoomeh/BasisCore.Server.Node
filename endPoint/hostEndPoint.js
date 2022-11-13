@@ -10,7 +10,7 @@ class HostEndPoint {
   }
 }
 
-module.exports = HostEndPoint;
+export default HostEndPoint;
 
 // class HostEndPointOptions{
 // get HostEndPointTypes Type() { get; set; }

@@ -1,6 +1,6 @@
-const http = require("http");
-const https = require("https");
-const HttpHostEndPoint = require("./HttpHostEndPoint");
+import https from "https";
+import HttpHostEndPoint from "./HttpHostEndPoint.js";
+import RequestDispatcher from "./requestDispatcher.js";
 
 class SecureHttpHostEndPoint extends HttpHostEndPoint {
   /**
@@ -23,11 +23,11 @@ class SecureHttpHostEndPoint extends HttpHostEndPoint {
         req.headers,
         req.socket
       );
-      var result = this._dispatcher(cms);
+      var result = this._dispatcher.processAsync(cms);
       res.writeHead(200);
       res.end(JSON.stringify(result));
     });
   }
 }
 
-module.exports = SecureHttpHostEndPoint;
+export default SecureHttpHostEndPoint;

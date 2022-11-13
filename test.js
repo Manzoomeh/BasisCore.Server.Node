@@ -1,10 +1,10 @@
-const fs = require("fs");
-
-const {
+import fs from "fs";
+import {
   SecureHttpHostEndPoint,
   NonSecureHttpHostEndPoint,
   H2HttpHostEndPoint,
-} = require("./endPoint/endPoint");
+} from "./endPoint/endPoints.js";
+import { StaticFileProxyHostService } from "./Services/hostServices.js";
 
 /**
  * @type {import("tls").SecureContextOptions}
@@ -16,14 +16,11 @@ var options = {
   //passphrase: "namayeshgah.ir",
 };
 
-const dispatcher = (x) => {
-  console.log("hi");
-  return x;
-};
+const service = new StaticFileProxyHostService("demo", "/wwwroot");
 
-var http = new NonSecureHttpHostEndPoint("0.0.0.0", 8080, dispatcher);
-var https = new SecureHttpHostEndPoint("0.0.0.0", 8081, dispatcher, options);
-var h2 = new H2HttpHostEndPoint("0.0.0.0", 8082, dispatcher, options);
+const http = new NonSecureHttpHostEndPoint("0.0.0.0", 8080, service);
+const https = new SecureHttpHostEndPoint("0.0.0.0", 8081, service, options);
+const h2 = new H2HttpHostEndPoint("0.0.0.0", 8082, service, options);
 
 http.listen();
 https.listen();

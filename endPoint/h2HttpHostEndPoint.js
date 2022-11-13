@@ -1,6 +1,6 @@
-const http2 = require("http2");
-
-const SecureHttpHostEndPoint = require("./SecureHttpHostEndPoint");
+import http2 from "http2";
+import SecureHttpHostEndPoint from "./SecureHttpHostEndPoint.js";
+import RequestDispatcher from "./requestDispatcher.js";
 
 class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /**
@@ -41,7 +41,7 @@ class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           headers,
           stream.session.socket
         );
-        var result = this._dispatcher(cms);
+        var result = this._dispatcher.processAsync(cms);
         stream.respond({
           ":status": 200,
         });
@@ -61,4 +61,4 @@ class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   }
 }
 
-module.exports = H2HttpHostEndPoint;
+export default H2HttpHostEndPoint;

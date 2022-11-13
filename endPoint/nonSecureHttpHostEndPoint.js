@@ -1,12 +1,13 @@
-const http = require("http");
-const HttpHostEndPoint = require("./HttpHostEndPoint");
+import http from "http";
+import HttpHostEndPoint from "./HttpHostEndPoint.js";
+import RequestDispatcher from "./requestDispatcher.js";
 
 class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /**
    *
    * @param {string} ip
    * @param {number} port
-   * @param {*} dispatcher
+   * @param {RequestDispatcher} dispatcher
    */
   constructor(ip, port, dispatcher) {
     super(ip, port, dispatcher);
@@ -14,17 +15,17 @@ class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
 
   _createServer() {
     return http.createServer((req, res) => {
-      var cms = this._createCmsObject(
+      const cms = this._createCmsObject(
         req.url,
         req.method,
         req.headers,
         req.socket
       );
-      var result = this._dispatcher(cms);
+      const result = this._dispatcher.processAsync(cms);
       res.writeHead(200);
       res.end(JSON.stringify(result));
     });
   }
 }
 
-module.exports = NonSecureHttpHostEndPoint;
+export default NonSecureHttpHostEndPoint;

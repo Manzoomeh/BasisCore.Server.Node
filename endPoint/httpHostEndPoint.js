@@ -1,6 +1,7 @@
-const dayjs = require("dayjs");
-const HostEndPoint = require("./hostEndPoint");
-const url = require("url");
+import dayjs from "dayjs";
+import HostEndPoint from "./hostEndPoint.js";
+import url from "url";
+import RequestDispatcher from "./requestDispatcher.js";
 
 var requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
@@ -8,7 +9,7 @@ class HttpHostEndPoint extends HostEndPoint {
    *
    * @param {string} ip
    * @param {number} port
-   * @param {function(IRequestCms):IRequestCms} dispatcher
+   * @param {RequestDispatcher} dispatcher
    */
   constructor(ip, port, dispatcher) {
     super(ip, port);
@@ -38,31 +39,25 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {Socket} socket
    * @returns {IRequestCms}
    */
-  _createCmsObject(urlStr, method, requestHeaders, socket) {
-    const request = {};
-
-    for (const key in requestHeaders) {
-      request[key] = requestHeaders[key];
-    }
+  _createCmsObject(urlStr, method, headers, socket) {
     const rawUrl = urlStr.substring(1);
     const urlObject = url.parse(rawUrl, true);
-    request["request-id"] = (++requestId).toString();
-    request["methode"] = method.toLowerCase();
-    request["rawurl"] = rawUrl;
-    request["url"] = urlObject.pathname;
-    request["full-url"] = `${request["host"]}${urlStr}`;
-    request["hostip"] = socket.localAddress;
-    request["hostport"] = socket.localPort.toString();
-    request["clientip"] = socket.remoteAddress;
-
-    requestHeaders["query"] = urlObject.query;
+    headers["request-id"] = (++requestId).toString();
+    headers["methode"] = method.toLowerCase();
+    headers["rawurl"] = rawUrl;
+    headers["url"] = urlObject.pathname;
+    headers["full-url"] = `${headers["host"]}${urlStr}`;
+    headers["hostip"] = socket.localAddress;
+    headers["hostport"] = socket.localPort.toString();
+    headers["clientip"] = socket.remoteAddress;
+    headers["query"] = urlObject.query;
 
     var now = dayjs();
     /**
      * @type IRequestCms
      */
     var cms = {
-      request: request,
+      request: headers,
       cms: {
         date: now.format("MM/DD/YYYY"),
         time: now.format("HH:mm A"),
@@ -81,9 +76,4 @@ class HttpHostEndPoint extends HostEndPoint {
  * @property {NodeJS.Dict<string | string[]>} request
  */
 
-// /**
-//  * @typedef {object} IRequestDispatcher
-//  * @property {function(IRequestCms): IRequestCms} Dispatch
-//  */
-
-module.exports = HttpHostEndPoint;
+export default HttpHostEndPoint;
