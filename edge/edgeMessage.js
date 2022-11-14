@@ -1,6 +1,6 @@
 const net = require("net");
 const { randomUUID } = require("crypto");
-const MessageTypes = require("./messageTypes");
+import MessageTypes from "./messageTypes.js";
 
 class EdgeMessage {
   /**

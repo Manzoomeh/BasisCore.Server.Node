@@ -16,7 +16,10 @@ var options = {
   //passphrase: "namayeshgah.ir",
 };
 
-const service = new StaticFileProxyHostService("demo", "/wwwroot");
+const service = new StaticFileProxyHostService(
+  "demo",
+  "D:/Programming/Falsafi/Node/WebServer/wwwroot"
+);
 
 const http = new NonSecureHttpHostEndPoint("0.0.0.0", 8080, service);
 const https = new SecureHttpHostEndPoint("0.0.0.0", 8081, service, options);

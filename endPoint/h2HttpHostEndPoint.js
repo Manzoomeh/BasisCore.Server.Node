@@ -3,16 +3,23 @@ import SecureHttpHostEndPoint from "./SecureHttpHostEndPoint.js";
 import RequestDispatcher from "./requestDispatcher.js";
 
 class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
+  /** @type {RequestDispatcher} */
+  #dispatcher;
+
+  /** @type {import("tls").SecureContextOptions} */
+  #options;
+
   /**
-   *
    * @param {string} ip
    * @param {number} port
    * @param {RequestDispatcher} dispatcher
    * @param {import("tls").SecureContextOptions} options
    */
+
   constructor(ip, port, dispatcher, options) {
-    super(ip, port, dispatcher);
-    this._options = options;
+    super(ip, port);
+    this.#options = options;
+    this.#dispatcher = dispatcher;
   }
 
   /**
@@ -32,7 +39,7 @@ class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   }
 
   _createServer() {
-    const server = http2.createSecureServer(this._options);
+    const server = http2.createSecureServer(this.#options);
     server.on("stream", async (stream, headers) => {
       try {
         var cms = this._createCmsObject(
@@ -41,11 +48,11 @@ class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           headers,
           stream.session.socket
         );
-        var result = this._dispatcher.processAsync(cms);
-        stream.respond({
-          ":status": 200,
-        });
-        stream.end(JSON.stringify(result));
+        const result = this.#dispatcher.process(cms);
+        const [code, headerList, body] = await result.getResultAsync();
+        headerList[":status"] = code;
+        stream.respond(headerList);
+        stream.end(body);
       } catch (ex) {
         console.error(ex);
         if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
@@ -56,7 +63,6 @@ class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         }
       }
     });
-
     return server;
   }
 }

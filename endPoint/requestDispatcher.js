@@ -1,5 +1,12 @@
+import Request from "../Models/request.js";
+import Response from "../Models/Response.js";
 class RequestDispatcher {
-  processAsync(cms) {
+  /**
+   *
+   * @param {Request} request
+   * @returns {Response}
+   */
+  process(request) {
     throw new Error("Not implemented");
   }
 }

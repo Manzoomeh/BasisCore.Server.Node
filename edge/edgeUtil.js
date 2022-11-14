@@ -1,5 +1,5 @@
 const net = require("net");
-const EdgeMessage = require("./edgeMessage");
+import EdgeMessage from "./edgeMessage.js";
 
 class EdgeUtil {
   static sendForEdgeAsync(ip, port, obj) {

@@ -1,1 +1,2 @@
 https://depth-first.com/articles/2021/10/20/types-without-typescript/
+class :https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes

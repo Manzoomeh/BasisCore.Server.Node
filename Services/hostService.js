@@ -1,4 +1,6 @@
 import { RequestDispatcher } from "../endPoint/endPoints.js";
+import Request from "../Models/request.js";
+import Response from "../Models/Response.js";
 
 class HostService extends RequestDispatcher {
   /**
@@ -9,7 +11,11 @@ class HostService extends RequestDispatcher {
     this._name = name;
   }
 
-  processAsync(cms) {
+  /**
+   * @param {Request} request
+   * @returns {Response}
+   */
+  process(request) {
     throw new Error("Not implemented!");
   }
 }

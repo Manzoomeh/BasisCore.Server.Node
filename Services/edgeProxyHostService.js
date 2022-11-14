@@ -12,7 +12,7 @@ class EdgeProxyHostService extends HostService {
     this._port = port;
   }
 
-  processAsync(cms) {
+  process(cms) {
     return cms;
   }
 }
