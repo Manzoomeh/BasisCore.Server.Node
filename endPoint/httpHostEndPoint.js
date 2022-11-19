@@ -2,8 +2,7 @@ import http from "http";
 import dayjs from "dayjs";
 import url from "url";
 import HostEndPoint from "./hostEndPoint.js";
-import RequestDispatcher from "./requestDispatcher.js";
-import Request from "../Models/request.js";
+import Request from "../Models/Request.js";
 
 var requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
@@ -45,7 +44,17 @@ class HttpHostEndPoint extends HostEndPoint {
     headers["hostip"] = socket.localAddress;
     headers["hostport"] = socket.localPort.toString();
     headers["clientip"] = socket.remoteAddress;
-    headers["query"] = urlObject.query;
+    if (urlObject.query) {
+      const query = {};
+      var hasQuery = false;
+      for (const key in urlObject.query) {
+        query[key] = urlObject.query[key];
+        hasQuery = true;
+      }
+      if (hasQuery) {
+        headers["query"] = query;
+      }
+    }
 
     var now = dayjs();
     var request = new Request();

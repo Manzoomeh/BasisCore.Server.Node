@@ -1,6 +1,13 @@
+import net from "net";
 import HostService from "./hostService.js";
+import EdgeMessage from "../edge/edgeMessage.js";
+import Request from "../Models/Request.js";
 
-class EdgeProxyHostService extends HostService {
+export default class EdgeProxyHostService extends HostService {
+  /**@type {string} */
+  #ip;
+  /**@type {number} */
+  #port;
   /**
    * @param {string} name
    * @param {number} ip
@@ -8,13 +15,37 @@ class EdgeProxyHostService extends HostService {
    */
   constructor(name, ip, port) {
     super(name);
-    this._ip = ip;
-    this._port = port;
+    this.#ip = ip;
+    this.#port = port;
   }
 
-  process(cms) {
-    return cms;
+  /**
+   * @param {Request} request
+   * @returns {Promise<Response>}
+   */
+  async processAsync(request) {
+    /** @type {Promise<Request>} */
+    const task = new Promise((resolve, reject) => {
+      var buffer = [];
+      const client = new net.Socket()
+        .on("data", (data) => buffer.push(data))
+        .on("close", function () {
+          const data = Buffer.concat(buffer);
+          try {
+            var msg = EdgeMessage.createFromBuffer(data);
+            resolve(JSON.parse(msg.payload));
+          } catch (e) {
+            reject(e);
+          }
+        })
+        .connect(this.#port, this.#ip, () => {
+          const msg = EdgeMessage.createAdHocMessageFromObject({
+            cms: request,
+          });
+          msg.writeTo(client);
+        });
+    });
+    var result = await task;
+    return this._createResponse(result);
   }
 }
-
-export default EdgeProxyHostService;

@@ -1,51 +1,54 @@
-const net = require("net");
-const { randomUUID } = require("crypto");
+import net from "net";
+import { randomUUID } from "crypto";
 import MessageTypes from "./messageTypes.js";
 
-class EdgeMessage {
+export default class EdgeMessage {
+  /** @type {MessageTypes}*/
+  #messageType;
+  /** @type {string}*/
+  #sessionId;
+  /** @type {Buffer}*/
+  #payload;
+
   /**
-   *
    * @param {MessageTypes} messageType
    * @param {string} sessionId
    * @param {Buffer} payload
    */
   constructor(messageType, sessionId, payload) {
-    this._messageType = messageType;
-    this._sessionId = sessionId;
-    this._payload = payload;
+    this.#messageType = messageType;
+    this.#sessionId = sessionId;
+    this.#payload = payload;
   }
 
   get payload() {
-    return this._payload;
+    return this.#payload;
   }
 
   /**
-   *
    * @param {net.Socket} socket
    */
   writeTo(socket) {
-    socket.write(Buffer.from([this._messageType]));
-    const guidBuffer = Buffer.from(this._sessionId);
-    const guidLenBuffer = EdgeMessage._getInt32Bytes(guidBuffer.length);
+    socket.write(Buffer.from([this.#messageType]));
+    const guidBuffer = Buffer.from(this.#sessionId);
+    const guidLenBuffer = EdgeMessage.#getInt32Bytes(guidBuffer.length);
     socket.write(guidLenBuffer);
     socket.write(guidBuffer);
-    socket.write(EdgeMessage._getInt32Bytes(this._payload.length));
-    socket.write(this._payload);
+    socket.write(EdgeMessage.#getInt32Bytes(this.#payload.length));
+    socket.write(this.#payload);
   }
 
   /**
-   *
    * @param {number} x
    * @returns {Buffer}
    */
-  static _getInt32Bytes(x) {
+  static #getInt32Bytes(x) {
     const bytes = Buffer.alloc(4);
     bytes.writeInt32BE(x);
     return bytes;
   }
 
   /**
-   *
    * @returns {string}
    */
   static getNewGUID() {
@@ -53,7 +56,6 @@ class EdgeMessage {
   }
 
   /**
-   *
    * @param {Buffer} buffer
    * @returns {EdgeMessage}
    */
@@ -68,7 +70,6 @@ class EdgeMessage {
   }
 
   /**
-   *
    * @param {object} obj
    * @returns {EdgeMessage}
    */
@@ -77,7 +78,6 @@ class EdgeMessage {
   }
 
   /**
-   *
    * @param {string} json
    * @returns {EdgeMessage}
    */
@@ -89,5 +89,3 @@ class EdgeMessage {
     );
   }
 }
-
-module.exports = EdgeMessage;

@@ -6,4 +6,4 @@ const MessageTypes = {
   NotExist: 5,
 };
 
-module.exports = MessageTypes;
+export default MessageTypes;

@@ -3,7 +3,7 @@ import fs from "fs";
 import { StatusCodes } from "http-status-codes";
 import Response from "./Response.js";
 
-class FileResponse extends Response {
+export default class FileResponse extends Response {
   /** @type {string}*/
   #path;
 
@@ -27,5 +27,3 @@ class FileResponse extends Response {
     }
   }
 }
-
-export default FileResponse;

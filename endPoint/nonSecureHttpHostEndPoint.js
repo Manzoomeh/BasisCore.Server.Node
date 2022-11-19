@@ -3,7 +3,7 @@ import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import RequestDispatcher from "./requestDispatcher.js";
 
-class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
+export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {RequestDispatcher} */
   #dispatcher;
 
@@ -27,16 +27,15 @@ class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
           req.headers,
           req.socket
         );
-        const result = this.#dispatcher.process(cms);
+        const result = await this.#dispatcher.processAsync(cms);
         const [code, headers, body] = await result.getResultAsync();
         res.writeHead(code, headers);
         res.end(body);
       } catch (ex) {
+        console.error(ex);
         res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR);
         res.end(ex.toString());
       }
     });
   }
 }
-
-export default NonSecureHttpHostEndPoint;

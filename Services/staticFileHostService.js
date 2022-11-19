@@ -1,10 +1,10 @@
 import path from "path";
 import HostService from "./hostService.js";
-import Request from "../Models/request.js";
+import Request from "../Models/Request.js";
 import Response from "../Models/Response.js";
 import FileResponse from "../Models/FileResponse.js";
 
-class StaticFileProxyHostService extends HostService {
+export default class StaticFileProxyHostService extends HostService {
   /** @type {string} */
   #rootPath;
   /**
@@ -18,15 +18,13 @@ class StaticFileProxyHostService extends HostService {
 
   /**
    * @param {Request} request
-   * @returns {Response}
+   * @returns {Promise<Response>}
    */
-  process(request) {
+  processAsync(request) {
     var url = request.Url;
     if (url == "") {
       url = "index.html";
     }
-    return new FileResponse(path.join(this.#rootPath, url));
+    return Promise.resolve(new FileResponse(path.join(this.#rootPath, url)));
   }
 }
-
-export default StaticFileProxyHostService;

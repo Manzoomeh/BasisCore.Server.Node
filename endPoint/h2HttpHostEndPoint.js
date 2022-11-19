@@ -1,12 +1,14 @@
 import http2 from "http2";
+import { StatusCodes } from "http-status-codes";
 import SecureHttpHostEndPoint from "./SecureHttpHostEndPoint.js";
 import RequestDispatcher from "./requestDispatcher.js";
+import SecureContextOptions from "tls";
 
-class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
+export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {RequestDispatcher} */
   #dispatcher;
 
-  /** @type {import("tls").SecureContextOptions} */
+  /** @type {SecureContextOptions} */
   #options;
 
   /**
@@ -48,7 +50,7 @@ class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           headers,
           stream.session.socket
         );
-        const result = this.#dispatcher.process(cms);
+        const result = await this.#dispatcher.processAsync(cms);
         const [code, headerList, body] = await result.getResultAsync();
         headerList[":status"] = code;
         stream.respond(headerList);
@@ -57,7 +59,7 @@ class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         console.error(ex);
         if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
           stream.respond({
-            ":status": 500,
+            ":status": StatusCodes.INTERNAL_SERVER_ERROR,
           });
           stream.end(ex.toString());
         }
@@ -66,5 +68,3 @@ class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     return server;
   }
 }
-
-export default H2HttpHostEndPoint;

@@ -4,7 +4,11 @@ import {
   NonSecureHttpHostEndPoint,
   H2HttpHostEndPoint,
 } from "./endPoint/endPoints.js";
-import { StaticFileProxyHostService } from "./Services/hostServices.js";
+import {
+  EdgeProxyHostService,
+  StaticFileProxyHostService,
+  SqlProxyHostService,
+} from "./Services/hostServices.js";
 
 /**
  * @type {import("tls").SecureContextOptions}
@@ -16,11 +20,16 @@ var options = {
   //passphrase: "namayeshgah.ir",
 };
 
-const service = new StaticFileProxyHostService(
+const fileService = new StaticFileProxyHostService(
   "demo",
   "D:/Programming/Falsafi/Node/WebServer/wwwroot"
 );
 
+const edgeService = new EdgeProxyHostService("edge", "127.0.0.1", 1026);
+
+const sqlService = new SqlProxyHostService("sql");
+
+const service = fileService;
 const http = new NonSecureHttpHostEndPoint("0.0.0.0", 8080, service);
 const https = new SecureHttpHostEndPoint("0.0.0.0", 8081, service, options);
 const h2 = new H2HttpHostEndPoint("0.0.0.0", 8082, service, options);

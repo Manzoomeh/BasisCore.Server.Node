@@ -1,14 +1,11 @@
-import Request from "../Models/request.js";
+import Request from "../Models/Request.js";
 import Response from "../Models/Response.js";
-class RequestDispatcher {
+export default class RequestDispatcher {
   /**
-   *
    * @param {Request} request
-   * @returns {Response}
+   * @returns {Promise<Response>}
    */
-  process(request) {
+  processAsync(request) {
     throw new Error("Not implemented");
   }
 }
-
-export default RequestDispatcher;

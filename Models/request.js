@@ -1,4 +1,4 @@
-class Request {
+export default class Request {
   /**
    * @type {NodeJS.Dict<string|string[]>}
    */
@@ -15,5 +15,3 @@ class Request {
     return this.request["url"];
   }
 }
-
-export default Request;

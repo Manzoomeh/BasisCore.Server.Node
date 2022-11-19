@@ -1,4 +1,4 @@
-export class Response {
+export default class Response {
   /**
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
@@ -6,5 +6,3 @@ export class Response {
     throw new Error("not implemented");
   }
 }
-
-export default Response;

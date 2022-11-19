@@ -1,8 +1,9 @@
 import https from "https";
+import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import RequestDispatcher from "./requestDispatcher.js";
 
-class SecureHttpHostEndPoint extends HttpHostEndPoint {
+export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {RequestDispatcher} */
   #dispatcher;
 
@@ -29,7 +30,7 @@ class SecureHttpHostEndPoint extends HttpHostEndPoint {
           req.headers,
           req.socket
         );
-        var result = this.#dispatcher.process(cms);
+        var result = await this.#dispatcher.processAsync(cms);
         const [code, headers, body] = await result.getResultAsync();
         res.writeHead(code, headers);
         res.end(body);
@@ -40,5 +41,3 @@ class SecureHttpHostEndPoint extends HttpHostEndPoint {
     });
   }
 }
-
-export default SecureHttpHostEndPoint;
