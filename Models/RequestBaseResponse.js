@@ -1,5 +1,5 @@
-import Request from "./Request.js";
-import Response from "./Response.js";
+import Request from "./request.js";
+import Response from "./response.js";
 
 export default class RequestBaseResponse extends Response {
   /**@type {Request} request */

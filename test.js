@@ -8,7 +8,7 @@ import {
   EdgeProxyHostService,
   StaticFileProxyHostService,
   SqlProxyHostService,
-} from "./Services/hostServices.js";
+} from "./services/hostServices.js";
 
 /**
  * @type {import("tls").SecureContextOptions}
@@ -27,7 +27,10 @@ const fileService = new StaticFileProxyHostService(
 
 const edgeService = new EdgeProxyHostService("edge", "127.0.0.1", 1026);
 
-const sqlService = new SqlProxyHostService("sql");
+const sqlService = new SqlProxyHostService(
+  "sql",
+  "Driver={SQL Server Native Client 11.0};Server=localhost;Database=temp;Uid=sa;Pwd=1234;Trusted_Connection=True;TrustServerCertificate=True;"
+);
 
 const service = fileService;
 const http = new NonSecureHttpHostEndPoint("0.0.0.0", 8080, service);

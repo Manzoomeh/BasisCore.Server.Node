@@ -1,8 +1,8 @@
 import { RequestDispatcher } from "../endPoint/endPoints.js";
-import Index2Response from "../Models/Index2Response.js";
-import Index5Response from "../Models/Index5Response.js";
-import Request from "../Models/Request.js";
-import Response from "../Models/Response.js";
+import Index2Response from "../models/index2Response.js";
+import Index5Response from "../models/index5Response.js";
+import Request from "../models/request.js";
+import Response from "../models/response.js";
 
 export default class HostService extends RequestDispatcher {
   /**@type {string} */

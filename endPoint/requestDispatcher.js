@@ -1,5 +1,5 @@
-import Request from "../Models/Request.js";
-import Response from "../Models/Response.js";
+import Request from "../models/request.js";
+import Response from "../models/response.js";
 export default class RequestDispatcher {
   /**
    * @param {Request} request

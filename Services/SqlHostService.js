@@ -1,6 +1,6 @@
 import HostService from "./hostService.js";
-import Request from "../Models/Request.js";
-import Response from "../Models/Response.js";
+import Request from "../models/request.js";
+import Response from "../models/response.js";
 import sql from "mssql";
 
 export default class SqlProxyHostService extends HostService {
@@ -8,11 +8,11 @@ export default class SqlProxyHostService extends HostService {
   #connectionString;
   /**
    * @param {string} name
+   * @param {string} connectionString
    */
-  constructor(name) {
+  constructor(name, connectionString) {
     super(name);
-    this.#connectionString =
-      "Driver={SQL Server Native Client 11.0};Server=localhost;Database=temp;Uid=sa;Pwd=1234;Trusted_Connection=True;TrustServerCertificate=True;";
+    this.#connectionString = connectionString;
   }
 
   /**

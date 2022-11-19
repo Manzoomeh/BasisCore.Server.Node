@@ -1,8 +1,8 @@
 import path from "path";
 import HostService from "./hostService.js";
-import Request from "../Models/Request.js";
-import Response from "../Models/Response.js";
-import FileResponse from "../Models/FileResponse.js";
+import Request from "../models/request.js";
+import Response from "../models/response.js";
+import FileResponse from "../models/fileResponse.js";
 
 export default class StaticFileProxyHostService extends HostService {
   /** @type {string} */

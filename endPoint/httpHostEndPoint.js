@@ -2,7 +2,7 @@ import http from "http";
 import dayjs from "dayjs";
 import url from "url";
 import HostEndPoint from "./hostEndPoint.js";
-import Request from "../Models/Request.js";
+import Request from "../models/request.js";
 
 var requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
