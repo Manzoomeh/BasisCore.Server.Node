@@ -8,6 +8,8 @@ import {
   EdgeProxyHostService,
   StaticFileProxyHostService,
   SqlProxyHostService,
+  RouterHostService,
+  RouterOptions,
 } from "./services/hostServices.js";
 
 /**
@@ -32,10 +34,17 @@ const sqlService = new SqlProxyHostService(
   "Driver={SQL Server Native Client 11.0};Server=localhost;Database=temp;Uid=sa;Pwd=1234;Trusted_Connection=True;TrustServerCertificate=True;"
 );
 
+var routerOptions = [
+  new RouterOptions(edgeService, "/edge"),
+  new RouterOptions(fileService, "/static"),
+  new RouterOptions(sqlService, "/sql|.*"),
+];
+const router = new RouterHostService("router", routerOptions);
+
 const service = fileService;
-const http = new NonSecureHttpHostEndPoint("0.0.0.0", 8080, service);
-const https = new SecureHttpHostEndPoint("0.0.0.0", 8081, service, options);
-const h2 = new H2HttpHostEndPoint("0.0.0.0", 8082, service, options);
+const http = new NonSecureHttpHostEndPoint("0.0.0.0", 8080, router);
+const https = new SecureHttpHostEndPoint("0.0.0.0", 8081, router, options);
+const h2 = new H2HttpHostEndPoint("0.0.0.0", 8082, router, options);
 
 http.listen();
 https.listen();

@@ -2,6 +2,7 @@ import net from "net";
 import HostService from "./hostService.js";
 import EdgeMessage from "../edge/edgeMessage.js";
 import Request from "../models/request.js";
+import { on } from "events";
 
 export default class EdgeProxyHostService extends HostService {
   /**@type {string} */
@@ -37,6 +38,10 @@ export default class EdgeProxyHostService extends HostService {
           } catch (e) {
             reject(e);
           }
+        })
+        .on("error", (e) => {
+          reject(e);
+          console.error(e);
         })
         .connect(this.#port, this.#ip, () => {
           const msg = EdgeMessage.createAdHocMessageFromObject({

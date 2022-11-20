@@ -14,4 +14,11 @@ export default class Request {
   get Url() {
     return this.request["url"];
   }
+
+  /**
+   * @returns {string}
+   */
+  get FullUrl() {
+    return this.request["full-url"];
+  }
 }
