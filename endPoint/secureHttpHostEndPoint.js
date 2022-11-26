@@ -22,22 +22,27 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
   }
 
   _createServer() {
-    return https.createServer(this.#options, async (req, res) => {
-      try {
-        var cms = this._createCmsObject(
-          req.url,
-          req.method,
-          req.headers,
-          req.socket
-        );
-        var result = await this.#dispatcher.processAsync(cms);
-        const [code, headers, body] = await result.getResultAsync();
-        res.writeHead(code, headers);
-        res.end(body);
-      } catch (ex) {
-        res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR);
-        res.end(ex.toString());
-      }
-    });
+    return https
+      .createServer(this.#options, async (req, res) => {
+        try {
+          var cms = this._createCmsObject(
+            req.url,
+            req.method,
+            req.headers,
+            req.socket
+          );
+          var result = await this.#dispatcher.processAsync(cms);
+          const [code, headers, body] = await result.getResultAsync();
+          res.writeHead(code, headers);
+          res.end(body);
+        } catch (ex) {
+          console.error(ex);
+          res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR);
+          res.end(ex.toString());
+        }
+      })
+      .on("error", (er) => console.error(er))
+      .on("clientError", (er) => console.error(er))
+      .on("tlsClientError", (er) => console.error(er));
   }
 }

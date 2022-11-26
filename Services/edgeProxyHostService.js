@@ -40,8 +40,8 @@ export default class EdgeProxyHostService extends HostService {
           }
         })
         .on("error", (e) => {
-          reject(e);
           console.error(e);
+          reject(e);
         })
         .connect(this.#port, this.#ip, () => {
           const msg = EdgeMessage.createAdHocMessageFromObject({

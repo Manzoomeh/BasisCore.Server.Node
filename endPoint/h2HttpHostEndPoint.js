@@ -41,30 +41,33 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   }
 
   _createServer() {
-    const server = http2.createSecureServer(this.#options);
-    server.on("stream", async (stream, headers) => {
-      try {
-        var cms = this._createCmsObject(
-          headers[":path"],
-          headers[":method"],
-          headers,
-          stream.session.socket
-        );
-        const result = await this.#dispatcher.processAsync(cms);
-        const [code, headerList, body] = await result.getResultAsync();
-        headerList[":status"] = code;
-        stream.respond(headerList);
-        stream.end(body);
-      } catch (ex) {
-        console.error(ex);
-        if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
-          stream.respond({
-            ":status": StatusCodes.INTERNAL_SERVER_ERROR,
-          });
-          stream.end(ex.toString());
+    return http2
+      .createSecureServer(this.#options)
+      .on("stream", async (stream, headers) => {
+        try {
+          var cms = this._createCmsObject(
+            headers[":path"],
+            headers[":method"],
+            headers,
+            stream.session.socket
+          );
+          const result = await this.#dispatcher.processAsync(cms);
+          const [code, headerList, body] = await result.getResultAsync();
+          headerList[":status"] = code;
+          stream.respond(headerList);
+          stream.end(body);
+        } catch (ex) {
+          console.error(ex);
+          if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
+            stream.respond({
+              ":status": StatusCodes.INTERNAL_SERVER_ERROR,
+            });
+            stream.end(ex.toString());
+          }
         }
-      }
-    });
-    return server;
+      })
+      .on("error", (er) => console.error(er))
+      .on("sessionError", (er) => console.error(er))
+      .on("unknownProtocol", (er) => console.error(er));
   }
 }

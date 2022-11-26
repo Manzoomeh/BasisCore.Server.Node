@@ -1,4 +1,5 @@
 import fs from "fs";
+import tls from "tls";
 import {
   SecureHttpHostEndPoint,
   NonSecureHttpHostEndPoint,
@@ -12,12 +13,16 @@ import {
   RouterOptions,
 } from "./services/hostServices.js";
 
+const [cert, key] = await Promise.all([
+  fs.promises.readFile("test-cert/server.cert"),
+  fs.promises.readFile("test-cert/server.key"),
+]);
 /**
- * @type {import("tls").SecureContextOptions}
+ * @type {tls.SecureContextOptions}
  */
 var options = {
-  key: fs.readFileSync("test-cert/server.key"),
-  cert: fs.readFileSync("test-cert/server.cert"),
+  key,
+  cert,
   //pfx: fs.readFileSync("namayeshgah.ir.pfx"),
   //passphrase: "namayeshgah.ir",
 };
