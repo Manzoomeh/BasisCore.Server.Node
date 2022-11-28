@@ -1,7 +1,7 @@
 import http from "http";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
-import RequestDispatcher from "./requestDispatcher.js";
+import RequestDispatcher from "../services/requestDispatcher.js";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {RequestDispatcher} */

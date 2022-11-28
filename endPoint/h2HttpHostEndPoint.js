@@ -1,7 +1,7 @@
 import http2 from "http2";
 import { StatusCodes } from "http-status-codes";
 import SecureHttpHostEndPoint from "./SecureHttpHostEndPoint.js";
-import RequestDispatcher from "./requestDispatcher.js";
+import RequestDispatcher from "../services/requestDispatcher.js";
 import SecureContextOptions from "tls";
 
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
@@ -25,7 +25,6 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   }
 
   /**
-   *
    * @param {string} urlStr
    * @param {string} method
    * @param {http.IncomingHttpHeaders} requestHeaders
@@ -44,6 +43,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     return http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
+        stream.on("error", (e) => console.log(e));
         try {
           var cms = this._createCmsObject(
             headers[":path"],

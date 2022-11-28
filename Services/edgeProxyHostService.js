@@ -2,7 +2,6 @@ import net from "net";
 import HostService from "./hostService.js";
 import EdgeMessage from "../edge/edgeMessage.js";
 import Request from "../models/request.js";
-import { on } from "events";
 
 export default class EdgeProxyHostService extends HostService {
   /**@type {string} */
@@ -11,8 +10,8 @@ export default class EdgeProxyHostService extends HostService {
   #port;
   /**
    * @param {string} name
-   * @param {number} ip
-   * @param {string} port
+   * @param {string} ip
+   * @param {number} port
    */
   constructor(name, ip, port) {
     super(name);

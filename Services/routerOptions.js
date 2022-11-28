@@ -1,4 +1,4 @@
-import { RequestDispatcher } from "../endPoint/endPoints.js";
+import RequestDispatcher from "./requestDispatcher.js";
 
 export default class RouterOptions {
   /**@type {RequestDispatcher} */

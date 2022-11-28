@@ -27,28 +27,6 @@ var options = {
   //passphrase: "namayeshgah.ir",
 };
 
-// const host = {
-//   EndPoints: {
-//     main: {
-//       Type: "http",
-//       Addresses: {
-//         EndPoint: "0.0.0.0:8080",
-//         Certificate: {
-//           Http2: true,
-//           http11: true,
-//           FilePath: "",
-//           KeyFilePath: "",
-//           Password: "",
-//         },
-//       },
-//       MaxHeaderSize: 0,
-//       Active: true,
-//       Routing: "",
-//       ReadHeaderTimeOut: 5000,
-//     },
-//   },
-// };
-
 const fileService = new StaticFileProxyHostService(
   "demo",
   "D:/Programming/Falsafi/Node/WebServer/wwwroot"

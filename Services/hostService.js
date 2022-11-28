@@ -1,4 +1,4 @@
-import { RequestDispatcher } from "../endPoint/endPoints.js";
+import RequestDispatcher from "./requestDispatcher.js";
 import Index2Response from "../models/index2Response.js";
 import Index5Response from "../models/index5Response.js";
 import Request from "../models/request.js";
@@ -13,7 +13,7 @@ export default class HostService extends RequestDispatcher {
    */
   constructor(name) {
     super();
-    this._name = name;
+    this.name = name;
   }
 
   /**
