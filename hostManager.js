@@ -15,8 +15,8 @@ import {
   HostService,
   SqlProxyHostService,
   StaticFileProxyHostService,
-  RequestDispatcher,
   HostEndPoint,
+  RouterHostService,
 } from "./services/hostServices.js";
 import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
 
@@ -27,9 +27,7 @@ export default class HostManager {
    * @param {HostManagerOptions} options
    */
   constructor(options) {
-    var dispatchers = this.#loadDispatchers(options.Services);
-    this.hosts = [];
-    this.#loadEndpoints(options.EndPoints, dispatchers);
+    this.#loadEndpoints(options);
   }
 
   listen() {
@@ -43,26 +41,29 @@ export default class HostManager {
   }
 
   /**
-   * @param {NodeJS.Dict<HostEndPointOptions>} endPoints
-   * @param {HostService[]} dispatchers
-   * @return {HostEndPoint[]}
+   * @param {HostManagerOptions} options
    */
-  #loadEndpoints(endPoints, dispatchers) {
-    for (const name in endPoints) {
-      if (Object.hasOwnProperty.call(endPoints, name)) {
-        const endPointsOptions = endPoints[name];
+  #loadEndpoints(options) {
+    this.hosts = [];
+    var services = this.#loadServices(options.Services);
+    for (const name in options.EndPoints) {
+      if (Object.hasOwnProperty.call(options.EndPoints, name)) {
+        const endPointsOptions = options.EndPoints[name];
         if (endPointsOptions.Active) {
-          var dispatcher = null;
+          var service = null;
           if (typeof endPointsOptions.Routing === "string") {
-            dispatcher = dispatchers.find(
-              (x) => x.name == endPointsOptions.Routing
+            service = services.find((x) => x.name == endPointsOptions.Routing);
+          } else if (typeof endPointsOptions.Routing === "object") {
+            service = new RouterHostService(
+              "name-router",
+              endPointsOptions.Routing,
+              services
             );
           }
-          console.log(dispatcher);
-          if (dispatcher) {
+          if (service) {
             switch ((endPointsOptions.Type || "http").toLowerCase()) {
               case "http": {
-                this.#createHttpEndPoint(name, endPointsOptions, dispatcher);
+                this.#createHttpEndPoint(name, endPointsOptions, service);
                 break;
               }
               default: {
@@ -82,14 +83,13 @@ export default class HostManager {
   /**
    * @param {string} name
    * @param {HostEndPointOptions} options
-   * @param {RequestDispatcher} dispatcher
+   * @param {HostService} service
    * @returns {HostEndPoint}
    */
-  #createHttpEndPoint(name, options, dispatcher) {
+  #createHttpEndPoint(name, options, service) {
     //console.table(options);
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
-      console.log(name, ip, port, typeof dispatcher);
       if (address.Certificate) {
         /**@type {tls.SecureContextOptions}*/
         var options = {};
@@ -101,15 +101,13 @@ export default class HostManager {
         }
         if (!address.Certificate.Http2) {
           this.hosts.push(
-            new SecureHttpHostEndPoint(ip, port, dispatcher, options)
+            new SecureHttpHostEndPoint(ip, port, service, options)
           );
         } else {
-          this.hosts.push(
-            new H2HttpHostEndPoint(ip, port, dispatcher, options)
-          );
+          this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options));
         }
       } else {
-        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, dispatcher));
+        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service));
       }
     });
   }
@@ -118,7 +116,7 @@ export default class HostManager {
    * @param {NodeJS.Dict<HostServiceOptions>} services
    * @returns {HostService[]}
    */
-  #loadDispatchers(services) {
+  #loadServices(services) {
     /**@type {HostService[]} */
     const retVal = new Array();
     for (const name in services) {

@@ -1,23 +1,41 @@
-import RequestDispatcher from "./requestDispatcher.js";
+import HostService from "./HostService.js";
+import { ServiceSelectorPredicateItemOptions } from "../models/model.js";
 
 export default class RouterOptions {
-  /**@type {RequestDispatcher} */
-  Service;
+  /**@type {HostService} */
+  service;
   /**@type {RegExp} */
-  Url;
+  #url;
   /**@type {boolean} */
-  Empty;
+  empty;
 
   /**
    *
-   * @param {RequestDispatcher} service
-   * @param {string|null} url
+   * @param {HostService} service
+   * @param {ServiceSelectorPredicateItemOptions|null} options
    */
-  constructor(service, url) {
-    this.Service = service;
-    if (url == null) {
-      this.Empty = true;
+  constructor(service, options) {
+    this.service = service;
+    this.empty = true;
+    if (options?.Url) {
+      this.#url = new RegExp(options.Url, "i");
+      this.empty = false;
     }
-    this.Url = new RegExp(url, "i");
+  }
+
+  /**
+   * @param {Request} request
+   * @returns {boolean}
+   */
+  isMatch(request) {
+    var isMatch = false;
+    if (this.empty) {
+      isMatch = true;
+    } else {
+      if (this.#url.test(request.FullUrl)) {
+        isMatch = true;
+      }
+    }
+    return isMatch;
   }
 }

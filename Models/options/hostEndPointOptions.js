@@ -1,4 +1,5 @@
 import PortListenerOptions from "./portListenerOptions.js";
+import ServiceSelectorPredicateOptions from "./ServiceSelectorPredicateOptions.js";
 export default class HostEndPointOptions {
   /**@type {"http" | "webSocket"} */
   Type;
@@ -8,7 +9,7 @@ export default class HostEndPointOptions {
   MaxHeaderSize;
   /**@type {boolean} */
   Active;
-  /**@type {} */
+  /**@type {ServiceSelectorPredicateOptions|string} */
   Routing;
   /** @type {number} */
   ReadHeaderTimeOut;

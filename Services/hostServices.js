@@ -4,7 +4,6 @@ import StaticFileProxyHostService from "./staticFileHostService.js";
 import SqlProxyHostService from "./sqlHostService.js";
 import RouterHostService from "./routerHostService.js";
 import RouterOptions from "./RouterOptions.js";
-import RequestDispatcher from "./requestDispatcher.js";
 import HostEndPoint from "../endPoint/hostEndPoint.js";
 
 export {
@@ -14,6 +13,5 @@ export {
   SqlProxyHostService,
   RouterHostService,
   RouterOptions,
-  RequestDispatcher,
   HostEndPoint,
 };

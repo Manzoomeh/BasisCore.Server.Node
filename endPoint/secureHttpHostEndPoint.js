@@ -1,24 +1,24 @@
 import https from "https";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
-import RequestDispatcher from "../services/requestDispatcher.js";
+import { HostService } from "../services/hostServices.js";
 
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
-  /** @type {RequestDispatcher} */
-  #dispatcher;
+  /** @type {HostService} */
+  #service;
 
   /** @type {import("tls").SecureContextOptions} */
   #options;
   /**
    * @param {string} ip
    * @param {number} port
-   * @param {RequestDispatcher} dispatcher
+   * @param {HostService} service
    * @param {import("tls").SecureContextOptions} options
    */
-  constructor(ip, port, dispatcher, options) {
+  constructor(ip, port, service, options) {
     super(ip, port);
     this.#options = options;
-    this.#dispatcher = dispatcher;
+    this.#service = service;
   }
 
   _createServer() {
@@ -31,7 +31,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
             req.headers,
             req.socket
           );
-          var result = await this.#dispatcher.processAsync(cms);
+          var result = await this.#service.processAsync(cms);
           const [code, headers, body] = await result.getResultAsync();
           res.writeHead(code, headers);
           res.end(body);

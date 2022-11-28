@@ -1,12 +1,12 @@
 import http2 from "http2";
 import { StatusCodes } from "http-status-codes";
 import SecureHttpHostEndPoint from "./SecureHttpHostEndPoint.js";
-import RequestDispatcher from "../services/requestDispatcher.js";
+import HostService from "../services/hostService.js";
 import SecureContextOptions from "tls";
 
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
-  /** @type {RequestDispatcher} */
-  #dispatcher;
+  /** @type {HostService} */
+  #service;
 
   /** @type {SecureContextOptions} */
   #options;
@@ -14,14 +14,14 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /**
    * @param {string} ip
    * @param {number} port
-   * @param {RequestDispatcher} dispatcher
+   * @param {HostService} service
    * @param {import("tls").SecureContextOptions} options
    */
 
-  constructor(ip, port, dispatcher, options) {
+  constructor(ip, port, service, options) {
     super(ip, port);
     this.#options = options;
-    this.#dispatcher = dispatcher;
+    this.#service = service;
   }
 
   /**
@@ -51,7 +51,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             headers,
             stream.session.socket
           );
-          const result = await this.#dispatcher.processAsync(cms);
+          const result = await this.#service.processAsync(cms);
           const [code, headerList, body] = await result.getResultAsync();
           headerList[":status"] = code;
           stream.respond(headerList);

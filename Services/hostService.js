@@ -1,10 +1,9 @@
-import RequestDispatcher from "./requestDispatcher.js";
 import Index2Response from "../models/index2Response.js";
 import Index5Response from "../models/index5Response.js";
 import Request from "../models/request.js";
 import Response from "../models/response.js";
 
-export default class HostService extends RequestDispatcher {
+export default class HostService {
   /**@type {string} */
   name;
 
@@ -12,7 +11,6 @@ export default class HostService extends RequestDispatcher {
    * @param {string} name
    */
   constructor(name) {
-    super();
     this.name = name;
   }
 

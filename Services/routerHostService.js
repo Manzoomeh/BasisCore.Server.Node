@@ -2,17 +2,27 @@ import HostService from "./hostService.js";
 import Request from "../models/request.js";
 import Response from "../models/response.js";
 import RouterOptions from "./RouterOptions.js";
+import { ServiceSelectorPredicateOptions } from "../models/model.js";
 
 export default class RouterHostService extends HostService {
   /** @type {RouterOptions[]} */
   #routes;
   /**
    * @param {string} name
-   * @param {RouterOptions[]} routes
+   * @param {ServiceSelectorPredicateOptions} options
+   * @param {HostService[]} services
    */
-  constructor(name, routes) {
+  constructor(name, options, services) {
     super(name);
-    this.#routes = routes;
+    this.#routes = [];
+    options.Items.forEach((option) => {
+      var service = services.find((x) => x.name == option.Service);
+      if (service) {
+        this.#routes.push(new RouterOptions(service, option));
+      } else {
+        console.log(`host service '${option.service}' not found!`);
+      }
+    });
   }
 
   /**
@@ -21,28 +31,10 @@ export default class RouterHostService extends HostService {
    */
   async processAsync(request) {
     for (const route of this.#routes) {
-      if (this.#isMatch(route, request)) {
-        return await route.Service.processAsync(request);
+      if (route.isMatch(request)) {
+        return await route.service.processAsync(request);
       }
     }
     throw new Error("Not suitable service found!");
-  }
-
-  /**
-   * @param {RouterOptions} route
-   * @param {Request} request
-   * @returns {boolean}
-   */
-  #isMatch(route, request) {
-    if (route.Empty) {
-      return true;
-    } else {
-      const url = request.FullUrl;
-      console.log(url, route.Url.test(url));
-      if (route.Url.test(url)) {
-        return true;
-      }
-    }
-    return false;
   }
 }

@@ -1,21 +1,21 @@
 import http from "http";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
-import RequestDispatcher from "../services/requestDispatcher.js";
+import { HostService } from "../services/hostServices.js";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
-  /** @type {RequestDispatcher} */
-  #dispatcher;
+  /** @type {HostService} */
+  #service;
 
   /**
    *
    * @param {string} ip
    * @param {number} port
-   * @param {RequestDispatcher} dispatcher
+   * @param {HostService} service
    */
-  constructor(ip, port, dispatcher) {
+  constructor(ip, port, service) {
     super(ip, port);
-    this.#dispatcher = dispatcher;
+    this.#service = service;
   }
 
   _createServer() {
@@ -27,7 +27,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
           req.headers,
           req.socket
         );
-        const result = await this.#dispatcher.processAsync(cms);
+        const result = await this.#service.processAsync(cms);
         const [code, headers, body] = await result.getResultAsync();
         res.writeHead(code, headers);
         res.end(body);

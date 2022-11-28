@@ -68,24 +68,24 @@ const host = {
           },
         },
       ],
-      Active: false,
+      Active: true,
       Routing: {
         Async: true,
         Items: [
           {
             Url: "/edge",
-            service: "edgeService",
+            Service: "edgeService",
           },
           {
             Url: "/static",
-            service: "fileService",
+            Service: "fileService",
           },
           {
             Url: "/sql",
-            service: "sqlService",
+            Service: "sqlService",
           },
           {
-            service: "sqlService",
+            Service: "sqlService",
           },
         ],
       },
