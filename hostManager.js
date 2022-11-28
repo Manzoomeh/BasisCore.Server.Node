@@ -9,6 +9,7 @@ import {
   HostEndPointOptions,
   HostServiceOptions,
   SslCertificateOptions,
+  SniCertificateOptions,
 } from "./models/model.js";
 import {
   EdgeProxyHostService,
@@ -87,17 +88,51 @@ export default class HostManager {
    * @returns {HostEndPoint}
    */
   #createHttpEndPoint(name, options, service) {
-    //console.table(options);
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
       if (address.Certificate) {
         /**@type {tls.SecureContextOptions}*/
         var options = {};
-        if (address.Certificate.Type === "ssl") {
-          /**@type {SslCertificateOptions} */
-          var sslOptions = address.Certificate;
-          options.cert = fs.readFileSync(sslOptions.FilePath);
-          options.key = fs.readFileSync(sslOptions.KeyPath);
+        switch (address.Certificate.Type) {
+          case "ssl": {
+            /**@type {SslCertificateOptions} */
+            var sslOptions = address.Certificate;
+            options.cert = fs.readFileSync(sslOptions.FilePath);
+            options.key = fs.readFileSync(sslOptions.KeyPath);
+            break;
+          }
+          case "sni": {
+            /**@type {SniCertificateOptions} */
+            var sniOptions = address.Certificate;
+
+            const hostLookup = {};
+            sniOptions.Hosts.forEach((host) => {
+              const cert = fs.readFileSync(host.FilePath);
+              const key = fs.readFileSync(host.KeyPath);
+              host.HostNames.forEach((hostName) => {
+                hostLookup[hostName.toLowerCase()] = { cert, key };
+              });
+            });
+            const sniCallback = (serverName, callback) => {
+              console.log(serverName);
+              const set = hostLookup[serverName.toLowerCase()];
+              if (set) {
+                callback(
+                  null,
+                  new tls.createSecureContext({
+                    cert: set.cert,
+                    key: set.key,
+                  })
+                );
+              } else {
+                console.log(
+                  `In sni setting no certificate found fot '${serverName}'`
+                );
+              }
+            };
+            options.SNICallback = sniCallback;
+            break;
+          }
         }
         if (!address.Certificate.Http2) {
           this.hosts.push(

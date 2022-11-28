@@ -6,5 +6,5 @@ export default class HostCertificateOptions {
   /**@type {string} */
   Password;
   /**@type {string} */
-  KeyFilePath;
+  KeyPath;
 }

@@ -55,7 +55,7 @@ const host = {
       Active: true,
       Routing: "sqlService",
     },
-    Main06: {
+    Main05: {
       Type: "http",
       Addresses: [
         {
@@ -89,6 +89,32 @@ const host = {
           },
         ],
       },
+    },
+    Main06: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "0.0.0.0:8085",
+          Certificate: {
+            Type: "sni",
+            Http2: true,
+            Hosts: [
+              {
+                HostNames: ["localhost"],
+                FilePath: "test-cert/server.cert",
+                KeyPath: "test-cert/server.key",
+              },
+              {
+                HostNames: ["s2.ir", "www.s2.ir", "www.s2.ir"],
+                FilePath: "test-cert/server.cert",
+                KeyPath: "test-cert/server.key",
+              },
+            ],
+          },
+        },
+      ],
+      Active: true,
+      Routing: "sqlService",
     },
   },
   Services: {
