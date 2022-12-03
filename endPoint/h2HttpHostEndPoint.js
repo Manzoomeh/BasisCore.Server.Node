@@ -43,7 +43,10 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     return http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
-        stream.on("error", (e) => console.log(e));
+        stream.on("error", (ex) => {
+          console.error("HTTP/2 server stream error", ex);
+          stream.destroy(ex);
+        });
         try {
           var cms = this._createCmsObject(
             headers[":path"],
@@ -57,7 +60,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           stream.respond(headerList);
           stream.end(body);
         } catch (ex) {
-          console.error(ex);
+          console.error("HTTP/2 server error", ex);
           if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
             stream.respond({
               ":status": StatusCodes.INTERNAL_SERVER_ERROR,
@@ -66,8 +69,28 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           }
         }
       })
-      .on("error", (er) => console.error(er))
-      .on("sessionError", (er) => console.error(er))
-      .on("unknownProtocol", (er) => console.error(er));
+      .on("clientError", (ex) => console.error("HTTP/2 server clientError", ex))
+      .on("error", (ex) => console.error("HTTP/2 server error", ex))
+      .on("sessionError", (ex) =>
+        console.error("HTTP/2 server sessionError", ex)
+      )
+      .on("unknownProtocol", (ex) =>
+        console.error("HTTP/2 server unknownProtocol", ex)
+      )
+      .on("session", (session) => {
+        session.ping(Buffer.from("abcdefgh"), (err, duration, payload) => {
+          if (!err) {
+            console.log(`Ping acknowledged in ${duration} milliseconds`);
+            console.log(`With payload '${payload.toString()}'`);
+          }
+        });
+        session.on("error", (ex) => {
+          if (ex?.code === "ECONNRESET") {
+            console.warn("HTTP/2 session connection reset.");
+          } else {
+            console.error("HTTP/2 session error", ex);
+          }
+        });
+      });
   }
 }

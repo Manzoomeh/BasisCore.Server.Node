@@ -29,6 +29,13 @@ export default class HostManager {
    */
   constructor(options) {
     this.#loadEndpoints(options);
+    // Catch uncaughtException
+    process.on("uncaughtException", (error, origin) => {
+      console.error("UNCAUGHT EXCEPTION");
+      console.error(error);
+      console.error(origin);
+      process.exit(1);
+    });
   }
 
   listen() {

@@ -10,7 +10,7 @@ const host = {
           EndPoint: "0.0.0.0:8080",
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "edgeService",
     },
     Main02: {
@@ -20,7 +20,7 @@ const host = {
           EndPoint: "0.0.0.0:8081",
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "fileService",
     },
     Main03: {
@@ -36,7 +36,7 @@ const host = {
           },
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "sqlService",
     },
     Main04: {
@@ -52,7 +52,7 @@ const host = {
           },
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "sqlService",
     },
     Main05: {
@@ -68,7 +68,7 @@ const host = {
           },
         },
       ],
-      Active: true,
+      Active: false,
       Routing: {
         Async: true,
         Items: [
@@ -113,8 +113,24 @@ const host = {
           },
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "sqlService",
+    },
+    Main07: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "127.0.0.1:8086",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: true,
+          },
+        },
+      ],
+      Active: true,
+      Routing: "fileService1",
     },
   },
   Services: {
@@ -135,6 +151,12 @@ const host = {
       Type: "file",
       Settings: {
         Directory: "D:/Programming/Falsafi/Node/WebServer/wwwroot",
+      },
+    },
+    fileService1: {
+      Type: "file",
+      Settings: {
+        Directory: "C:/Users/Qamsari/Desktop/QamFileServer/testqam",
       },
     },
   },

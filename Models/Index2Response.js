@@ -21,8 +21,14 @@ export default class Index2Response extends RequestBaseResponse {
         parseInt(this._request.cms.webserver.headercode.split(" ")[0]),
         {
           ...{ "content-type": this._request.cms.webserver.mime },
-          ...(this._request.cms.webserver.gzip && {
+          ...(this._request.cms.webserver.gzip == "true" && {
             "Content-Encoding": "gzip",
+          }),
+          ...(this._request.cms.webserver.etag && {
+            ETag: this._request.cms.webserver.etag,
+          }),
+          ...(this._request.cms.webserver.lastmodified && {
+            "Last-Modified": this._request.cms.webserver.lastmodified,
           }),
           ...(this._request.cms.http && this._request.cms.http),
         },
