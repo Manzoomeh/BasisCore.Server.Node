@@ -78,12 +78,6 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         console.error("HTTP/2 server unknownProtocol", ex)
       )
       .on("session", (session) => {
-        session.ping(Buffer.from("abcdefgh"), (err, duration, payload) => {
-          if (!err) {
-            console.log(`Ping acknowledged in ${duration} milliseconds`);
-            console.log(`With payload '${payload.toString()}'`);
-          }
-        });
         session.on("error", (ex) => {
           if (ex?.code === "ECONNRESET") {
             console.warn("HTTP/2 session connection reset.");
