@@ -1,16 +1,29 @@
 {
-  "name": "@manzoomeh-negaran/webserver",
+  "name": "@manzoomeh/basicore.server",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
+  "description": "java script version of Manzoomeh Negaran http  web server for nodejs",
+  "main": "hostManager.js",
+  "keywords": [
+    "BasisCore",
+    "ServerSide",
+    "HttpServer",
+    "Manzoomeh Negaran"
+  ],
+  "author": "Manzoomeh Negaran <info@manzoomeh.ir> (https://www.manzoomeh.ir)",
+  "license": "ISC",
+  "homepage": "https://github.com/Manzoomeh/BasisCore.Servre.Node",
+  "bugs": {
+    "url": "https://github.com/Manzoomeh/BasisCore.Servre.Node/issues"
+  },
+  "contributors": [
+    "s.alireza qamsari <ali.qamsari@gmail.com> (https://www.linkedin.com/in/qamsari/)"
+  ],
   "scripts": {
     "test": "node --openssl-legacy-provider test.js",
     "test-config": "node config-test.js ",
     "dev": "node --openssl-legacy-provider index.js"
   },
   "type": "module",
-  "author": "",
-  "license": "ISC",
   "dependencies": {
     "dayjs": "^1.11.6",
     "http-status-codes": "^2.2.0",
