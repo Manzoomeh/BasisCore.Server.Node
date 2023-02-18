@@ -26,13 +26,13 @@ export default class EdgeProxyHostService extends HostService {
   async processAsync(request) {
     /** @type {Promise<Request>} */
     const task = new Promise((resolve, reject) => {
-      var buffer = [];
+      const buffer = [];
       const client = new net.Socket()
         .on("data", (data) => buffer.push(data))
         .on("close", function () {
           const data = Buffer.concat(buffer);
           try {
-            var msg = EdgeMessage.createFromBuffer(data);
+            const msg = EdgeMessage.createFromBuffer(data);
             resolve(JSON.parse(msg.payload));
           } catch (e) {
             reject(e);
@@ -49,7 +49,7 @@ export default class EdgeProxyHostService extends HostService {
           msg.writeTo(client);
         });
     });
-    var result = await task;
+    const result = await task;
     return this._createResponse(result);
   }
 }

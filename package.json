@@ -21,7 +21,7 @@
   "scripts": {
     "test": "node --openssl-legacy-provider test.js",
     "test-config": "node config-test.js ",
-    "dev": "node --openssl-legacy-provider index.js"
+    "dev": "node --openssl-legacy-provider config-test.js"
   },
   "type": "module",
   "dependencies": {

@@ -94,26 +94,26 @@ const host = {
       Type: "http",
       Addresses: [
         {
-          EndPoint: "0.0.0.0:8085",
-          Certificate: {
-            Type: "sni",
-            Http2: true,
-            Hosts: [
-              {
-                HostNames: ["localhost"],
-                FilePath: "test-cert/server.cert",
-                KeyPath: "test-cert/server.key",
-              },
-              {
-                HostNames: ["s2.ir", "www.s2.ir", "www.s2.ir"],
-                FilePath: "test-cert/server.cert",
-                KeyPath: "test-cert/server.key",
-              },
-            ],
-          },
+          EndPoint: "127.0.0.1:8085",
+          // Certificate: {
+          //   Type: "sni",
+          //   Http2: true,
+          //   Hosts: [
+          //     {
+          //       HostNames: ["localhost"],
+          //       FilePath: "test-cert/server.cert",
+          //       KeyPath: "test-cert/server.key",
+          //     },
+          //     {
+          //       HostNames: ["s2.ir", "www.s2.ir", "www.s2.ir"],
+          //       FilePath: "test-cert/server.cert",
+          //       KeyPath: "test-cert/server.key",
+          //     },
+          //   ],
+          // },
         },
       ],
-      Active: false,
+      Active: true,
       Routing: "sqlService",
     },
     Main07: {
@@ -156,7 +156,7 @@ const host = {
     fileService1: {
       Type: "file",
       Settings: {
-        Directory: "C:/Users/Qamsari/Desktop/QamFileServer/testqam",
+        Directory: "D:/Programming/Falsafi/Node/wwwroot/testqam",
       },
     },
   },

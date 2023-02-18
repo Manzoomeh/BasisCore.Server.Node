@@ -48,7 +48,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           stream.destroy(ex);
         });
         try {
-          var cms = this._createCmsObject(
+          const cms = this._createCmsObject(
             headers[":path"],
             headers[":method"],
             headers,
@@ -60,11 +60,15 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           stream.respond(headerList);
           stream.end(body);
         } catch (ex) {
-          console.error("HTTP/2 server error", ex);
           if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
-            stream.respond({
-              ":status": StatusCodes.INTERNAL_SERVER_ERROR,
-            });
+            console.error("HTTP/2 server error", ex);
+            try {
+              stream.respond({
+                ":status": StatusCodes.INTERNAL_SERVER_ERROR,
+              });
+            } catch (ex) {
+              console.error("HTTP/2 server error", ex);
+            }
             stream.end(ex.toString());
           }
         }

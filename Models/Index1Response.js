@@ -1,7 +1,6 @@
-import Request from "./request.js";
 import RequestBaseResponse from "./requestBaseResponse.js";
 
-export default class Index5Response extends RequestBaseResponse {
+export default class Index1Response extends RequestBaseResponse {
   /**
    * @param {Request} request
    */
@@ -17,12 +16,12 @@ export default class Index5Response extends RequestBaseResponse {
       parseInt(this._request.cms.webserver.headercode.split(" ")[0]),
       {
         ...{ "content-type": this._request.cms.webserver.mime },
-        ...(this._request.cms.webserver.gzip && {
+        ...(this._request.cms.webserver.gzip === "true" && {
           "Content-Encoding": "gzip",
         }),
         ...this._request.cms.http,
       },
-      this._request.cms.content,
+      this._request.cms.cms.content,
     ];
   }
 }

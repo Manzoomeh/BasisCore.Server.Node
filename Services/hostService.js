@@ -1,5 +1,6 @@
 import Index2Response from "../models/index2Response.js";
 import Index5Response from "../models/index5Response.js";
+import Index1Response from "../Models/Index1Response.js";
 import Request from "../models/request.js";
 import Response from "../models/response.js";
 
@@ -28,9 +29,17 @@ export default class HostService {
    */
   _createResponse(request) {
     /**@type {Response} */
-    var retVal = null;
+    let retVal = null;
     switch (request.cms.webserver.index) {
+      case "1": {
+        retVal = new Index1Response(request);
+        break;
+      }
       case "2": {
+        retVal = new Index2Response(request);
+        break;
+      }
+      case "4": {
         retVal = new Index2Response(request);
         break;
       }

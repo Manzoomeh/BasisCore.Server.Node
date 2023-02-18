@@ -29,12 +29,15 @@ export default class HostManager {
    */
   constructor(options) {
     this.#loadEndpoints(options);
-    // Catch uncaughtException
     process.on("uncaughtException", (error, origin) => {
-      console.error("UNCAUGHT EXCEPTION");
-      console.error(error);
-      console.error(origin);
-      process.exit(1);
+      if (error?.code !== "ECONNRESET") {
+        console.error("UNCAUGHT EXCEPTION");
+        console.error(error);
+        console.error(origin);
+        process.exit(1);
+      } else {
+        console.error("error", error);
+      }
     });
   }
 
@@ -53,12 +56,12 @@ export default class HostManager {
    */
   #loadEndpoints(options) {
     this.hosts = [];
-    var services = this.#loadServices(options.Services);
+    const services = this.#loadServices(options.Services);
     for (const name in options.EndPoints) {
       if (Object.hasOwnProperty.call(options.EndPoints, name)) {
         const endPointsOptions = options.EndPoints[name];
         if (endPointsOptions.Active) {
-          var service = null;
+          let service = null;
           if (typeof endPointsOptions.Routing === "string") {
             service = services.find((x) => x.name == endPointsOptions.Routing);
           } else if (typeof endPointsOptions.Routing === "object") {
@@ -88,6 +91,7 @@ export default class HostManager {
       }
     }
   }
+
   /**
    * @param {string} name
    * @param {HostEndPointOptions} options
@@ -99,18 +103,18 @@ export default class HostManager {
       const [ip, port] = address.EndPoint.split(":", 2);
       if (address.Certificate) {
         /**@type {tls.SecureContextOptions}*/
-        var options = {};
+        const options = {};
         switch (address.Certificate.Type) {
           case "ssl": {
             /**@type {SslCertificateOptions} */
-            var sslOptions = address.Certificate;
+            const sslOptions = address.Certificate;
             options.cert = fs.readFileSync(sslOptions.FilePath);
             options.key = fs.readFileSync(sslOptions.KeyPath);
             break;
           }
           case "sni": {
             /**@type {SniCertificateOptions} */
-            var sniOptions = address.Certificate;
+            const sniOptions = address.Certificate;
 
             const hostLookup = {};
             sniOptions.Hosts.forEach((host) => {
@@ -196,7 +200,7 @@ export default class HostManager {
    */
   #createSqlDispatcher(name, options) {
     /**@type {HostService} */
-    var service = null;
+    let service = null;
     const sqlConnection = options.Settings["Connections.sql.RoutingData"];
     if (sqlConnection) {
       service = new SqlProxyHostService(name, sqlConnection);
@@ -221,7 +225,7 @@ export default class HostManager {
    */
   #createFileDispatcher(name, options) {
     /**@type {HostService} */
-    var service = null;
+    let service = null;
     const rootPath = options.Settings["Directory"];
     if (rootPath) {
       service = new StaticFileProxyHostService(name, rootPath);
@@ -237,7 +241,7 @@ export default class HostManager {
    * @returns {HostManager}
    */
   static fromJson(jsonObj) {
-    var options = new HostManagerOptions();
+    const options = new HostManagerOptions();
     return new HostManager(Object.assign(options, jsonObj));
   }
 }
