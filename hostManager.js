@@ -30,14 +30,7 @@ export default class HostManager {
   constructor(options) {
     this.#loadEndpoints(options);
     process.on("uncaughtException", (error, origin) => {
-      if (error?.code !== "ECONNRESET") {
-        console.error("UNCAUGHT EXCEPTION");
-        console.error(error);
-        console.error(origin);
-        process.exit(1);
-      } else {
-        console.error("error", error);
-      }
+      console.error("uncaught exception", { error, origin });
     });
   }
 
