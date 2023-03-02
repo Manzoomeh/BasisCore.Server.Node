@@ -73,7 +73,19 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           }
         }
       })
-      .on("clientError", (ex) => console.error("HTTP/2 server clientError", ex))
+      .on("clientError", (ex) => {
+        switch (ex.code) {
+          case "ERR_SSL_SSLV3_ALERT_BAD_CERTIFICATE":
+          case "ERR_SSL_SSLV3_ALERT_CERTIFICATE_UNKNOWN":
+          case "ECONNRESET": {
+            break;
+          }
+          default: {
+            console.error("HTTP/2 server clientError", ex);
+            break;
+          }
+        }
+      })
       .on("error", (ex) => console.error("HTTP/2 server error", ex))
       .on("sessionError", (ex) =>
         console.error("HTTP/2 server sessionError", ex)

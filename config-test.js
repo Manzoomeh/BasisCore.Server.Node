@@ -94,7 +94,7 @@ const host = {
       Type: "http",
       Addresses: [
         {
-          EndPoint: "127.0.0.1:8085",
+          EndPoint: "127.0.0.1:1563",
           // Certificate: {
           //   Type: "sni",
           //   Http2: true,
@@ -114,19 +114,19 @@ const host = {
         },
       ],
       Active: true,
-      Routing: "sqlService",
+      Routing: "fileService1",
     },
     Main07: {
       Type: "http",
       Addresses: [
         {
-          EndPoint: "127.0.0.1:8086",
-          // Certificate: {
-          //   Type: "ssl",
-          //   FilePath: "test-cert/server.cert",
-          //   KeyPath: "test-cert/server.key",
-          //   Http2: true,
-          // },
+          EndPoint: "127.0.0.1:1564",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: true,
+          },
         },
       ],
       Active: true,
