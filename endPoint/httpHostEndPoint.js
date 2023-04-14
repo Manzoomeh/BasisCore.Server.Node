@@ -4,7 +4,7 @@ import url from "url";
 import HostEndPoint from "./hostEndPoint.js";
 import Request from "../models/request.js";
 
-var requestId = 0;
+let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /**
    *
@@ -14,11 +14,12 @@ class HttpHostEndPoint extends HostEndPoint {
   constructor(ip, port) {
     super(ip, port);
   }
+
   /** @returns {Server}*/
   _createServer() {}
 
   listen() {
-    var server = this._createServer();
+    const server = this._createServer();
     server
       .on("error", (x) => console.error(x))
       .listen(this._port, this._ip, () =>
@@ -46,7 +47,7 @@ class HttpHostEndPoint extends HostEndPoint {
     headers["clientip"] = socket.remoteAddress;
     if (urlObject.query) {
       const query = {};
-      var hasQuery = false;
+      let hasQuery = false;
       for (const key in urlObject.query) {
         query[key] = urlObject.query[key];
         hasQuery = true;
@@ -56,8 +57,8 @@ class HttpHostEndPoint extends HostEndPoint {
       }
     }
 
-    var now = dayjs();
-    var request = new Request();
+    const now = dayjs();
+    const request = new Request();
     request.request = headers;
     request.cms = {
       date: now.format("MM/DD/YYYY"),

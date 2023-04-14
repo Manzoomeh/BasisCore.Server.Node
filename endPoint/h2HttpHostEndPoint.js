@@ -44,7 +44,9 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
         stream.on("error", (ex) => {
-          console.error("HTTP/2 server stream error", ex);
+          if (ex.code != "ERR_STREAM_WRITE_AFTER_END") {
+            console.error("HTTP/2 server stream error", ex);
+          }
           stream.destroy(ex);
         });
         try {
@@ -87,12 +89,12 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         }
       })
       .on("error", (ex) => console.error("HTTP/2 server error", ex))
-      .on("sessionError", (ex) =>
-        console.error("HTTP/2 server sessionError", ex)
-      )
-      .on("unknownProtocol", (ex) =>
-        console.error("HTTP/2 server unknownProtocol", ex)
-      )
+      .on("sessionError", (ex) => {
+        /*console.error("HTTP/2 server sessionError", ex)*/
+      })
+      .on("unknownProtocol", (ex) => {
+        /*console.error("HTTP/2 server unknownProtocol", ex)*/
+      })
       .on("session", (session) => {
         session.on("error", (ex) => {
           if (ex?.code === "ECONNRESET") {

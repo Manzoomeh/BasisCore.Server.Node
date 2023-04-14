@@ -20,7 +20,6 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
 
   _createServer() {
     return http.createServer(async (req, res) => {
-      //res.setHeader("Connection", "close");
       try {
         const cms = this._createCmsObject(
           req.url,
