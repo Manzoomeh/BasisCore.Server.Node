@@ -96,7 +96,7 @@ const host = {
       Type: "http",
       Addresses: [
         {
-          EndPoint: "127.0.0.1:1563",
+          EndPoint: "127.0.0.1:80",
           // Certificate: {
           //   Type: "sni",
           //   Http2: true,
@@ -122,7 +122,7 @@ const host = {
       Type: "http",
       Addresses: [
         {
-          EndPoint: "127.0.0.1:1564",
+          EndPoint: "127.0.0.1:443",
           Certificate: {
             Type: "ssl",
             FilePath: "test-cert/server.cert",
@@ -131,14 +131,14 @@ const host = {
           },
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "fileService1",
     },
     Main08: {
       Type: "http",
       Addresses: [
         {
-          EndPoint: "127.0.0.1:1565",
+          EndPoint: "127.0.0.1:443",
           Certificate: {
             Type: "ssl",
             FilePath: "test-cert/server.cert",
