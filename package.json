@@ -19,9 +19,8 @@
     "s.alireza qamsari <ali.qamsari@gmail.com> (https://www.linkedin.com/in/qamsari/)"
   ],
   "scripts": {
-    "test": "node --openssl-legacy-provider test.js",
-    "test-config": "node config-test.js ",
-    "dev": "node --openssl-legacy-provider config-test.js"
+    "stage": "node index.js ",
+    "dev": "node --openssl-legacy-provider index.js"
   },
   "type": "module",
   "dependencies": {
