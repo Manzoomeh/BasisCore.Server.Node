@@ -28,11 +28,27 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
    * @param {string} urlStr
    * @param {string} method
    * @param {http.IncomingHttpHeaders} requestHeaders
+   * @param {NodeJS.Dict<string>[]} formFields
+   * @param {BinaryContent[]} fileContents
    * @param {Socket} socket
-   * @returns {RequestCms}
+   * @returns {Promise<RequestCms>}
    */
-  _createCmsObject(urlStr, method, requestHeaders, socket) {
-    const cms = super._createCmsObject(urlStr, method, requestHeaders, socket);
+  async _createCmsObjectAsync(
+    urlStr,
+    method,
+    requestHeaders,
+    formFields,
+    fileContents,
+    socket
+  ) {
+    const cms = await super._createCmsObjectAsync(
+      urlStr,
+      method,
+      requestHeaders,
+      formFields,
+      fileContents,
+      socket
+    );
     cms.request[
       "full-url"
     ] = `${requestHeaders[":authority"]}${requestHeaders[":path"]}`;
@@ -43,6 +59,12 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     return http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
+        /** @type {Request} */
+        let cms = null;
+        /**@type {BinaryContent[]} */
+        const fileContents = [];
+        /**@type {NodeJS.Dict<string>} */
+        const formFields = {};
         stream.on("error", (ex) => {
           if (ex.code != "ERR_STREAM_WRITE_AFTER_END") {
             console.error("HTTP/2 server stream error", ex);
@@ -50,10 +72,12 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           stream.destroy(ex);
         });
         try {
-          const cms = this._createCmsObject(
+          cms = await this._createCmsObjectAsync(
             headers[":path"],
             headers[":method"],
             headers,
+            formFields,
+            fileContents,
             stream.session.socket
           );
           const result = await this.#service.processAsync(cms);

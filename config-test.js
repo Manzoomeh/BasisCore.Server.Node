@@ -125,6 +125,22 @@ const host = {
             Type: "ssl",
             FilePath: "test-cert/server.cert",
             KeyPath: "test-cert/server.key",
+            Http2: false,
+          },
+        },
+      ],
+      Active: true,
+      Routing: "fileService1",
+    },
+    Main08: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "127.0.0.1:1565",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
             Http2: true,
           },
         },

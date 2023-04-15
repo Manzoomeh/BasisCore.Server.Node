@@ -1,0 +1,15 @@
+{
+  "queryString": {
+    "data": "1",
+    "p": "44"
+  },
+  "logs": [
+    {
+      "name": "rrrr.PNG",
+      "size": 51597,
+      "mime": "image/png",
+      "save": "D:\\Programming\\Falsafi\\BasisCore\\Server\\BasisCore.Server.Node\\output\\original\\rrrr.PNG",
+      "status": "Successful"
+    }
+  ]
+}
