@@ -179,7 +179,7 @@ const host = {
         ReportUrl: "StreamerEngine.report.json", //or "http://localhost:4000/report",
       },
       Settings: {
-        Directory: "D:/Programming/Falsafi/Node/wwwroot/testqam",
+        Directory: "wwwroot",
       },
     },
   },
