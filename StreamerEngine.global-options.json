@@ -40,7 +40,7 @@
             "Name": "save in storage",
             "Type": "save",
             "options": {
-                "location": "D:/Programming/Falsafi/BasisCore/Server/BasisCore.Server.Node/output/original"
+                "location": "C:/Programming/Node/storage/BasisCore.Server.Node/original"
             }
         },
         {
@@ -72,7 +72,7 @@
             "Name": "save zip in storage",
             "Type": "save",
             "options": {
-                "location": "D:/Programming/Falsafi/BasisCore/Server/BasisCore.Server.Node/output/compressed"
+                "location": "C:/Programming/Node/storage/BasisCore.Server.Node/compressed"
             }
         },
         {

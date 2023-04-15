@@ -20,7 +20,7 @@
             "Name": "save resize in storage",
             "Type": "save",
             "options": {
-                "location": "D:/Programming/Falsafi/BasisCore/Server/BasisCore.Server.Node/output/resize"
+                "location": "C:/Programming/Node/storage/BasisCore.Server.Node/resize"
             }
         }
     ],
