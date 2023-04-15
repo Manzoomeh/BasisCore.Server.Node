@@ -174,9 +174,9 @@ const host = {
     fileService1: {
       Type: "file",
       Streamer: {
-        DefaultConfigUrl: "StreamerEngine.global-options.json",
-        PermissionUrl: "StreamerEngine.local-options.json",
-        ReportUrl: "StreamerEngine.report.json",
+        DefaultConfigUrl: "StreamerEngine.global-options.json", //or "http://localhost:4000/default",
+        PermissionUrl: "StreamerEngine.local-options.json", //or "http://localhost:4000/permission",
+        ReportUrl: "StreamerEngine.report.json", //or "http://localhost:4000/report",
       },
       Settings: {
         Directory: "D:/Programming/Falsafi/Node/wwwroot/testqam",
