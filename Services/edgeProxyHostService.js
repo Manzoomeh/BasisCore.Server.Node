@@ -12,18 +12,21 @@ export default class EdgeProxyHostService extends HostService {
    * @param {string} name
    * @param {string} ip
    * @param {number} port
+   * @param {HostServiceOptions} options
    */
-  constructor(name, ip, port) {
-    super(name);
+  constructor(name, ip, port, options) {
+    super(name, options);
     this.#ip = ip;
     this.#port = port;
   }
 
   /**
    * @param {Request} request
+   * @param {BinaryContent[]} fileContents
    * @returns {Promise<Response>}
    */
-  async processAsync(request) {
+  async processAsync(request, fileContents) {
+    await this._processUploadAsync(fileContents, request);
     /** @type {Promise<Request>} */
     const task = new Promise((resolve, reject) => {
       const buffer = [];

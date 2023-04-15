@@ -7,7 +7,7 @@ import IStepOptions from "./Models/IStepOptions.js";
 import IStreamOptions from "./Models/IStreamOptions.js";
 import IStreamerActions from "./Models/IStreamerActions.js";
 import Status from "./Models/Status.js";
-import IStreamerEngineOptions from "./Models/IStreamerEngineOptions.js";
+import IStreamerEngineOptions from "../models/options/IStreamerEngineOptions.js";
 import CompositeProcess from "./Process/CompositeProcess.js";
 import InvalidProcessType from "./Process/InvalidProcessType.js";
 import IProcess from "./Process/IProcess.js";

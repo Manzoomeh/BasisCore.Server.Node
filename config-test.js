@@ -1,5 +1,7 @@
 import HostManager from "./hostManager.js";
+import { HostManagerOptions } from "./models/model.js";
 
+/** @type {HostManagerOptions} */
 const host = {
   Lazy: true,
   EndPoints: {
@@ -171,6 +173,11 @@ const host = {
     },
     fileService1: {
       Type: "file",
+      Streamer: {
+        DefaultConfigUrl: "StreamerEngine.global-options.json",
+        PermissionUrl: "StreamerEngine.local-options.json",
+        ReportUrl: "StreamerEngine.report.json",
+      },
       Settings: {
         Directory: "D:/Programming/Falsafi/Node/wwwroot/testqam",
       },

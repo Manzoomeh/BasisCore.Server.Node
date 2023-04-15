@@ -196,13 +196,13 @@ export default class HostManager {
     let service = null;
     const sqlConnection = options.Settings["Connections.sql.RoutingData"];
     if (sqlConnection) {
-      service = new SqlProxyHostService(name, sqlConnection);
+      service = new SqlProxyHostService(name, sqlConnection, options);
     } else {
       const edgeConnection =
         options.Settings["Connections.edge-socket.RoutingData"];
       if (edgeConnection) {
         const [ip, port] = edgeConnection.split(":");
-        service = new EdgeProxyHostService(name, ip, port);
+        service = new EdgeProxyHostService(name, ip, port, options);
       }
     }
     if (!service) {
@@ -221,7 +221,7 @@ export default class HostManager {
     let service = null;
     const rootPath = options.Settings["Directory"];
     if (rootPath) {
-      service = new StaticFileProxyHostService(name, rootPath);
+      service = new StaticFileProxyHostService(name, rootPath, options);
     } else {
       throw new error(
         `The 'Directory' setting not set for file dispatcher in '${name}' service!`

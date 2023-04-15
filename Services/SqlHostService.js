@@ -9,9 +9,10 @@ export default class SqlProxyHostService extends HostService {
   /**
    * @param {string} name
    * @param {string} connectionString
+   * @param {HostServiceOptions} options
    */
-  constructor(name, connectionString) {
-    super(name);
+  constructor(name, connectionString, options) {
+    super(name, options);
     this.#connectionString = connectionString;
   }
 
@@ -44,10 +45,12 @@ export default class SqlProxyHostService extends HostService {
 
   /**
    * @param {Request} request
+   * @param {BinaryContent[]} fileContents
    * @returns {Promise<Response>}
    */
-  async processAsync(request) {
+  async processAsync(request, fileContents) {
     try {
+      await this._processUploadAsync(fileContents, request);
       const params = this._convertToTable(request);
       const pool = await sql.connect(this.#connectionString);
       const data = await pool

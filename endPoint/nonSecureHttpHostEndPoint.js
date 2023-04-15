@@ -29,16 +29,16 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
         const fileContents = [];
         /**@type {NodeJS.Dict<string>} */
         const formFields = {};
+
         const createCmsAndCreateResponseAsync = async () => {
           cms = await this._createCmsObjectAsync(
             req.url,
             req.method,
             req.headers,
             formFields,
-            fileContents,
             req.socket
           );
-          const result = await this.#service.processAsync(cms);
+          const result = await this.#service.processAsync(cms, fileContents);
           const [code, headers, body] = await result.getResultAsync();
           res.writeHead(code, headers);
           res.end(body);

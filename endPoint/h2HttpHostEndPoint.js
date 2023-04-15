@@ -73,10 +73,9 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             method,
             headers,
             formFields,
-            fileContents,
             stream.session.socket
           );
-          const result = await this.#service.processAsync(cms);
+          const result = await this.#service.processAsync(cms, fileContents);
           const [code, headerList, body] = await result.getResultAsync();
           headerList[":status"] = code;
           stream.respond(headerList);
@@ -111,19 +110,6 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           } else {
             createCmsAndCreateResponseAsync();
           }
-          // cms = await this._createCmsObjectAsync(
-          //   headers[":path"],
-          //   headers[":method"],
-          //   headers,
-          //   formFields,
-          //   fileContents,
-          //   stream.session.socket
-          // );
-          // const result = await this.#service.processAsync(cms);
-          // const [code, headerList, body] = await result.getResultAsync();
-          // headerList[":status"] = code;
-          // stream.respond(headerList);
-          // stream.end(body);
         } catch (ex) {
           if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
             console.error("HTTP/2 server error", ex);

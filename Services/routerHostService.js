@@ -16,7 +16,7 @@ export default class RouterHostService extends HostService {
     super(name);
     this.#routes = [];
     options.Items.forEach((option) => {
-      var service = services.find((x) => x.name == option.Service);
+      const service = services.find((x) => x.name == option.Service);
       if (service) {
         this.#routes.push(new RouterOptions(service, option));
       } else {
@@ -27,12 +27,13 @@ export default class RouterHostService extends HostService {
 
   /**
    * @param {Request} request
+   * @param {BinaryContent[]} fileContents
    * @returns {Promise<Response>}
    */
-  async processAsync(request) {
+  async processAsync(request, fileContents) {
     for (const route of this.#routes) {
       if (route.isMatch(request)) {
-        return await route.service.processAsync(request);
+        return await route.service.processAsync(request, fileContents);
       }
     }
     throw new Error("Not suitable service found!");
