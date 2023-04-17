@@ -1,72 +1,189 @@
-const http2 = require("http2");
-const fs = require("fs");
-const dayjs = require("dayjs");
+import HostManager from "./hostManager.js";
+import { HostManagerOptions } from "./models/model.js";
 
-const EdgeUtil = require("./edge/edgeUtil.js");
-
-const edge_port = 1026;
-const edge_ip = "127.0.0.1";
-
-var request_id = 0;
-
-const server = http2.createSecureServer({
-  key: fs.readFileSync("test-cert/server.key"),
-  cert: fs.readFileSync("test-cert/server.cert"),
-
-  //pfx: fs.readFileSync("namayeshgah.ir.pfx"),
-  //passphrase: "namayeshgah.ir",
-});
-
-server.on("error", (err) => console.error(err));
-server.on("stream", async (stream, headers) => {
-  try {
-    console.log(headers[":path"]);
-
-    headers["request-id"] = (++request_id).toString();
-    headers["methode"] = headers[":method"].toLowerCase();
-    headers["rawurl"] = headers["url"] = headers[":path"].substring(1);
-    headers["full-url"] = `${headers[":authority"]}${headers[":path"]}`;
-    headers["hostip"] = stream.session.socket.localAddress;
-    headers["hostport"] = stream.session.socket.localPort.toString();
-    headers["clientip"] = stream.session.socket.remoteAddress;
-
-    var cms = {
-      cms: {
-        request: headers,
-        cms: {
-          date: dayjs().format("MM/DD/YYYY"),
-          time: dayjs().format("HH:mm A"),
-          date2: dayjs().format("YYYYMMDD"),
-          time2: dayjs().format("HHmmss"),
-          date3: dayjs().format("YYYY.MM.DD"),
+/** @type {HostManagerOptions} */
+const host = {
+  Lazy: true,
+  EndPoints: {
+    Main01: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "0.0.0.0:8080",
         },
+      ],
+      Active: false,
+      Routing: "edgeService",
+    },
+    Main02: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "0.0.0.0:8081",
+        },
+      ],
+      Active: false,
+      Routing: "fileService",
+    },
+    Main03: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "0.0.0.0:8082",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: false,
+          },
+        },
+      ],
+      Active: false,
+      Routing: "sqlService",
+    },
+    Main04: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "0.0.0.0:8083",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: true,
+          },
+        },
+      ],
+      Active: false,
+      Routing: "sqlService",
+    },
+    Main05: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "0.0.0.0:8084",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: true,
+          },
+        },
+      ],
+      Active: false,
+      Routing: {
+        Async: true,
+        Items: [
+          {
+            Url: "/edge",
+            Service: "edgeService",
+          },
+          {
+            Url: "/static",
+            Service: "fileService",
+          },
+          {
+            Url: "/sql",
+            Service: "sqlService",
+          },
+          {
+            Service: "sqlService",
+          },
+        ],
       },
-    };
+    },
+    Main06: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "127.0.0.1:1563",
+          // Certificate: {
+          //   Type: "sni",
+          //   Http2: true,
+          //   Hosts: [
+          //     {
+          //       HostNames: ["localhost"],
+          //       FilePath: "test-cert/server.cert",
+          //       KeyPath: "test-cert/server.key",
+          //     },
+          //     {
+          //       HostNames: ["s2.ir", "www.s2.ir", "www.s2.ir"],
+          //       FilePath: "test-cert/server.cert",
+          //       KeyPath: "test-cert/server.key",
+          //     },
+          //   ],
+          // },
+        },
+      ],
+      Active: true,
+      Routing: "fileService1",
+    },
+    Main07: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "127.0.0.1:1564",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: false,
+          },
+        },
+      ],
+      Active: true,
+      Routing: "fileService1",
+    },
+    Main08: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "127.0.0.1:1565",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: true,
+          },
+        },
+      ],
+      Active: true,
+      Routing: "fileService1",
+    },
+  },
+  Services: {
+    edgeService: {
+      Type: "sql",
+      Settings: {
+        "Connections.edge-socket.RoutingData": "127.0.0.1:1026",
+      },
+    },
+    sqlService: {
+      Type: "sql",
+      Settings: {
+        "Connections.sql.RoutingData":
+          "Driver={SQL Server Native Client 11.0};Server=localhost;Database=temp;Uid=sa;Pwd=1234;Trusted_Connection=True;TrustServerCertificate=True;",
+      },
+    },
+    fileService: {
+      Type: "file",
+      Settings: {
+        Directory: "D:/Programming/Falsafi/Node/WebServer/wwwroot",
+      },
+    },
+    fileService1: {
+      Type: "file",
+      Streamer: {
+        DefaultConfigUrl: "StreamerEngine.global-options.json", //or "http://localhost:4000/default",
+        PermissionUrl: "StreamerEngine.local-options.json", //or "http://localhost:4000/permission",
+        ReportUrl: "StreamerEngine.report.json", //or "http://localhost:4000/report",
+      },
+      Settings: {
+        Directory: "wwwroot",
+      },
+    },
+  },
+};
 
-    const result = await EdgeUtil.sendForEdgeAsync(edge_ip, edge_port, cms);
-    if (result.cms.webserver.filepath) {
-      content = await fs.promises.readFile(result.cms.webserver.filepath);
-      stream.respond({
-        "content-type": result.cms.webserver.mime,
-        ":status": result.cms.webserver.headercode.split(" ")[0],
-      });
-      stream.end(content);
-    } else {
-      stream.respond({
-        "content-type": result.cms.webserver.mime,
-        ":status": result.cms.webserver.headercode.split(" ")[0],
-      });
-      stream.end(result.cms.content);
-    }
-  } catch (ex) {
-    console.error(ex);
-    if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
-      stream.respond({
-        ":status": 500,
-      });
-      stream.end(ex.toString());
-    }
-  }
-});
-
-server.listen(8000, "0.0.0.0");
+const service = HostManager.fromJson(host);
+service.listen();

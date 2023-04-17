@@ -1,6 +1,5 @@
-import MultipartOptions from "./MultipartOptions.js";
+import IStreamerEngineOptions from "./IStreamerEngineOptions.js";
 
-//const HostEndPointType = "http" | "webSocket";
 export default class HostServiceOptions {
   /**@type {"Sql"|"Edge"|"File"} */
   Type;
@@ -12,8 +11,8 @@ export default class HostServiceOptions {
   MaxBodySize;
   /**@type {number} */
   MaxMultiPartSize;
-  /**@type {MultipartOptions} */
-  Multipart;
+  /**@type {IStreamerEngineOptions} */
+  Streamer;
   /**@type {NodeJS.Dict<any>} */
   Settings;
 }

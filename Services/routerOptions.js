@@ -28,7 +28,7 @@ export default class RouterOptions {
    * @returns {boolean}
    */
   isMatch(request) {
-    var isMatch = false;
+    let isMatch = false;
     if (this.empty) {
       isMatch = true;
     } else {
