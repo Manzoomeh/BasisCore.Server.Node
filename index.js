@@ -174,9 +174,9 @@ const host = {
     fileService1: {
       Type: "file",
       Streamer: {
-        DefaultConfigUrl: "StreamerEngine.global-options.json", //or "http://localhost:4000/default",
-        PermissionUrl: "StreamerEngine.local-options.json", //or "http://localhost:4000/permission",
-        ReportUrl: "StreamerEngine.report.json", //or "http://localhost:4000/report",
+        DefaultConfigUrl: "http://localhost:4000/default", //"StreamerEngine.global-options.json", //or "http://localhost:4000/default",
+        PermissionUrl: "http://localhost:4000/permission", //"StreamerEngine.local-options.json", //or "http://localhost:4000/permission",
+        ReportUrl: "http://localhost:4000/report", //"StreamerEngine.report.json", //or "http://localhost:4000/report",
       },
       Settings: {
         Directory: "wwwroot",
