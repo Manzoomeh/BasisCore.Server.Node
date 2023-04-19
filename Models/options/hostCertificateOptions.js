@@ -1,10 +1,12 @@
 export default class HostCertificateOptions {
   /**@type {string[]} */
   HostNames;
-  /**@type {string} */
+  /**@type {string?} */
   FilePath;
-  /**@type {string} */
-  Password;
-  /**@type {string} */
+  /**@type {string?} */
   KeyPath;
+  /**@type {string?} */
+  PfxPath;
+  /**@type {string?} */
+  PfxPassword;
 }
