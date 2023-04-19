@@ -34,6 +34,8 @@ const host = {
             Type: "ssl",
             FilePath: "test-cert/server.cert",
             KeyPath: "test-cert/server.key",
+            //PfxPath: "sample.pfx",
+            //PfxPassword: "123",
             Http2: false,
           },
         },

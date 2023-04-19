@@ -1,9 +1,11 @@
 import CertificateOptions from "./certificateOptions.js";
 export default class SslCertificateOptions extends CertificateOptions {
-  /**@type {string} */
+  /**@type {string?} */
   FilePath;
-  /**@type {string} */
-  KeyFilePath;
-  /**@type {string} */
-  Password;
+  /**@type {string?} */
+  KeyPath;
+  /**@type {string?} */
+  PfxPath;
+  /**@type {string?} */
+  PfxPassword;
 }

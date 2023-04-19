@@ -101,24 +101,45 @@ export default class HostManager {
           case "ssl": {
             /**@type {SslCertificateOptions} */
             const sslOptions = address.Certificate;
-            options.cert = fs.readFileSync(sslOptions.FilePath);
-            options.key = fs.readFileSync(sslOptions.KeyPath);
+            if (sslOptions.FilePath) {
+              options.cert = fs.readFileSync(sslOptions.FilePath);
+            }
+            if (sslOptions.KeyPath) {
+              options.key = fs.readFileSync(sslOptions.KeyPath);
+            }
+            if (sslOptions.PfxPath) {
+              options.pfx = fs.readFileSync(sslOptions.PfxPath);
+            }
+            if (sslOptions.PfxPassword) {
+              options.passphrase = fs.readFileSync(sslOptions.PfxPassword);
+            }
             break;
           }
           case "sni": {
             /**@type {SniCertificateOptions} */
             const sniOptions = address.Certificate;
-
+            /**@type {NodeJS.Dict<tls.SecureContextOptions>} */
             const hostLookup = {};
             sniOptions.Hosts.forEach((host) => {
-              const cert = fs.readFileSync(host.FilePath);
-              const key = fs.readFileSync(host.KeyPath);
+              /**@type {tls.SecureContextOptions}*/
+              const options = {};
+              if (sslOptions.FilePath) {
+                options.cert = fs.readFileSync(host.FilePath);
+              }
+              if (sslOptions.KeyPath) {
+                options.key = fs.readFileSync(host.KeyPath);
+              }
+              if (sslOptions.PfxPath) {
+                options.pfx = fs.readFileSync(host.PfxPath);
+              }
+              if (sslOptions.PfxPassword) {
+                options.passphrase = fs.readFileSync(host.PfxPassword);
+              }
               host.HostNames.forEach((hostName) => {
-                hostLookup[hostName.toLowerCase()] = { cert, key };
+                hostLookup[hostName.toLowerCase()] = options;
               });
             });
             const sniCallback = (serverName, callback) => {
-              console.log(serverName);
               const set = hostLookup[serverName.toLowerCase()];
               if (set) {
                 callback(
