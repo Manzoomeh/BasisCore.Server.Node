@@ -29,7 +29,6 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
         const fileContents = [];
         /**@type {NodeJS.Dict<string>} */
         const formFields = {};
-
         const createCmsAndCreateResponseAsync = async () => {
           cms = await this._createCmsObjectAsync(
             req.url,
@@ -51,6 +50,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
             file.on("data", (x) => ContentParts.push(x));
             file.on("end", async () => {
               const content = new BinaryContent();
+              content.url = `${req.headers["host"]}${req.url}`;
               content.mime = info.mimeType.toLowerCase();
               content.name = info.filename;
               content.payload = Buffer.concat(ContentParts);

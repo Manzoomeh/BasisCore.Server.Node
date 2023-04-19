@@ -3,6 +3,8 @@ import Status from "./Status.js";
 
 export default class BinaryContent {
   /**@type {string} */
+  url;
+  /**@type {string} */
   name;
   /**@type {string} */
   mime;
@@ -20,6 +22,7 @@ export default class BinaryContent {
   /**@returns {BinaryContent} */
   clone() {
     const retVal = new BinaryContent();
+    retVal.url = this.url;
     retVal.name = this.name;
     retVal.mime = this.mime;
     retVal.payload = this.payload;

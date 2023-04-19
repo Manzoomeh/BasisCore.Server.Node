@@ -116,19 +116,19 @@ const host = {
         },
       ],
       Active: true,
-      Routing: "fileService1",
+      Routing: "edgeService",
     },
     Main07: {
       Type: "http",
       Addresses: [
         {
           EndPoint: "127.0.0.1:1564",
-          Certificate: {
-            Type: "ssl",
-            FilePath: "test-cert/server.cert",
-            KeyPath: "test-cert/server.key",
-            Http2: false,
-          },
+          // Certificate: {
+          //   Type: "ssl",
+          //   FilePath: "test-cert/server.cert",
+          //   KeyPath: "test-cert/server.key",
+          //   Http2: false,
+          // },
         },
       ],
       Active: true,

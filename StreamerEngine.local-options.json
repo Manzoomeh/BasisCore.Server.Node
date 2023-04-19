@@ -1,6 +1,13 @@
 {
     "Actions": [
         {
+            "Name": "edge image",
+            "Type": "edge",
+            "options": {
+                "endpoint": "127.0.0.1:1026"
+            }
+        },
+        {
             "Name": "resize image",
             "Type": "resize",
             "options": {
@@ -44,20 +51,12 @@
     "Process": [
         [
             "select image/jpg",
-            [
-                "resize image",
-                "resize rename",
-                "save resize in storage"
-            ],
+            "edge image",
             "save in storage"
         ],
         [
             "select image/jpeg",
-            [
-                "resize image",
-                "resize rename",
-                "save resize in storage"
-            ],
+            "edge image",
             "save in storage"
         ],
         [
