@@ -111,7 +111,7 @@ export default class HostManager {
               options.pfx = fs.readFileSync(sslOptions.PfxPath);
             }
             if (sslOptions.PfxPassword) {
-              options.passphrase = fs.readFileSync(sslOptions.PfxPassword);
+              options.passphrase = sslOptions.PfxPassword;
             }
             break;
           }
