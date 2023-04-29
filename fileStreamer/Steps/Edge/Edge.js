@@ -54,6 +54,7 @@ export default class Edge extends Step {
               rawurl: urlObject.pathname.substring(1),
             };
             request["form"] = {
+              options: options.options,
               name: content.name,
               mime: content.mime,
               payload: content.payload.toString("base64"),
