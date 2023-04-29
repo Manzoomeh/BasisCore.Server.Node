@@ -6,6 +6,7 @@ import Step from "../Step.js";
 import EdgeOptions from "./EdgeOptions.js";
 import EdgeMessage from "../../../edge/edgeMessage.js";
 import Request from "../../../models/request.js";
+import EdgeResult from "./EdgeResult.js";
 
 export default class Edge extends Step {
   /**
@@ -51,7 +52,11 @@ export default class Edge extends Step {
               "full-url": content.url,
               url: urlObject.pathname.substring(1),
               rawurl: urlObject.pathname.substring(1),
-              Form: {},
+            };
+            request["form"] = {
+              name: content.name,
+              mime: content.mime,
+              payload: content.payload.toString("base64"),
             };
             if (urlObject.query) {
               const query = {};
@@ -61,30 +66,26 @@ export default class Edge extends Step {
                 hasQuery = true;
               }
               if (hasQuery) {
-                request.request["query"] = query;
+                request["query"] = query;
               }
             }
             request.cms = {};
-            console.log(
-              "request",
-              port,
-              ip,
-              JSON.stringify(
-                {
-                  cms: request,
-                },
-                " "
-              )
-            );
             const msg = EdgeMessage.createAdHocMessageFromObject({
               cms: request,
             });
-
             msg.writeTo(client);
           });
       });
-      const result = await task;
-      console.log(result);
+      const requestResult = await task;
+      content.AddLog("edge", options.endpoint);
+      /** @type {EdgeResult} */
+      const result = JSON.parse(requestResult.cms.content);
+      content.name = result.name;
+      content.mime = result.mime;
+      content.payload = Buffer.from(result.payload, "base64");
+      result.logs.forEach((log) => {
+        content.AddLog(log.title, log.message);
+      });
     } catch (er) {
       console.error(er);
       content.AddLog("rest-error", er);
