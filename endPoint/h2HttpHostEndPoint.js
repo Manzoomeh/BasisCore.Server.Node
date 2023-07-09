@@ -28,7 +28,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /**
    * @param {string} urlStr
    * @param {string} method
-   * @param {http.IncomingHttpHeaders} requestHeaders
+   * @param {http2.IncomingHttpHeaders} requestHeaders
    * @param {NodeJS.Dict<string>[]} formFields
    * @param {BinaryContent[]} fileContents
    * @param {Socket} socket

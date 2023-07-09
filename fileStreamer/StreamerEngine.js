@@ -23,9 +23,9 @@ import Selector from "./Steps/Selector/Selector.js";
 export default class StreamerEngine {
   /** @type {IStreamerEngineOptions} */
   _options;
-  /**@type {NodeJS.Dict<IStep>} */
+  /** @type {NodeJS.Dict<IStep>} */
   _steps;
-  /**@type {IStreamerActions} */
+  /** @type {IStreamerActions} */
   _defaultConfig = null;
 
   /** @param {StreamerEngineOptions} options */
@@ -57,25 +57,21 @@ export default class StreamerEngine {
    * @returns {Promise<string>}
    */
   async _loadOptionsAsync(url) {
-    return await new Promise(async (resolve, reject) => {
-      if (this._isValidUrl(url)) {
-        try {
-          resolve(await got.get(url).text());
-        } catch (error) {
-          reject(error);
-        }
-      } else {
-        try {
-          resolve(
-            fs.readFileSync(url, {
-              encoding: "utf-8",
-            })
-          );
-        } catch (error) {
-          reject(error);
-        }
+    if (this._isValidUrl(url)) {
+      try {
+        return await got.get(url).text();
+      } catch (error) {
+        throw error;
       }
-    });
+    } else {
+      try {
+        return fs.readFileSync(url, {
+          encoding: "utf-8",
+        });
+      } catch (error) {
+        throw error;
+      }
+    }
   }
 
   /**
@@ -96,7 +92,7 @@ export default class StreamerEngine {
         console.error(message);
         console.error(error);
         if (tryCount < 5) {
-          await new Promise((temp_resolve) => setTimeout(temp_resolve, 1000));
+          await new Promise((resolve) => setTimeout(resolve, 1000));
         } else {
           throw new Error(message);
         }
@@ -127,35 +123,32 @@ export default class StreamerEngine {
   }
 
   /**
-   *
    * @param {any} report
    * @param {string} queryString
    * @returns {Promise<any>}
    */
   async _sendReportAsync(report, queryString) {
-    return await new Promise(async (resolve, reject) => {
-      let url = this._options.ReportUrl;
-      if (this._isValidUrl(url)) {
-        if (queryString) {
-          url += `?${queryString}`;
-        }
-        try {
-          const options = {
-            json: report,
-          };
-          resolve(await got.post(url, options).json());
-        } catch (error) {
-          reject(error);
-        }
-      } else {
-        try {
-          fs.writeFileSync(url, JSON.stringify(report, null, 2));
-          resolve(report);
-        } catch (error) {
-          reject(error);
-        }
+    let url = this._options.ReportUrl;
+    if (this._isValidUrl(url)) {
+      if (queryString) {
+        url += `?${queryString}`;
       }
-    });
+      try {
+        const options = {
+          json: report,
+        };
+        return await got.post(url, options).json();
+      } catch (error) {
+        throw error;
+      }
+    } else {
+      try {
+        fs.writeFileSync(url, JSON.stringify(report, null, 2));
+        return report;
+      } catch (error) {
+        throw error;
+      }
+    }
   }
 
   /**
@@ -169,17 +162,17 @@ export default class StreamerEngine {
       if (this._defaultConfig == null) {
         await this._loadDefaultConfigAsync();
       }
-      /** @type {IStreamOptions} */
+          /** @type {IStreamOptions} */
       const permission = await this.loadPermissionAsync(queryString);
       const validContents = this._applyPermission(contents, permission);
       await this._applyProcessAsync(validContents, permission);
-      /** @type {BinaryContent[]} */
+/** @type {BinaryContent[]} */
       const log = [];
       for (const item of contents) {
         this._flatLogs(log, item);
       }
 
-      /**@type {NodeJS.Dict<BinaryContent[]>} */
+  /**@type {NodeJS.Dict<BinaryContent[]>} */
       const groupByNameContent = log.reduce((previousValue, currentValue) => {
         if (previousValue[currentValue.name]) {
           previousValue[currentValue.name].push(currentValue);
@@ -190,7 +183,7 @@ export default class StreamerEngine {
       }, {});
 
       for (const key in groupByNameContent) {
-        /**@type {BinaryContent[]} */
+                /**@type {BinaryContent[]} */
         const relatedContent = groupByNameContent[key];
         if (relatedContent.length > 0) {
           if (!relatedContent.some((x) => x.processedByChild())) {
@@ -242,7 +235,7 @@ export default class StreamerEngine {
    * @returns {BinaryContent[]}
    */
   _applyPermission(contents, localOptions) {
-    /** @type {NodeJS.Dict<IPermission>} */
+        /** @type {NodeJS.Dict<IPermission>} */
     const permissionList = {};
     if (
       this._defaultConfig !== null &&
@@ -254,7 +247,7 @@ export default class StreamerEngine {
         }
       }
     }
-    if (this.localOptions !== null && localOptions.Permissions != null) {
+    if (localOptions !== null && localOptions.Permissions != null) {
       for (const permission of localOptions.Permissions) {
         for (const mime of permission.Mimes) {
           permissionList[mime] = permission;
@@ -282,11 +275,10 @@ export default class StreamerEngine {
       }
     }
 
-    /**@type {BinaryContent[]} */
+     /**@type {BinaryContent[]} */
     const validContents = [];
-    for (const content of contents.filter((x) => x.status == Status.NotSet)) {
+    for (const content of contents.filter((x) => x.status === Status.NotSet)) {
       content.AddLog("mime", content.mime);
-      //TODO: check mime by extension and content
       const fileExtensionIsMatchByContent = true;
       if (fileExtensionIsMatchByContent) {
         const permission = permissionList[content.mime];
@@ -316,7 +308,7 @@ export default class StreamerEngine {
    */
   async _applyProcessAsync(contents, localOptions) {
     if (contents.length > 0) {
-      /**@type {NodeJS.Dict<IStepOptions>} */
+       /**@type {NodeJS.Dict<IStepOptions>} */
       const actionList = {};
       if (this._defaultConfig && this._defaultConfig.Actions) {
         for (const action of this._defaultConfig.Actions) {

@@ -9,13 +9,13 @@ const host = {
       Type: "http",
       Addresses: [
         {
-          EndPoint: "185.44.36.76:80",
+          EndPoint: "127.0.0.1:80",
         },
       ],
       Active: true,
       Routing: "edgeService",
     },
-    Main03: {
+ /**   Main03: {
       Type: "http",
       Addresses: [
         {
@@ -33,7 +33,7 @@ const host = {
       ],
       Active: true,
       Routing: "edgeService",
-    },
+    }, */
   },
   Services: {
     edgeService: {
