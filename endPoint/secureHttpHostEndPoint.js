@@ -54,6 +54,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
               file.on("data", (x) => ContentParts.push(x));
               file.on("end", async () => {
                 const content = new BinaryContent();
+                content.url = `${req.headers["host"]}${req.url}`;
                 content.mime = info.mimeType.toLowerCase();
                 content.name = info.filename;
                 content.payload = Buffer.concat(ContentParts);

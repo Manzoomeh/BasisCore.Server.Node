@@ -67,9 +67,10 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         /**@type {NodeJS.Dict<string>} */
         const formFields = {};
         const method = headers[":method"];
+        const url = headers[":path"];
         const createCmsAndCreateResponseAsync = async () => {
           cms = await this._createCmsObjectAsync(
-            headers[":path"],
+            url,
             method,
             headers,
             formFields,
@@ -96,6 +97,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
               file.on("data", (x) => ContentParts.push(x));
               file.on("end", async () => {
                 const content = new BinaryContent();
+                content.url = `${headers["host"]}${url}`;
                 content.mime = info.mimeType.toLowerCase();
                 content.name = info.filename;
                 content.payload = Buffer.concat(ContentParts);

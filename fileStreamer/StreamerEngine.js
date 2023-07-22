@@ -19,6 +19,7 @@ import Rename from "./Steps/Rename/Rename.js";
 import Resize from "./Steps/Resize/Resize.js";
 import Save from "./Steps/Save/Save.js";
 import Selector from "./Steps/Selector/Selector.js";
+import Edge from "./Steps/Edge/Edge.js";
 
 export default class StreamerEngine {
   /** @type {IStreamerEngineOptions} */
@@ -37,6 +38,7 @@ export default class StreamerEngine {
       save: new Save(),
       rename: new Rename(),
       resize: new Resize(),
+      edge: new Edge(),
     };
   }
 

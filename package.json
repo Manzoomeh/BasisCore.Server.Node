@@ -26,6 +26,7 @@
   "dependencies": {
     "busboy": "^1.6.0",
     "dayjs": "^1.11.6",
+    "formdata-node": "^5.0.0",
     "got": "^12.6.0",
     "http-status-codes": "^2.2.0",
     "imagemagick": "^0.1.3",
