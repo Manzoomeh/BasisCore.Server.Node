@@ -1,0 +1,30 @@
+{
+  "Emails": {
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "html": { "To": "IsBodyHtml" },
+      "host": { "Required": true },
+      "from": { "Required": true },
+      "pass": {
+        "To": "Password",
+        "Required": true
+      },
+      "ssl": {},
+      "port": {}
+    },
+    "Elements": {
+      "email": {
+        "To": "RawEmailItems",
+        "Multi": true,
+        "Attributes": {
+          "to": {},
+          "FormAttach": {}
+        }
+      }
+    }
+  }
+}

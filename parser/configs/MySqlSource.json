@@ -1,0 +1,52 @@
+{
+  "MySqlSource": {
+    "AddExtraAttribute": true,
+    "Attributes": {
+      "core": {},
+      "name": {
+        "Required": true
+      },
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "source": {
+        "To": "ConnectionName"
+      },
+      "procedurename": {}
+    },
+    "Elements": {
+      "params": {
+        "To": "Params",
+        "Elements": {
+          "add": {
+            "multi": true,
+            "Attributes": {
+              "name": {
+                "Required": true
+              },
+              "value": {
+                "Required": true
+              }
+            }
+          }
+        }
+      },
+      "member": {
+        "To": "Members",
+        "Multi": true,
+        "AddExtraAttribute": true,
+        "Attributes": {
+          "name": {
+            "Required": true
+          },
+          "preview": {
+            "Default": "false",
+            "Type": "Boolean"
+          },
+          "postsql": {},
+          "sort": {}
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+{
+  "Schema": {
+    "AddExtraAttribute": true,
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "datamembername": {
+        "To": "data-member-name",
+        "Required": true
+      }
+    }
+  },
+  "SchemaList": {
+    "AddExtraAttribute": true,
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "datamembername": {
+        "To": "data-member-name",
+        "Required": true
+      }
+    }
+  }
+}

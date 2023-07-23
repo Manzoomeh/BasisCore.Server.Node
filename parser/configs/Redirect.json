@@ -1,0 +1,13 @@
+{
+  "Redirect": {
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "url": {
+        "Required": true
+      }
+    }
+  }
+}

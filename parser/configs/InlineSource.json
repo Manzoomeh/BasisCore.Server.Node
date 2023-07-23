@@ -1,0 +1,51 @@
+{
+  "InlineSource": {
+  "AddExtraAttribute": true,
+    "Attributes": {
+      "core": {},
+      "name": {
+        "Required": true
+      },
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {}
+    },
+    "Elements": {
+      "member": {
+        "To": "Members",
+        "Multi": true,
+        "Attributes": {
+          "name": {
+            "Required": true
+          },
+          "format": {
+            "To": "type",
+            "Required": true,
+            "Values": [ "Table", "Json", "Sql", "Join", "Xml", "script" ]
+          },
+          "language": {
+            "Values": [ "python" ]
+          },
+          "preview": {
+            "Default": "false",
+            "Type": "Boolean"
+          },
+          "postsql": {},
+          "sort": {},
+          "lefttblcol": {
+            "To": "left-data-member"
+          },
+          "righttblcol": {
+            "To": "right-data-member"
+          },
+          "jointype": {
+            "Values": [ "InnerJoin", "LeftJoin", "RightJoin" ]
+          },
+            "datamembername": {
+              "To": "DataMemberNames"
+            }
+          }
+      }
+    }
+  }
+}

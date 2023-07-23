@@ -1,0 +1,21 @@
+{
+  "Cookie": {
+  "AddExtraAttribute": true,
+    "Attributes": {
+      "core": {},
+      "name": {
+        "Required": true
+      },
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "value": {
+        "Required": true
+      },
+      "max-age": {
+        "to": "MaxAge"
+      },
+      "path": {}
+    }
+  }
+}

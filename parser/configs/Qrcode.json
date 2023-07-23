@@ -1,0 +1,14 @@
+{
+  "qrcode": {
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "value": {},
+      "color": {},
+      "size": {},
+      "type": {}
+    }
+  }
+}

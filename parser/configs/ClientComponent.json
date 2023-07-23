@@ -1,0 +1,12 @@
+{
+  "ClientComponent": {
+    "AddExtraAttribute": true,
+    "Attributes": {
+      "_core": {},
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] }
+    }
+  }
+}

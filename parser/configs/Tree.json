@@ -1,0 +1,61 @@
+{
+  "Tree": {
+  "AddExtraAttribute": true,
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "rendertype": { "Values": [ "None", "Append", "Replace" ] },
+      "datamembername": {
+        "To": "data-member-name",
+        "Required": true
+      },
+      "nullvalue": {
+        "To": "null-value",
+        "Required": true
+      },
+      "idcol": {
+        "To": "principal-key",
+        "Required": true
+      },
+      "parentidcol": {
+        "To": "foreign-key",
+        "Required": true
+      },
+      "relationnamecol": {
+        "To": "relation-column-name"
+      }
+    },
+    "Elements": {
+      "layout": {},
+      "face": {
+        "Multi": true,
+        "To": "faces",
+        "Attributes": {
+          "name": {},
+          "level": {},
+          "filter": {},
+          "replace": {},
+          "function": {},
+          "rowtype": {}
+        }
+      },
+      "replace": {
+        "Multi": true,
+        "To": "replaces",
+        "Attributes": {
+          "tagName": {}
+        }
+      },
+      "else-layout": {},
+      "divider": {
+        "Attributes": {
+          "rowcount": {}
+        }
+      },
+      "incomplete": {}
+    }
+  }
+}
