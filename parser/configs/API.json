@@ -1,0 +1,11 @@
+{
+  "API": {
+    "AddExtraAttribute": true,
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] }
+    }
+  }
+}

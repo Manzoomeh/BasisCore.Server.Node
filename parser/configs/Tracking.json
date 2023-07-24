@@ -1,0 +1,20 @@
+{
+  "Tracking": {
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "rendertype": { "Values": [ "None", "Append", "Replace" ] },
+      "source": {
+        "To": "ConnectionName",
+        "Required": true
+      },
+      "collectionname": {},
+      "dbname": {},
+      "addcookie": {},
+      "cookiename": {}
+    }
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "Repeater": {
+    "IsCollection": true,
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "rendertype": { "Values": [ "None", "Append", "Replace" ] },
+      "datamembername": {
+        "To": "data-member-name",
+        "Required": true
+      }
+    },
+    "Elements": {
+      "content": {
+        "To": "Commands"
+      }
+    }
+  }
+}

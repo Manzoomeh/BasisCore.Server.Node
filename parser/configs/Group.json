@@ -1,0 +1,19 @@
+{
+  "Group": {
+  "AddExtraAttribute": true,
+    "IsCollection": true,
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "rendertype": { "Values": [ "None", "Append", "Replace" ] }
+    },
+    "Elements": {
+      "content": {
+        "To": "Commands"
+      }
+    }
+  }
+}

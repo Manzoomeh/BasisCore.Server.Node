@@ -1,0 +1,31 @@
+{
+  "Export": {
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "rendertype": { "Values": [ "None", "Append", "Replace" ] },
+      "type": { "Required": true }
+    },
+    "Elements": {
+      "configs": {
+        "To": "Configs",
+        "Elements": {
+          "add": {
+            "multi": true,
+            "Attributes": {
+              "name": {
+                "Required": true
+              },
+              "value": {
+                "Required": true
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,15 @@
+{
+  "Barcode": {
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "rendertype": { "Values": [ "None", "Append", "Replace" ] },
+      "value": {},
+      "color": {},
+      "type": {}
+    }
+  }
+}

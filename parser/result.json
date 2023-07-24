@@ -1,0 +1,635 @@
+{
+  "$type": "group",
+  "core": "group",
+  "name": "ROOT_GROUP",
+  "Commands": [
+    {
+      "$type": "external.fly.ws",
+      "core": "external.fly.ws",
+      "ConnectionName": "cmsDbService2",
+      "name": "db",
+      "extra-attribute": { "procedurename": "dbsource" },
+      "Members": [
+        {
+          "method": "cms",
+          "name": "inventory",
+          "query": [
+            "{\r\n \"name\": \"db\",\r\n \"mid\": \"20\",\r\n \"member\": [\r\n {\r\n \"type\": \"list\",\r\n \"name\": \"q\",\r\n \"request\": \"inventoryview\",\r\n \"pid\": \"",
+            {
+              "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            },
+            "\",\r\n \"pagename\": \"Tem2_Hotel.bc\"\r\n }\r\n ]\r\n }"
+          ]
+        }
+      ]
+    },
+    {
+      "$type": "group",
+      "core": "group",
+      "name": "list",
+      "Commands": [
+        {
+          "$type": "inlinesource",
+          "core": "inlinesource",
+          "name": "list",
+          "Members": [
+            {
+              "name": "inventoryjson",
+              "type": "json",
+              "content": [
+                "{\"root\":",
+                {
+                  "Params": [
+                    {
+                      "Source": "db",
+                      "Member": "inventory",
+                      "Column": "result"
+                    }
+                  ]
+                },
+                "}"
+              ]
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n\r\n<!-- for navigation -->\r\n"
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "ConnectionName": "basiscore",
+          "extra-attribute": {
+            "mid": "20",
+            "lid": "1",
+            "usedforid": {
+              "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
+          },
+          "name": "db",
+          "Members": [
+            {
+              "name": "scalar",
+              "extra-attribute": { "type": "scalar", "typeid": "150" }
+            }
+          ]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "ConnectionName": "basiscore",
+          "name": "db",
+          "extra-attribute": {
+            "lid": "1",
+            "mid": "20",
+            "usedforid": {
+              "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
+          },
+          "Members": [
+            {
+              "name": "navigation",
+              "extra-attribute": { "type": "tree", "request": "navigationcat" }
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n\r\n<!-- for products table -->\r\n"
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "ConnectionName": "basiscore",
+          "extra-attribute": {
+            "mid": "20",
+            "lid": "1",
+            "usedforid": {
+              "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
+          },
+          "name": "db",
+          "Members": [
+            { "name": "view3", "extra-attribute": { "type": "view" } },
+            {
+              "name": "tourdata",
+              "extra-attribute": { "type": "view", "request": "rdfa" }
+            }
+          ]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "ConnectionName": "basiscore",
+          "name": "dbsckema",
+          "extra-attribute": {
+            "mid": "20",
+            "lid": "1",
+            "usedforid": {
+              "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
+          },
+          "Members": [
+            { "name": "showsckema", "extra-attribute": { "type": "view" } }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n\r\n<!--article mortabet -->\r\n"
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "ConnectionName": "basiscore",
+          "extra-attribute": {
+            "mid": "20",
+            "lid": "1",
+            "usedforid": {
+              "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
+          },
+          "name": "dbpr2",
+          "Members": [
+            {
+              "name": "listpr2",
+              "extra-attribute": {
+                "type": "list",
+                "link": "article.bc",
+                "blgid": "218",
+                "perpage": "10",
+                "propertyid": "7231"
+              }
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n\r\n<!--gallery-->\r\n"
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "ConnectionName": "media",
+          "name": "db11",
+          "extra-attribute": {
+            "lid": "1",
+            "usedforid": {
+              "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            },
+            "sourcemid": "product"
+          },
+          "Members": [
+            {
+              "name": "gallery",
+              "extra-attribute": { "type": "list", "format": "4" }
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n\r\n<!-- for seo -->\r\n"
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "ConnectionName": "basiscore",
+          "name": "db11",
+          "extra-attribute": { "lid": "1", "request": "seo" },
+          "Members": [
+            {
+              "name": "list",
+              "extra-attribute": {
+                "type": "list",
+                "request": "product",
+                "id": {
+                  "Params": [
+                    { "Source": "cms", "Member": "query", "Column": "id" }
+                  ]
+                }
+              }
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n\r\n<!--for pdf-->\r\n"
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "ConnectionName": "media",
+          "name": "db11",
+          "extra-attribute": {
+            "lid": "1",
+            "usedforid": {
+              "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            },
+            "sourcemid": "product"
+          },
+          "Members": [
+            {
+              "name": "pdf",
+              "extra-attribute": { "type": "list", "format": "pdf" }
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n\r\n<!doctype html>\r\n<html class='mm-hover'>\r\n<head>\r\n<meta charset=\"utf-8\">\r\n<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\"/>\r\n<meta name=\"author\" content=\"BasisCore\">\r\n"
+        },
+        {
+          "$type": "print",
+          "core": "print",
+          "data-member-name": "db11.list",
+          "faces": [
+            {
+              "content": [
+                "\r\n<title>",
+                {
+                  "Params": [
+                    { "Source": "cms", "Member": "seo", "Column": "title" },
+                    { "Source": "db11", "Member": "list", "Column": "title" }
+                  ]
+                },
+                "</title>\r\n<meta name=\"description\" content=\"",
+                {
+                  "Params": [
+                    {
+                      "Source": "cms",
+                      "Member": "seo",
+                      "Column": "description"
+                    },
+                    {
+                      "Source": "db11",
+                      "Member": "list",
+                      "Column": "description"
+                    }
+                  ]
+                },
+                "\"/>\r\n"
+              ]
+            }
+          ]
+        },
+        { "$type": "call", "core": "call", "FileName": "script1.inc" },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n<link href=\"/css/product-show.css\" rel=\"stylesheet\" >\r\n<link href=\"/css/style3.css\" rel=\"stylesheet\" type=\"text/css\" />\r\n<link type=\"text/css\" rel=\"stylesheet\" href=\"/css/jquery.pwstabs.css\">\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/domain-responsive.css\">\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/default-menu.css\" />\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/component-menu.css\" />\r\n<!-- new-css-start -->\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"css/table.css\">\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"css/new-menu.css\">\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"css/mobile-menu.css\"/>\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"css/shahinParvaz-style.css\"/>\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"css/fAwesome.min.css\">\r\n<!-- new-css-end -->\r\n<script type=\"text/javascript\" src=\"/js/jquery.js\"></script>\r\n<script type=\"text/javascript\" src=\"/js/modernizr.custom.js\"></script>\r\n<script type=\"text/javascript\" src=\"/js/jquery.dlmenu.js\"></script>\r\n<script>\r\n$(function() {\r\n\r\n$( '#dl-menu' ).dlmenu();\r\n});\r\n</script>\r\n<script>\r\n$(document).ready(function(e) {\r\nvar link1 =$(\".hotel_name1 a\")\r\nlink1.each(function(index, value) { \r\nvar m = $(this).attr('href');\r\nif(m == \"/hotel.bc?id=\"){\r\nvar text = $(this).text();\r\n$(this).parent().text( text )\r\n$(this).empty()}});});\r\n</script>\r\n<link rel=\"stylesheet\" type=\"text/css\" href=\"/css/advanced-slider-base.css\" media=\"screen\"/>\r\n<script type='text/javascript' src='/js/jquery-1.10.2.min.js'></script><!--news-->\r\n\r\n<script src=\"/js/jquery.newsTicker.js\" type=\"text/javascript\"></script><!--news-->\r\n<script src=\"/js/jquery.newsTicker-inline.js\" type=\"text/javascript\"></script><!---news-->\r\n\r\n</head>\r\n<body class=\"st-effect-3\">\r\n<div id=\"container\" >\r\n"
+        },
+        { "$type": "call", "core": "call", "FileName": "header.inc" },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n<a href=\"#\" id=\"toTop\"><i class=\"fas fa-sort-up\"></i></a>\r\n<div class=\"slc\">\r\n<ul>\r\n <li><a href=\"https://Instagram.com/shahinparvazsama\"><i class=\"fab fa-instagram\"></i></a> </li>\r\n <li><a href=\"https://t.me/shahin_parvazsama\"><i class=\"fab fa-telegram-plane\"></i></a> </li>\r\n <li><a href=\"http://www.aparat.com/shahinparvazsama\"><i class=\"fas fa-film\"></i></a></li>\r\n</ul>\r\n</div>\r\n<div class=\"top-bg-inner-pages main-content-resize-nonfloat\"></div>\r\n<div class=\"breadcrumb main-content-resize\">\r\n<div class=\"container\">\r\n<ul>\r\n <li><a href=\"/\">خانه</a><i class=\"fas fa-chevron-left\"></i></li>\r\n "
+        },
+        {
+          "$type": "print",
+          "core": "print",
+          "data-member-name": "db.navigation",
+          "faces": [
+            {
+              "filter": "RowNumber=max(RowNumber) and parentcatid not in (10402,11488)",
+              "content": "\r\n <li><span>@title</span></li>\r\n "
+            },
+            {
+              "filter": "link is null and parentcatid not in (10402,11488)",
+              "content": "\r\n <li><a href=\"/tour-list.bc?lid=1&catid=@parentcatid\">@title</a><i class=\"fa fa-chevron-left\"></i></li>\r\n "
+            },
+            {
+              "filter": "parentcatid not in (10402,11488)",
+              "content": "\r\n <li><a href=\"/@link\">@title</a><i class=\"fa fa-chevron-left\"></i></li>\r\n "
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n</ul>\r\n<!-- <div class=\"clr\"></div> -->\r\n</div>\r\n</div>\r\n<!-- content -->\r\n<div class=\"clr\"></div>\r\n<div class=\"box-resize\">\r\n<div class=\"box\"> \r\n<!-- special tour -->\r\n<div id=\"special-tour\"> \r\n<!-- info tour -->\r\n "
+        },
+        {
+          "$type": "print",
+          "core": "print",
+          "data-member-name": "db.tourdata",
+          "faces": [
+            {
+              "content": "\r\n <div id=\"info-product\" itemprop=\"@vocabulary\" itemscope itemtype=\"@link\">\r\n "
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": [
+            "\r\n <div class=\"content-tab\">\r\n <div class=\"tabset1\">\r\n <div data-pws-tab=\"tab1\" data-pws-tab-name=\"مشخصات هتل\"> \r\n <!-- info inner -->\r\n <div class=\"typography\">\r\n <div>\r\n <a id=\"dw-package\" href=\"/pdf-package.bc?id=",
+            {
+              "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            },
+            "\" target=\"_blank\" >دانلود پکیج تور <img src=\"/images/downloading.png\" width=\"32\" height=\"32\" alt=\"download package\"></a>\r\n </div>\r\n \r\n <!-- table -->\r\n <div class=\"tour-table\">\r\n \r\n \r\n <div class=\"hotel-tbl\">\r\n "
+          ]
+        },
+        {
+          "$type": "tree",
+          "core": "tree",
+          "data-member-name": "list.inventoryjson",
+          "principal-key": "id",
+          "foreign-key": "parentid",
+          "null-value": "null",
+          "layout-content": "\r\n <table class=\"tblhotelfield\">\r\n <thead>\r\n <tr class=\"tbl-head\">\r\n <td class=\"first-th\"><table class=\"hotel-info\">\r\n <tr>\r\n <td class=\"tbl-th11\">نام هتل</td>\r\n <td class=\"tbl-th12\">درجه هتل</td>\r\n <td class=\"tbl-th13\">خدمات هتل</td>\r\n </tr>\r\n </table></td>\r\n <td class=\"tbl-th2\">هر نفر در اتاق دوتخته</td>\r\n <td class=\"tbl-th3\">هر نفر در اتاق یک تخته</td>\r\n \r\n <td class=\"tbl-th4\">6 تا 12 سال با تخت</td>\r\n <td class=\"tbl-th5\">2 تا 6 سال بدون تخت</td>\r\n <td class=\"tbl-th6\">موقعیت</td>\r\n <td class=\"tbl-th7\">توضیحات</td>\r\n </tr>\r\n </thead>\r\n @child\r\n </table>\r\n ",
+          "faces": [
+            {
+              "filter": "parentid in ('1')",
+              "content": "\r\n <tr class=\"tbl-body\"> @child </tr>\r\n "
+            },
+            {
+              "filter": "field in ('hotelinfo')",
+              "content": "\r\n <td class=\"first-th\"><table class=\"hotel-info\">\r\n <tbody>\r\n \r\n @child\r\n </tbody>\r\n \r\n </table></td>\r\n "
+            },
+            {
+              "filter": "field in ('hotel')",
+              "content": "\r\n <tr>\r\n <td class=\"tbl-th11\"><div class=\"td-hotel\"> @child </div></td>\r\n </tr>\r\n "
+            },
+            {
+              "filter": "field in ('hotelid')",
+              "content": "\r\n <input type=\"hidden\" class=\"loc-input\" value=\"@value\" />\r\n "
+            },
+            {
+              "filter": "field in ('hotelname')",
+              "content": "\r\n <section class=\"part1\"><a href=\"\" target=\"_blank\" class=\"name-link\">@value</a> </section>\r\n "
+            },
+            {
+              "filter": "field in ('star')",
+              "content": "\r\n <section class=\"part2\"> <img src=\"images/@value-star-rating.png\" alt=\"@value\" width=\"70\" height=\"15\"> </section>\r\n "
+            },
+            {
+              "filter": "field in ('service') and type = 'scalar.string'",
+              "content": "\r\n <section class=\"part3\"> <span>@value</span> </section>\r\n "
+            },
+            {
+              "filter": "field in ('doublecost') and type ='array'",
+              "content": "\r\n <td class=\"tbl-th2 cost\">@child</td>\r\n "
+            },
+            {
+              "filter": "field in ('singlecost') and type ='array'",
+              "content": "\r\n <td class=\"tbl-th3 cost\">@child</td>\r\n "
+            },
+            {
+              "filter": "field in ('childwithbed') and type ='array'",
+              "content": "\r\n <td class=\"tbl-th4 cost\">@child</td>\r\n "
+            },
+            {
+              "filter": "field in ('childwithoutbed') and type ='array'",
+              "content": "\r\n <td class=\"tbl-th5 cost\">@child</td>\r\n "
+            },
+            {
+              "filter": "field in ('locationf')",
+              "content": "\r\n <td class=\"tbl-th6\">@value</td>\r\n "
+            },
+            {
+              "filter": "field in ('descriptionf')",
+              "content": "\r\n <td class=\"tbl-th7\">@value</td>\r\n "
+            },
+            {
+              "filter": "field in ('doublecost','singlecost','childwithbed','childwithoutbed') and type ='object'",
+              "content": "\r\n @child \r\n "
+            },
+            {
+              "filter": "field in ('doublecostf','singlecostf','childwithbedf','childwithoutbedf')",
+              "content": " <span class=\"price2 cost slice\">@value</span> "
+            },
+            {
+              "filter": "field in ('doubleunit','childwithoutbedunit','childwithbedunit','singleunit')",
+              "content": " <span>@value</span><br> "
+            },
+            { "filter": "type in ('array','object')", "content": " @child " }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n <div class=\"clr\"></div>\r\n </div>\r\n "
+        },
+        {
+          "$type": "tree",
+          "core": "tree",
+          "data-member-name": "list.inventoryjson",
+          "principal-key": "id",
+          "foreign-key": "parentid",
+          "null-value": "null",
+          "layout-content": " @child ",
+          "faces": [
+            {
+              "filter": "parentid in ('1')",
+              "content": "\r\n <div class=\"hotel-section\"> @child </div>\r\n "
+            },
+            { "filter": "field in ('hotel')", "content": " @child " },
+            {
+              "filter": "field in ('hotelid')",
+              "content": "\r\n <input type=\"hidden\" class=\"loc-input\" value=\"@value\" />\r\n "
+            },
+            {
+              "filter": "field in ('hotelname')",
+              "content": "\r\n <div class=\"mobile-hotel\"> <a href=\"\" target=\"_blank\" class=\"name-link\">@value</a> </div>\r\n "
+            },
+            {
+              "filter": "field in ('star')",
+              "content": "\r\n <div class=\"mobile-hotel-info\">\r\n <section class=\"hotel-qu\"> درجه هتل </section>\r\n <section class=\"hotel-ans\"> <img src=\"images/@value-star-rating.png\" alt=\"@value\" width=\"53\" height=\"12\"> </section>\r\n <div class=\"clr\"></div>\r\n </div>\r\n "
+            },
+            {
+              "filter": "field in ('service') and type = 'scalar.string'",
+              "content": "\r\n <div class=\"mobile-hotel-info\">\r\n <section class=\"hotel-qu\">خدمات</section>\r\n <section class=\"hotel-ans\"> @value </section>\r\n <div class=\"clr\"></div>\r\n </div>\r\n "
+            },
+            {
+              "filter": "field in ('doublecost') and type ='array'",
+              "content": "\r\n <div class=\"mobile-hotel-info\">\r\n <section class=\"hotel-qu\"> نرخ اتاق دو تخته</section>\r\n <section class=\"hotel-ans\">@child </section>\r\n <div class=\"clr\"></div>\r\n </div>\r\n "
+            },
+            {
+              "filter": "field in ('singlecost') and type ='array'",
+              "content": "\r\n <div class=\"mobile-hotel-info\">\r\n <section class=\"hotel-qu\"> نرخ اتاق یک تخته</section>\r\n <section class=\"hotel-ans\"> @child</section>\r\n <div class=\"clr\"></div>\r\n </div>\r\n "
+            },
+            {
+              "filter": "field in ('childwithbed') and type ='array'",
+              "content": "\r\n <div class=\"mobile-hotel-info\">\r\n <section class=\"hotel-qu\"> نرخ کودک 6 تا 12 سال</section>\r\n <section class=\"hotel-ans\"> @child </section>\r\n <div class=\"clr\"></div>\r\n </div>\r\n "
+            },
+            {
+              "filter": "field in ('childwithoutbed') and type ='array'",
+              "content": "\r\n <div class=\"mobile-hotel-info\">\r\n <section class=\"hotel-qu\">نرخ کودک 2 تا 6 سال</section>\r\n <section class=\"hotel-ans\"> @child </section>\r\n <div class=\"clr\"></div>\r\n </div>\r\n "
+            },
+            {
+              "filter": "field in ('locationf')",
+              "content": "\r\n <div class=\"mobile-hotel-info\">\r\n <section class=\"hotel-qu\">موقعیت مکانی </section>\r\n <section class=\"hotel-ans\">@value</section>\r\n <div class=\"clr\"></div>\r\n </div>\r\n "
+            },
+            {
+              "filter": "field in ('descriptionf')",
+              "content": "\r\n <div class=\"mobile-hotel-info\">\r\n <section class=\"hotel-qu\"> توضیحات</section>\r\n <section class=\"hotel-ans\">@value </section>\r\n <div class=\"clr\"></div>\r\n </div>\r\n "
+            },
+            {
+              "filter": "field in ('doublecost','singlecost','childwithbed','childwithoutbed') and type ='object'",
+              "content": "\r\n <p> @child </p>\r\n "
+            },
+            {
+              "filter": "field in ('doublecostf','singlecostf','childwithbedf','childwithoutbedf')",
+              "content": " <span class=\"price2 cost slice\">@value</span> "
+            },
+            {
+              "filter": "field in ('doubleunit','childwithoutbedunit','childwithbedunit','singleunit')",
+              "content": " <span>@value</span> "
+            },
+            { "filter": "type in ('array','object')", "content": " @child " }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n </div>\r\n\r\n </div>\r\n <!-- end table --> \r\n </div>\r\n <!-- /info inner -->\r\n \r\n <div data-pws-tab=\"tab2\" data-pws-tab-name=\"مشخصات تور\">\r\n <div class=\"typography\">\r\n "
+        },
+        {
+          "$type": "view",
+          "core": "view",
+          "data-member-name": "dbsckema.showsckema",
+          "faces": [
+            {
+              "level": "1",
+              "filter": "TypeID not in (160,161,162,159) and prpID not in (8084,8097)",
+              "content": "\r\n <div class=\"schema\">\r\n <div class=\"diamond\"></div>\r\n <div class=\"schema-Q\">\r\n <p>@question </p>\r\n </div>\r\n <div class=\"schema-A\">\r\n <p class=\"show-answer\">@child<span class=\"seprate\"><i class=\"fa fa-circle\"></i></span> </p>\r\n </div>\r\n </div>\r\n "
+            },
+            {
+              "level": "2",
+              "content": " <span class=\"seprate\"> <i class=\"fa fa-circle\"></i> </span><span itemprop=\"@vocabulary\"> @answer</span> "
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n </div>\r\n </div>\r\n <div data-pws-tab=\"tab3\" data-pws-tab-name=\" برنامه سفر \">\r\n <div class=\"typography\">\r\n "
+        },
+        {
+          "$type": "print",
+          "core": "print",
+          "data-member-name": "dbsckema.showsckema",
+          "faces": [
+            {
+              "filter": "prpID in (8084) ",
+              "content": "\r\n <div>\r\n <span class=\"seprate-t\"><i class=\"fa fa-circle\"></i></span>\r\n <p itemprop=\"@vocabulary\">@text</p>\r\n <br>\r\n <p itemprop=\"@vocabulary\">@largetext</p>\r\n </div>\r\n "
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n </div>\r\n </div>\r\n <div data-pws-tab=\"tab4\" data-pws-tab-name=\" توضیحات تور \">\r\n <div class=\"typography\">\r\n "
+        },
+        {
+          "$type": "view",
+          "core": "view",
+          "data-member-name": "dbsckema.showsckema",
+          "faces": [
+            {
+              "filter": "prpID in (8097)",
+              "content": "\r\n <div itemprop=\"@vocabulary\">\r\n <span class=\"seprate-t\"><i class=\"fa fa-circle\"></i></span>\r\n <p itemprop=\"@vocabulary\">@text</p>\r\n <br>\r\n <p itemprop=\"@vocabulary\">@largetext</p>\r\n </div>\r\n "
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n </div>\r\n </div>\r\n <div data-pws-tab=\"tab5\" data-pws-tab-name=\"ویدئو\">\r\n <div class=\"video-tab\">\r\n "
+        },
+        {
+          "$type": "print",
+          "core": "print",
+          "data-member-name": "dbsckema.showsckema",
+          "faces": [
+            {
+              "filter": "prpID=59082",
+              "content": "\r\n <div id=\"1\" class=\"video-box\">\r\n <script type=\"text/JavaScript\" src=\"https://www.aparat.com/embed/@answer?data[rnddiv]=1&data[responsive]=yes\"></script>\r\n </div>\r\n "
+            }
+          ]
+        },
+        {
+          "$type": "print",
+          "core": "print",
+          "data-member-name": "dbsckema.showsckema",
+          "layout-content": "\r\n <div class=\"pro-link-box\">@child</div>\r\n ",
+          "faces": [
+            {
+              "filter": "prpID=59083",
+              "content": " لینک تور مرتبط : <a class=\"pro-link\" href=\"@answer\"> @answer</a> "
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n </div>\r\n <div class=\"clr\"></div>\r\n </div>\r\n </div>\r\n <!-- tabset1 --> \r\n </div>\r\n</div>\r\n<div class=\"clr\"></div>\r\n<!-- /info tour --> \r\n<!-- gallery -->\r\n<div id=\"gallery-resize\">\r\n "
+        },
+        {
+          "$type": "print",
+          "core": "print",
+          "data-member-name": "db11.gallery",
+          "layout-content": "\r\n <div class=\"advanced-slider\" id=\"responsive-slider\">\r\n <ul class=\"slides\">\r\n @child\r\n </ul>\r\n </div>\r\n ",
+          "faces": [
+            {
+              "content": "\r\n <li class=\"slide rounded-caption\"> <img class=\"image\" src=\"/@largeIMG\" alt=\"@name\" width=\"800\" height=\"450\"/> <img class=\"thumbnail\" src=\"/@smallIMG\" alt=\"@name\" width=\"40\" height=\"40\"/> </li>\r\n "
+            }
+          ]
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n</div>\r\n\r\n<!-- product related -->\r\n<div id=\"news\">\r\n <div class=\"clr\"></div>\r\n "
+        },
+        { "$type": "call", "core": "call", "FileName": "airline.inc" },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n <!-- jquery news -->\r\n <div class=\"text-news\">\r\n <div class=\"text-news2\">\r\n <div id=\"nt-example1-container\">\r\n <div class=\"title-related\">\r\n <p class=\"s1\"></p>\r\n <div class=\"title-related-text f-none\">تور مرتبط</div>\r\n <p class=\"s1\"></p>\r\n </div>\r\n <ul id=\"nt-example1\">\r\n "
+        },
+        { "$type": "call", "core": "call", "FileName": "logo-tour.inc" },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n </ul>\r\n </div>\r\n </div>\r\n </div>\r\n <div class=\"contact-sub\">\r\n <div id=\"nt-example1-prev\"></div>\r\n <div id=\"nt-example1-next\"></div>\r\n </div>\r\n</div>\r\n\r\n<!-- /article related -->\r\n<div id=\"info-related-article\">\r\n <div class=\"title-related topziro\">\r\n <div class=\"title-related-text \">مقالات مرتبط</div>\r\n <p class=\"s2\"></p>\r\n </div>\r\n <div class=\"typography article-info\">\r\n "
+        },
+        {
+          "$type": "print",
+          "core": "print",
+          "data-member-name": "dbpr2.listpr2",
+          "faces": [
+            {
+              "content": "\r\n <div class=\"schema aaa\">\r\n <div class=\"img-maghale\"><img src=\"/@image\" alt=\"@title\"> </div>\r\n <div class=\"name-maghale\"> <a href=\"/@link\" >\r\n <p><i class=\"fa fa-pencil\"></i>@title </p>\r\n </a> </div>\r\n <div class=\"date-maghale\">\r\n <p class=\"show-date\" > <span class=\"seprate\"> </span> <span>@prp_7231</span> <span class=\"seprate\"><i class=\"fa fa-calendar-o\"></i></span> </p>\r\n </div>\r\n <div class=\"img-maghale\"> <a href=\"/@link\" ><i class=\"fa fa-plus\"></i></a> </div>\r\n </div>\r\n "
+            }
+          ],
+          "layout-content": " @child ",
+          "else-layout-content": "\r\n <div class=\"related-tour-else\"> <img src=\"/images/no-gallery.jpg\" alt=\" مطلبی برای مقاله مرتبط درج نشده است \"/> </div>\r\n "
+        },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n </div>\r\n</div>\r\n</div>\r\n<div class=\"clr\"></div>\r\n</div>\r\n</div>\r\n<div class=\"clr\"></div>\r\n<div class=\"main-content-resize-nonfloat\">\r\n"
+        },
+        { "$type": "call", "core": "call", "FileName": "footer.inc" },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n</div>\r\n</div>\r\n"
+        },
+        { "$type": "call", "core": "call", "FileName": "GoogleAnalytics.inc" },
+        {
+          "$type": "rawtext",
+          "core": "rawtext",
+          "content": "\r\n<script type=\"text/javascript\" src=\"/js/jquery.touchSwipe.min.js\"></script> \r\n<script type=\"text/javascript\" src=\"/js/jquery.advancedSlider.min.js\"></script> \r\n<script type=\"text/javascript\">\r\njQuery(document).ready(function($){\r\n$('#responsive-slider').advancedSlider({width: 800,\r\nheight: 550,\r\nresponsive: true,\r\nskin: 'glossy-square-gray',\r\nshadow: false,\r\neffectType: 'swipe',\r\nslideshow: true,\r\npauseSlideshowOnHover: true,\r\nswipeThreshold: 30,\r\n\r\nslideButtons: false,\r\nthumbnailType: 'scroller',\r\nthumbnailWidth: 140,\r\nthumbnailHeight: 80,\r\nthumbnailButtons: true,\r\nthumbnailSwipe: true,\r\nthumbnailScrollerResponsive: true,\r\nminimumVisibleThumbnails: 2,\r\nmaximumVisibleThumbnails: 6,\r\nkeyboardNavigation: true\r\n}); });\r\n</script> \r\n<script type='text/javascript' src='/js/jquery-1.10.2.min.js'></script><!--news--> \r\n\r\n<script src=\"/js/jquery.pwstabs.js\"></script><!--tab--> \r\n<script>\r\njQuery(document).ready(function ($) {\r\n$('.tabset1').pwstabs({\r\neffect: 'scale',\r\ndefaultTab:1,\r\ncontainerWidth: '989px'\r\n});\r\n$('.pws_demo_colors a').click(function (e) {\r\ne.preventDefault();\r\n$('.pws_tabs_container').removeClass('pws_theme_cyan pws_theme_grey pws_theme_violet pws_theme_green pws_theme_yellow pws_theme_gold pws_theme_orange pws_theme_red pws_theme_purple pws_theme_dark_cyan pws_theme_dark_grey pws_theme_dark_violet pws_theme_dark_green pws_theme_dark_yellow pws_theme_dark_gold pws_theme_dark_orange pws_theme_dark_red pws_theme_dark_purple').addClass('pws_theme_'+$(this).attr('data-demo-color') );\r\n});});\r\n</script> \r\n<script src=\"/js/autoNumeric.js\"></script> \r\n<script>\r\n $(\".cost1111\").autoNumeric('init');\r\n </script>\r\n<script src=\"js/jquery-3-3-1.js\"></script>\r\n<script src=\"js/new-menu.js\"></script>\r\n<script type='text/javascript' src=\"js/jquery.navgoco.js\"></script>\r\n<script type='text/javascript' src=\"js/off-canvas.js\" ></script>\r\n<script>\r\n$(document).ready(function () {\r\n$(window).scroll(function () {\r\nif ($(this).scrollTop() > 50) {\r\n $('.header-bot').addClass(\"header-bot-fixed\");\r\n} else {\r\n $('.header-bot').removeClass(\"header-bot-fixed\");\r\n}\r\n});\r\n});\r\n</script>\r\n<script>\r\n$(document).ready(function () {\r\n$(\"#toTop\").hide();\r\n$(function () {\r\n$(window).scroll(function () {\r\n if ($(this).scrollTop() > 100) {\r\n $('#toTop').fadeIn();\r\n } else {\r\n $('#toTop').fadeOut();\r\n }\r\n});\r\n$('#toTop').click(function () {\r\n $('body,html').animate({\r\n scrollTop: 0\r\n }, 800);\r\n return false;\r\n});\r\n});\r\n});\r\n</script>\r\n</body>\r\n</html>"
+        }
+      ]
+    }
+  ]
+}

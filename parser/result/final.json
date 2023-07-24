@@ -1,0 +1,304 @@
+{
+  "$type": "group",
+  "core": "group",
+  "name": "ROOT_GROUP",
+  "commands": [
+    {
+      "$type": "group",
+      "core": "group",
+      "name": "list",
+      "content": [
+        {
+          "$type": "inlinesource",
+          "core": "inlinesource",
+          "name": "list",
+          "member": ["{\"root\":[##db.inventory.result##]}"]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "db",
+          "extra-attribute": {
+            "mid": "20",
+            "lid": "1",
+            "usedforid": "[##cms.query.id##]"
+          },
+          "ConnectionName": "basiscore",
+          "Members": [{ "name": "scalar", "type": "scalar", "typeid": "150" }]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "db",
+          "extra-attribute": {
+            "lid": "1",
+            "mid": "20",
+            "usedforid": "[##cms.query.id##]"
+          },
+          "ConnectionName": "basiscore",
+          "Members": [
+            { "name": "navigation", "type": "tree", "request": "navigationcat" }
+          ]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "db",
+          "extra-attribute": {
+            "mid": "20",
+            "lid": "1",
+            "usedforid": "[##cms.query.id##]"
+          },
+          "ConnectionName": "basiscore",
+          "Members": [
+            { "name": "view3", "type": "view" },
+            { "name": "tourdata", "type": "view", "request": "rdfa" }
+          ]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "dbsckema",
+          "extra-attribute": {
+            "mid": "20",
+            "lid": "1",
+            "usedforid": "[##cms.query.id##]"
+          },
+          "ConnectionName": "basiscore",
+          "Members": [{ "name": "showsckema", "type": "view" }]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "dbpr2",
+          "extra-attribute": {
+            "mid": "20",
+            "lid": "1",
+            "usedforid": "[##cms.query.id##]"
+          },
+          "ConnectionName": "basiscore",
+          "Members": [
+            {
+              "name": "listpr2",
+              "type": "list",
+              "link": "article.bc",
+              "blgid": "218",
+              "perpage": "10",
+              "propertyid": "7231"
+            }
+          ]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "db11",
+          "extra-attribute": {
+            "lid": "1",
+            "usedforid": "[##cms.query.id##]",
+            "sourcemid": "product"
+          },
+          "ConnectionName": "media",
+          "Members": [{ "name": "gallery", "type": "list", "format": "4" }]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "db11",
+          "extra-attribute": { "lid": "1", "request": "seo" },
+          "ConnectionName": "basiscore",
+          "Members": [
+            {
+              "name": "list",
+              "type": "list",
+              "request": "product",
+              "id": "[##cms.query.id##]"
+            }
+          ]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "db11",
+          "extra-attribute": {
+            "lid": "1",
+            "usedforid": "[##cms.query.id##]",
+            "sourcemid": "product"
+          },
+          "ConnectionName": "media",
+          "Members": [{ "name": "pdf", "type": "list", "format": "pdf" }]
+        }
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "<!doctype  ><html class=mm-hover  ><head  ><meta charset=utf-8  ><meta name=viewport content=width initial-scale=1.0 /><meta name=author content=BasisCore  >"
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db11.list",
+      "GroupColumn": "something"
+    },
+    { "$type": "call", "core": "call", "FileName": "script1.inc" },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "<link href=/css/product-show.css rel=stylesheet  ><link href=/css/style3.css rel=stylesheet type=text/css /><link type=text/css rel=stylesheet href=/css/jquery.pwstabs.css  ><link rel=stylesheet type=text/css href=/css/domain-responsive.css  ><link rel=stylesheet type=text/css href=/css/default-menu.css /><link rel=stylesheet type=text/css href=/css/component-menu.css /><link rel=stylesheet type=text/css href=css/table.css  ><link rel=stylesheet type=text/css href=css/new-menu.css  ><link rel=stylesheet type=text/css href=css/mobile-menu.css /><link rel=stylesheet type=text/css href=css/shahinParvaz-style.css /><link rel=stylesheet type=text/css href=css/fAwesome.min.css  ><script type=text/javascript src=/js/jquery.js  ></script  ><script type=text/javascript src=/js/modernizr.custom.js  ></script  ><script type=text/javascript src=/js/jquery.dlmenu.js  ></script  ><script  >  $(function () { $('#dl-menu').dlmenu(); });  </script  ><script  >  $(document).ready(function (e) { var link1 = $(\".hotel_name1 a\")  link1.each(function (index, value) { var m = $(this).attr('href'); if (m == \"/hotel.bc?id=\") { var text = $(this).text(); $(this).parent().text(text)  $(this).empty() } }); });  </script  ><link rel=stylesheet type=text/css href=/css/advanced-slider-base.css media=screen /><script type=text/javascript src=/js/jquery-1.10.2.min.js  ></script  ><script src=/js/jquery.newsTicker.js type=text/javascript  ></script  ><script src=/js/jquery.newsTicker-inline.js type=text/javascript  ></script  ></head  ><body class=st-effect-3  ><div id=container  >"
+    },
+    { "$type": "call", "core": "call", "FileName": "header.inc" },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "<a href=# id=toTop  ><i class=fas  ></i  ></a  ><div class=slc  ><ul  ><li  ><a href=https://Instagram.com/shahinparvazsama  ><i class=fab  ></i  ></a  ></li  ><li  ><a href=https://t.me/shahin_parvazsama  ><i class=fab  ></i  ></a  ></li  ><li  ><a href=http://www.aparat.com/shahinparvazsama  ><i class=fas  ></i  ></a  ></li  ></ul  ></div  ><div class=top-bg-inner-pages  ></div  ><div class=breadcrumb  ><div class=container  ><ul  ><li  ><a href=/  >خانه</a  ><i class=fas  ></i  ></li  >"
+    },
+    {
+      "$type": "view",
+      "core": "view",
+      "data-member-name": "db.navigation",
+      "GroupColumn": "something"
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</ul  ></div  ></div  ><div class=clr  ></div  ><div class=box-resize  ><div class=box  ><div id=special-tour  >"
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db.tourdata",
+      "GroupColumn": "something"
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "<div class=content-tab  ><div class=tabset1  ><div data-pws-tab=tab1 data-pws-tab-name=مشخصات  ><div class=typography  ><div  ><a id=dw-package href=/pdf-package.bc?id target=_blank  >دانلود پکیج تور <img src=/images/downloading.png\r\n width=32 height=32 alt=download  ></a  ></div  ><div class=tour-table  ><div class=hotel-tbl  >"
+    },
+    {
+      "$type": "tree",
+      "core": "tree",
+      "data-member-name": "list.inventoryjson",
+      "null-value": "null",
+      "principal-key": "id\r\n",
+      "foreign-key": "parentid",
+      "face": [
+        "\r\n                                                        @value</a  > </section  >\r\n                                                    </face  >\r\n                                                    \r\n                                                          </section  >\r\n                                                    </face  >\r\n                                                    \r\n                                                         @value</span  > </section  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @value</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @value</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child </face  >\r\n                                                    \r\n                                                        @value</span  > </face  >\r\n                                                    \r\n                                                        @value</span  > </face  >\r\n                                                     @child "
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "<div class=clr  ></div  ></div  >"
+    },
+    {
+      "$type": "tree",
+      "core": "tree",
+      "data-member-name": "list.inventoryjson",
+      "null-value": "null",
+      "principal-key": "id\r\n",
+      "foreign-key": "parentid",
+      "layout": " @child ",
+      "face": [
+        "\r\n                                                     @value</a  > </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         درجه هتل </section  >\r\n                                                          </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                        خدمات</section  >\r\n                                                         @value </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         نرخ اتاق دو تخته</section  >\r\n                                                        @child </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         نرخ اتاق یک تخته</section  >\r\n                                                         @child</section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         نرخ کودک 6 تا 12 سال</section  >\r\n                                                         @child </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                        نرخ کودک 2 تا 6 سال</section  >\r\n                                                         @child </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                        موقعیت مکانی </section  >\r\n                                                        @value</section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         توضیحات</section  >\r\n                                                        @value </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                     @child </p  >\r\n                                                </face  >\r\n                                                \r\n                                                    @value</span  > </face  >\r\n                                                \r\n                                                    @value</span  > </face  >\r\n                                                 @child "
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ></div  ></div  ><div data-pws-tab=tab2 data-pws-tab-name=مشخصات  ><div class=typography  >"
+    },
+    {
+      "$type": "view",
+      "core": "view",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something"
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ></div  ><div data-pws-tab=tab3 data-pws-tab-name=  ><div class=typography  >"
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something"
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ></div  ><div data-pws-tab=tab4 data-pws-tab-name=  ><div class=typography  >"
+    },
+    {
+      "$type": "view",
+      "core": "view",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something"
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ></div  ><div data-pws-tab=tab5 data-pws-tab-name=ویدئو  ><div class=video-tab  >"
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something"
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something"
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ><div class=clr  ></div  ></div  ></div  ></div  ></div  ><div class=clr  ></div  ><div id=gallery-resize  >"
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db11.gallery",
+      "GroupColumn": "something"
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ><div id=news  ><div class=clr  ></div  >"
+    },
+    { "$type": "call", "core": "call", "FileName": "airline.inc" },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "<div class=text-news  ><div class=text-news2  ><div id=nt-example1-container  ><div class=title-related  ><p class=s1  ></p  ><div class=title-related-text  >تور مرتبط</div  ><p class=s1  ></p  ></div  ><ul id=nt-example1  >"
+    },
+    { "$type": "call", "core": "call", "FileName": "logo-tour.inc" },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</ul  ></div  ></div  ></div  ><div class=contact-sub  ><div id=nt-example1-prev  ></div  ><div id=nt-example1-next  ></div  ></div  ></div  ><div id=info-related-article  ><div class=title-related  ><div class=title-related-text  >مقالات مرتبط</div  ><p class=s2  ></p  ></div  ><div class=typography  >"
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "dbpr2.listpr2",
+      "GroupColumn": "something",
+      "layout": "\r\n                                    \r\n                                         </div  >\r\n                                         \r\n                                                </i  >@title </p  >\r\n                                            </a  > </div  >\r\n                                        \r\n                                              </span  > @prp_7231</span  >\r\n                                                </i  ></span  > </p  >\r\n                                        </div  >\r\n                                         </i  ></a  > </div  >\r\n                                    </div  >\r\n                                </face  >\r\n                                 @child "
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ></div  ></div  ><div class=clr  ></div  ></div  ></div  ><div class=clr  ></div  ><div class=main-content-resize-nonfloat  >"
+    },
+    { "$type": "call", "core": "call", "FileName": "footer.inc" },
+    { "$type": "rawtext", "core": "rawtext", "content": "</div  ></div  >" },
+    { "$type": "call", "core": "call", "FileName": "GoogleAnalytics.inc" },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "<script type=text/javascript src=/js/jquery.touchSwipe.min.js  ></script  ><script type=text/javascript src=/js/jquery.advancedSlider.min.js  ></script  ><script\r\n type=text/javascript  >  jQuery(document).ready(function ($) { $('#responsive-slider').advancedSlider({ width: 800, height: 550, responsive: true, skin: 'glossy-square-gray', shadow: false, effectType: 'swipe', slideshow: true, pauseSlideshowOnHover: true, swipeThreshold: 30, slideButtons: false, thumbnailType: 'scroller', thumbnailWidth: 140, thumbnailHeight: 80, thumbnailButtons: true, thumbnailSwipe: true, thumbnailScrollerResponsive: true, minimumVisibleThumbnails: 2, maximumVisibleThumbnails: 6, keyboardNavigation: true }); });  </script  ><script type=text/javascript src=/js/jquery-1.10.2.min.js  ></script  ><script src=/js/jquery.pwstabs.js  ></script  ><script  >  jQuery(document).ready(function ($) { $('.tabset1').pwstabs({ effect: 'scale', defaultTab: 1, containerWidth: '989px' }); $('.pws_demo_colors a').click(function (e) { e.preventDefault(); $('.pws_tabs_container').removeClass('pws_theme_cyan pws_theme_grey pws_theme_violet pws_theme_green pws_theme_yellow pws_theme_gold pws_theme_orange pws_theme_red pws_theme_purple pws_theme_dark_cyan pws_theme_dark_grey pws_theme_dark_violet pws_theme_dark_green pws_theme_dark_yellow pws_theme_dark_gold pws_theme_dark_orange pws_theme_dark_red pws_theme_dark_purple').addClass('pws_theme_' + $(this).attr('data-demo-color')); }); });  </script  ><script src=/js/autoNumeric.js  ></script  ><script  >     $(\".cost1111\").autoNumeric('init');     </script  ><script src=js/jquery-3-3-1.js  ></script  ><script src=js/new-menu.js  ></script  ><script type=text/javascript src=js/jquery.navgoco.js  ></script  ><script type=text/javascript src=js/off-canvas.js  ></script  ><script  >  $(document).ready(function () { $(window).scroll(function () { if ($(this).scrollTop() > 50) { $('.header-bot').addClass(\"header-bot-fixed\"); } else { $('.header-bot').removeClass(\"header-bot-fixed\"); } }); });  </script  ><script  >  $(document).ready(function () { $(\"#toTop\").hide(); $(function () { $(window).scroll(function () { if ($(this).scrollTop() > 100) { $('#toTop').fadeIn(); } else { $('#toTop').fadeOut(); } }); $('#toTop').click(function () { $('body,html').animate({ scrollTop: 0 }, 800); return false; }); }); });  </script  ></body  ></html  >"
+    }
+  ]
+}

@@ -1,0 +1,50 @@
+{
+  "List": {
+  "AddExtraAttribute": true,
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "rendertype": { "Values": [ "None", "Append", "Replace" ] },
+      "datamembername": {
+        "To": "data-member-name",
+        "Required": true
+      },
+      "groupcol": {
+        "To": "GroupColumn",
+        "Required": true
+      }
+    },
+    "Elements": {
+      "layout": {},
+      "face": {
+        "To": "faces",
+        "Multi": true,
+        "Attributes": {
+          "name": {},
+          "level": {},
+          "filter": {},
+          "replace": {},
+          "function": {},
+          "rowtype": {}
+        }
+      },
+      "replace": {
+        "Multi": true,
+        "To": "Replaces",
+        "Attributes": {
+          "tagName": {}
+        }
+      },
+      "else-layout": {},
+      "divider": {
+        "Attributes": {
+          "rowcount": {}
+        }
+      },
+      "incomplete": {}
+    }
+  }
+}

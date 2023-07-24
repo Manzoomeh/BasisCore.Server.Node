@@ -1,0 +1,20 @@
+{
+  "Callback": {
+    "AddExtraAttribute": true,
+    "Attributes": {
+      "core": {},
+      "name": {},
+      "if": {},
+      "run": { "Values": [ "AtServer", "AtClient", "None" ] },
+      "renderto": {},
+      "rendertype": { "Values": [ "None", "Append", "Replace" ] },
+      "Method": {
+        "Required": true
+      },
+      "datamembername": {
+        "To": "data-member-name",
+        "Required": true
+      }
+    }
+  }
+}
