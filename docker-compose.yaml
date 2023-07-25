@@ -1,0 +1,18 @@
+version: "1"
+services:
+  myapp:
+    image: basis-node:tag
+    ports:
+      - "3000:3000" 
+    depends_on:
+      - database 
+    environment:
+      - DB_HOST=database  
+
+  database:
+    image: mysql:latest
+    environment:
+      - MYSQL_ROOT_PASSWORD=mysecretpassword  
+networks:
+  default:
+  
