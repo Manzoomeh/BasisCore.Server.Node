@@ -12,7 +12,10 @@
           "$type": "inlinesource",
           "core": "inlinesource",
           "name": "list",
-          "member": ["{\"root\":[##db.inventory.result##]}"]
+          "Members": [
+            { "name": "inventoryjson", "undefined": "json", "preview": "" }
+          ],
+          "member": ["undefined{\"root\":[##db.inventory.result##]}"]
         },
         {
           "$type": "dbsource",
@@ -181,9 +184,8 @@
       "null-value": "null",
       "principal-key": "id\r\n",
       "foreign-key": "parentid",
-      "face": [
-        "\r\n                                                        @value</a  > </section  >\r\n                                                    </face  >\r\n                                                    \r\n                                                          </section  >\r\n                                                    </face  >\r\n                                                    \r\n                                                         @value</span  > </section  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @value</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @value</td  >\r\n                                                    </face  >\r\n                                                    \r\n                                                        @child </face  >\r\n                                                    \r\n                                                        @value</span  > </face  >\r\n                                                    \r\n                                                        @value</span  > </face  >\r\n                                                     @child "
-      ]
+      "faces": [{ "filter": "field" }, { "filter": "type" }],
+      "face": ["undefined @child "]
     },
     {
       "$type": "rawtext",
@@ -197,10 +199,13 @@
       "null-value": "null",
       "principal-key": "id\r\n",
       "foreign-key": "parentid",
-      "layout": " @child ",
-      "face": [
-        "\r\n                                                     @value</a  > </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         درجه هتل </section  >\r\n                                                          </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                        خدمات</section  >\r\n                                                         @value </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         نرخ اتاق دو تخته</section  >\r\n                                                        @child </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         نرخ اتاق یک تخته</section  >\r\n                                                         @child</section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         نرخ کودک 6 تا 12 سال</section  >\r\n                                                         @child </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                        نرخ کودک 2 تا 6 سال</section  >\r\n                                                         @child </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                        موقعیت مکانی </section  >\r\n                                                        @value</section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                    \r\n                                                         توضیحات</section  >\r\n                                                        @value </section  >\r\n                                                        </div  >\r\n                                                    </div  >\r\n                                                </face  >\r\n                                                \r\n                                                     @child </p  >\r\n                                                </face  >\r\n                                                \r\n                                                    @value</span  > </face  >\r\n                                                \r\n                                                    @value</span  > </face  >\r\n                                                 @child "
-      ]
+      "layout": { "content": "undefined @child " },
+      "faces": [
+        { "filter": "field" },
+        { "filter": "field" },
+        { "filter": "type" }
+      ],
+      "face": ["undefined @child "]
     },
     {
       "$type": "rawtext",
@@ -285,7 +290,7 @@
       "core": "print",
       "data-member-name": "dbpr2.listpr2",
       "GroupColumn": "something",
-      "layout": "\r\n                                    \r\n                                         </div  >\r\n                                         \r\n                                                </i  >@title </p  >\r\n                                            </a  > </div  >\r\n                                        \r\n                                              </span  > @prp_7231</span  >\r\n                                                </i  ></span  > </p  >\r\n                                        </div  >\r\n                                         </i  ></a  > </div  >\r\n                                    </div  >\r\n                                </face  >\r\n                                 @child "
+      "layout": { "content": "undefined @child " }
     },
     {
       "$type": "rawtext",

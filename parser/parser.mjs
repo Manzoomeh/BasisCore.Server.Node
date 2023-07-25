@@ -501,12 +501,11 @@ class HTMLParser {
 
   async processBasisContent(content, elements, il) {
     //    try {
-    let tempString = "";
     const elementsKeys = Object.keys(elements);
     if (!elements || elementsKeys.length === 0) {
       return il;
     }
-    let tempAttributes;
+    let tempAttributes = {content : ""}
     let elementMultiState = elementsKeys.reduce((acc, curr) => {
       acc[curr] = 0;
       return acc;
@@ -522,7 +521,7 @@ class HTMLParser {
       } else {
         if (item.type == "text") {
           if (elementsState.trim() !== "") {
-            tempString += item.value;
+            tempAttributes.content += item.value;
           } else {
             continue;
           }
@@ -536,7 +535,6 @@ class HTMLParser {
               ) {
                 elementsState = "";
                 let finalAttributes = {};
-                console.log(elements[item.name.slice(1)].Attributes);
                 if (
                   typeof elements[item.name.slice(1)].Attributes == "object"
                 ) {
@@ -544,46 +542,70 @@ class HTMLParser {
                     Object.keys(elements[item.name.slice(1)].Attributes)
                       .length > 0
                   ) {
-                    for (let attribute in elements[item.name.slice(1)]
-                      .Attributes) {
-                      if (tempAttributes.attribute) {
-                        if (attribute.To) {
-                          finalAttributes[attribute.To] =
-                            tempAttributes[attribute];
+                    for (let attrKey in tempAttributes) {
+                      if (attrKey in elements[item.name.slice(1)].Attributes) {
+                        let attrConfig =
+                          elements[item.name.slice(1)].Attributes[attrKey];
+                        console.log(attrConfig);
+                        if (attrConfig.To) {
+                          finalAttributes[attrConfig.TO] =
+                            tempAttributes[attrKey];
                         } else {
-                          finalAttributes[attribute] =
-                            tempAttributes[attribute];
+                          finalAttributes[attrKey] = tempAttributes[attrKey];
                         }
+                        const requiredAttributes = Object.keys(
+                          elements[item.name.slice(1)].Attributes
+                        ).filter((key) => {
+                          return (
+                            elements[item.name.slice(1)].Attributes[key][
+                              "Required"
+                            ] === true
+                          );
+                        });
+                        this.checkProperties(
+                          tempAttributes,
+                          requiredAttributes
+                        );
                         if (
-                          attribute.Values &&
-                          Array.isArray(attribute.Values) &&
-                          attribute.Values.length > 0
+                          Array.isArray(attrConfig.values) &&
+                          !attrConfig.values.includes(tempAttributes[attrKey])
                         ) {
-                          if (
-                            attribute.Values.includes(
-                              tempAttributes[attribute]
-                            ) == false
-                          ) {
-                            throw new error(`Values for ${this.getKeyByValue(
-                              elements[item.name.slice(1)].Attributes,
-                              attribute
-                            )} should be 
-                          ${attribute.Values}`);
-                          }
+                          throw new Error(
+                            `the correct value for ${attrKey} is values like ${attrConfig.values}`
+                          );
                         }
-                      } else {
-                        if (attribute.Required == true) {
-                          let elementKey = this.getKeyByValue(
-                            elements[item.name.slice(1)].Attributes,
-                            attribute
-                          );
-                          throw new error(
-                            `the attribute ${elementKey} is required`
-                          );
+                        let missingProperties = this.findMissingProperties(
+                          tempAttributes,
+                          attrConfig
+                        );
+                        if (
+                          attrConfig.AddExtraAttribute &&
+                          missingProperties.length > 0
+                        ) {
+                          for (let missingProperty of missingProperties) {
+                            finalAttributes["extra-attribute"][
+                              missingProperty
+                            ] = tempAttributes[missingProperties];
+                          }
                         }
                       }
                     }
-                    il[item.name.slice(1)] = finalAttributes;
+                    console.log(item.name.slice(1));
+                    if (typeof item.name.slice(1) == "string") {
+                      if (elements[item.name.slice(1)].To) {
+                        if (!il[elements[item.name.slice(1)].To]) {
+                          il[elements[item.name.slice(1)].To] = [];
+                        }
+                        il[elements[item.name.slice(1)].To].push(
+                          finalAttributes
+                        );
+                      } else {
+                        if (!il[elements[item.name.slice(1)]]) {
+                          il[elements[item.name.slice(1)]] = [];
+                        }
+                        il[item.name.slice(1)].push(finalAttributes);
+                      }
+                    }
                   }
                 }
                 if (elements[item.name.slice(1)].TO) {
@@ -594,7 +616,7 @@ class HTMLParser {
                     if (!il.hasOwnProperty(item.name)) {
                       il[elements[item.name.slice(1)].TO] = [];
                     }
-                    if (tempString == "") {
+                    if (tempAttributes.content == "") {
                       if (elements[item.name]["To"]) {
                         if (il[elements[item.name]["To"]] == undefined) {
                           il[elements[item.name]["To"]] = [];
@@ -607,12 +629,10 @@ class HTMLParser {
                         il[item.name].push(tempAttributes);
                       }
                     } else {
-                      il[elements[item.name.slice(1)].TO].push(tempString);
-                      tempString = "";
                       elementsState = "";
                     }
                   } else {
-                    if (tempString == "") {
+                    if (tempAttributes.content == "") {
                       if (elements[item.name]["To"]) {
                         if (il[elements[item.name]["To"]] == undefined) {
                           il[elements[item.name]["To"]] = [];
@@ -627,8 +647,8 @@ class HTMLParser {
                         tempAttributes = {};
                       }
                     } else {
-                      il[elements[item.name.slice(1)].TO] = tempString;
-                      tempString = "";
+                      il[elements[item.name.slice(1)].TO] = tempAttributes.content;
+                      tempAttributes.content = "";
                       elementsState = "";
                     }
                   }
@@ -640,7 +660,7 @@ class HTMLParser {
                     if (!il.hasOwnProperty(item.name)) {
                       il[item.name.slice(1)] = [];
                     }
-                    if (tempString == "") {
+                    if (tempAttributes.content == "") {
                       if (elements[item.name.slice(1)]["To"]) {
                         if (
                           il[elements[item.name.slice(1)]["To"]] == undefined
@@ -659,27 +679,37 @@ class HTMLParser {
                         tempAttributes = {};
                       }
                     } else {
-                      il[item.name.slice(1)].push(tempString);
+                      il[item.name.slice(1)].push(tempAttributes.content);
                     }
                     tempAttributes = {};
-                    tempString = "";
+                    tempAttributes.content = "";
                     elementsState = "";
                   } else {
-                    il[item.name.slice(1)] = tempString;
-                    tempString = "";
+                    if(elements[item.name.slice(1)].TO){
+                      if(il[elements[item.name.slice(1)].TO]){
+                        il[elements[item.name.slice(1)].TO] = tempAttributes.content
+                      }else{
+                        il[elements[item.name.slice(1)].TO] = tempAttributes.content
+                      }
+                    }
+                    if(!il[item.name.slice(1)]){
+                      il[item.name.slice(1)] ={}
+                    }
+                    il[item.name.slice(1)].content = tempAttributes.content;
+                    tempAttributes.content = "";
                     elementsState = "";
                   }
                 }
               } else {
-                tempString += `<${item.name}` + " ";
+                tempAttributes.content += `<${item.name}` + " ";
                 if (Object.keys(item.attributes).length > 0) {
                   keyValueString = this.objectToKeyValueString(item.attributes);
-                  tempString += keyValueString + " ";
+                  tempAttributes.content += keyValueString + " ";
                 }
                 if (item.tagType === "single") {
-                  tempString += "/>";
+                  tempAttributes.content += "/>";
                 } else {
-                  tempString += " >";
+                  tempAttributes.content += " >";
                 }
               }
               if (
@@ -759,6 +789,20 @@ class HTMLParser {
     //    } catch (error) {
     //throw new Error(error);
     //    }
+  }
+  findMissingProperties(object1, object2) {
+    const object1Keys = Object.keys(object1);
+    const missingKeys = object1Keys.filter(
+      (key) => !object2.hasOwnProperty(key)
+    );
+    return missingKeys;
+  }
+  checkProperties(obj, propertiesArray) {
+    for (const property of propertiesArray) {
+      if (!obj.hasOwnProperty(property)) {
+        throw new Error(`Object is missing the property "${property}"`);
+      }
+    }
   }
   getKeyByValue(obj, value) {
     for (const key in obj) {
