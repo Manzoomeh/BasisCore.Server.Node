@@ -505,11 +505,9 @@ class HTMLParser {
     if (!elements || elementsKeys.length === 0) {
       return il;
     }
-    let tempAttributes = {content : ""}
-    let elementMultiState = elementsKeys.reduce((acc, curr) => {
-      acc[curr] = 0;
-      return acc;
-    }, {});
+    let tempAttributes = {};
+    let tempString = "";
+    let elementMultiState = 0;
     let elementsState = "";
     for (let item of content) {
       if (item.basis === true) {
@@ -521,274 +519,111 @@ class HTMLParser {
       } else {
         if (item.type == "text") {
           if (elementsState.trim() !== "") {
-            tempAttributes.content += item.value;
+            tempString += item.value;
           } else {
             continue;
           }
         } else if (item.type == "tag") {
           if (item.tagType === "double") {
-            if (item.name.startsWith("/")) {
-              if (
-                //elementsKeys.includes(item.name) ||
-                elementsKeys.includes(item.name.slice(1)) &&
-                elementsState == item.name.slice(1)
-              ) {
-                elementsState = "";
-                let finalAttributes = {};
-                if (
-                  typeof elements[item.name.slice(1)].Attributes == "object"
-                ) {
-                  if (
-                    Object.keys(elements[item.name.slice(1)].Attributes)
-                      .length > 0
-                  ) {
-                    for (let attrKey in tempAttributes) {
-                      if (attrKey in elements[item.name.slice(1)].Attributes) {
-                        let attrConfig =
-                          elements[item.name.slice(1)].Attributes[attrKey];
-                        console.log(attrConfig);
-                        if (attrConfig.To) {
-                          finalAttributes[attrConfig.TO] =
-                            tempAttributes[attrKey];
-                        } else {
-                          finalAttributes[attrKey] = tempAttributes[attrKey];
-                        }
-                        const requiredAttributes = Object.keys(
-                          elements[item.name.slice(1)].Attributes
-                        ).filter((key) => {
-                          return (
-                            elements[item.name.slice(1)].Attributes[key][
-                              "Required"
-                            ] === true
-                          );
-                        });
-                        this.checkProperties(
-                          tempAttributes,
-                          requiredAttributes
-                        );
-                        if (
-                          Array.isArray(attrConfig.values) &&
-                          !attrConfig.values.includes(tempAttributes[attrKey])
-                        ) {
-                          throw new Error(
-                            `the correct value for ${attrKey} is values like ${attrConfig.values}`
-                          );
-                        }
-                        let missingProperties = this.findMissingProperties(
-                          tempAttributes,
-                          attrConfig
-                        );
-                        if (
-                          attrConfig.AddExtraAttribute &&
-                          missingProperties.length > 0
-                        ) {
-                          for (let missingProperty of missingProperties) {
-                            finalAttributes["extra-attribute"][
-                              missingProperty
-                            ] = tempAttributes[missingProperties];
-                          }
-                        }
-                      }
-                    }
-                    console.log(item.name.slice(1));
-                    if (typeof item.name.slice(1) == "string") {
-                      if (elements[item.name.slice(1)].To) {
-                        if (!il[elements[item.name.slice(1)].To]) {
-                          il[elements[item.name.slice(1)].To] = [];
-                        }
-                        il[elements[item.name.slice(1)].To].push(
-                          finalAttributes
-                        );
-                      } else {
-                        if (!il[elements[item.name.slice(1)]]) {
-                          il[elements[item.name.slice(1)]] = [];
-                        }
-                        il[item.name.slice(1)].push(finalAttributes);
-                      }
-                    }
+            if (
+              elementsKeys.includes(item.name.slice(1)) &&
+              item.name.startsWith("/") &&
+              item.name.slice(1) == elementsState
+            ) {
+              elementsState = "";
+              elementMultiState = 0;
+              let finalAttributes = {};
+              const keys = Object.keys(tempAttributes);
+              const elementConfig = elements[item.name.slice(1)];
+              for (let key of keys) {
+                if (tempAttributes[key].startsWith("[##") && tempAttributes["key"].endsWith("##]")) {
+                  value = value.slice(3, -3).split(".");
+                  if (value.length > 3 || value.length < 3) {
+                    throw new Error("invalid binding expression");
                   }
-                }
-                if (elements[item.name.slice(1)].TO) {
-                  if (
-                    elements[item.name.slice(1)] &&
-                    elements[item.name.slice(1)].Multi == true
-                  ) {
-                    if (!il.hasOwnProperty(item.name)) {
-                      il[elements[item.name.slice(1)].TO] = [];
-                    }
-                    if (tempAttributes.content == "") {
-                      if (elements[item.name]["To"]) {
-                        if (il[elements[item.name]["To"]] == undefined) {
-                          il[elements[item.name]["To"]] = [];
-                        }
-                        il[elements[item.name]["To"]].push(tempAttributes);
-                      } else {
-                        if (il[item.name] == undefined) {
-                          il[item.name] = [];
-                        }
-                        il[item.name].push(tempAttributes);
-                      }
-                    } else {
-                      elementsState = "";
-                    }
+                  let [source, member, columnWithDefault] = value;
+                  let column;
+                  let defaultValue;
+                  if (columnWithDefault.includes("|")) {
+                    [column, defaultValue] = columnWithDefault.split("|");
                   } else {
-                    if (tempAttributes.content == "") {
-                      if (elements[item.name]["To"]) {
-                        if (il[elements[item.name]["To"]] == undefined) {
-                          il[elements[item.name]["To"]] = [];
-                        }
-                        il[elements[item.name]["To"]].push(tempAttributes);
-                        tempAttributes = {};
-                      } else {
-                        if (il[item.name] == undefined) {
-                          il[item.name] = [];
-                        }
-                        il[item.name].push(tempAttributes);
-                        tempAttributes = {};
-                      }
-                    } else {
-                      il[elements[item.name.slice(1)].TO] = tempAttributes.content;
-                      tempAttributes.content = "";
-                      elementsState = "";
-                    }
+                    column = columnWithDefault;
                   }
-                } else {
-                  if (
-                    elements[item.name.slice(1)] &&
-                    elements[item.name.slice(1)].Multi == true
-                  ) {
-                    if (!il.hasOwnProperty(item.name)) {
-                      il[item.name.slice(1)] = [];
-                    }
-                    if (tempAttributes.content == "") {
-                      if (elements[item.name.slice(1)]["To"]) {
-                        if (
-                          il[elements[item.name.slice(1)]["To"]] == undefined
-                        ) {
-                          il[elements[item.name.slice(1)]["To"]] = [];
-                        }
-                        il[elements[item.name.slice(1)]["To"]].push(
-                          tempAttributes
-                        );
-                        tempAttributes = {};
-                      } else {
-                        if (il[item.name] == undefined) {
-                          il[item.name] = [];
-                        }
-                        il[item.name].push(tempAttributes);
-                        tempAttributes = {};
-                      }
-                    } else {
-                      il[item.name.slice(1)].push(tempAttributes.content);
-                    }
-                    tempAttributes = {};
-                    tempAttributes.content = "";
-                    elementsState = "";
+                  if (!defaultValue) {
+                    value = {
+                      params: [{ Source: source, Member: member, Column: column }],
+                    };
                   } else {
-                    if(elements[item.name.slice(1)].TO){
-                      if(il[elements[item.name.slice(1)].TO]){
-                        il[elements[item.name.slice(1)].TO] = tempAttributes.content
-                      }else{
-                        il[elements[item.name.slice(1)].TO] = tempAttributes.content
-                      }
-                    }
-                    if(!il[item.name.slice(1)]){
-                      il[item.name.slice(1)] ={}
-                    }
-                    il[item.name.slice(1)].content = tempAttributes.content;
-                    tempAttributes.content = "";
-                    elementsState = "";
+                    value = {
+                      params: [
+                        { Source: source, Member: member, Column: column },
+                        { value: defaultValue },
+                      ],
+                    };
                   }
+                  tempAttributes[key] = value
                 }
-              } else {
-                tempAttributes.content += `<${item.name}` + " ";
-                if (Object.keys(item.attributes).length > 0) {
-                  keyValueString = this.objectToKeyValueString(item.attributes);
-                  tempAttributes.content += keyValueString + " ";
-                }
-                if (item.tagType === "single") {
-                  tempAttributes.content += "/>";
-                } else {
-                  tempAttributes.content += " >";
+                let attributeConfig = elementConfig.Attributes[key];
+                if (attributeConfig) {
+                  if (attributeConfig.To) {
+                    finalAttributes[attributeConfig.To] = tempAttributes[key];
+                  } else {
+                    finalAttributes[key] = tempAttributes[key];
+                  }
+                }else{
+                  if(!elementConfig.addExtraAttribute||elementConfig.addExtraAttribute==false){
+                    throw new error(`adding extra attribute is not available for ${item.name.slice(1)} `)
+                  }else{
+                    if(!finalAttributes["extra-attributes"]){
+                      finalAttributes["extra-attributes"] = {}
+                    }
+                    finalAttributes["extra-attributes"][key] = tempAttributes[key]
+                  }
                 }
               }
-              if (
-                elementsKeys.some((key) => key === item.name) &&
-                elementsState == item.name
-              ) {
+              switch (item.name.slice(1)) {
+                case "member":
+                  
+                case "email":
+
+                case "params":
+
+                case "layout":
+
+                case "replace":
+
+                case "else-layout":
+
+                case "divider":
+
+                case "add":
+
+                case "content":
+
+                case "face":
+
+                default:
+                  throw new error(
+                    `element ${item.name.slice(1)} is not valid `
+                  );
               }
             } else {
-              elementsState = `${item.name}`;
-              elementMultiState[item.name] += 1;
-              tempAttributes = item.attributes;
-            }
-          } else {
-            if (elementsKeys.includes(item.name) && elementsState == "") {
-              if (elements[item.name]["To"]) {
-                if (il[elements[item.name]["To"]] == undefined) {
-                  il[elements[item.name]["To"]] = [];
-                }
-                il[elements[item.name]["To"]].push(item.attributes);
-              } else {
-                if (il[item.name] == undefined) {
-                  il[item.name] = [];
-                }
-                il[item.name].push(item.attributes);
+              tempString.content += `<${item.name}` + " ";
+              if (Object.keys(item.attributes).length > 0) {
+                keyValueString = this.objectToKeyValueString(item.attributes);
+                tempString.content += keyValueString + " ";
               }
-            }
-          }
-          if (!elements[item.name]) {
-            if (elements[item.name] == undefined) {
-              let trueProperties = Object.entries(elementsState)
-                .filter(([key, value]) => value === true)
-                .map(([key, value]) => key);
-              if (1 > trueProperties.length > 0) {
-                const nestedElementConfig = elements[trueProperties[0]];
-                for (let attribute in nestedElementConfig) {
-                  if (
-                    attribute.Required == true &&
-                    !item.attributes[attribute]
-                  ) {
-                    throw new Error(
-                      `Required attribute ${attribute} is missing in ${item.name}`
-                    );
-                  }
-                  if (attribute.To) {
-                    if (!il[attribute.To]) {
-                      il[elementsKeys[trueProperties[0]]][`${attribute}`] =
-                        item.attributes[attribute];
-                    } else {
-                      il[elementsKeys[trueProperties[0]]][attribute.To].push(
-                        item.attributes[attribute]
-                      );
-                    }
-                    delete item.attributes[attribute];
-                  }
-                  il[attribute] = item.attributes[attribute];
-                }
-              } else if (trueProperties.length > 1) {
-                throw new Error("cannot be on two element state");
+              if (item.tagType === "single") {
+                tempString.content += "/>";
               } else {
-                throw new Error("this tag is not defined in basis config");
-              }
-            }
-          }
-          if (elements[item.name] && elements[item.name].Multi == true) {
-            if (elementMultiState[item.name] == 1) {
-              if (Array.isArray(il[item.name]) && il[item.name].length == 1) {
-                throw new Error(
-                  `${item.name} is already defined and in basis you can only define one of them`
-                );
+                tempString.content += " >";
               }
             }
           }
         }
+        return il;
       }
     }
-    return il;
-    //    } catch (error) {
-    //throw new Error(error);
-    //    }
   }
   findMissingProperties(object1, object2) {
     const object1Keys = Object.keys(object1);
