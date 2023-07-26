@@ -1,449 +1,769 @@
-
-<basis core="group" name="list">
-    <basis core="inlinesource" name="list">
-        <member name="inventoryjson" format="json" preview="sth">{"root":[##db.inventory.result##]}</member>
-    </basis> <!-- for navigation -->
-    <basis core="dbsource" source="basiscore" mid="20" name="db" lid="1" usedforid="[##cms.query.id##]">
-        <member name="scalar" type="scalar" typeid="150" />
-    </basis>
-    <basis core="dbsource" source="basiscore" name="db" lid="1" mid="20" usedforid="[##cms.query.id##]">
-        <member name="navigation" type="tree" request="navigationcat" />
-    </basis> <!-- for products table -->
-    <basis core="dbsource" source="basiscore" mid="20" name="db" lid="1" usedforid="[##cms.query.id##]">
-        <member name="view3" type="view" />
-        <member name="tourdata" type="view" request="rdfa" />
-    </basis>
-    <basis core="dbsource" source="basiscore" name="dbsckema" mid="20" lid="1" usedforid="[##cms.query.id##]">
-        <member name="showsckema" type="view" />
-    </basis> <!--article mortabet -->
-    <basis core="dbsource" source="basiscore" mid="20" name="dbpr2" lid="1" usedforid="[##cms.query.id##]">
-        <member name="listpr2" type="list" link="article.bc" blgid="218" perpage="10" propertyid="7231" />
-    </basis> <!--gallery-->
-    <basis core="dbsource" source="media" name="db11" lid="1" usedforid="[##cms.query.id##]" sourcemid="product">
-        <member name="gallery" type="list" format="4" />
-    </basis> <!-- for seo -->
-    <basis core="dbsource" source="basiscore" name="db11" lid="1" request="seo">
-        <member name="list" type="list" request="product" id="[##cms.query.id##]" />
-    </basis> <!--for pdf-->
-    <basis core="dbsource" source="media" name="db11" lid="1" usedforid="[##cms.query.id##]" sourcemid="product">
-        <member name="pdf" type="list" format="pdf" />
-    </basis>
+<basis core="dbsource" source="basiscore" mid="20" name="db" lid="1">
+  <member name="menu" type="tree" request="cat" parentid="0" />
 </basis>
-    <!doctype html>
-    <html class='mm-hover'>
-
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <meta name="author" content="BasisCore">
-        <basis core="print" groupcol="something" datamembername="db11.list">
-            <face>
-                <title>[##cms.seo.title|db11.list.title##]</title>
-                <meta name="description" content="[##cms.seo.description|db11.list.description##]" />
-            </face>
-        </basis>
-        <basis core="call" file="script1.inc" />
-        <link href="/css/product-show.css" rel="stylesheet">
-        <link href="/css/style3.css" rel="stylesheet" type="text/css" />
-        <link type="text/css" rel="stylesheet" href="/css/jquery.pwstabs.css">
-        <link rel="stylesheet" type="text/css" href="/css/domain-responsive.css">
-        <link rel="stylesheet" type="text/css" href="/css/default-menu.css" />
-        <link rel="stylesheet" type="text/css" href="/css/component-menu.css" /> <!-- new-css-start -->
-        <link rel="stylesheet" type="text/css" href="css/table.css">
-        <link rel="stylesheet" type="text/css" href="css/new-menu.css">
-        <link rel="stylesheet" type="text/css" href="css/mobile-menu.css" />
-        <link rel="stylesheet" type="text/css" href="css/shahinParvaz-style.css" />
-        <link rel="stylesheet" type="text/css" href="css/fAwesome.min.css"> <!-- new-css-end -->
-        <script type="text/javascript" src="/js/jquery.js"></script>
-        <script type="text/javascript" src="/js/modernizr.custom.js"></script>
-        <script type="text/javascript" src="/js/jquery.dlmenu.js"></script>
-        <script>  $(function () { $('#dl-menu').dlmenu(); });  </script>
-        <script>  $(document).ready(function (e) { var link1 = $(".hotel_name1 a")  link1.each(function (index, value) { var m = $(this).attr('href'); if (m == "/hotel.bc?id=") { var text = $(this).text(); $(this).parent().text(text)  $(this).empty() } }); });  </script>
-        <link rel="stylesheet" type="text/css" href="/css/advanced-slider-base.css" media="screen" />
-        <script type='text/javascript' src='/js/jquery-1.10.2.min.js'></script><!--news-->
-        <script src="/js/jquery.newsTicker.js" type="text/javascript"></script><!--news-->
-        <script src="/js/jquery.newsTicker-inline.js" type="text/javascript"></script><!---news-->
-    </head>
-
-    <body class="st-effect-3">
-        <div id="container">
-            <basis core="call" file="header.inc" /> <a href="#" id="toTop"><i class="fas fa-sort-up"></i></a>
-            <div class="slc">
-                <ul>
-                    <li><a href="https://Instagram.com/shahinparvazsama"><i class="fab fa-instagram"></i></a> </li>
-                    <li><a href="https://t.me/shahin_parvazsama"><i class="fab fa-telegram-plane"></i></a> </li>
-                    <li><a href="http://www.aparat.com/shahinparvazsama"><i class="fas fa-film"></i></a></li>
-                </ul>
+<basis core="dbsource" source="basiscore" mid="1" name="db" lid="1">
+  <member name="menu2" type="tree" request="cat" parentid="0" />
+</basis>
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>وضعیت آب و هوا</title>
+    <meta name="description" content="وضعیت آب و هوا" />
+    <meta name="author" content="BasisCore" />
+    <link rel="stylesheet" type="text/css" href="css/menu-desktop-mobile.css" />
+    <link rel="stylesheet" href="/css/domain.css" />
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="css/fontawesome.5.9.0-web.min.css"
+    />
+    <script src="/js/jquery-1.7.1.min.js"></script>
+    <script>
+      $(document).ready(function () {
+        $("#dropnav-btn").click(function () {
+          $("#dropnav").slideToggle("speed");
+        });
+      });
+    </script>
+    <script>
+      jQuery(document).ready(function () {
+        jQuery("#jquery-accordion-menu").jqueryAccordionMenu();
+        jQuery(".colors a").click(function () {
+          if ($(this).attr("class") != "default") {
+            $("#jquery-accordion-menu").removeClass();
+            $("#jquery-accordion-menu")
+              .addClass("jquery-accordion-menu")
+              .addClass($(this).attr("class"));
+          } else {
+            $("#jquery-accordion-menu").removeClass();
+            $("#jquery-accordion-menu").addClass("jquery-accordion-menu");
+          }
+        });
+      });
+    </script>
+    <script src="/js/script.js"></script>
+    <script src="/js/jquery.cycle.all.min.js"></script>
+    <script src="/js/jquery.ui.totop.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function () {
+        $(".info-txt .info-seprator:last-child").css("display", "none");
+      });
+    </script>
+  </head>
+  <body>
+    <div id="container">
+      <div id="header-resize2"><basis core="call" file="header.inc" /></div>
+      <div id="body-resize">
+        <div id="body">
+          <ul class="location">
+            <li><a>اینجا هستید: </a><a href="/"> صفحه اصلی </a></li>
+            <li>
+              <img
+                src="/images/nav-arrow.png"
+                width="9"
+                height="12"
+                alt="ندای پارسه"
+              />
+              <a>وضعیت آب و هوا</a>
+            </li>
+          </ul>
+          <div class="box-top"><p class="body-title">وضعیت آب و هوا</p></div>
+          <div class="box-mid">
+            <div class="box-midd">
+              <div id="weather">
+                <table width="100%" border="0" cellspacing="1" cellpadding="0">
+                  <tr>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_3339">
+                          <a
+                            href="http://www.weather.com/weather/local/TUXX0002"
+                            >Ankara Weather Forecast, Turkey</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "TUXX0002";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_3339";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=snow*MAP=europe|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=6d384c48de1d48703111db0e46c2ffec";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_8695">
+                          <a
+                            href="http://www.weather.com/weather/local/GRXX0004"
+                            >Athens Weather Forecast, Greece</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "GRXX0004";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_8695";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=sunset*MAP=eur|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=23e135a673145e183c600b5436a8871c";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_7710">
+                          <a
+                            href="http://www.weather.com/weather/local/AJXX0001"
+                            >Baku Weather Forecast, Azerbaijan</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "AJXX0001";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_7710";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=sports*MAP=eur|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=695b77799de0bf3db75483fb966cbaf7";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_569">
+                          <a
+                            href="http://www.weather.com/weather/local/THXX0002"
+                            >Bangkok Weather Forecast, Thailand</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "THXX0002";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_569";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=outdoors*MAP=asia|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=a63dfda0d213b35b7abae5f48eb9614d";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                  </tr>
+                  <!-- <tr>                  <td width="25%"></td>                  <td width="25%"></td>                  <td width="25%"></td>                  <td width="25%"></td>                </tr> -->
+                  <tr>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_9692">
+                          <a
+                            href="http://www.weather.com/weather/local/CHXX0008"
+                            >Beijing Weather Forecast, China</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "CHXX0008";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_9692";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=ski*MAP=asia|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=5583d0934e32731169769bf19597ae7f";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_8639">
+                          <a
+                            href="http://www.weather.com/weather/local/GMXX0007"
+                            >Berlin Weather Forecast, Germany</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "GMXX0007";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_8639";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=flower*MAP=eur|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=16bba45d5ccdb0afd60c33756dd5f0a7";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_9009">
+                          <a
+                            href="http://www.weather.com/weather/local/ASXX0023"
+                            >Canberra Weather Forecast, Australia</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "ASXX0023";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_9009";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=sun*MAP=aus|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=46b64393f66c57a4989d9a8708c282e0";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_8400">
+                          <a
+                            href="http://www.weather.com/weather/local/SYXX0004"
+                            >Damascus Weather Forecast, Syria</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "SYXX0004";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_8400";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=veggies*MAP=me|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=457f630a8f81a8e80933992eb91e5950";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                  </tr>
+                  <!-- <tr>                  <td width="25%"></td>                  <td width="25%"></td>                  <td width="25%"></td>                  <td width="25%"></td>                </tr> -->
+                  <tr>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_3159">
+                          <a
+                            href="http://www.weather.com/weather/local/INXX0038"
+                            >Delhi Weather Forecast, India</a
+                          >
+                        </div>
+                      </div>
+                      <div align="center">
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "INXX0038";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_3159";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=car*MAP=india_|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=e6ad1c39ee08ce4b5702a5ddba475e75";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_7911">
+                          <a
+                            href="http://www.weather.com/weather/local/AEXX0004"
+                            >Dubai Weather Forecast, United Arab Emirates</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "AEXX0004";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_7911";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=plane*MAP=me|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=a0dc48f738fcd7bdf7519ace217fe8d9";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_9018">
+                          <a
+                            href="http://www.weather.com/weather/local/MYXX0008"
+                            >Kuala Lumpur Weather Forecast, Malaysia</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "MYXX0008";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_9018";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=clouds*MAP=asia|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=ace53a04e639f3a9fefd24def8b2a6eb";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_5874">
+                          <a
+                            href="http://www.weather.com/weather/local/UKXX0085"
+                            >London Weather Forecast, United Kingdom</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "UKXX0085";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_5874";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=summer*MAP=eur|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=34bb1d8bb8418389c2019a445314f752";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                  </tr>
+                  <!-- <tr>                  <td width="25%"><div align="center"> </div></td>                  <td width="25%"><div align="center"></div></td>                  <td width="25%"><div align="center"></div></td>                  <td width="25%"><div align="center"></div></td>                </tr> -->
+                  <tr>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_6552">
+                          <a
+                            href="http://www.weather.com/weather/local/SPXX0050"
+                            >Madrid Weather Forecast, Spain</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "SPXX0050";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_6552";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=lightning*MAP=eur|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=40e9f31617de8e7ea91cca7eccfc503c";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_9390">
+                          <a
+                            href="http://www.weather.com/weather/local/RSXX0063"
+                            >Moscow Weather Forecast, Russia</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "RSXX0063";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_9390";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=winter*MAP=eur|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=41356e27d43a20fbf47fc27ea6155e36";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_561">
+                          <a
+                            href="http://www.weather.com/weather/local/FRXX0076"
+                            >Paris Weather Forecast, France</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "FRXX0076";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_561";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=fall*MAP=eur|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=469c3cbd56549783ab773a7a5af2b750";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_9112">
+                          <a
+                            href="http://www.weather.com/weather/local/SAXX0017"
+                            >Riyadh Weather Forecast, Saudi Arabia</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "SAXX0017";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_9112";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=country*MAP=me|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=1687bf533f51b38d95efc10bec8158e8";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                  </tr>
+                  <!-- <tr>                  <td width="25%"><div align="center"> </div></td>                  <td width="25%"><div align="center"> </div></td>                  <td width="25%"><div align="center"> </div></td>                  <td width="25%"><div align="center"> </div></td>                </tr> -->
+                  <tr>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_214">
+                          <a
+                            href="http://www.weather.com/weather/local/ITXX0067"
+                            >Rome Weather Forecast, Italy</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "ITXX0067";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_214";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=spring*MAP=eur|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=850547d351e3944eae6f1cdd7cd50727";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_2104">
+                          <a
+                            href="http://www.weather.com/weather/local/BUXX0005"
+                            >Sofia Weather Forecast, Bulgaria</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "BUXX0005";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_2104";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=music*MAP=eur|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=9c5ad81695f9eb861ee3030aebe84494";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_3576">
+                          <a
+                            href="http://www.weather.com/weather/local/JAXX0085"
+                            >Tokyo Weather Forecast, Japan</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "JAXX0085";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_3576";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=golf*MAP=japan_|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=711810e42e386c1056332f00ab11c599";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                    <td width="25%">
+                      <div align="center">
+                        <div id="wx_module_6484">
+                          <a
+                            href="http://www.weather.com/weather/local/USDC0001"
+                            >Washington Weather Forecast, DC</a
+                          >
+                        </div>
+                        <script type="text/javascript">
+                          /* Locations can be edited manually by updating 'wx_locID' below.  Please also update */ /* the location name and link in the above div (wx_module) to reflect any changes made. */ var wx_locID =
+                            "USDC0001";
+                          /* If you are editing locations manually and are adding multiple modules to one page, each */ /* module must have a unique div id.  Please append a unique # to the div above, as well */ /* as the one referenced just below.  If you use the builder to create individual modules  */ /* you will not need to edit these parameters. */ var wx_targetDiv =
+                            "wx_module_6484";
+                          /* Please do not change the configuration value [wx_config] manually - your module */ /* will no longer function if you do.  If at any time you wish to modify this */ /* configuration please use the graphical configuration tool found at */ /* https://registration.weather.com/ursa/wow/step2 */ var wx_config =
+                            "SZ=180x150*WX=FHW*LNK=SSNL*UNT=C*BGI=flower*MAP=CSC|null*DN=olympic-tour.com*TIER=0*PID=1052010410*MD5=351401f20858003c79eb485717a194c5";
+                          document.write(
+                            "<scr" +
+                              'ipt src="' +
+                              document.location.protocol +
+                              "//wow.weather.com/weather/wow/module/" +
+                              wx_locID +
+                              "?config=" +
+                              wx_config +
+                              "&amp;proto=" +
+                              document.location.protocol +
+                              "&amp;target=" +
+                              wx_targetDiv +
+                              '"></scr' +
+                              "ipt>"
+                          );
+                        </script>
+                      </div>
+                    </td>
+                  </tr>
+                  <!-- <tr>                  <td width="25%" ><div align="center"> </div></td>                  <td width="25%"><div align="center"></div></td>                  <td width="25%"><div align="center"></div></td>                  <td width="25%"><div align="center"></div></td>                </tr> -->
+                </table>
+              </div>
+              <div class="clr"></div>
             </div>
-            <div class="top-bg-inner-pages main-content-resize-nonfloat"></div>
-            <div class="breadcrumb main-content-resize">
-                <div class="container">
-                    <ul>
-                        <li><a href="/">خانه</a><i class="fas fa-chevron-left"></i></li>
-                        <basis core="view"  groupcol="something" datamembername="db.navigation">
-                            <face filter="RowNumber=max(RowNumber) and parentcatid not in (10402,11488)">
-                                <li><span>@title</span></li>
-                            </face>
-                            <face filter="link is null and parentcatid not in (10402,11488)">
-                                <li><a href="/tour-list.bc?lid=1&catid=@parentcatid">@title</a><i
-                                        class="fa fa-chevron-left"></i></li>
-                            </face>
-                            <face filter="parentcatid not in (10402,11488)">
-                                <li><a href="/@link">@title</a><i class="fa fa-chevron-left"></i></li>
-                            </face>
-                        </basis>
-                    </ul> <!-- <div class="clr"></div> -->
-                </div>
-            </div> <!-- content -->
-            <div class="clr"></div>
-            <div class="box-resize">
-                <div class="box"> <!-- special tour -->
-                    <div id="special-tour"> <!-- info tour -->
-                        <basis core="print" groupcol="something"  datamembername="db.tourdata">
-                            <face>
-                                <div id="info-product" itemprop="@vocabulary" itemscope itemtype="@link">
-                            </face>
-                        </basis>
-                        <div class="content-tab">
-                            <div class="tabset1">
-                                <div data-pws-tab="tab1" data-pws-tab-name="مشخصات هتل"> <!-- info inner -->
-                                    <div class="typography">
-                                        <div> <a id="dw-package" href="/pdf-package.bc?id=[##cms.query.id##]"
-                                                target="_blank">دانلود پکیج تور <img src="/images/downloading.png"
-                                                    width="32" height="32" alt="download package"></a> </div>
-                                        <!-- table -->
-                                        <div class="tour-table">
-                                            <div class="hotel-tbl">
-                                                <basis core="tree" datamembername="list.inventoryjson" idcol="id"
-                                                    parentidcol="parentid" nullvalue="null">
-                                                    <layout>
-                                                        <table class="tblhotelfield">
-                                                            <thead>
-                                                                <tr class="tbl-head">
-                                                                    <td class="first-th">
-                                                                        <table class="hotel-info">
-                                                                            <tr>
-                                                                                <td class="tbl-th11">نام هتل</td>
-                                                                                <td class="tbl-th12">درجه هتل</td>
-                                                                                <td class="tbl-th13">خدمات هتل</td>
-                                                                            </tr>
-                                                                        </table>
-                                                                    </td>
-                                                                    <td class="tbl-th2">هر نفر در اتاق دوتخته</td>
-                                                                    <td class="tbl-th3">هر نفر در اتاق یک تخته</td>
-                                                                    <td class="tbl-th4">6 تا 12 سال با تخت</td>
-                                                                    <td class="tbl-th5">2 تا 6 سال بدون تخت</td>
-                                                                    <td class="tbl-th6">موقعیت</td>
-                                                                    <td class="tbl-th7">توضیحات</td>
-                                                                </tr>
-                                                            </thead> @child
-                                                        </table>
-                                                    </layout>
-                                                    <face filter="parentid in ('1')">
-                                                        <tr class="tbl-body"> @child </tr>
-                                                    </face>
-                                                    <face filter="field in ('hotelinfo')">
-                                                        <td class="first-th">
-                                                            <table class="hotel-info">
-                                                                <tbody> @child </tbody>
-                                                            </table>
-                                                        </td>
-                                                    </face>
-                                                    <face filter="field in ('hotel')">
-                                                        <tr>
-                                                            <td class="tbl-th11">
-                                                                <div class="td-hotel"> @child </div>
-                                                            </td>
-                                                        </tr>
-                                                    </face>
-                                                    <face filter="field in ('hotelid')"> <input type="hidden"
-                                                            class="loc-input" value="@value" /> </face>
-                                                    <face filter="field in ('hotelname')">
-                                                        <section class="part1"><a href="" target="_blank"
-                                                                class="name-link">@value</a> </section>
-                                                    </face>
-                                                    <face filter="field in ('star')">
-                                                        <section class="part2"> <img src="images/@value-star-rating.png"
-                                                                alt="@value" width="70" height="15"> </section>
-                                                    </face>
-                                                    <face filter="field in ('service') and type = 'scalar.string'">
-                                                        <section class="part3"> <span>@value</span> </section>
-                                                    </face>
-                                                    <face filter="field in ('doublecost') and type ='array'">
-                                                        <td class="tbl-th2 cost">@child</td>
-                                                    </face>
-                                                    <face filter="field in ('singlecost') and type ='array'">
-                                                        <td class="tbl-th3 cost">@child</td>
-                                                    </face>
-                                                    <face filter="field in ('childwithbed') and type ='array'">
-                                                        <td class="tbl-th4 cost">@child</td>
-                                                    </face>
-                                                    <face filter="field in ('childwithoutbed') and type ='array'">
-                                                        <td class="tbl-th5 cost">@child</td>
-                                                    </face>
-                                                    <face filter="field in ('locationf')">
-                                                        <td class="tbl-th6">@value</td>
-                                                    </face>
-                                                    <face filter="field in ('descriptionf')">
-                                                        <td class="tbl-th7">@value</td>
-                                                    </face>
-                                                    <face
-                                                        filter="field in ('doublecost','singlecost','childwithbed','childwithoutbed') and type ='object'">
-                                                        @child </face>
-                                                    <face
-                                                        filter="field in ('doublecostf','singlecostf','childwithbedf','childwithoutbedf')">
-                                                        <span class="price2 cost slice">@value</span> </face>
-                                                    <face
-                                                        filter="field in ('doubleunit','childwithoutbedunit','childwithbedunit','singleunit')">
-                                                        <span>@value</span><br> </face>
-                                                    <face filter="type in ('array','object')"> @child </face>
-                                                </basis>
-                                                <div class="clr"></div>
-                                            </div>
-                                            <basis core="tree" datamembername="list.inventoryjson" idcol="id"
-                                                parentidcol="parentid" nullvalue="null">
-                                                <layout> @child </layout>
-                                                <face filter="parentid in ('1')">
-                                                    <div class="hotel-section"> @child </div>
-                                                </face>
-                                                <face filter="field in ('hotel')"> @child </face>
-                                                <face filter="field in ('hotelid')"> <input type="hidden"
-                                                        class="loc-input" value="@value" /> </face>
-                                                <face filter="field in ('hotelname')">
-                                                    <div class="mobile-hotel"> <a href="" target="_blank"
-                                                            class="name-link">@value</a> </div>
-                                                </face>
-                                                <face filter="field in ('star')">
-                                                    <div class="mobile-hotel-info">
-                                                        <section class="hotel-qu"> درجه هتل </section>
-                                                        <section class="hotel-ans"> <img
-                                                                src="images/@value-star-rating.png" alt="@value"
-                                                                width="53" height="12"> </section>
-                                                        <div class="clr"></div>
-                                                    </div>
-                                                </face>
-                                                <face filter="field in ('service') and type = 'scalar.string'">
-                                                    <div class="mobile-hotel-info">
-                                                        <section class="hotel-qu">خدمات</section>
-                                                        <section class="hotel-ans"> @value </section>
-                                                        <div class="clr"></div>
-                                                    </div>
-                                                </face>
-                                                <face filter="field in ('doublecost') and type ='array'">
-                                                    <div class="mobile-hotel-info">
-                                                        <section class="hotel-qu"> نرخ اتاق دو تخته</section>
-                                                        <section class="hotel-ans">@child </section>
-                                                        <div class="clr"></div>
-                                                    </div>
-                                                </face>
-                                                <face filter="field in ('singlecost') and type ='array'">
-                                                    <div class="mobile-hotel-info">
-                                                        <section class="hotel-qu"> نرخ اتاق یک تخته</section>
-                                                        <section class="hotel-ans"> @child</section>
-                                                        <div class="clr"></div>
-                                                    </div>
-                                                </face>
-                                                <face filter="field in ('childwithbed') and type ='array'">
-                                                    <div class="mobile-hotel-info">
-                                                        <section class="hotel-qu"> نرخ کودک 6 تا 12 سال</section>
-                                                        <section class="hotel-ans"> @child </section>
-                                                        <div class="clr"></div>
-                                                    </div>
-                                                </face>
-                                                <face filter="field in ('childwithoutbed') and type ='array'">
-                                                    <div class="mobile-hotel-info">
-                                                        <section class="hotel-qu">نرخ کودک 2 تا 6 سال</section>
-                                                        <section class="hotel-ans"> @child </section>
-                                                        <div class="clr"></div>
-                                                    </div>
-                                                </face>
-                                                <face filter="field in ('locationf')">
-                                                    <div class="mobile-hotel-info">
-                                                        <section class="hotel-qu">موقعیت مکانی </section>
-                                                        <section class="hotel-ans">@value</section>
-                                                        <div class="clr"></div>
-                                                    </div>
-                                                </face>
-                                                <face filter="field in ('descriptionf')">
-                                                    <div class="mobile-hotel-info">
-                                                        <section class="hotel-qu"> توضیحات</section>
-                                                        <section class="hotel-ans">@value </section>
-                                                        <div class="clr"></div>
-                                                    </div>
-                                                </face>
-                                                <face
-                                                    filter="field in ('doublecost','singlecost','childwithbed','childwithoutbed') and type ='object'">
-                                                    <p> @child </p>
-                                                </face>
-                                                <face
-                                                    filter="field in ('doublecostf','singlecostf','childwithbedf','childwithoutbedf')">
-                                                    <span class="price2 cost slice">@value</span> </face>
-                                                <face
-                                                    filter="field in ('doubleunit','childwithoutbedunit','childwithbedunit','singleunit')">
-                                                    <span>@value</span> </face>
-                                                <face filter="type in ('array','object')"> @child </face>
-                                            </basis>
-                                        </div>
-                                    </div> <!-- end table -->
-                                </div> <!-- /info inner -->
-                                <div data-pws-tab="tab2" data-pws-tab-name="مشخصات تور">
-                                    <div class="typography">
-                                        <basis core="view"  groupcol="something" datamembername="dbsckema.showsckema">
-                                            <face level="1"
-                                                filter="TypeID not in (160,161,162,159) and prpID not in (8084,8097)">
-                                                <div class="schema">
-                                                    <div class="diamond"></div>
-                                                    <div class="schema-Q">
-                                                        <p>@question </p>
-                                                    </div>
-                                                    <div class="schema-A">
-                                                        <p class="show-answer">@child<span class="seprate"><i
-                                                                    class="fa fa-circle"></i></span> </p>
-                                                    </div>
-                                                </div>
-                                            </face>
-                                            <face level="2"> <span class="seprate"> <i class="fa fa-circle"></i>
-                                                </span><span itemprop="@vocabulary"> @answer</span> </face>
-                                        </basis>
-                                    </div>
-                                </div>
-                                <div data-pws-tab="tab3" data-pws-tab-name=" برنامه سفر ">
-                                    <div class="typography">
-                                        <basis core="print"  groupcol="something"  datamembername="dbsckema.showsckema">
-                                            <face filter="prpID in (8084) ">
-                                                <div> <span class="seprate-t"><i class="fa fa-circle"></i></span>
-                                                    <p itemprop="@vocabulary">@text</p> <br>
-                                                    <p itemprop="@vocabulary">@largetext</p>
-                                                </div>
-                                            </face>
-                                        </basis>
-                                    </div>
-                                </div>
-                                <div data-pws-tab="tab4" data-pws-tab-name=" توضیحات تور ">
-                                    <div class="typography">
-                                        <basis core="view"  groupcol="something" datamembername="dbsckema.showsckema">
-                                            <face filter="prpID in (8097)">
-                                                <div itemprop="@vocabulary"> <span class="seprate-t"><i
-                                                            class="fa fa-circle"></i></span>
-                                                    <p itemprop="@vocabulary">@text</p> <br>
-                                                    <p itemprop="@vocabulary">@largetext</p>
-                                                </div>
-                                            </face>
-                                        </basis>
-                                    </div>
-                                </div>
-                                <div data-pws-tab="tab5" data-pws-tab-name="ویدئو">
-                                    <div class="video-tab">
-                                        <basis core="print"  groupcol="something"  datamembername="dbsckema.showsckema">
-                                            <face filter="prpID=59082">
-                                                <div id="1" class="video-box">
-                                                    <script type="text/JavaScript"
-                                                        src="https://www.aparat.com/embed/@answer?data[rnddiv]=1&data[responsive]=yes"></script>
-                                                </div>
-                                            </face>
-                                        </basis>
-                                        <basis core="print"  groupcol="something" datamembername="dbsckema.showsckema">
-                                            <layout>
-                                                <div class="pro-link-box">@child</div>
-                                            </layout>
-                                            <face filter="prpID=59083"> لینک تور مرتبط : <a class="pro-link"
-                                                    href="@answer"> @answer</a> </face>
-                                        </basis>
-                                    </div>
-                                    <div class="clr"></div>
-                                </div>
-                            </div> <!-- tabset1 -->
-                        </div>
-                    </div>
-                    <div class="clr"></div> <!-- /info tour --> <!-- gallery -->
-                    <div id="gallery-resize">
-                        <basis core="print" groupcol="something"  datamembername="db11.gallery">
-                            <layout>
-                                <div class="advanced-slider" id="responsive-slider">
-                                    <ul class="slides"> @child </ul>
-                                </div>
-                            </layout>
-                            <face>
-                                <li class="slide rounded-caption"> <img class="image" src="/@largeIMG" alt="@name"
-                                        width="800" height="450" /> <img class="thumbnail" src="/@smallIMG" alt="@name"
-                                        width="40" height="40" /> </li>
-                            </face>
-                        </basis>
-                    </div> <!-- product related -->
-                    <div id="news">
-                        <div class="clr"></div>
-                        <basis core="call" file="airline.inc" /> <!-- jquery news -->
-                        <div class="text-news">
-                            <div class="text-news2">
-                                <div id="nt-example1-container">
-                                    <div class="title-related">
-                                        <p class="s1"></p>
-                                        <div class="title-related-text f-none">تور مرتبط</div>
-                                        <p class="s1"></p>
-                                    </div>
-                                    <ul id="nt-example1">
-                                        <basis core="call" file="logo-tour.inc" />
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="contact-sub">
-                            <div id="nt-example1-prev"></div>
-                            <div id="nt-example1-next"></div>
-                        </div>
-                    </div> <!-- /article related -->
-                    <div id="info-related-article">
-                        <div class="title-related topziro">
-                            <div class="title-related-text ">مقالات مرتبط</div>
-                            <p class="s2"></p>
-                        </div>
-                        <div class="typography article-info">
-                            <basis core="print"  groupcol="something" datamembername="dbpr2.listpr2">
-                                <face>
-                                    <div class="schema aaa">
-                                        <div class="img-maghale"><img src="/@image" alt="@title"> </div>
-                                        <div class="name-maghale"> <a href="/@link">
-                                                <p><i class="fa fa-pencil"></i>@title </p>
-                                            </a> </div>
-                                        <div class="date-maghale">
-                                            <p class="show-date"> <span class="seprate"> </span> <span>@prp_7231</span>
-                                                <span class="seprate"><i class="fa fa-calendar-o"></i></span> </p>
-                                        </div>
-                                        <div class="img-maghale"> <a href="/@link"><i class="fa fa-plus"></i></a> </div>
-                                    </div>
-                                </face>
-                                <layout> @child </layout> <else-layout>
-                                    <div class="related-tour-else"> <img src="/images/no-gallery.jpg"
-                                            alt=" مطلبی برای مقاله مرتبط درج نشده است " /> </div>
-                                </else-layout>
-                            </basis>
-                        </div>
-                    </div>
-                </div>
-                <div class="clr"></div>
-            </div>
+          </div>
+          <div class="box-bot"></div>
+          <div class="clr"></div>
         </div>
-        <div class="clr"></div>
-        <div class="main-content-resize-nonfloat">
-            <basis core="call" file="footer.inc" />
-        </div>
-        </div>
-        <basis core="call" file="GoogleAnalytics.inc" />
-        <script type="text/javascript" src="/js/jquery.touchSwipe.min.js"></script>
-        <script type="text/javascript" src="/js/jquery.advancedSlider.min.js"></script>
-        <script
-            type="text/javascript">  jQuery(document).ready(function ($) { $('#responsive-slider').advancedSlider({ width: 800, height: 550, responsive: true, skin: 'glossy-square-gray', shadow: false, effectType: 'swipe', slideshow: true, pauseSlideshowOnHover: true, swipeThreshold: 30, slideButtons: false, thumbnailType: 'scroller', thumbnailWidth: 140, thumbnailHeight: 80, thumbnailButtons: true, thumbnailSwipe: true, thumbnailScrollerResponsive: true, minimumVisibleThumbnails: 2, maximumVisibleThumbnails: 6, keyboardNavigation: true }); });  </script>
-        <script type='text/javascript' src='/js/jquery-1.10.2.min.js'></script><!--news-->
-        <script src="/js/jquery.pwstabs.js"></script><!--tab-->
-        <script>  jQuery(document).ready(function ($) { $('.tabset1').pwstabs({ effect: 'scale', defaultTab: 1, containerWidth: '989px' }); $('.pws_demo_colors a').click(function (e) { e.preventDefault(); $('.pws_tabs_container').removeClass('pws_theme_cyan pws_theme_grey pws_theme_violet pws_theme_green pws_theme_yellow pws_theme_gold pws_theme_orange pws_theme_red pws_theme_purple pws_theme_dark_cyan pws_theme_dark_grey pws_theme_dark_violet pws_theme_dark_green pws_theme_dark_yellow pws_theme_dark_gold pws_theme_dark_orange pws_theme_dark_red pws_theme_dark_purple').addClass('pws_theme_' + $(this).attr('data-demo-color')); }); });  </script>
-        <script src="/js/autoNumeric.js"></script>
-        <script>     $(".cost1111").autoNumeric('init');     </script>
-        <script src="js/jquery-3-3-1.js"></script>
-        <script src="js/new-menu.js"></script>
-        <script type='text/javascript' src="js/jquery.navgoco.js"></script>
-        <script type='text/javascript' src="js/off-canvas.js"></script>
-        <script>  $(document).ready(function () { $(window).scroll(function () { if ($(this).scrollTop() > 50) { $('.header-bot').addClass("header-bot-fixed"); } else { $('.header-bot').removeClass("header-bot-fixed"); } }); });  </script>
-        <script>  $(document).ready(function () { $("#toTop").hide(); $(function () { $(window).scroll(function () { if ($(this).scrollTop() > 100) { $('#toTop').fadeIn(); } else { $('#toTop').fadeOut(); } }); $('#toTop').click(function () { $('body,html').animate({ scrollTop: 0 }, 800); return false; }); }); });  </script>
-    </body>
-
-    </html>
+      </div>
+      <div class="clr"></div>
+      <basis core="call" file="footer.inc" />
+    </div>
+    <script src="js/jquery-3-3-1.js"></script>
+    <script src="js/mobile-menu.js"></script>
+  </body>
+</html>

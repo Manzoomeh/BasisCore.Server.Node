@@ -361,7 +361,7 @@ class HTMLParser {
     rootObject.$type = "group";
     rootObject.core = "group";
     rootObject.name = "ROOT_GROUP";
-    rootObject.commands = childrenArray;
+    rootObject.Commands = childrenArray;
     rootObject.content = [];
     return rootObject;
   }
@@ -376,15 +376,18 @@ class HTMLParser {
           return;
         } else {
           if (subItem.type == "tag") {
-            rawTextString += `<${subItem.name}` + " ";
+            rawTextString += `<${subItem.name}`;
             if (Object.keys(subItem.attributes).length > 0) {
               keyValueString = this.objectToKeyValueString(subItem.attributes);
-              rawTextString += keyValueString + " ";
+              rawTextString += " " + keyValueString + " ";
             }
             if (subItem.tagType === "single") {
               rawTextString += "/>";
             } else {
-              rawTextString += " >";
+              if (rawTextString == "<!DOCTYPE") {
+                rawTextString += ` html`;
+              }
+              rawTextString += ">";
             }
           } else if (subItem.type == "text") {
             if (subItem.value.trim() === "") {
@@ -481,7 +484,6 @@ class HTMLParser {
         const keys = Object.keys(object.attributes);
         if (keys.length > 0) {
           if (config.AddExtraAttribute == true) {
-            
             for (let key of keys) {
               let value = object.attributes[key];
               if (value.startsWith("[##") && value.endsWith("##]")) {
@@ -500,7 +502,9 @@ class HTMLParser {
                 }
                 if (!defaultValue) {
                   value = {
-                    params: [{ Source: source, Member: member, Column: column }],
+                    params: [
+                      { Source: source, Member: member, Column: column },
+                    ],
                   };
                 } else {
                   value = {
@@ -687,11 +691,10 @@ class HTMLParser {
                   il[to] = [{}];
                   il[to][0] = finalAttributes;
                   il[to][0].content = finalContent;
-                }else{
-                il[to].push(finalAttributes);
-                il[to][il[to].length - 1].content = finalContent;
+                } else {
+                  il[to].push(finalAttributes);
+                  il[to][il[to].length - 1].content = finalContent;
                 }
-
               } else {
                 if (!il[item.name.slice(1)]) {
                   il[item.name.slice(1)] = [{}];
@@ -724,8 +727,8 @@ class HTMLParser {
               }
             }
           } else {
-            tempString = ""
-            let finalAttributes ={};
+            tempString = "";
+            let finalAttributes = {};
             if (elementsKeys.indexOf(item.name) !== -1) {
               const keys = Object.keys(item.attributes);
               const elementConfig = elements[item.name];
@@ -734,7 +737,7 @@ class HTMLParser {
                   item.attributes[key].startsWith("[##") &&
                   item.attributes[key].endsWith("##]")
                 ) {
-                   let value = item.attributes[key].slice(3, -3).split(".");
+                  let value = item.attributes[key].slice(3, -3).split(".");
                   if (value.length > 3 || value.length < 3) {
                     throw new Error("invalid binding expression");
                   }
@@ -777,10 +780,11 @@ class HTMLParser {
                     } else if (
                       typeof finalAttributes[attributeConfig.To] == "string"
                     ) {
-                      finalAttributes[attributeConfig.To] = item.attributes[key];
+                      finalAttributes[attributeConfig.To] =
+                        item.attributes[key];
                     }
                   } else {
-                    finalAttributes[key] =item.attributes[key];
+                    finalAttributes[key] = item.attributes[key];
                   }
                 } else {
                   if (
@@ -788,16 +792,14 @@ class HTMLParser {
                     elementConfig.AddExtraAttribute == false
                   ) {
                     throw new Error(
-                      `adding extra attribute (${key} = ${
-                        item.attributes[key]
-                      }]) in ${item.attributes} is not available for ${item.name} `
+                      `adding extra attribute (${key} = ${item.attributes[key]}]) in ${item.attributes} is not available for ${item.name} `
                     );
                   } else {
                     if (!finalAttributes["extra-attributes"]) {
                       finalAttributes["extra-attributes"] = {};
                     }
                     finalAttributes["extra-attributes"][key] =
-                    item.attributes[key];
+                      item.attributes[key];
                   }
                 }
               }
@@ -806,10 +808,9 @@ class HTMLParser {
                 if (!il[to]) {
                   il[to] = [{}];
                   il[to][0] = finalAttributes;
-                }else{
+                } else {
                   il[to].push(finalAttributes);
                 }
-                
               } else {
                 if (!il[item.name]) {
                   il[item.name] = [{}];
@@ -819,7 +820,7 @@ class HTMLParser {
                 il[item.name][length] = finalAttributes;
               }
               tempAttributes = {};
-            }else{
+            } else {
               tempString += `<${item.name}` + " ";
               if (Object.keys(item.attributes).length > 0) {
                 let keyValueString = this.objectToKeyValueString(
@@ -827,7 +828,7 @@ class HTMLParser {
                 );
                 tempString += keyValueString + " ";
               }
-                tempString += "/>";
+              tempString += "/>";
             }
           }
         }
@@ -933,7 +934,6 @@ class HTMLParser {
     return splitArray;
   }
   static async parse(htmlName, filename) {
-    //console.time("appTime");
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
     const htmlDir = path.join(__dirname, "src", htmlName + ".html");
@@ -941,7 +941,6 @@ class HTMLParser {
     await parser.readHtmlFile();
     await parser.getTheParserConfig();
     const tokens = parser.parse();
-    console.log(tokens)
     const result = await parser.processTags(tokens);
     const resultObj = await parser.processArray(result);
     const final = resultObj.toFilteredObject();
@@ -949,8 +948,26 @@ class HTMLParser {
       final,
       path.join(__dirname, "result", filename + ".json")
     );
-    // console.timeEnd("appTime");
+  }
+  static async parseForExelTest(htmlFile, originalJson) {
+    const __filename = fileURLToPath(import.meta.url);
+    const __dirname = path.dirname(__filename);
+    const parser = new HTMLParser("/", "/configs");
+    parser.html = htmlFile;
+    await parser.getTheParserConfig();
+    const tokens = parser.parse();
+    const result = await parser.processTags(tokens);
+    const resultObj = await parser.processArray(result);
+    const final = resultObj.toFilteredObject();
+    await parser.writeJsonFile(
+      final,
+      path.join(__dirname, "testfile", "result", "appResult" + ".json")
+    );
+    await fsPromises.writeFile(
+      
+      path.join(__dirname, "testfile", "result", "original" + ".json"),originalJson,"utf-8"
+    );
   }
 }
 HTMLParser.parse("index", "final");
-export default HTMLParser.parse;
+export default HTMLParser;
