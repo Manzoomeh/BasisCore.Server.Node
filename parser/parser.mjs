@@ -820,7 +820,7 @@ class HTMLParser {
               }
               tempAttributes = {};
             }else{
-              tempString += `<${item.name}` + "";
+              tempString += `<${item.name}` + " ";
               if (Object.keys(item.attributes).length > 0) {
                 let keyValueString = this.objectToKeyValueString(
                   item.attributes
