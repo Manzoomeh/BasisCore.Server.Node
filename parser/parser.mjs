@@ -201,25 +201,30 @@ class HTMLParser {
     }
 
     const tagText = this.html.slice(this.position + 1, tagEnd);
-    const [tagName, ...attributes] = tagText.split(" ");
+    //const regex = /^<\/?([a-zA-Z][a-zA-Z0-9]*)\b/;
+    const match = tagText.split(" ")[0];
+
+    if (!match) {
+      throw new Error("Invalid HTML: cannot detect the tag name");
+    }
+
+    const tagName = match;
     const attributeMap = {};
 
-    for (let attr of attributes) {
-      let [attrName, attrValue] = attr.split("=");
+    const attrRegex = /(\w+)\s*=\s*(?:"([^"]*)"|'([^']*)'|(\S+))/g;
+    let attrMatch;
 
-      // Check if the attribute has a value
-      if (attrValue) {
-        attributeMap[attrName] = attrValue.replace(/['"]/g, "");
-      } else {
-        continue;
-      }
+    while ((attrMatch = attrRegex.exec(tagText)) !== null) {
+      const [, attrName, doubleQuotedValue, singleQuotedValue, unquotedValue] =
+        attrMatch;
+      const attrValue = doubleQuotedValue || singleQuotedValue || unquotedValue;
+      attributeMap[attrName] = attrValue;
     }
 
     // Check if it's a self-closing tag
     if (tagText.endsWith("/")) {
       single = true;
     }
-
     if (single === true) {
       if ("/" in attributeMap) {
         delete attributeMap["/"];
@@ -476,8 +481,37 @@ class HTMLParser {
         const keys = Object.keys(object.attributes);
         if (keys.length > 0) {
           if (config.AddExtraAttribute == true) {
+            
             for (let key of keys) {
-              result.addExtraAttribute(key, object.attributes[key]);
+              let value = object.attributes[key];
+              if (value.startsWith("[##") && value.endsWith("##]")) {
+                value = value.slice(3, -3).split(".");
+
+                if (value.length > 3 || value.length < 3) {
+                  throw new Error("invalid binding expression");
+                }
+                let [source, member, columnWithDefault] = value;
+                let column;
+                let defaultValue;
+                if (columnWithDefault.includes("|")) {
+                  [column, defaultValue] = columnWithDefault.split("|");
+                } else {
+                  column = columnWithDefault;
+                }
+                if (!defaultValue) {
+                  value = {
+                    params: [{ Source: source, Member: member, Column: column }],
+                  };
+                } else {
+                  value = {
+                    params: [
+                      { Source: source, Member: member, Column: column },
+                      { value: defaultValue },
+                    ],
+                  };
+                }
+              }
+              result.addExtraAttribute(key, value);
             }
           }
         }
@@ -507,8 +541,8 @@ class HTMLParser {
     }
     let tempAttributes = {};
     let tempString = "";
-    let elementMultiState = 0;
     let elementsState = "";
+    let elementMultiState = 0;
     for (let item of content) {
       if (item.basis === true) {
         let result = await this.processBasisTags(item);
@@ -526,8 +560,8 @@ class HTMLParser {
         } else if (item.type == "tag") {
           if (item.tagType === "double") {
             if (
-              elementsKeys.includes(item.name.slice(1)) &&
               item.name.startsWith("/") &&
+              elementsKeys.indexOf(item.name.slice(1)) !== -1 &&
               item.name.slice(1) == elementsState
             ) {
               elementsState = "";
@@ -536,7 +570,10 @@ class HTMLParser {
               const keys = Object.keys(tempAttributes);
               const elementConfig = elements[item.name.slice(1)];
               for (let key of keys) {
-                if (tempAttributes[key].startsWith("[##") && tempAttributes["key"].endsWith("##]")) {
+                if (
+                  tempAttributes[key].startsWith("[##") &&
+                  tempAttributes[key].endsWith("##]")
+                ) {
                   value = value.slice(3, -3).split(".");
                   if (value.length > 3 || value.length < 3) {
                     throw new Error("invalid binding expression");
@@ -551,7 +588,9 @@ class HTMLParser {
                   }
                   if (!defaultValue) {
                     value = {
-                      params: [{ Source: source, Member: member, Column: column }],
+                      params: [
+                        { Source: source, Member: member, Column: column },
+                      ],
                     };
                   } else {
                     value = {
@@ -561,69 +600,240 @@ class HTMLParser {
                       ],
                     };
                   }
-                  tempAttributes[key] = value
+                  tempAttributes[key] = value;
                 }
                 let attributeConfig = elementConfig.Attributes[key];
                 if (attributeConfig) {
                   if (attributeConfig.To) {
-                    finalAttributes[attributeConfig.To] = tempAttributes[key];
+                    if (
+                      attributeConfig.multi &&
+                      (typeof finalAttributes[attributeConfig.To] == "string" ||
+                        typeof finalAttributes[attributeConfig.To] == "object")
+                    ) {
+                      finalAttributes[attributeConfig.To] = [
+                        finalAttributes[attributeConfig.To],
+                        tempAttributes[key],
+                      ];
+                    } else if (
+                      typeof finalAttributes[attributeConfig.To] == "string"
+                    ) {
+                      finalAttributes[attributeConfig.To] = tempAttributes[key];
+                    }
                   } else {
                     finalAttributes[key] = tempAttributes[key];
                   }
-                }else{
-                  if(!elementConfig.addExtraAttribute||elementConfig.addExtraAttribute==false){
-                    throw new error(`adding extra attribute is not available for ${item.name.slice(1)} `)
-                  }else{
-                    if(!finalAttributes["extra-attributes"]){
-                      finalAttributes["extra-attributes"] = {}
+                } else {
+                  if (
+                    !elementConfig.AddExtraAttribute ||
+                    elementConfig.AddExtraAttribute == false
+                  ) {
+                    throw new Error(
+                      `adding extra attribute (${key} = ${
+                        tempAttributes[key]
+                      }]) in ${tempAttributes} is not available for ${item.name.slice(
+                        1
+                      )} `
+                    );
+                  } else {
+                    if (!finalAttributes["extra-attributes"]) {
+                      finalAttributes["extra-attributes"] = {};
                     }
-                    finalAttributes["extra-attributes"][key] = tempAttributes[key]
+                    finalAttributes["extra-attributes"][key] =
+                      tempAttributes[key];
                   }
                 }
               }
+
+              let finalContent;
               switch (item.name.slice(1)) {
                 case "member":
-                  
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 case "email":
-
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 case "params":
-
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 case "layout":
-
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 case "replace":
-
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 case "else-layout":
-
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 case "divider":
-
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 case "add":
-
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 case "content":
-
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 case "face":
-
+                  finalContent = this.splitByBindings(tempString);
+                  break;
                 default:
                   throw new error(
                     `element ${item.name.slice(1)} is not valid `
                   );
               }
-            } else {
-              tempString.content += `<${item.name}` + " ";
-              if (Object.keys(item.attributes).length > 0) {
-                keyValueString = this.objectToKeyValueString(item.attributes);
-                tempString.content += keyValueString + " ";
-              }
-              if (item.tagType === "single") {
-                tempString.content += "/>";
+              if (elements[item.name.slice(1)].To) {
+                let to = elements[item.name.slice(1)].To;
+                if (!il[to]) {
+                  il[to] = [{}];
+                  il[to][0] = finalAttributes;
+                  il[to][0].content = finalContent;
+                }else{
+                il[to].push(finalAttributes);
+                il[to][il[to].length - 1].content = finalContent;
+                }
+
               } else {
-                tempString.content += " >";
+                if (!il[item.name.slice(1)]) {
+                  il[item.name.slice(1)] = [{}];
+                  il[item.name.slice(1)][0] = finalAttributes;
+                  il[item.name.slice(1)][0].content = finalContent;
+                }
+                let length = il[item.name.slice(1)].length;
+                il[item.name.slice(1)][length] = finalAttributes;
+                il[item.name.slice(1)][length].content = finalContent;
               }
+              tempAttributes = {};
+            } else {
+              if (elementsKeys.includes(item.name) && elementsState == "") {
+                tempAttributes = item.attributes;
+                elementsState = `${item.name}`;
+                elementMultiState = 1;
+              } else {
+                tempString += `<${item.name}` + " ";
+                if (Object.keys(item.attributes).length > 0) {
+                  let keyValueString = this.objectToKeyValueString(
+                    item.attributes
+                  );
+                  tempString += keyValueString + " ";
+                }
+                if (item.tagType === "single") {
+                  tempString += "/>";
+                } else {
+                  tempString += " >";
+                }
+              }
+            }
+          } else {
+            tempString = ""
+            let finalAttributes ={};
+            if (elementsKeys.indexOf(item.name) !== -1) {
+              const keys = Object.keys(item.attributes);
+              const elementConfig = elements[item.name];
+              for (let key of keys) {
+                if (
+                  item.attributes[key].startsWith("[##") &&
+                  item.attributes[key].endsWith("##]")
+                ) {
+                   let value = item.attributes[key].slice(3, -3).split(".");
+                  if (value.length > 3 || value.length < 3) {
+                    throw new Error("invalid binding expression");
+                  }
+                  let [source, member, columnWithDefault] = value;
+                  let column;
+                  let defaultValue;
+                  if (columnWithDefault.includes("|")) {
+                    [column, defaultValue] = columnWithDefault.split("|");
+                  } else {
+                    column = columnWithDefault;
+                  }
+                  if (!defaultValue) {
+                    value = {
+                      params: [
+                        { Source: source, Member: member, Column: column },
+                      ],
+                    };
+                  } else {
+                    value = {
+                      params: [
+                        { Source: source, Member: member, Column: column },
+                        { value: defaultValue },
+                      ],
+                    };
+                  }
+                  item.attributes[key] = value;
+                }
+                let attributeConfig = elementConfig.Attributes[key];
+                if (attributeConfig) {
+                  if (attributeConfig.To) {
+                    if (
+                      attributeConfig.multi &&
+                      (typeof finalAttributes[attributeConfig.To] == "string" ||
+                        typeof finalAttributes[attributeConfig.To] == "object")
+                    ) {
+                      finalAttributes[attributeConfig.To] = [
+                        finalAttributes[attributeConfig.To],
+                        item.attributes[key],
+                      ];
+                    } else if (
+                      typeof finalAttributes[attributeConfig.To] == "string"
+                    ) {
+                      finalAttributes[attributeConfig.To] = item.attributes[key];
+                    }
+                  } else {
+                    finalAttributes[key] =item.attributes[key];
+                  }
+                } else {
+                  if (
+                    !elementConfig.AddExtraAttribute ||
+                    elementConfig.AddExtraAttribute == false
+                  ) {
+                    throw new Error(
+                      `adding extra attribute (${key} = ${
+                        item.attributes[key]
+                      }]) in ${item.attributes} is not available for ${item.name} `
+                    );
+                  } else {
+                    if (!finalAttributes["extra-attributes"]) {
+                      finalAttributes["extra-attributes"] = {};
+                    }
+                    finalAttributes["extra-attributes"][key] =
+                    item.attributes[key];
+                  }
+                }
+              }
+              if (elements[item.name].To) {
+                let to = elements[item.name].To;
+                if (!il[to]) {
+                  il[to] = [{}];
+                  il[to][0] = finalAttributes;
+                }else{
+                  il[to].push(finalAttributes);
+                }
+                
+              } else {
+                if (!il[item.name]) {
+                  il[item.name] = [{}];
+                  il[item.name][0] = finalAttributes;
+                }
+                let length = il[item.name].length;
+                il[item.name][length] = finalAttributes;
+              }
+              tempAttributes = {};
+            }else{
+              tempString += `<${item.name}` + "";
+              if (Object.keys(item.attributes).length > 0) {
+                let keyValueString = this.objectToKeyValueString(
+                  item.attributes
+                );
+                tempString += keyValueString + " ";
+              }
+                tempString += "/>";
             }
           }
         }
-        return il;
       }
     }
+    return il;
   }
   findMissingProperties(object1, object2) {
     const object1Keys = Object.keys(object1);
@@ -731,6 +941,7 @@ class HTMLParser {
     await parser.readHtmlFile();
     await parser.getTheParserConfig();
     const tokens = parser.parse();
+    console.log(tokens)
     const result = await parser.processTags(tokens);
     const resultObj = await parser.processArray(result);
     const final = resultObj.toFilteredObject();

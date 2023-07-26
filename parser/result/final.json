@@ -13,34 +13,23 @@
           "core": "inlinesource",
           "name": "list",
           "Members": [
-            { "name": "inventoryjson", "undefined": "json", "preview": "" }
-          ],
-          "member": ["undefined{\"root\":[##db.inventory.result##]}"]
-        },
-        {
-          "$type": "dbsource",
-          "core": "dbsource",
-          "name": "db",
-          "extra-attribute": {
-            "mid": "20",
-            "lid": "1",
-            "usedforid": "[##cms.query.id##]"
-          },
-          "ConnectionName": "basiscore",
-          "Members": [{ "name": "scalar", "type": "scalar", "typeid": "150" }]
-        },
-        {
-          "$type": "dbsource",
-          "core": "dbsource",
-          "name": "db",
-          "extra-attribute": {
-            "lid": "1",
-            "mid": "20",
-            "usedforid": "[##cms.query.id##]"
-          },
-          "ConnectionName": "basiscore",
-          "Members": [
-            { "name": "navigation", "type": "tree", "request": "navigationcat" }
+            {
+              "name": "inventoryjson",
+              "preview": "sth",
+              "content": [
+                "{\"root\":",
+                {
+                  "params": [
+                    {
+                      "source": "db",
+                      "member": "inventory",
+                      "column": "result"
+                    }
+                  ]
+                },
+                "}"
+              ]
+            }
           ]
         },
         {
@@ -50,12 +39,55 @@
           "extra-attribute": {
             "mid": "20",
             "lid": "1",
-            "usedforid": "[##cms.query.id##]"
+            "usedforid": {
+              "params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
           },
           "ConnectionName": "basiscore",
           "Members": [
-            { "name": "view3", "type": "view" },
-            { "name": "tourdata", "type": "view", "request": "rdfa" }
+            {
+              "name": "scalar",
+              "extra-attributes": { "type": "scalar", "typeid": "150" }
+            }
+          ]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "db",
+          "extra-attribute": {
+            "lid": "1",
+            "mid": "20",
+            "usedforid": {
+              "params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
+          },
+          "ConnectionName": "basiscore",
+          "Members": [
+            {
+              "name": "navigation",
+              "extra-attributes": { "type": "tree", "request": "navigationcat" }
+            }
+          ]
+        },
+        {
+          "$type": "dbsource",
+          "core": "dbsource",
+          "name": "db",
+          "extra-attribute": {
+            "mid": "20",
+            "lid": "1",
+            "usedforid": {
+              "params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
+          },
+          "ConnectionName": "basiscore",
+          "Members": [
+            { "name": "view3", "extra-attributes": { "type": "view" } },
+            {
+              "name": "tourdata",
+              "extra-attributes": { "type": "view", "request": "rdfa" }
+            }
           ]
         },
         {
@@ -65,10 +97,14 @@
           "extra-attribute": {
             "mid": "20",
             "lid": "1",
-            "usedforid": "[##cms.query.id##]"
+            "usedforid": {
+              "params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
           },
           "ConnectionName": "basiscore",
-          "Members": [{ "name": "showsckema", "type": "view" }]
+          "Members": [
+            { "name": "showsckema", "extra-attributes": { "type": "view" } }
+          ]
         },
         {
           "$type": "dbsource",
@@ -77,17 +113,21 @@
           "extra-attribute": {
             "mid": "20",
             "lid": "1",
-            "usedforid": "[##cms.query.id##]"
+            "usedforid": {
+              "params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            }
           },
           "ConnectionName": "basiscore",
           "Members": [
             {
               "name": "listpr2",
-              "type": "list",
-              "link": "article.bc",
-              "blgid": "218",
-              "perpage": "10",
-              "propertyid": "7231"
+              "extra-attributes": {
+                "type": "list",
+                "link": "article.bc",
+                "blgid": "218",
+                "perpage": "10",
+                "propertyid": "7231"
+              }
             }
           ]
         },
@@ -97,11 +137,18 @@
           "name": "db11",
           "extra-attribute": {
             "lid": "1",
-            "usedforid": "[##cms.query.id##]",
+            "usedforid": {
+              "params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            },
             "sourcemid": "product"
           },
           "ConnectionName": "media",
-          "Members": [{ "name": "gallery", "type": "list", "format": "4" }]
+          "Members": [
+            {
+              "name": "gallery",
+              "extra-attributes": { "type": "list", "format": "4" }
+            }
+          ]
         },
         {
           "$type": "dbsource",
@@ -112,9 +159,15 @@
           "Members": [
             {
               "name": "list",
-              "type": "list",
-              "request": "product",
-              "id": "[##cms.query.id##]"
+              "extra-attributes": {
+                "type": "list",
+                "request": "product",
+                "id": {
+                  "params": [
+                    { "Source": "cms", "Member": "query", "Column": "id" }
+                  ]
+                }
+              }
             }
           ]
         },
@@ -124,24 +177,45 @@
           "name": "db11",
           "extra-attribute": {
             "lid": "1",
-            "usedforid": "[##cms.query.id##]",
+            "usedforid": {
+              "params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+            },
             "sourcemid": "product"
           },
           "ConnectionName": "media",
-          "Members": [{ "name": "pdf", "type": "list", "format": "pdf" }]
+          "Members": [
+            {
+              "name": "pdf",
+              "extra-attributes": { "type": "list", "format": "pdf" }
+            }
+          ]
         }
       ]
     },
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "<!doctype  ><html class=mm-hover  ><head  ><meta charset=utf-8  ><meta name=viewport content=width initial-scale=1.0 /><meta name=author content=BasisCore  >"
+      "content": "<!doctype  ><html class=mm-hover  ><head  ><meta charset=utf-8  ><meta name=viewport content=width=device-width, initial-scale=1.0 /><meta name=author content=BasisCore  >"
     },
     {
       "$type": "print",
       "core": "print",
       "data-member-name": "db11.list",
-      "GroupColumn": "something"
+      "GroupColumn": "something",
+      "faces": [
+        {
+          "content": [
+            "<metaname=description content=",
+            {
+              "params": [
+                { "source": "cms", "member": "seo", "column": "description" },
+                { "value": "db11" }
+              ]
+            },
+            " />\r\n            "
+          ]
+        }
+      ]
     },
     { "$type": "call", "core": "call", "FileName": "script1.inc" },
     {
@@ -153,13 +227,27 @@
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "<a href=# id=toTop  ><i class=fas  ></i  ></a  ><div class=slc  ><ul  ><li  ><a href=https://Instagram.com/shahinparvazsama  ><i class=fab  ></i  ></a  ></li  ><li  ><a href=https://t.me/shahin_parvazsama  ><i class=fab  ></i  ></a  ></li  ><li  ><a href=http://www.aparat.com/shahinparvazsama  ><i class=fas  ></i  ></a  ></li  ></ul  ></div  ><div class=top-bg-inner-pages  ></div  ><div class=breadcrumb  ><div class=container  ><ul  ><li  ><a href=/  >خانه</a  ><i class=fas  ></i  ></li  >"
+      "content": "<a href=# id=toTop  ><i class=fas fa-sort-up  ></i  ></a  ><div class=slc  ><ul  ><li  ><a href=https://Instagram.com/shahinparvazsama  ><i class=fab fa-instagram  ></i  ></a  ></li  ><li  ><a href=https://t.me/shahin_parvazsama  ><i class=fab fa-telegram-plane  ></i  ></a  ></li  ><li  ><a href=http://www.aparat.com/shahinparvazsama  ><i class=fas fa-film  ></i  ></a  ></li  ></ul  ></div  ><div class=top-bg-inner-pages main-content-resize-nonfloat  ></div  ><div class=breadcrumb main-content-resize  ><div class=container  ><ul  ><li  ><a href=/  >خانه</a  ><i class=fas fa-chevron-left  ></i  ></li  >"
     },
     {
       "$type": "view",
       "core": "view",
       "data-member-name": "db.navigation",
-      "GroupColumn": "something"
+      "GroupColumn": "something",
+      "faces": [
+        {
+          "filter": "RowNumber=max(RowNumber) and parentcatid not in (10402,11488)",
+          "content": "\r\n                                <li  ><span  >@title</span  ></li  >\r\n                            "
+        },
+        {
+          "filter": "link is null and parentcatid not in (10402,11488)",
+          "content": "\r\n                                <li  ><span  >@title</span  ></li  >\r\n                            \r\n                                <li  ><a href=/tour-list.bc?lid=1&catid=@parentcatid  >@title</a  ><i\r\n class=fa fa-chevron-left  ></i  ></li  >\r\n                            "
+        },
+        {
+          "filter": "parentcatid not in (10402,11488)",
+          "content": "\r\n                                <li  ><span  >@title</span  ></li  >\r\n                            \r\n                                <li  ><a href=/tour-list.bc?lid=1&catid=@parentcatid  >@title</a  ><i\r\n class=fa fa-chevron-left  ></i  ></li  >\r\n                            \r\n                                <li  ><a href=/@link  >@title</a  ><i class=fa fa-chevron-left  ></i  ></li  >\r\n                            "
+        }
+      ]
     },
     {
       "$type": "rawtext",
@@ -170,22 +258,95 @@
       "$type": "print",
       "core": "print",
       "data-member-name": "db.tourdata",
-      "GroupColumn": "something"
+      "GroupColumn": "something",
+      "faces": [
+        {
+          "content": "\r\n                                <div id=info-product itemprop=@vocabulary itemtype=@link  >\r\n                            "
+        }
+      ]
     },
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "<div class=content-tab  ><div class=tabset1  ><div data-pws-tab=tab1 data-pws-tab-name=مشخصات  ><div class=typography  ><div  ><a id=dw-package href=/pdf-package.bc?id target=_blank  >دانلود پکیج تور <img src=/images/downloading.png\r\n width=32 height=32 alt=download  ></a  ></div  ><div class=tour-table  ><div class=hotel-tbl  >"
+      "content": [
+        "<div class=content-tab  ><div class=tabset1  ><div tab=tab1 name=مشخصات هتل  ><div class=typography  ><div  ><a id=dw-package href=/pdf-package.bc?id=",
+        { "params": [{ "source": "cms", "member": "query", "column": "id" }] },
+        " target=_blank  >دانلود پکیج تور <img src=/images/downloading.png width=32 height=32 alt=download package  ></a  ></div  ><div class=tour-table  ><div class=hotel-tbl  >"
+      ]
     },
     {
       "$type": "tree",
       "core": "tree",
       "data-member-name": "list.inventoryjson",
       "null-value": "null",
-      "principal-key": "id\r\n",
+      "principal-key": "id",
       "foreign-key": "parentid",
-      "faces": [{ "filter": "field" }, { "filter": "type" }],
-      "face": ["undefined @child "]
+      "layout": [
+        {
+          "content": "\r\n                                                        <table class=tblhotelfield  >\r\n                                                            <thead  >\r\n                                                                <tr class=tbl-head  >\r\n                                                                    <td class=first-th  >\r\n                                                                        <table class=hotel-info  >\r\n                                                                            <tr  >\r\n                                                                                <td class=tbl-th11  >نام هتل</td  >\r\n                                                                                <td class=tbl-th12  >درجه هتل</td  >\r\n                                                                                <td class=tbl-th13  >خدمات هتل</td  >\r\n                                                                            </tr  >\r\n                                                                        </table  >\r\n                                                                    </td  >\r\n                                                                    <td class=tbl-th2  >هر نفر در اتاق دوتخته</td  >\r\n                                                                    <td class=tbl-th3  >هر نفر در اتاق یک تخته</td  >\r\n                                                                    <td class=tbl-th4  >6 تا 12 سال با تخت</td  >\r\n                                                                    <td class=tbl-th5  >2 تا 6 سال بدون تخت</td  >\r\n                                                                    <td class=tbl-th6  >موقعیت</td  >\r\n                                                                    <td class=tbl-th7  >توضیحات</td  >\r\n                                                                </tr  >\r\n                                                            </thead  > @child\r\n                                                        </table  >\r\n                                                    "
+        },
+        {
+          "content": "\r\n                                                        <table class=tblhotelfield  >\r\n                                                            <thead  >\r\n                                                                <tr class=tbl-head  >\r\n                                                                    <td class=first-th  >\r\n                                                                        <table class=hotel-info  >\r\n                                                                            <tr  >\r\n                                                                                <td class=tbl-th11  >نام هتل</td  >\r\n                                                                                <td class=tbl-th12  >درجه هتل</td  >\r\n                                                                                <td class=tbl-th13  >خدمات هتل</td  >\r\n                                                                            </tr  >\r\n                                                                        </table  >\r\n                                                                    </td  >\r\n                                                                    <td class=tbl-th2  >هر نفر در اتاق دوتخته</td  >\r\n                                                                    <td class=tbl-th3  >هر نفر در اتاق یک تخته</td  >\r\n                                                                    <td class=tbl-th4  >6 تا 12 سال با تخت</td  >\r\n                                                                    <td class=tbl-th5  >2 تا 6 سال بدون تخت</td  >\r\n                                                                    <td class=tbl-th6  >موقعیت</td  >\r\n                                                                    <td class=tbl-th7  >توضیحات</td  >\r\n                                                                </tr  >\r\n                                                            </thead  > @child\r\n                                                        </table  >\r\n                                                    "
+        }
+      ],
+      "faces": [
+        {
+          "filter": "parentid in ('1')",
+          "content": "\r\n                                                        <table class=tblhotelfield  >\r\n                                                            <thead  >\r\n                                                                <tr class=tbl-head  >\r\n                                                                    <td class=first-th  >\r\n                                                                        <table class=hotel-info  >\r\n                                                                            <tr  >\r\n                                                                                <td class=tbl-th11  >نام هتل</td  >\r\n                                                                                <td class=tbl-th12  >درجه هتل</td  >\r\n                                                                                <td class=tbl-th13  >خدمات هتل</td  >\r\n                                                                            </tr  >\r\n                                                                        </table  >\r\n                                                                    </td  >\r\n                                                                    <td class=tbl-th2  >هر نفر در اتاق دوتخته</td  >\r\n                                                                    <td class=tbl-th3  >هر نفر در اتاق یک تخته</td  >\r\n                                                                    <td class=tbl-th4  >6 تا 12 سال با تخت</td  >\r\n                                                                    <td class=tbl-th5  >2 تا 6 سال بدون تخت</td  >\r\n                                                                    <td class=tbl-th6  >موقعیت</td  >\r\n                                                                    <td class=tbl-th7  >توضیحات</td  >\r\n                                                                </tr  >\r\n                                                            </thead  > @child\r\n                                                        </table  >\r\n                                                    \r\n                                                        <tr class=tbl-body  > @child </tr  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('hotelinfo')",
+          "content": "\r\n                                                        <table class=tblhotelfield  >\r\n                                                            <thead  >\r\n                                                                <tr class=tbl-head  >\r\n                                                                    <td class=first-th  >\r\n                                                                        <table class=hotel-info  >\r\n                                                                            <tr  >\r\n                                                                                <td class=tbl-th11  >نام هتل</td  >\r\n                                                                                <td class=tbl-th12  >درجه هتل</td  >\r\n                                                                                <td class=tbl-th13  >خدمات هتل</td  >\r\n                                                                            </tr  >\r\n                                                                        </table  >\r\n                                                                    </td  >\r\n                                                                    <td class=tbl-th2  >هر نفر در اتاق دوتخته</td  >\r\n                                                                    <td class=tbl-th3  >هر نفر در اتاق یک تخته</td  >\r\n                                                                    <td class=tbl-th4  >6 تا 12 سال با تخت</td  >\r\n                                                                    <td class=tbl-th5  >2 تا 6 سال بدون تخت</td  >\r\n                                                                    <td class=tbl-th6  >موقعیت</td  >\r\n                                                                    <td class=tbl-th7  >توضیحات</td  >\r\n                                                                </tr  >\r\n                                                            </thead  > @child\r\n                                                        </table  >\r\n                                                    \r\n                                                        <tr class=tbl-body  > @child </tr  >\r\n                                                    \r\n                                                        <td class=first-th  >\r\n                                                            <table class=hotel-info  >\r\n                                                                <tbody  > @child </tbody  >\r\n                                                            </table  >\r\n                                                        </td  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('hotel')",
+          "content": "\r\n                                                        <table class=tblhotelfield  >\r\n                                                            <thead  >\r\n                                                                <tr class=tbl-head  >\r\n                                                                    <td class=first-th  >\r\n                                                                        <table class=hotel-info  >\r\n                                                                            <tr  >\r\n                                                                                <td class=tbl-th11  >نام هتل</td  >\r\n                                                                                <td class=tbl-th12  >درجه هتل</td  >\r\n                                                                                <td class=tbl-th13  >خدمات هتل</td  >\r\n                                                                            </tr  >\r\n                                                                        </table  >\r\n                                                                    </td  >\r\n                                                                    <td class=tbl-th2  >هر نفر در اتاق دوتخته</td  >\r\n                                                                    <td class=tbl-th3  >هر نفر در اتاق یک تخته</td  >\r\n                                                                    <td class=tbl-th4  >6 تا 12 سال با تخت</td  >\r\n                                                                    <td class=tbl-th5  >2 تا 6 سال بدون تخت</td  >\r\n                                                                    <td class=tbl-th6  >موقعیت</td  >\r\n                                                                    <td class=tbl-th7  >توضیحات</td  >\r\n                                                                </tr  >\r\n                                                            </thead  > @child\r\n                                                        </table  >\r\n                                                    \r\n                                                        <tr class=tbl-body  > @child </tr  >\r\n                                                    \r\n                                                        <td class=first-th  >\r\n                                                            <table class=hotel-info  >\r\n                                                                <tbody  > @child </tbody  >\r\n                                                            </table  >\r\n                                                        </td  >\r\n                                                    \r\n                                                        <tr  >\r\n                                                            <td class=tbl-th11  >\r\n                                                                <div class=td-hotel  > @child </div  >\r\n                                                            </td  >\r\n                                                        </tr  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('hotelid')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> "
+        },
+        {
+          "filter": "field in ('hotelname')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('star')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    \r\n                                                        <section class=part2  > <img src=images/@value-star-rating.png alt=@value width=70 height=15  > </section  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('service') and type = 'scalar.string'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    \r\n                                                        <section class=part2  > <img src=images/@value-star-rating.png alt=@value width=70 height=15  > </section  >\r\n                                                    \r\n                                                        <section class=part3  > <span  >@value</span  > </section  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('doublecost') and type ='array'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    \r\n                                                        <section class=part2  > <img src=images/@value-star-rating.png alt=@value width=70 height=15  > </section  >\r\n                                                    \r\n                                                        <section class=part3  > <span  >@value</span  > </section  >\r\n                                                    \r\n                                                        <td class=tbl-th2 cost  >@child</td  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('singlecost') and type ='array'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    \r\n                                                        <section class=part2  > <img src=images/@value-star-rating.png alt=@value width=70 height=15  > </section  >\r\n                                                    \r\n                                                        <section class=part3  > <span  >@value</span  > </section  >\r\n                                                    \r\n                                                        <td class=tbl-th2 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th3 cost  >@child</td  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('childwithbed') and type ='array'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    \r\n                                                        <section class=part2  > <img src=images/@value-star-rating.png alt=@value width=70 height=15  > </section  >\r\n                                                    \r\n                                                        <section class=part3  > <span  >@value</span  > </section  >\r\n                                                    \r\n                                                        <td class=tbl-th2 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th3 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th4 cost  >@child</td  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('childwithoutbed') and type ='array'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    \r\n                                                        <section class=part2  > <img src=images/@value-star-rating.png alt=@value width=70 height=15  > </section  >\r\n                                                    \r\n                                                        <section class=part3  > <span  >@value</span  > </section  >\r\n                                                    \r\n                                                        <td class=tbl-th2 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th3 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th4 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th5 cost  >@child</td  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('locationf')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    \r\n                                                        <section class=part2  > <img src=images/@value-star-rating.png alt=@value width=70 height=15  > </section  >\r\n                                                    \r\n                                                        <section class=part3  > <span  >@value</span  > </section  >\r\n                                                    \r\n                                                        <td class=tbl-th2 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th3 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th4 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th5 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th6  >@value</td  >\r\n                                                    "
+        },
+        {
+          "filter": "field in ('descriptionf')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    \r\n                                                        <section class=part2  > <img src=images/@value-star-rating.png alt=@value width=70 height=15  > </section  >\r\n                                                    \r\n                                                        <section class=part3  > <span  >@value</span  > </section  >\r\n                                                    \r\n                                                        <td class=tbl-th2 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th3 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th4 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th5 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th6  >@value</td  >\r\n                                                    \r\n                                                        <td class=tbl-th7  >@value</td  >\r\n                                                    "
+        },
+        {
+          "filter": "type in ('array','object')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                        <section class=part1  ><a href=undefined target=_blank class=name-link  >@value</a  > </section  >\r\n                                                    \r\n                                                        <section class=part2  > <img src=images/@value-star-rating.png alt=@value width=70 height=15  > </section  >\r\n                                                    \r\n                                                        <section class=part3  > <span  >@value</span  > </section  >\r\n                                                    \r\n                                                        <td class=tbl-th2 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th3 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th4 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th5 cost  >@child</td  >\r\n                                                    \r\n                                                        <td class=tbl-th6  >@value</td  >\r\n                                                    \r\n                                                        <td class=tbl-th7  >@value</td  >\r\n                                                    <face\r\n filter=field in ('doublecost','singlecost','childwithbed','childwithoutbed') and type ='object'  ></face  ><face\r\n filter=field in ('doublecostf','singlecostf','childwithbedf','childwithoutbedf')  ><span class=price2 cost slice  ></span  ></face  ><face\r\n filter=field in ('doubleunit','childwithoutbedunit','childwithbedunit','singleunit')  ><span  ></span  ><br  ></face  > @child "
+        }
+      ]
     },
     {
       "$type": "rawtext",
@@ -197,65 +358,156 @@
       "core": "tree",
       "data-member-name": "list.inventoryjson",
       "null-value": "null",
-      "principal-key": "id\r\n",
+      "principal-key": "id",
       "foreign-key": "parentid",
-      "layout": { "content": "undefined @child " },
+      "layout": [{ "content": " @child " }, { "content": " @child " }],
       "faces": [
-        { "filter": "field" },
-        { "filter": "field" },
-        { "filter": "type" }
+        {
+          "filter": "parentid in ('1')",
+          "content": " @child \r\n                                                    <div class=hotel-section  > @child </div  >\r\n                                                "
+        },
+        {
+          "filter": "field in ('hotel')",
+          "content": " @child \r\n                                                    <div class=hotel-section  > @child </div  >\r\n                                                 @child "
+        },
+        {
+          "filter": "field in ('hotelid')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> "
+        },
+        {
+          "filter": "field in ('hotelname')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                "
+        },
+        {
+          "filter": "field in ('star')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > درجه هتل </section  >\r\n                                                        <section class=hotel-ans  > <img\r\n src=images/@value-star-rating.png alt=@value width=53 height=12  > </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                "
+        },
+        {
+          "filter": "field in ('service') and type = 'scalar.string'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > درجه هتل </section  >\r\n                                                        <section class=hotel-ans  > <img\r\n src=images/@value-star-rating.png alt=@value width=53 height=12  > </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >خدمات</section  >\r\n                                                        <section class=hotel-ans  > @value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                "
+        },
+        {
+          "filter": "field in ('doublecost') and type ='array'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > درجه هتل </section  >\r\n                                                        <section class=hotel-ans  > <img\r\n src=images/@value-star-rating.png alt=@value width=53 height=12  > </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >خدمات</section  >\r\n                                                        <section class=hotel-ans  > @value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق دو تخته</section  >\r\n                                                        <section class=hotel-ans  >@child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                "
+        },
+        {
+          "filter": "field in ('singlecost') and type ='array'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > درجه هتل </section  >\r\n                                                        <section class=hotel-ans  > <img\r\n src=images/@value-star-rating.png alt=@value width=53 height=12  > </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >خدمات</section  >\r\n                                                        <section class=hotel-ans  > @value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق دو تخته</section  >\r\n                                                        <section class=hotel-ans  >@child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق یک تخته</section  >\r\n                                                        <section class=hotel-ans  > @child</section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                "
+        },
+        {
+          "filter": "field in ('childwithbed') and type ='array'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > درجه هتل </section  >\r\n                                                        <section class=hotel-ans  > <img\r\n src=images/@value-star-rating.png alt=@value width=53 height=12  > </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >خدمات</section  >\r\n                                                        <section class=hotel-ans  > @value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق دو تخته</section  >\r\n                                                        <section class=hotel-ans  >@child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق یک تخته</section  >\r\n                                                        <section class=hotel-ans  > @child</section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ کودک 6 تا 12 سال</section  >\r\n                                                        <section class=hotel-ans  > @child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                "
+        },
+        {
+          "filter": "field in ('childwithoutbed') and type ='array'",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > درجه هتل </section  >\r\n                                                        <section class=hotel-ans  > <img\r\n src=images/@value-star-rating.png alt=@value width=53 height=12  > </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >خدمات</section  >\r\n                                                        <section class=hotel-ans  > @value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق دو تخته</section  >\r\n                                                        <section class=hotel-ans  >@child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق یک تخته</section  >\r\n                                                        <section class=hotel-ans  > @child</section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ کودک 6 تا 12 سال</section  >\r\n                                                        <section class=hotel-ans  > @child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >نرخ کودک 2 تا 6 سال</section  >\r\n                                                        <section class=hotel-ans  > @child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                "
+        },
+        {
+          "filter": "field in ('locationf')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > درجه هتل </section  >\r\n                                                        <section class=hotel-ans  > <img\r\n src=images/@value-star-rating.png alt=@value width=53 height=12  > </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >خدمات</section  >\r\n                                                        <section class=hotel-ans  > @value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق دو تخته</section  >\r\n                                                        <section class=hotel-ans  >@child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق یک تخته</section  >\r\n                                                        <section class=hotel-ans  > @child</section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ کودک 6 تا 12 سال</section  >\r\n                                                        <section class=hotel-ans  > @child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >نرخ کودک 2 تا 6 سال</section  >\r\n                                                        <section class=hotel-ans  > @child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >موقعیت مکانی </section  >\r\n                                                        <section class=hotel-ans  >@value</section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                "
+        },
+        {
+          "filter": "field in ('descriptionf')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > درجه هتل </section  >\r\n                                                        <section class=hotel-ans  > <img\r\n src=images/@value-star-rating.png alt=@value width=53 height=12  > </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >خدمات</section  >\r\n                                                        <section class=hotel-ans  > @value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق دو تخته</section  >\r\n                                                        <section class=hotel-ans  >@child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق یک تخته</section  >\r\n                                                        <section class=hotel-ans  > @child</section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ کودک 6 تا 12 سال</section  >\r\n                                                        <section class=hotel-ans  > @child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >نرخ کودک 2 تا 6 سال</section  >\r\n                                                        <section class=hotel-ans  > @child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >موقعیت مکانی </section  >\r\n                                                        <section class=hotel-ans  >@value</section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > توضیحات</section  >\r\n                                                        <section class=hotel-ans  >@value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                "
+        },
+        {
+          "filter": "type in ('array','object')",
+          "content": "<inputtype=hidden class=loc-input value=@value /> \r\n                                                    <div class=mobile-hotel  > <a href=undefined target=_blank class=name-link  >@value</a  > </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > درجه هتل </section  >\r\n                                                        <section class=hotel-ans  > <img\r\n src=images/@value-star-rating.png alt=@value width=53 height=12  > </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >خدمات</section  >\r\n                                                        <section class=hotel-ans  > @value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق دو تخته</section  >\r\n                                                        <section class=hotel-ans  >@child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ اتاق یک تخته</section  >\r\n                                                        <section class=hotel-ans  > @child</section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > نرخ کودک 6 تا 12 سال</section  >\r\n                                                        <section class=hotel-ans  > @child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >نرخ کودک 2 تا 6 سال</section  >\r\n                                                        <section class=hotel-ans  > @child </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  >موقعیت مکانی </section  >\r\n                                                        <section class=hotel-ans  >@value</section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                \r\n                                                    <div class=mobile-hotel-info  >\r\n                                                        <section class=hotel-qu  > توضیحات</section  >\r\n                                                        <section class=hotel-ans  >@value </section  >\r\n                                                        <div class=clr  ></div  >\r\n                                                    </div  >\r\n                                                <face\r\n filter=field in ('doublecost','singlecost','childwithbed','childwithoutbed') and type ='object'  ><p  ></p  ></face  ><face\r\n filter=field in ('doublecostf','singlecostf','childwithbedf','childwithoutbedf')  ><span class=price2 cost slice  ></span  ></face  ><face\r\n filter=field in ('doubleunit','childwithoutbedunit','childwithbedunit','singleunit')  ><span  ></span  ></face  > @child "
+        }
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ></div  ></div  ><div tab=tab2 name=مشخصات تور  ><div class=typography  >"
+    },
+    {
+      "$type": "view",
+      "core": "view",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something",
+      "faces": [
+        {
+          "level": "1",
+          "filter": "TypeID not in (160,161,162,159) and prpID not in (8084,8097)",
+          "content": "\r\n                                                <div class=schema  >\r\n                                                    <div class=diamond  ></div  >\r\n                                                    <div class=schema-Q  >\r\n                                                        <p  >@question </p  >\r\n                                                    </div  >\r\n                                                    <div class=schema-A  >\r\n                                                        <p class=show-answer  >@child<span class=seprate  ><i\r\n class=fa fa-circle  ></i  ></span  > </p  >\r\n                                                    </div  >\r\n                                                </div  >\r\n                                            "
+        },
+        {
+          "level": "2",
+          "content": "\r\n                                                <div class=schema  >\r\n                                                    <div class=diamond  ></div  >\r\n                                                    <div class=schema-Q  >\r\n                                                        <p  >@question </p  >\r\n                                                    </div  >\r\n                                                    <div class=schema-A  >\r\n                                                        <p class=show-answer  >@child<span class=seprate  ><i\r\n class=fa fa-circle  ></i  ></span  > </p  >\r\n                                                    </div  >\r\n                                                </div  >\r\n                                             <span class=seprate  > <i class=fa fa-circle  ></i  >\r\n                                                </span  ><span itemprop=@vocabulary  > @answer</span  > "
+        }
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ></div  ><div tab=tab3 name= برنامه سفر   ><div class=typography  >"
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something",
+      "faces": [
+        {
+          "filter": "prpID in (8084) ",
+          "content": "\r\n                                                <div  > <span class=seprate-t  ><i class=fa fa-circle  ></i  ></span  >\r\n                                                    <p itemprop=@vocabulary  >@text</p  > <br  >\r\n                                                    <p itemprop=@vocabulary  >@largetext</p  >\r\n                                                </div  >\r\n                                            "
+        }
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ></div  ><div tab=tab4 name= توضیحات تور   ><div class=typography  >"
+    },
+    {
+      "$type": "view",
+      "core": "view",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something",
+      "faces": [
+        {
+          "filter": "prpID in (8097)",
+          "content": "\r\n                                                <div itemprop=@vocabulary  > <span class=seprate-t  ><i\r\n class=fa fa-circle  ></i  ></span  >\r\n                                                    <p itemprop=@vocabulary  >@text</p  > <br  >\r\n                                                    <p itemprop=@vocabulary  >@largetext</p  >\r\n                                                </div  >\r\n                                            "
+        }
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "</div  ></div  ><div tab=tab5 name=ویدئو  ><div class=video-tab  >"
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something",
+      "faces": [
+        {
+          "filter": "prpID=59082",
+          "content": "\r\n                                                <div id=1 class=video-box  >\r\n                                                    <script type=text/JavaScript src=https://www.aparat.com/embed/@answer?data[rnddiv]=1&data[responsive]=yes  ></script  >\r\n                                                </div  >\r\n                                            "
+        }
+      ]
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "dbsckema.showsckema",
+      "GroupColumn": "something",
+      "layout": [
+        {
+          "content": "\r\n                                                <div class=pro-link-box  >@child</div  >\r\n                                            "
+        },
+        {
+          "content": "\r\n                                                <div class=pro-link-box  >@child</div  >\r\n                                            "
+        }
       ],
-      "face": ["undefined @child "]
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "</div  ></div  ></div  ><div data-pws-tab=tab2 data-pws-tab-name=مشخصات  ><div class=typography  >"
-    },
-    {
-      "$type": "view",
-      "core": "view",
-      "data-member-name": "dbsckema.showsckema",
-      "GroupColumn": "something"
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "</div  ></div  ><div data-pws-tab=tab3 data-pws-tab-name=  ><div class=typography  >"
-    },
-    {
-      "$type": "print",
-      "core": "print",
-      "data-member-name": "dbsckema.showsckema",
-      "GroupColumn": "something"
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "</div  ></div  ><div data-pws-tab=tab4 data-pws-tab-name=  ><div class=typography  >"
-    },
-    {
-      "$type": "view",
-      "core": "view",
-      "data-member-name": "dbsckema.showsckema",
-      "GroupColumn": "something"
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "</div  ></div  ><div data-pws-tab=tab5 data-pws-tab-name=ویدئو  ><div class=video-tab  >"
-    },
-    {
-      "$type": "print",
-      "core": "print",
-      "data-member-name": "dbsckema.showsckema",
-      "GroupColumn": "something"
-    },
-    {
-      "$type": "print",
-      "core": "print",
-      "data-member-name": "dbsckema.showsckema",
-      "GroupColumn": "something"
+      "faces": [
+        {
+          "filter": "prpID=59083",
+          "content": "\r\n                                                <div class=pro-link-box  >@child</div  >\r\n                                             لینک تور مرتبط : <a class=pro-link href=@answer  > @answer</a  > "
+        }
+      ]
     },
     {
       "$type": "rawtext",
@@ -266,7 +518,20 @@
       "$type": "print",
       "core": "print",
       "data-member-name": "db11.gallery",
-      "GroupColumn": "something"
+      "GroupColumn": "something",
+      "layout": [
+        {
+          "content": "\r\n                                <div class=advanced-slider id=responsive-slider  >\r\n                                    <ul class=slides  > @child </ul  >\r\n                                </div  >\r\n                            "
+        },
+        {
+          "content": "\r\n                                <div class=advanced-slider id=responsive-slider  >\r\n                                    <ul class=slides  > @child </ul  >\r\n                                </div  >\r\n                            "
+        }
+      ],
+      "faces": [
+        {
+          "content": "<imgclass=thumbnail src=/@smallIMG alt=@name width=40 height=40 /> </li  >\r\n                            "
+        }
+      ]
     },
     {
       "$type": "rawtext",
@@ -277,20 +542,40 @@
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "<div class=text-news  ><div class=text-news2  ><div id=nt-example1-container  ><div class=title-related  ><p class=s1  ></p  ><div class=title-related-text  >تور مرتبط</div  ><p class=s1  ></p  ></div  ><ul id=nt-example1  >"
+      "content": "<div class=text-news  ><div class=text-news2  ><div id=nt-example1-container  ><div class=title-related  ><p class=s1  ></p  ><div class=title-related-text f-none  >تور مرتبط</div  ><p class=s1  ></p  ></div  ><ul id=nt-example1  >"
     },
     { "$type": "call", "core": "call", "FileName": "logo-tour.inc" },
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "</ul  ></div  ></div  ></div  ><div class=contact-sub  ><div id=nt-example1-prev  ></div  ><div id=nt-example1-next  ></div  ></div  ></div  ><div id=info-related-article  ><div class=title-related  ><div class=title-related-text  >مقالات مرتبط</div  ><p class=s2  ></p  ></div  ><div class=typography  >"
+      "content": "</ul  ></div  ></div  ></div  ><div class=contact-sub  ><div id=nt-example1-prev  ></div  ><div id=nt-example1-next  ></div  ></div  ></div  ><div id=info-related-article  ><div class=title-related topziro  ><div class=title-related-text   >مقالات مرتبط</div  ><p class=s2  ></p  ></div  ><div class=typography article-info  >"
     },
     {
       "$type": "print",
       "core": "print",
       "data-member-name": "dbpr2.listpr2",
       "GroupColumn": "something",
-      "layout": { "content": "undefined @child " }
+      "faces": [
+        {
+          "content": "\r\n                                    <div class=schema aaa  >\r\n                                        <div class=img-maghale  ><img src=/@image alt=@title  > </div  >\r\n                                        <div class=name-maghale  > <a href=/@link  >\r\n                                                <p  ><i class=fa fa-pencil  ></i  >@title </p  >\r\n                                            </a  > </div  >\r\n                                        <div class=date-maghale  >\r\n                                            <p class=show-date  > <span class=seprate  > </span  > <span  >@prp_7231</span  >\r\n                                                <span class=seprate  ><i class=fa fa-calendar-o  ></i  ></span  > </p  >\r\n                                        </div  >\r\n                                        <div class=img-maghale  > <a href=/@link  ><i class=fa fa-plus  ></i  ></a  > </div  >\r\n                                    </div  >\r\n                                "
+        }
+      ],
+      "layout": [
+        {
+          "content": "\r\n                                    <div class=schema aaa  >\r\n                                        <div class=img-maghale  ><img src=/@image alt=@title  > </div  >\r\n                                        <div class=name-maghale  > <a href=/@link  >\r\n                                                <p  ><i class=fa fa-pencil  ></i  >@title </p  >\r\n                                            </a  > </div  >\r\n                                        <div class=date-maghale  >\r\n                                            <p class=show-date  > <span class=seprate  > </span  > <span  >@prp_7231</span  >\r\n                                                <span class=seprate  ><i class=fa fa-calendar-o  ></i  ></span  > </p  >\r\n                                        </div  >\r\n                                        <div class=img-maghale  > <a href=/@link  ><i class=fa fa-plus  ></i  ></a  > </div  >\r\n                                    </div  >\r\n                                 @child "
+        },
+        {
+          "content": "\r\n                                    <div class=schema aaa  >\r\n                                        <div class=img-maghale  ><img src=/@image alt=@title  > </div  >\r\n                                        <div class=name-maghale  > <a href=/@link  >\r\n                                                <p  ><i class=fa fa-pencil  ></i  >@title </p  >\r\n                                            </a  > </div  >\r\n                                        <div class=date-maghale  >\r\n                                            <p class=show-date  > <span class=seprate  > </span  > <span  >@prp_7231</span  >\r\n                                                <span class=seprate  ><i class=fa fa-calendar-o  ></i  ></span  > </p  >\r\n                                        </div  >\r\n                                        <div class=img-maghale  > <a href=/@link  ><i class=fa fa-plus  ></i  ></a  > </div  >\r\n                                    </div  >\r\n                                 @child "
+        }
+      ],
+      "else-layout": [
+        {
+          "content": "<imgsrc=/images/no-gallery.jpg alt= مطلبی برای مقاله مرتبط درج نشده است  /> </div  >\r\n                                "
+        },
+        {
+          "content": "<imgsrc=/images/no-gallery.jpg alt= مطلبی برای مقاله مرتبط درج نشده است  /> </div  >\r\n                                "
+        }
+      ]
     },
     {
       "$type": "rawtext",
