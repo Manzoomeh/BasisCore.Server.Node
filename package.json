@@ -20,7 +20,8 @@
   ],
   "scripts": {
     "stage": "node index.js ",
-    "dev": "node --openssl-legacy-provider index.js"
+    "dev": "node --openssl-legacy-provider index.js",
+    "start" : "node index.js"
   },
   "type": "module",
   "dependencies": {

@@ -1,8 +1,9 @@
 FROM node:18-alpine3.17
-RUN addgroup admins && adduser -S -G admins admin
-USER admin
+#RUN addgroup admins && adduser -S -G admins admin
+#USER admin
 WORKDIR /app
-COPY . . 
+COPY . .
+RUN ls /app
 RUN npm install
 EXPOSE 1563 1564 1565
 CMD npm start
