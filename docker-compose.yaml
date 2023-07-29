@@ -1,18 +1,15 @@
-version: "1"
-services:
-  myapp:
-    image: basis-node:tag
-    ports:
-      - "3000:3000" 
-    depends_on:
-      - database 
-    environment:
-      - DB_HOST=database  
+version: "3"
 
-  database:
-    image: mysql:latest
-    environment:
-      - MYSQL_ROOT_PASSWORD=mysecretpassword  
-networks:
-  default:
-  
+services:
+  node_app:
+    build:
+      context: .
+    image: basis_node
+    container_name: basis_node
+    restart: always
+    ports:
+      - "1563:1563"
+      - "1564:1564"
+      - "1565:1565"
+   # volumes:
+     

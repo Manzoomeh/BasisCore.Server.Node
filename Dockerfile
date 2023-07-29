@@ -4,7 +4,5 @@ USER admin
 WORKDIR /app
 COPY . . 
 RUN npm install
-EXPOSE 1563
-EXPOSE 1564
-EXPOSE 1565
+EXPOSE 1563 1564 1565
 CMD npm start
