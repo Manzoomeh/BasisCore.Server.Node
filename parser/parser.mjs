@@ -267,7 +267,19 @@ class HTMLParser {
         if (array.length > 0) {
           array.forEach((object) => {
             if (object.type === "tag") {
-              if (object.name === "basis" || /^basis:g\d+$/.test(object.name)) {
+              if (basisNumber == 0 && object.name == "img") {
+                console.log(object);
+                resultArray.push(tempArray);
+                tempArray = [];
+                let imgObject = object.attributes;
+                imgObject["$type"] = "image";
+                imgObject["core"] = "img";
+                imgObject["name"] = "img";
+                resultArray.push(imgObject);
+              } else if (
+                object.name === "basis" ||
+                /^basis:g\d+$/.test(object.name)
+              ) {
                 if (object.tagType === "single") {
                   resultArray.push(tempArray);
                   tempArray = [];
@@ -354,6 +366,10 @@ class HTMLParser {
         if (item.basis === true) {
           let partResults = await this.processBasisTags(item);
           childrenArray.push(partResults);
+        } else {
+          if (item["$type"] == "image") {
+            childrenArray.push(item);
+          }
         }
       }
     }
@@ -660,6 +676,7 @@ class HTMLParser {
                   finalContent = this.splitByBindings(tempString);
                   break;
                 case "layout":
+                  console.log(tempString);
                   finalContent = this.splitByBindings(tempString);
                   break;
                 case "replace":
@@ -685,25 +702,27 @@ class HTMLParser {
                     `element ${item.name.slice(1)} is not valid `
                   );
               }
+              tempString = "";
               if (elements[item.name.slice(1)].To) {
                 let to = elements[item.name.slice(1)].To;
-                if (!il[to]) {
+                if (il[to]) {
+                  il[to].push(finalAttributes);
+                  il[to][il[to].length - 1].content = finalContent;
+                } else if (!il[to]) {
                   il[to] = [{}];
                   il[to][0] = finalAttributes;
                   il[to][0].content = finalContent;
-                } else {
-                  il[to].push(finalAttributes);
-                  il[to][il[to].length - 1].content = finalContent;
                 }
               } else {
-                if (!il[item.name.slice(1)]) {
+                if (il[item.name.slice(1)]) {
+                  let length = il[item.name.slice(1)].length;
+                  il[item.name.slice(1)][length] = finalAttributes;
+                  il[item.name.slice(1)][length].content = finalContent;
+                } else {
                   il[item.name.slice(1)] = [{}];
                   il[item.name.slice(1)][0] = finalAttributes;
                   il[item.name.slice(1)][0].content = finalContent;
                 }
-                let length = il[item.name.slice(1)].length;
-                il[item.name.slice(1)][length] = finalAttributes;
-                il[item.name.slice(1)][length].content = finalContent;
               }
               tempAttributes = {};
             } else {
@@ -964,8 +983,9 @@ class HTMLParser {
       path.join(__dirname, "testfile", "result", "appResult" + ".json")
     );
     await fsPromises.writeFile(
-      
-      path.join(__dirname, "testfile", "result", "original" + ".json"),originalJson,"utf-8"
+      path.join(__dirname, "testfile", "result", "original" + ".json"),
+      originalJson,
+      "utf-8"
     );
   }
 }
