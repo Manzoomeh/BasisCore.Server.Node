@@ -13,6 +13,7 @@ class HTMLParser {
     this.html;
     this.configDir = configDir;
     this.configObj;
+    this.parserConfig;
   }
 
   deletePropertyFromAttributes(obj, propertyName) {
@@ -48,8 +49,11 @@ class HTMLParser {
     return newObj;
   }
 
-  async getTheParserConfig() {
+  async getTheParserConfig(filePath) {
     const config = await this.readAllConfigFiles(this.configDir);
+    const fileData = await fsPromises.readFile(filePath, "utf8");
+    const json = JSON.parse(fileData);
+    this.parserConfig = json;
     const renderingConfigAttributes = ["run", "renderto", "rendertype"];
     let result = config;
     for (let attribute of renderingConfigAttributes) {
@@ -262,53 +266,95 @@ class HTMLParser {
         const resultArray = [];
         let tempArray = [];
         let basisNumber = 0;
+        let tempHtmlTagObject = {};
+        let htmlTagStatus = 0;
         let tempObject = { basis: true };
-
+        const htmlTags = this.parserConfig.htmlTags;
         if (array.length > 0) {
           array.forEach((object) => {
             if (object.type === "tag") {
-              if (basisNumber == 0 && object.name == "img") {
-                console.log(object);
-                resultArray.push(tempArray);
-                tempArray = [];
-                let imgObject = object.attributes;
-                imgObject["$type"] = "image";
-                imgObject["core"] = "img";
-                imgObject["name"] = "img";
-                resultArray.push(imgObject);
-              } else if (
-                object.name === "basis" ||
-                /^basis:g\d+$/.test(object.name)
-              ) {
-                if (object.tagType === "single") {
-                  resultArray.push(tempArray);
-                  tempArray = [];
-                  tempObject.attributes = object.attributes;
-                  tempObject.content = [];
-                  resultArray.push(tempObject);
-                  tempObject = { basis: true };
-                } else {
-                  basisNumber += 1;
-                  if (basisNumber === 1) {
+              for (const element of htmlTags) {
+                if (object.name == element.tag) {
+                  if (tempElement && element.tag != tempElement) {
+                    throw new Error(
+                      `you cannot use ${element.tag} in ${tempElement} by order of config`
+                    );
+                  }
+                  tempElement = element.tag;
+                  if (element.type != object.tagType) {
+                    throw new Error(
+                      `the tag ${object.name} should be ${element.tag} tag`
+                    );
+                  }
+                  tempHtmlTagObject["core"] = object.name;
+                  tempHtmlTagObject["name"] = object.name;
+                  tempHtmlTagObject["$type"] = "htmltag";
+                  tempHtmlTagObject["attributes"] = object.attributes;
+                  if (
+                    element.tag == "single" &&
+                    htmlTagStatus == 0 &&
+                    basisNumber == 0
+                  ) {
+                    resultArray.push(tempHtmlTagObject);
+                    tempHtmlTagObject = {};
+                    tempArray = [];
+                    tempElement = undefined;
+                  } else if (element.tag == double) {
+                    htmlTagStatus += 1;
+                    if (htmlTagStatus == 1) {
+                      resultArray.push(tempArray);
+                      tempArray = [];
+                    }
+                  }
+                } else if (
+                  object.name.slice(1) == tempElement &&
+                  object.name.startsWith("/")
+                ) {
+                  if (tempElement == object.name.slice(1)) {
+                    htmlTagStatus -= 1;
+                    if (htmlTagStatus == 0) {
+                      tempHtmlTagObject.content = tempArray;
+                      resultArray.push(tempHtmlTagObject);
+                      tempHtmlTagObject = {};
+                      tempArray = [];
+                    }
+                  } else {
+                    throw new error("invalid tag positioning");
+                  }
+                } else if (
+                  object.name === "basis" ||
+                  /^basis:g\d+$/.test(object.name)
+                ) {
+                  if (object.tagType === "single") {
                     resultArray.push(tempArray);
                     tempArray = [];
                     tempObject.attributes = object.attributes;
+                    tempObject.content = [];
+                    resultArray.push(tempObject);
+                    tempObject = { basis: true };
+                  } else {
+                    basisNumber += 1;
+                    if (basisNumber === 1) {
+                      resultArray.push(tempArray);
+                      tempArray = [];
+                      tempObject.attributes = object.attributes;
+                    } else {
+                      tempArray.push(object);
+                    }
+                  }
+                } else if (object.name === "/basis") {
+                  basisNumber -= 1;
+                  if (basisNumber === 0) {
+                    tempObject.content = tempArray;
+                    tempArray = [];
+                    resultArray.push(tempObject);
+                    tempObject = { basis: true };
                   } else {
                     tempArray.push(object);
                   }
-                }
-              } else if (object.name === "/basis") {
-                basisNumber -= 1;
-                if (basisNumber === 0) {
-                  tempObject.content = tempArray;
-                  tempArray = [];
-                  resultArray.push(tempObject);
-                  tempObject = { basis: true };
                 } else {
                   tempArray.push(object);
                 }
-              } else {
-                tempArray.push(object);
               }
             } else if (object.type === "text") {
               tempArray.push(object);
@@ -367,9 +413,7 @@ class HTMLParser {
           let partResults = await this.processBasisTags(item);
           childrenArray.push(partResults);
         } else {
-          if (item["$type"] == "image") {
-            childrenArray.push(item);
-          }
+          childrenArray.push(item);
         }
       }
     }
@@ -952,13 +996,13 @@ class HTMLParser {
 
     return splitArray;
   }
-  static async parse(htmlName, filename) {
+  static async parse(htmlName, filename, parserConfig) {
     const __filename = fileURLToPath(import.meta.url);
     const __dirname = path.dirname(__filename);
     const htmlDir = path.join(__dirname, "src", htmlName + ".html");
     const parser = new HTMLParser(htmlDir, "/configs");
     await parser.readHtmlFile();
-    await parser.getTheParserConfig();
+    await parser.getTheParserConfig(parserConfig);
     const tokens = parser.parse();
     const result = await parser.processTags(tokens);
     const resultObj = await parser.processArray(result);
@@ -989,5 +1033,5 @@ class HTMLParser {
     );
   }
 }
-HTMLParser.parse("index", "final");
+HTMLParser.parse("index", "final", "parserConfig.json");
 export default HTMLParser;

@@ -1,0 +1,9 @@
+{
+    "removeComments":true,
+    "htmlTags" :[
+        {
+            "tag": "img",
+            "type" : "single"  
+        }
+    ]
+}
