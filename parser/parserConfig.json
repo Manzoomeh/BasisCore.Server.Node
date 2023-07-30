@@ -3,7 +3,8 @@
     "htmlTags" :[
         {
             "tag": "img",
-            "type" : "single"  
+            "type" : "single",
+            "allow-content" : false  
         }
     ]
 }

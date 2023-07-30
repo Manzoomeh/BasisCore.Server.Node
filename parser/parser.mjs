@@ -256,7 +256,7 @@ class HTMLParser {
     if (Object.keys(obj).length === 0) {
       return "";
     }
-    const array = Object.entries(obj).map(([key, value]) => `${key}=${value}`);
+    const array = Object.entries(obj).map(([key, value]) => `${key}='${value}'`);
     return array.join(" ");
   }
 
@@ -268,6 +268,7 @@ class HTMLParser {
         let basisNumber = 0;
         let tempHtmlTagObject = {};
         let htmlTagStatus = 0;
+        let tempElement;
         let tempObject = { basis: true };
         const htmlTags = this.parserConfig.htmlTags;
         if (array.length > 0) {
@@ -281,25 +282,30 @@ class HTMLParser {
                     );
                   }
                   tempElement = element.tag;
+
                   if (element.type != object.tagType) {
+                    console.log(object);
+                    console.log(element);
                     throw new Error(
-                      `the tag ${object.name} should be ${element.tag} tag`
+                      `the tag ${object.name} should be ${element.type} tag`
                     );
                   }
+                  let tempHtmlTagObject = new IL()
                   tempHtmlTagObject["core"] = object.name;
                   tempHtmlTagObject["name"] = object.name;
                   tempHtmlTagObject["$type"] = "htmltag";
                   tempHtmlTagObject["attributes"] = object.attributes;
                   if (
-                    element.tag == "single" &&
+                    element.type == "single" &&
                     htmlTagStatus == 0 &&
                     basisNumber == 0
                   ) {
                     resultArray.push(tempHtmlTagObject);
+                    console.log(tempHtmlTagObject)
                     tempHtmlTagObject = {};
                     tempArray = [];
                     tempElement = undefined;
-                  } else if (element.tag == double) {
+                  } else if (element.tag == "double") {
                     htmlTagStatus += 1;
                     if (htmlTagStatus == 1) {
                       resultArray.push(tempArray);
@@ -385,6 +391,7 @@ class HTMLParser {
 
           result.push(item);
         }
+        
         resolve(result);
       } catch (error) {
         reject(error);
@@ -413,6 +420,9 @@ class HTMLParser {
           let partResults = await this.processBasisTags(item);
           childrenArray.push(partResults);
         } else {
+          if(item.content&& item.content.length>0){
+            item.content = processHtmlTagContent(item)
+          }
           childrenArray.push(item);
         }
       }
@@ -899,6 +909,46 @@ class HTMLParser {
     }
     return il;
   }
+  processHtmlTagContent(item){
+    const elementConfig = this.parserConfig.htmlTags[item.core]
+    if(!elementConfig){
+      throw new Error("no config found for this element")
+    }
+    if(elementConfig["allow-content"]==false){
+      return ""
+    }
+    let resultString
+    item.content.forEach(async (subItem) => {
+      if (!subItem || !subItem.type) {
+        return;
+      } else {
+        if (subItem.type == "tag") {
+          resultString += `<${subItem.name}`;
+          if (Object.keys(subItem.attributes).length > 0) {
+            keyValueString = this.objectToKeyValueString(subItem.attributes);
+            resultString += " " + keyValueString + " ";
+          }
+          if (subItem.tagType === "single") {
+            resultString += "/>";
+          } else {
+            if (rawTextString == "<!DOCTYPE") {
+              resultString += ` html`;
+            }
+            resultString += ">";
+          }
+        } else if (subItem.type == "text") {
+          if (subItem.value.trim() === "") {
+            // If the string consists of whitespace only, do nothing (continue)
+            return;
+          } else {
+            // If the string is not empty or contains non-whitespace characters, return the value
+            resultString += subItem.value;
+          }
+        }
+      }
+    })
+    return this.splitByBindings(resultString)
+  }
   findMissingProperties(object1, object2) {
     const object1Keys = Object.keys(object1);
     const missingKeys = object1Keys.filter(
@@ -1002,7 +1052,7 @@ class HTMLParser {
     const htmlDir = path.join(__dirname, "src", htmlName + ".html");
     const parser = new HTMLParser(htmlDir, "/configs");
     await parser.readHtmlFile();
-    await parser.getTheParserConfig(parserConfig);
+    await parser.getTheParserConfig(path.join(__dirname,parserConfig));
     const tokens = parser.parse();
     const result = await parser.processTags(tokens);
     const resultObj = await parser.processArray(result);
@@ -1033,5 +1083,5 @@ class HTMLParser {
     );
   }
 }
-HTMLParser.parse("index", "final", "parserConfig.json");
+HTMLParser.parse("index", "final", "./parserConfig.json");
 export default HTMLParser;
