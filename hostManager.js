@@ -10,7 +10,7 @@ import {
   HostServiceOptions,
   SslCertificateOptions,
   SniCertificateOptions,
-} from "./models/model.js";
+} from "./Models/model.js";
 import {
   EdgeProxyHostService,
   HostService,
@@ -18,7 +18,7 @@ import {
   StaticFileProxyHostService,
   HostEndPoint,
   RouterHostService,
-} from "./services/hostServices.js";
+} from "./Services/hostServices.js";
 import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
 
 export default class HostManager {

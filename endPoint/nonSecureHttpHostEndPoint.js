@@ -1,8 +1,8 @@
 import http from "http";
 import busboy from "busboy";
 import { StatusCodes } from "http-status-codes";
-import HttpHostEndPoint from "./HttpHostEndPoint.js";
-import { HostService } from "../services/hostServices.js";
+import HttpHostEndPoint from "./httpHostEndPoint.js";
+import { HostService } from "../Services/hostServices.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {

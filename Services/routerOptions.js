@@ -1,5 +1,5 @@
-import HostService from "./HostService.js";
-import { ServiceSelectorPredicateItemOptions } from "../models/model.js";
+import HostService from "./hostService.js";
+import { ServiceSelectorPredicateItemOptions } from "../Models/model.js";
 
 export default class RouterOptions {
   /**@type {HostService} */

@@ -19,7 +19,7 @@ export default class Logger {
     for (const log of this._logs) {
       if (list[log.title]) {
         let index = 0;
-        const newTitle = `${log.title}_${index}`;
+        let newTitle = `${log.title}_${index}`;
         while (list[newTitle]) {
           index++;
           newTitle = `${log.title}_${index}`;

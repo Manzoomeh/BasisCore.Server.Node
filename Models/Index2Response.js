@@ -1,7 +1,7 @@
 import fs from "fs";
 import { StatusCodes } from "http-status-codes";
 import Request from "./request.js";
-import RequestBaseResponse from "./requestBaseResponse.js";
+import RequestBaseResponse from "./RequestBaseResponse.js";
 
 export default class Index2Response extends RequestBaseResponse {
   /**

@@ -1,4 +1,4 @@
-import RequestBaseResponse from "./requestBaseResponse.js";
+import RequestBaseResponse from "./RequestBaseResponse.js";
 
 export default class Index1Response extends RequestBaseResponse {
   /**

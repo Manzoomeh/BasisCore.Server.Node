@@ -1,5 +1,5 @@
 import SslCertificateOptions from "./sslCertificateOptions.js";
-import SniCertificateOptions from "./SniCertificateOptions.js";
+import SniCertificateOptions from "./sniCertificateOptions.js";
 export default class PortListenerOptions {
   /**@type {string} */
   EndPoint;

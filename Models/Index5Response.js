@@ -1,5 +1,5 @@
 import Request from "./request.js";
-import RequestBaseResponse from "./requestBaseResponse.js";
+import RequestBaseResponse from "./RequestBaseResponse.js";
 
 export default class Index5Response extends RequestBaseResponse {
   /**

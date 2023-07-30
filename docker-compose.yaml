@@ -3,12 +3,12 @@ services:
   node_app:
     build:
       context: .
-    image: basis_test_js
+    image: basis_node_server
     container_name: basis_test_js
     restart: always
     ports:
       - "1563:1563"
       - "1564:1564"
       - "1565:1565"
-   # volumes:
-     
+    volumes:
+      - F:/webserver/config:/app/config

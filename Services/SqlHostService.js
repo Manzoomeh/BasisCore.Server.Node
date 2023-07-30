@@ -1,6 +1,6 @@
 import HostService from "./hostService.js";
-import Request from "../models/request.js";
-import Response from "../models/response.js";
+import Request from "../Models/request.js";
+import Response from "../Models/Response.js";
 import sql from "mssql";
 
 export default class SqlProxyHostService extends HostService {

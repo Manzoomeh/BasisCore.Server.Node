@@ -1,8 +1,8 @@
 import HostService from "./hostService.js";
-import Request from "../models/request.js";
-import Response from "../models/response.js";
-import RouterOptions from "./RouterOptions.js";
-import { ServiceSelectorPredicateOptions } from "../models/model.js";
+import Request from "./../Models/request.js";
+import Response from "./../Models/Response.js";
+import RouterOptions from "./routerOptions.js";
+import { ServiceSelectorPredicateOptions } from "../Models/model.js";
 
 export default class RouterHostService extends HostService {
   /** @type {RouterOptions[]} */

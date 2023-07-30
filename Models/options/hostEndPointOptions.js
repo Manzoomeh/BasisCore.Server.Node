@@ -1,5 +1,5 @@
 import PortListenerOptions from "./portListenerOptions.js";
-import ServiceSelectorPredicateOptions from "./ServiceSelectorPredicateOptions.js";
+import ServiceSelectorPredicateOptions from "./serviceSelectorPredicateOptions.js";
 export default class HostEndPointOptions {
   /**@type {"http" | "webSocket"} */
   Type;

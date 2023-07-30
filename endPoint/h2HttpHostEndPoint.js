@@ -2,7 +2,7 @@ import http2 from "http2";
 import busboy from "busboy";
 import { StatusCodes } from "http-status-codes";
 import SecureHttpHostEndPoint from "./secureHttpHostEndPoint.js";
-import HostService from "../services/hostService.js";
+import HostService from "./../Services/hostService.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
