@@ -20,6 +20,7 @@ import Resize from "./Steps/Resize/Resize.js";
 import Save from "./Steps/Save/Save.js";
 import Selector from "./Steps/Selector/Selector.js";
 import Edge from "./Steps/Edge/Edge.js";
+import WebP from "./Steps/WebP/WebP.js";
 
 export default class StreamerEngine {
   /** @type {IStreamerEngineOptions} */
@@ -29,7 +30,7 @@ export default class StreamerEngine {
   /**@type {IStreamerActions} */
   _defaultConfig = null;
 
-  /** @param {StreamerEngineOptions} options */
+  /** @param {IStreamerEngineOptions} options */
   constructor(options) {
     this._options = options;
     this._steps = {
@@ -39,6 +40,7 @@ export default class StreamerEngine {
       rename: new Rename(),
       resize: new Resize(),
       edge: new Edge(),
+      webP :new WebP(),
     };
   }
 
