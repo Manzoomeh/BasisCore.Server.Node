@@ -1,9 +1,9 @@
-version: "3"
+version: "1.0"
 services:
   node_app:
     build:
       context: .
-    image: basis_node_server
+    image: manzoomeh/node_server:v1
     container_name: basis_test_js
     restart: always
     ports:
@@ -12,3 +12,9 @@ services:
       - "1565:1565"
     volumes:
       - F:/webserver/config:/app/config
+    deploy:
+      resources:
+        limits:
+          memory: 1G
+        reservations:
+          memory: 512M
