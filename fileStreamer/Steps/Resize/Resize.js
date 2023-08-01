@@ -15,7 +15,7 @@ export default class Resize extends Step {
    */
   processContentAsync(content, options) {
     return new Promise((resolve) => {
-      var op = [
+      const op = [
         "-",
         // "-set",
         // "option:filter:blur",
