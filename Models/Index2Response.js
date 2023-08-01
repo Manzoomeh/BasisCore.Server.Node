@@ -14,7 +14,7 @@ export default class Index2Response extends RequestBaseResponse {
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
   async getResultAsync() {
-    var path = this._request.cms.webserver.filepath;
+    const path = this._request.cms.webserver.filepath;
     if (fs.existsSync(path)) {
       const content = await fs.promises.readFile(path);
       return [

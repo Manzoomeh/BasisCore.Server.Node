@@ -1,3 +1,40 @@
 {
-  "cSpell.words": ["Manzoomeh", "Negaran"]
+  "cSpell.words": ["Manzoomeh", "Negaran"],
+
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "eslint.format.enable": true,
+  "eslint.validate": ["javascript", "javascriptreact"],
+  "eslint.workingDirectories": [
+    {
+      "directory": "${workspaceFolder}",
+      "changeProcessCWD": true
+    }
+  ],
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": true
+  },
+  "eslint.options": {
+    "configFile": ".eslintrc.js",
+    "plugins": [
+      "unicorn",
+      "import",
+      "eslint-comments",
+      "sonarjs",
+      "promise",
+      "no-secrets"
+    ],
+    "rules": {
+      "no-undef": "warn",
+      "no-unused-vars": "warn",
+      "unicorn/rule-name": "warn",
+      "import/rule-name": "warn",
+      "eslint-comments/rule-name": "warn",
+      "sonarjs/rule-name": "warn",
+      "promise/rule-name": "warn"
+    }
+  },
+  "[javascript]": {
+    "editor.defaultFormatter": "rvest.vs-code-prettier-eslint"
+  }
 }

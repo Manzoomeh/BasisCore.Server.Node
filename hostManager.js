@@ -1,16 +1,16 @@
-import tls from "tls";
-import fs from "fs";
+import tls from 'tls';
+import fs from 'fs';
 import {
   NonSecureHttpHostEndPoint,
   SecureHttpHostEndPoint,
-} from "./endPoint/endPoints.js";
+} from './endPoint/endPoints.js';
 import {
   HostManagerOptions,
   HostEndPointOptions,
   HostServiceOptions,
   SslCertificateOptions,
   SniCertificateOptions,
-} from "./models/model.js";
+} from './models/model.js';
 import {
   EdgeProxyHostService,
   HostService,
@@ -18,11 +18,10 @@ import {
   StaticFileProxyHostService,
   HostEndPoint,
   RouterHostService,
-} from "./services/hostServices.js";
-import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
+} from './services/hostServices.js';
 
 export default class HostManager {
-  /**@type {HostEndPoint[]} */
+  /** @type {HostEndPoint[]} */
   hosts;
   /**
 /**
@@ -31,8 +30,8 @@ export default class HostManager {
   constructor(options) {
     this.hosts = [];
     this.#loadEndpoints(options);
-    process.on("uncaughtException", (error, origin) => {
-      console.error("uncaught exception", { error, origin });
+    process.on('uncaughtException', (error, origin) => {
+      console.error('uncaught exception', {error, origin});
     });
   }
 
@@ -54,24 +53,24 @@ export default class HostManager {
     for (const [name, endPointsOptions] of Object.entries(options.EndPoints)) {
       if (endPointsOptions.Active) {
         let service = null;
-        if (typeof endPointsOptions.Routing === "string") {
+        if (typeof endPointsOptions.Routing === 'string') {
           service = services.find((x) => x.name == endPointsOptions.Routing);
-        } else if (typeof endPointsOptions.Routing === "object") {
+        } else if (typeof endPointsOptions.Routing === 'object') {
           service = new RouterHostService(
-            "name-router",
-            endPointsOptions.Routing,
-            services
+              'name-router',
+              endPointsOptions.Routing,
+              services,
           );
         }
         if (service) {
-          switch ((endPointsOptions.Type || "http").toLowerCase()) {
-            case "http": {
+          switch ((endPointsOptions.Type || 'http').toLowerCase()) {
+            case 'http': {
               this.#createHttpEndPoint(name, endPointsOptions, service);
               break;
             }
             default: {
               console.error(
-                `${endPointsOptions.Type} not supported in this version of web server`
+                  `${endPointsOptions.Type} not supported in this version of web server`,
               );
               break;
             }
@@ -87,27 +86,27 @@ export default class HostManager {
    * @param {string} name
    * @param {HostEndPointOptions} options
    * @param {HostService} service
-   * @returns {HostEndPoint}
+   * @return {HostEndPoint}
    */
   #createHttpEndPoint(name, options, service) {
     for (const address of options.Addresses) {
-      const [ip, port] = address.EndPoint.split(":", 2);
+      const [ip, port] = address.EndPoint.split(':', 2);
       const certificateOptions = this.#getCertificateOptions(address.Certificate);
-      const endPoint = address.Certificate && !address.Certificate.Http2
-        ? new SecureHttpHostEndPoint(ip, port, service, certificateOptions)
-        : new NonSecureHttpHostEndPoint(ip, port, service);
+      const endPoint = address.Certificate && !address.Certificate.Http2 ?
+        new SecureHttpHostEndPoint(ip, port, service, certificateOptions) :
+        new NonSecureHttpHostEndPoint(ip, port, service);
       this.hosts.push(endPoint);
     }
   }
 
   /**
    * @param {SslCertificateOptions | SniCertificateOptions} certificate
-   * @returns {tls.SecureContextOptions}
+   * @return {tls.SecureContextOptions}
    */
   #getCertificateOptions(certificate) {
     const options = {};
     if (certificate) {
-      if (certificate.Type === "ssl") {
+      if (certificate.Type === 'ssl') {
         if (certificate.FilePath) {
           options.cert = fs.readFileSync(certificate.FilePath);
         }
@@ -120,7 +119,7 @@ export default class HostManager {
         if (certificate.PfxPassword) {
           options.passphrase = certificate.PfxPassword;
         }
-      } else if (certificate.Type === "sni") {
+      } else if (certificate.Type === 'sni') {
         const hostLookup = {};
         for (const host of certificate.Hosts) {
           const hostOptions = {};
@@ -144,15 +143,15 @@ export default class HostManager {
           const set = hostLookup[serverName.toLowerCase()];
           if (set) {
             callback(
-              null,
-              new tls.createSecureContext({
-                cert: set.cert,
-                key: set.key,
-              })
+                null,
+                new tls.createSecureContext({
+                  cert: set.cert,
+                  key: set.key,
+                }),
             );
           } else {
             console.log(
-              `No certificate found for '${serverName}' in SNI settings`
+                `No certificate found for '${serverName}' in SNI settings`,
             );
           }
         };
@@ -164,24 +163,24 @@ export default class HostManager {
 
   /**
    * @param {NodeJS.Dict<HostServiceOptions>} services
-   * @returns {HostService[]}
+   * @return {HostService[]}
    */
   #loadServices(services) {
     const retVal = [];
     for (const [name, serviceOptions] of Object.entries(services)) {
       try {
         switch (serviceOptions.Type.toLowerCase()) {
-          case "sql": {
+          case 'sql': {
             retVal.push(this.#createSqlDispatcher(name, serviceOptions));
             break;
           }
-          case "file": {
+          case 'file': {
             retVal.push(this.#createFileDispatcher(name, serviceOptions));
             break;
           }
           default: {
             console.error(
-              `${serviceOptions.Type} not supported in this version of web server`
+                `${serviceOptions.Type} not supported in this version of web server`,
             );
             break;
           }
@@ -196,16 +195,16 @@ export default class HostManager {
   /**
    * @param {string} name
    * @param {HostServiceOptions} options
-   * @returns {HostService}
+   * @return {HostService}
    */
   #createSqlDispatcher(name, options) {
-    const sqlConnection = options.Settings["Connections.sql.RoutingData"];
+    const sqlConnection = options.Settings['Connections.sql.RoutingData'];
     if (sqlConnection) {
       return new SqlProxyHostService(name, sqlConnection, options);
     } else {
-      const edgeConnection = options.Settings["Connections.edge-socket.RoutingData"];
+      const edgeConnection = options.Settings['Connections.edge-socket.RoutingData'];
       if (edgeConnection) {
-        const [ip, port] = edgeConnection.split(":");
+        const [ip, port] = edgeConnection.split(':');
         return new EdgeProxyHostService(name, ip, port, options);
       }
     }
@@ -215,22 +214,22 @@ export default class HostManager {
   /**
    * @param {string} name
    * @param {HostServiceOptions} options
-   * @returns {HostService}
+   * @return {HostService}
    */
   #createFileDispatcher(name, options) {
-    const rootPath = options.Settings["Directory"];
+    const rootPath = options.Settings['Directory'];
     if (rootPath) {
       return new StaticFileProxyHostService(name, rootPath, options);
     } else {
       throw new Error(
-        `The 'Directory' setting is not set for file dispatcher in '${name}' service!`
+          `The 'Directory' setting is not set for file dispatcher in '${name}' service!`,
       );
     }
   }
 
   /**
    * @param {object} jsonObj
-   * @returns {HostManager}
+   * @return {HostManager}
    */
   static fromJson(jsonObj) {
     const options = new HostManagerOptions();
