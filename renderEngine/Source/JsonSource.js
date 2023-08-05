@@ -1,5 +1,5 @@
-import DataSourceTypes from "../Enums/DataSourceTypes";
-import IDataSource from "./IDataSource";
+import DataSourceTypes from "../Enums/DataSourceTypes.js";
+import IDataSource from "./IDataSource.js";
 
 export default class JsonSource extends IDataSource {
   /**

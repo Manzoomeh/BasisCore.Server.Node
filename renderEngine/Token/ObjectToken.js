@@ -1,13 +1,19 @@
-import Util from "../../Util";
-import IToken from "./IToken";
-import SimpleTokenElement from "./SimpleTokenElement";
+import Util from "../../Util.js";
+import IContext from "../Context/IContext.js";
+import IToken from "./IToken.js";
+import SimpleTokenElement from "./SimpleTokenElement.js";
 
 export default class ObjectToken extends IToken {
   /** @type {Array<SimpleTokenElement>} */
-  params;
+  elements;
 
-  constructor() {
+  /**
+   *
+   * @param {Array<SimpleTokenElement>} elements
+   */
+  constructor(elements) {
     super();
+    this.elements = elements;
   }
 
   /**
@@ -16,38 +22,38 @@ export default class ObjectToken extends IToken {
    */
   async getValueAsync(context) {
     let retVal = null;
-    for (let i = 0; i < this.params.length; i++) {
-      const isLastItem = this.params.length == i + 1;
-      const item = this.params[i];
-      if (item.Value) {
-        retVal = item.Value;
+    for (let i = 0; i < this.elements.length; i++) {
+      const isLastItem = this.elements.length == i + 1;
+      const item = this.elements[i];
+      if (item.value) {
+        retVal = item.value;
         break;
       } else {
-        if (item.Member) {
-          const dataMember = `${item.Source}.${item.Member}`;
-          let dataSource = context.tryGetDataSource(dataMember);
+        if (item.member) {
+          const dataMember = `${item.source}.${item.member}`;
+          let dataSource = context.tryGetSource(dataMember);
           if (dataSource == null) {
             if (isLastItem) {
               if (dataMember.startsWith("cms.")) {
                 break;
               }
               //Only Wait For Last Item in List
-              dataSource = await context.waitToGetDataSourceAsync(dataMember);
+              dataSource = await context.waitToGetSourceAsync(dataMember);
               context.cancellation.throwIfCancellationRequested();
             } else {
               continue;
             }
           }
-          const columnName = item.Column ?? dataSource.Columns[0];
-          if (!dataSource.Columns.includes(columnName)) {
+          const columnName = item.column ?? dataSource.Columns[0];
+          if (!dataSource.columns.includes(columnName)) {
             if (isLastItem) {
               break;
             } else {
               continue;
             }
           }
-          if (dataSource.Data.length == 1) {
-            const columnRawValue = dataSource.Data[0][columnName];
+          if (dataSource.data.length == 1) {
+            const columnRawValue = dataSource.data[0][columnName];
             const columnValue = Util.toString(columnRawValue);
             if (Util.isNullOrEmpty(columnRawValue)) {
               //if value in source is null or blank,process next source
@@ -58,21 +64,23 @@ export default class ObjectToken extends IToken {
               retVal = columnValue;
               break;
             }
-          } else if (dataSource.Data.length > 1) {
+          } else if (dataSource.data.length > 1) {
             try {
-              retVal = dataSource.Data.map((x) => {
-                const columnValue = x[columnName];
-                return typeof columnValue === "string"
-                  ? `'${columnValue}'`
-                  : Util.toString(columnValue);
-              }).join(",");
+              retVal = dataSource.data
+                .map((x) => {
+                  const columnValue = x[columnName];
+                  return typeof columnValue === "string"
+                    ? `'${columnValue}'`
+                    : Util.toString(columnValue);
+                })
+                .join(",");
             } catch {
               /*Nothing*/
             }
           }
         } else {
-          if (!Util.isNullOrEmpty(item.Source)) {
-            const isOk = await context.checkConnectionAsync(item.Source);
+          if (!Util.isNullOrEmpty(item.source)) {
+            const isOk = await context.checkConnectionAsync(item.source);
             retVal = isOk.toString();
           }
         }

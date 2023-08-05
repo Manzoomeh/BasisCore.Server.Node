@@ -1,34 +1,29 @@
-import IDataSource from "../Source/IDataSource";
-import IContext from "./IContext";
-import SourceRepository from "./SourceRepository";
+import IDataSource from "../Source/IDataSource.js";
+import IContext from "./IContext.js";
+import SourceRepository from "./SourceRepository.js";
 
 export default class ContextBase extends IContext {
   /** @type {SourceRepository} */
-  repository = {};
+  repository = new SourceRepository();
 
   /** @param {IDataSource} dataSource */
-  addDataSource(dataSource) {
-    this.repository.setSource(dataSource);
+  addSource(dataSource) {
+    this.repository.addSource(dataSource);
   }
 
   /**
-   * @param {string} dataSourceId
+   * @param {string} sourceId
    * @returns {IDataSource?}
    */
-  tryGetDataSource(dataSourceId) {
-    return this.sources.get(dataSourceId.toLowerCase()) ?? null;
+  tryGetSource(sourceId) {
+    return this.repository.tryToGet(sourceId);
   }
 
   /**
-   * @param {string} dataSourceId
+   * @param {string} sourceId
    * @returns {Promise<IDataSource>}
    */
-  async waitToGetDataSourceAsync(dataSourceId) {
-    const key = dataSourceId.toLowerCase();
-    let retVal = this.tryGetDataSource(key);
-    if (retVal == null) {
-      retVal = await this.waitToGetDataSourceAsync(key);
-    }
-    return retVal;
+  waitToGetSourceAsync(sourceId) {
+    return this.repository.waitToGetAsync(sourceId);
   }
 }

@@ -1,17 +1,17 @@
-import IToken from "./IToken";
+import IToken from "./IToken.js";
 
 export default class ValueToken extends IToken {
   /**@type {string} */
   value;
 
-  /**@param {string} */
+  /**@param {string} value */
   constructor(value) {
     super();
     this.value = value;
   }
 
   /**
-   * @param {IContext}
+   * @param {IContext} context
    * @returns {Promise<string>}
    */
   getValueAsync(context) {

@@ -20,7 +20,9 @@
   ],
   "scripts": {
     "stage": "node index.js ",
-    "dev": "node --openssl-legacy-provider index.js"
+    "dev": "node --openssl-legacy-provider index.js",
+    "context": "node test/context/index.js",
+    "token": "node test/token/index.js"
   },
   "type": "module",
   "dependencies": {

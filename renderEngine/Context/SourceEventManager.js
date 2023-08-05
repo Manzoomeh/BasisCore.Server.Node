@@ -1,4 +1,4 @@
-import IDataSource from "../Source/IDataSource";
+import IDataSource from "../Source/IDataSource.js";
 
 /**
  * @callback SourceEventHandler
@@ -6,7 +6,7 @@ import IDataSource from "../Source/IDataSource";
  */
 export default class SourceEventManager {
   /** @type {Set<SourceEventHandler>} */
-  handlers;
+  handlers = new Set();
 
   /**
    * @param {SourceEventHandler} handler

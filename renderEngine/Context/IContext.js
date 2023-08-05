@@ -1,5 +1,5 @@
-import CancellationToken from "../Cancellation/CancellationToken";
-import IDataSource from "../Source/IDataSource";
+import CancellationToken from "../Cancellation/CancellationToken.js";
+import IDataSource from "../Source/IDataSource.js";
 
 export default class IContext {
   /**@type {boolean} */
@@ -9,17 +9,17 @@ export default class IContext {
   /**@type {CancellationToken} */
   cancellation;
   /**
-   * @param {string} dataSourceId
+   * @param {string} sourceId
    * @returns {IDataSource}
    */
-  tryGetDataSource(dataSourceId) {
+  tryGetSource(sourceId) {
     throw new Error("Method not implemented.");
   }
   /**
-   * @param {string} dataSourceId
+   * @param {string} sourceId
    * @returns {Promise<IDataSource>}
    */
-  waitToGetDataSourceAsync(dataSourceId) {
+  waitToGetSourceAsync(sourceId) {
     throw new Error("Method not implemented.");
   }
   /**
