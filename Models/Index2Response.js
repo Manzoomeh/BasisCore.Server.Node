@@ -2,6 +2,7 @@ import fs from "fs";
 import { StatusCodes } from "http-status-codes";
 import Request from "./request.js";
 import RequestBaseResponse from "./RequestBaseResponse.js";
+import FileManagerBase from "../fileManager/fileManagerBase.js";
 
 export default class Index2Response extends RequestBaseResponse {
   /**
@@ -15,8 +16,8 @@ export default class Index2Response extends RequestBaseResponse {
    */
   async getResultAsync() {
     var path = this._request.cms.webserver.filepath;
-    if (fs.existsSync(path)) {
-      const content = await fs.promises.readFile(path);
+    if (FileManagerBase.getCurrent().exists(path)) {
+      const content = await FileManagerBase.getCurrent().readFileAsync(path);
       return [
         parseInt(this._request.cms.webserver.headercode.split(" ")[0]),
         {

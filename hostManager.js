@@ -123,6 +123,7 @@ export default class HostManager {
             sniOptions.Hosts.forEach((host) => {
               /**@type {tls.SecureContextOptions}*/
               const options = {};
+              c
               if (sslOptions.FilePath) {
                 options.cert = fs.readFileSync(host.FilePath);
               }

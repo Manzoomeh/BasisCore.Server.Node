@@ -2,7 +2,7 @@ import mime from "mime-types";
 import fs from "fs";
 import { StatusCodes } from "http-status-codes";
 import Response from "./Response.js";
-
+import FileManagerBase from "../fileManager/fileManagerBase.js";
 export default class FileResponse extends Response {
   /** @type {string}*/
   #path;
@@ -18,12 +18,15 @@ export default class FileResponse extends Response {
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
   async getResultAsync() {
-    if (fs.existsSync(this.#path)) {
+    
+//    if (FileManagerBase.getCurrent().exists()) {
       const mimeType = mime.lookup(this.#path);
-      const content = await fs.promises.readFile(this.#path);
+      const content = await FileManagerBase.getCurrent().readFileAsync(this.#path);
+      console.log(content)
       return [StatusCodes.OK, { "content-type": mimeType }, content];
-    } else {
+  //  } else {
+      console.log(this.#path)
       return [StatusCodes.NOT_FOUND, {}, null];
     }
-  }
+  //}
 }

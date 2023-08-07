@@ -52,7 +52,7 @@ export default class EdgeProxyHostService extends HostService {
           msg.writeTo(client);
         });
     });
-    const result = await task;
+    const result = await task; 
     return this._createResponse(result);
   }
 }
