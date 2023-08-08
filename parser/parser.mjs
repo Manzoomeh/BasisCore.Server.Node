@@ -11,7 +11,7 @@ class HTMLParser {
     this.currentToken = null;
     this.tokens = [];
     this.html;
-    this.configDir = configDir;
+    c
     this.configObj;
     this.parserConfig;
   }
