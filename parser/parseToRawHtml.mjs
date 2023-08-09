@@ -1,22 +1,21 @@
 import fs from "fs";
-import path, { resolve } from "path";
+import path from "path";
 import IL from "./models/IL.mjs";
-import { type } from "os";
 import { fileURLToPath } from "url";
 import { promises as fsPromises } from "fs";
 
 class ConvertTORawHtml {
+  parserConfig;
+  configObj;
+  configDir;
   constructor(configDir) {
     this.configDir = configDir;
-    this.parserConfig;
-    this.configObj;
   }
 
   async _getTheParserConfig(filePath) {
     const config = await this.readAllConfigFiles(this.configDir);
     const fileData = await fsPromises.readFile(filePath, "utf8");
-    const json = JSON.parse(fileData);
-    this.parserConfig = json;
+    this.parserConfig = JSON.parse(fileData);
     const renderingConfigAttributes = ["run", "renderto", "rendertype"];
     let result = config;
     for (let attribute of renderingConfigAttributes) {
@@ -55,13 +54,20 @@ class ConvertTORawHtml {
     const json = JSON.parse(fileData);
     return json;
   }
+  /**
+   *
+   * @param {string} value
+   * @param {array} array
+   * @returns {number|boolean}
+   */
   findElementInArray(value, array) {
-    const index = array.indexOf(value);
-    if (index !== -1) {
-      return index;
-    } else {
-      return false;
+    for (let index in array) {
+      let object = array[index];
+      if (value == object.tag) {
+        return index;
+      }
     }
+    return -1;
   }
   /**
    *
@@ -69,10 +75,11 @@ class ConvertTORawHtml {
    * @returns {promise<string>|error}
    */
   async processIL(object) {
-    return new Promise((resolve, reject) => {
+    return new Promise(async (resolve, reject) => {
+      let finalString = "";
       for (let childObject of object.Commands) {
         let childObjectResult;
-        let finalString = "";
+
         if (
           !childObject ||
           childObject == {} ||
@@ -81,20 +88,19 @@ class ConvertTORawHtml {
           continue;
         }
         if (childObject["$type"] == "htmltag") {
-          childObjectResult = this._processHtmlTagType(childObject);
+          childObjectResult = await this._processHtmlTagType(childObject);
         } else if (childObject["$type"] == "rawtext") {
-          childObjectResult = this._processRawTextType(childObject);
+          childObjectResult = await this._processRawTextType(childObject);
         } else if (!childObject["$type"]) {
-          console.log(childObject);
           throw new Error(
             `type for one of objects with core of ${childObject["core"]} is not defined`
           );
         } else {
-          childObjectResult = this._processBasisTagType(childObject);
+          childObjectResult = await this._processBasisTagType(childObject);
         }
         finalString += childObjectResult;
       }
-      resolve(childObjectResult);
+      resolve(finalString);
     });
   }
   /**
@@ -113,35 +119,42 @@ class ConvertTORawHtml {
   }
   /**
    * @param {IL} object
-   * @returns {string}
+   * @returns {promise<string>}
    */
   async _processHtmlTagType(object) {
-    const finalContent =
-      Array.isArray(object.content) 
+    return new Promise((resolve, reject) => {
+      const finalContent = Array.isArray(object.content)
         ? processArrayWithBindings(object)
         : object.content;
-    const validHtmlTags = this.parserConfig.htmlTags;
-    if ((validHtmlTags.length = 0)) {
-      throw new Error("html tags is not available with this config");
-    }
-    const index = this.findElementInArray(object.core, validHtmlTags);
-    if (index == false) {
-      throw new Error("this core is not defiend in configuration");
-    }
-    const config = validHtmlTags[index];
-    if (config.type == single) {
-      return `<${config.tag} ${this.objectToKeyValueString(
-        object.attributes
-      )} />`;
-    } else if (config["allow-content"] == false) {
-      return `<${config.tag} ${this.objectToKeyValueString(
-        object.attributes
-      )} ></${config.tag}>`;
-    } else {
-      return `<${config.tag} ${this.objectToKeyValueString(
-        object.attributes
-      )} > ${finalContent}</${config.tag}>`;
-    }
+      const validHtmlTags = this.parserConfig.htmlTags;
+      if (validHtmlTags.length == 0) {
+        throw new Error("html tags is not available with this config");
+      }
+      const index = this.findElementInArray(object.core, validHtmlTags);
+      if (index == -1) {
+        throw new Error(
+          `this core ${object.core} is not defiend in configuration`
+        );
+      }
+      const config = validHtmlTags[index];
+      if (config.type == "single") {
+        resolve(
+          `<${config.tag} ${this.objectToKeyValueString(object.attributes)} />`
+        );
+      } else if (config["allow-content"] == false) {
+        resolve(
+          `<${config.tag} ${this.objectToKeyValueString(
+            object.attributes
+          )} ></${config.tag}>`
+        );
+      } else {
+        resolve(
+          `<${config.tag} ${this.objectToKeyValueString(
+            object.attributes
+          )} > ${finalContent}</${config.tag}>`
+        );
+      }
+    });
   }
   /**
    *
@@ -163,170 +176,185 @@ class ConvertTORawHtml {
   }
   /**
    * @param {IL} object
-   * @returns {string}
+   * @returns {promise<string>}
    */
   async _processRawTextType(object) {
-    const finalContent = Array.isArray(object.content)
-      ? processArrayWithBindings(object)
-      : object.content;
-    return finalContent;
+    return new Promise((resolve, reject) => {
+      const finalContent = Array.isArray(object.content)
+        ? processArrayWithBindings(object)
+        : object.content;
+      resolve(finalContent);
+    });
   }
   /**
    * @param {IL} object
-   * @returns {string}
+   * @returns {promise<string>}
    */
   async _processBasisTagType(object) {
-    let finalResult = `<basis core=${object.core}`;
-    const objectConfig = this.configObj[object.core];
-    const elementsConfig = objectConfig["Elements"];
-    delete objectConfig["Elements"];
-    for (let i in objectConfig.attributes) {
-      if (objectConfig.attributes[i].To) {
-        if (object[objectConfig.attributes[i].To]) {
-          finalResult += `'${i}'='${object[objectConfig.attributes[i].To]} '`;
-          delete object[objectConfig.attributes[i].To];
+    return new Promise(async (resolve, reject) => {
+      let finalResult = `<basis core='${object.core}'`;
+      const objectConfig = this.configObj[object.core];
+      delete object.core;
+      delete objectConfig.core;
+      const elementsConfig = objectConfig["Elements"];
+      for (let i in objectConfig.Attributes) {
+        if (objectConfig.Attributes[i].To) {
+          if (object[objectConfig.Attributes[i].To]) {
+            finalResult += `${i}='${object[objectConfig.Attributes[i].To]} '`;
+            delete object[objectConfig.Attributes[i].To];
+          } else {
+            if (objectConfig.Attributes[i].required == true) {
+              throw new Error("the property required");
+            }
+          }
         } else {
-          if (objectConfig.attributes[i].required == true) {
-            throw new Error("the property required");
+          if (objectConfig.Attributes[i]) {
+            if (!object[i]) {
+              if (objectConfig.Attributes[i].required == true) {
+                throw new Error("the property required");
+              }
+              continue;
+            }
+            finalResult += `${i}='${object[i]}' `;
+            delete object[i];
           }
         }
-      } else {
-        if (object.attributes[i]) {
-          finalResult += `'${i}'='${object[i]}' `;
-          delete object[i];
-        } else {
-          if (objectConfig.attributes[i].required == true) {
-            throw new Error("the property required");
-          }
+      }
+      if (objectConfig.AddExtraAttribute == true && object["extra-attribute"]) {
+        for (let j in object["extra-attribute"]) {
+          finalResult += `${j}='${object["extra-attribute"][j]}' `;
         }
-      }
-    }
-    if (objectConfig.AddExtraAttribute == true && object["extra-attribute"]) {
-      for (let j in object["extra-attribute"]) {
-        finalResult = `'${j}'='${object["extra-attribute"][j]}' `;
-      }
-      delete object["extra-attribute"];
-    } else if (
-      objectConfig.AddExtraAttribute == false &&
-      object["extra-attribute"]
-    ) {
-      throw new Error("adding extra attributes not allowed");
-    }
-    if (object.content || object.Commands || elementsConfig) {
-      finalResult += ">";
-      if (object.content) {
-        if (Array.isArray(object.content)) {
-          finalResult += this._processArrayWithBinding(object.content);
-          delete object.content;
-        } else if (typeof object.content == "string") {
-          finalResult += object.content;
-          delete object.content;
-        } else {
-          throw new Error("unvalid object content");
-        }
-      }
-      if (object.Commands) {
-        finalResult += this.processIL(object);
-        delete object.Commands;
-      }
-      if (
-        elementsConfig &&
-        Object.keys(elementsConfig).length !== 0 &&
-        Object.keys(object).length !== 0
+        delete object["extra-attribute"];
+      } else if (
+        objectConfig.AddExtraAttribute == false &&
+        object["extra-attribute"]
       ) {
-        finalResult += this._processElements(elementsConfig, object);
+        throw new Error("adding extra attributes not allowed");
       }
-      finalResult += `</basis>`;
-    } else {
-      finalResult += `/>`;
-    }
+      if (object.content || object.Commands || elementsConfig) {
+        finalResult += ">";
+        if (object.content) {
+          if (Array.isArray(object.content)) {
+            finalResult += this._processArrayWithBinding(object.content);
+            delete object.content;
+          } else if (typeof object.content == "string") {
+            finalResult += object.content;
+            delete object.content;
+          } else {
+            throw new Error("unvalid object content");
+          }
+        }
+        if (object.Commands) {
+          finalResult += this.processIL(object);
+          delete object.Commands;
+        }
+        if (
+          elementsConfig &&
+          Object.keys(elementsConfig).length !== 0 &&
+          Object.keys(object).length !== 0
+        ) {
+          finalResult += await this._processElements(elementsConfig, object);
+        }
+        finalResult += `</basis>`;
+      } else {
+        finalResult += `/>`;
+      }
+      resolve(finalResult);
+    });
   }
   /**
    *
    * @param {object} elementsConfig
    * @param {object} object
    *
-   * @returns {string}
+   * @returns {promise<string>}
    */
   _processElements(elementsConfig, object) {
-    let result = "";
-    for (let element in object) {
-      for (let config in elementsConfig) {
-        if (element == elementsConfig[config].To || element == config) {
-          if (Array.isArray(object[element])) {
-            object[element].forEach((subElement) => {
-              const content = subElement.content;
+    return new Promise((resolve, reject) => {
+      let result = "";
+      for (let element in object) {
+        for (let config in elementsConfig) {
+          if (element == elementsConfig[config].To || element == config) {
+            if (Array.isArray(object[element])) {
+              object[element].forEach((subElement) => {
+                let extraAttrString = "";
+                if (
+                  elementsConfig[config].AddExtraAttribute == true &&
+                  subElement["extra-attributes"]
+                ) {
+                  for (let j in subElement["extra-attributes"]) {
+                    extraAttrString += `${j}='${subElement["extra-attributes"][j]}' `;
+                  }
+                  delete subElement["extra-attributes"];
+                } else if (
+                  elementsConfig[config].AddExtraAttribute == false &&
+                  subElement["extra-attributes"]
+                ) {
+                  throw new Error("adding extra attributes not allowed");
+                }
+                const content = subElement.content;
+                if (!content) {
+                  result += `<${config} ${this.objectToKeyValueString(
+                    subElement
+                  )} ${extraAttrString}/>`;
+                } else {
+                  delete subElement.content;
+                  result += `<${config} ${this.objectToKeyValueString(
+                    subElement
+                  )} ${extraAttrString}>`;
+                  if (typeof content == "string") {
+                    result += content + `</${config}>`;
+                  } else if (Array.isArray(content)) {
+                    result +=
+                      this._processArrayWithBinding(content) + `</${config}>`;
+                  }
+                }
+              });
+            } else if (typeof object[element] == "object") {
+              let extraAttrString = "";
+              if (
+                elementsConfig[element].AddExtraAttribute == true &&
+                object[element]["extra-attributes"]
+              ) {
+                for (let j in object[element]["extra-attributes"]) {
+                  extraAttrString += `${j}='${object[element]["extra-attributes"][j]}' `;
+                }
+                delete object[element]["extra-attributes"];
+              } else if (
+                elementsConfig[element].AddExtraAttribute == false &&
+                object[element]["extra-attributes"]
+              ) {
+                throw new Error("adding extra attributes not allowed");
+              }
+              const content = object[element].content;
               if (!content) {
                 result += `<${config} ${this.objectToKeyValueString(
-                  subElement
-                )} />`;
+                  object[element]
+                )} ${extraAttrString}/>`;
               } else {
-                delete subElement.content;
+                delete object[element].content;
                 result += `<${config} ${this.objectToKeyValueString(
-                  subElement
-                )} >`;
+                  object[element]
+                )} ${extraAttrString}>`;
                 if (typeof content == "string") {
-                  result += content;
+                  result += content + `</${config}>`;
                 } else if (Array.isArray(content)) {
-                  result += this._processArrayWithBinding(content);
+                  result +=
+                    this._processArrayWithBinding(content) + `</${config}>`;
                 }
               }
-            });
-          } else if (typeof object[element] == "object") {
-            const content = object[element].content;
-            if (!content) {
-              result += `<${config} ${this.objectToKeyValueString(
-                object[element]
-              )} />`;
+            } else if (typeof object[element] == "string") {
+              result += object[element] + `</${config}>`;
             } else {
-              delete object[element].content;
-              result += `<${config} ${this.objectToKeyValueString(
-                object[element]
-              )} >`;
-              if (typeof content == "string") {
-                result += content;
-              } else if (Array.isArray(content)) {
-                result += this._processArrayWithBinding(content);
-              }
+              throw new error(`invalid element "${element}" type`);
             }
-          } else if (typeof object[element] == "string") {
-            result += object[element];
-          } else {
-            throw new error(`invalid element "${element}" type`);
           }
         }
       }
-    }
-    return result;
+      resolve(result);
+    });
   }
 
-  /**
-   *
-   * @param {string} filepath
-   * @param {string}resultPath
-   * @param {}
-   * @returns {promise<void>}
-   */
-  static async process(jsonName, resultName, parserConfig) {
-    try {
-      const __filename = fileURLToPath(import.meta.url);
-      const __dirname = path.dirname(__filename);
-      const convertTORawHtml = new ConvertTORawHtml("/configs");
-      const jsonDir = path.join(__dirname, "result", jsonName + ".json");
-      await convertTORawHtml._getTheParserConfig(
-        path.join(__dirname, parserConfig)
-      );
-      const object = await convertTORawHtml._readJSONFile(jsonDir);
-      const result = await convertTORawHtml.processIL(object);
-      await fs.promises.writeFile(
-        path.join(__dirname, "result", resultName + ".html"),
-        result
-      );
-      return console.log("parsing IL was succsessful");
-    } catch (error) {
-      console.log(error);
-    }
-  }
   deletePropertyFromAttributes(obj, propertyName) {
     const newObj = {};
     const finalObj = {};
@@ -359,6 +387,110 @@ class ConvertTORawHtml {
 
     return newObj;
   }
+  detectBasisTags(object) {
+    return new Promise(async (resolve, reject) => {
+      let finalArray = [];
+      let childObject;
+      for (let index in object.Commands) {
+        childObject = object.Commands[index]
+
+        if (
+          !childObject ||
+          childObject == {} ||
+          Object.keys(childObject) == 0
+        ) {
+          continue;
+        }
+        if (childObject["$type"] == "htmltag") {
+          continue;
+        } else if (childObject["$type"] == "rawtext") {
+          continue;
+        } else if (!childObject["$type"]) {
+          throw new Error(
+            `type for one of objects with core of ${childObject["core"]} is not defined`
+          );
+        } else {
+          const resultString = await this._processBasisTagType(childObject);
+          console.log(resultString)
+         let childObjectResult = {
+           basis: resultString,
+           index,
+         };
+          console.log(childObjectResult)
+          finalArray.push(childObjectResult);
+        }
+     
+        
+      }
+      resolve(finalArray);
+    });
+  }
+  /**
+   *
+   * @param {string} filepath
+   * @param {string}resultPath
+   * @param {string}parserConfig
+   * @returns {promise<void>}
+   */
+  static async reverseProcess(jsonName, resultName, parserConfig) {
+    try {
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const convertTORawHtml = new ConvertTORawHtml("/configs");
+      const jsonDir = path.join(__dirname, "result", jsonName + ".json");
+      await convertTORawHtml._getTheParserConfig(
+        path.join(__dirname, parserConfig)
+      );
+      const object = await convertTORawHtml._readJSONFile(jsonDir);
+
+      const result = await convertTORawHtml.processIL(object);
+      await fs.promises.writeFile(
+        path.join(__dirname, "result", resultName + ".html"),
+        result
+      );
+      return console.log("parsing IL was succsessful");
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  /**
+   *
+   * @param {string} filepath
+   * @param {string}resultPath
+   * @param {}
+   * @returns {promise<void>}
+   */
+  static async findBasisTags(jsonName, resultName, parserConfig) {
+    try {
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const convertTORawHtml = new ConvertTORawHtml("/configs");
+      const jsonDir = path.join(__dirname, "result", jsonName + ".json");
+      await convertTORawHtml._getTheParserConfig(
+        path.join(__dirname, parserConfig)
+      );
+      const object = await convertTORawHtml._readJSONFile(jsonDir);
+      const result = await convertTORawHtml.detectBasisTags(object);
+      console.log(result)
+      await fs.promises.writeFile(
+        path.join(__dirname, "result", resultName + ".json"),
+        JSON.stringify(result) 
+      );
+      return console.log("detecting JSON was succsessful");
+    } catch (error) {
+      console.log(error);
+    }
+  }
 }
 
-await ConvertTORawHtml.process("final", "htmresult", "./parserConfig.json");
+await ConvertTORawHtml.reverseProcess(
+  "final",
+  "htmresult",
+  "./parserConfig.json"
+);
+await ConvertTORawHtml.findBasisTags(
+  "final",
+  "htmresult",
+  "./parserConfig.json"
+);

@@ -11,7 +11,6 @@ class HTMLParser {
     this.currentToken = null;
     this.tokens = [];
     this.html;
-    c
     this.configObj;
     this.parserConfig;
   }
