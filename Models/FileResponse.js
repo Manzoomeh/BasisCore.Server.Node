@@ -19,14 +19,15 @@ export default class FileResponse extends Response {
    */
   async getResultAsync() {
     
-//    if (FileManagerBase.getCurrent().exists()) {
-      const mimeType = mime.lookup(this.#path);
+  if (FileManagerBase.getCurrent().exists()) {
+      
       const content = await FileManagerBase.getCurrent().readFileAsync(this.#path);
-      console.log(content)
+      const mimeType = mime.lookup(FileManagerBase.getCurrent().convertToLinuxPath(this.#path));
+      console.log({content,mimeType})
       return [StatusCodes.OK, { "content-type": mimeType }, content];
-  //  } else {
+ } else {
       console.log(this.#path)
       return [StatusCodes.NOT_FOUND, {}, null];
     }
-  //}
+  }
 }

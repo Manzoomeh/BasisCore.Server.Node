@@ -36,7 +36,6 @@ class FileManagerBase {
   static getCurrent() {
    
     const fileManagerBase = new FileManagerBase()
-     console.log(fileManagerBase._current)
     return fileManagerBase._current;
   }
 }

@@ -18,6 +18,7 @@ export default class Index2Response extends RequestBaseResponse {
     var path = this._request.cms.webserver.filepath;
     if (FileManagerBase.getCurrent().exists(path)) {
       const content = await FileManagerBase.getCurrent().readFileAsync(path);
+            console.log({ content});
       return [
         parseInt(this._request.cms.webserver.headercode.split(" ")[0]),
         {
