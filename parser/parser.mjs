@@ -6,6 +6,7 @@ import { promises as fsPromises } from "fs";
 class HTMLParser {
   constructor(htmlDir, configDir) {
     this.htmlDir = htmlDir;
+    this.configDir = configDir;
     this.position = 0;
     this.state = this.parseText;
     this.currentToken = null;
@@ -255,7 +256,9 @@ class HTMLParser {
     if (Object.keys(obj).length === 0) {
       return "";
     }
-    const array = Object.entries(obj).map(([key, value]) => `${key}='${value}'`);
+    const array = Object.entries(obj).map(
+      ([key, value]) => `${key}='${value}'`
+    );
     return array.join(" ");
   }
 
@@ -275,6 +278,7 @@ class HTMLParser {
             if (object.type === "tag") {
               for (const element of htmlTags) {
                 if (object.name == element.tag) {
+                  resultArray.push(tempArray);
                   if (tempElement && element.tag != tempElement) {
                     throw new Error(
                       `you cannot use ${element.tag} in ${tempElement} by order of config`
@@ -283,13 +287,11 @@ class HTMLParser {
                   tempElement = element.tag;
 
                   if (element.type != object.tagType) {
-                    console.log(object);
-                    console.log(element);
                     throw new Error(
                       `the tag ${object.name} should be ${element.type} tag`
                     );
                   }
-                  let tempHtmlTagObject = new IL()
+                  let tempHtmlTagObject = new IL();
                   tempHtmlTagObject["core"] = object.name;
                   tempHtmlTagObject["name"] = object.name;
                   tempHtmlTagObject["$type"] = "htmltag";
@@ -300,7 +302,6 @@ class HTMLParser {
                     basisNumber == 0
                   ) {
                     resultArray.push(tempHtmlTagObject);
-                    console.log(tempHtmlTagObject)
                     tempHtmlTagObject = {};
                     tempArray = [];
                     tempElement = undefined;
@@ -390,7 +391,7 @@ class HTMLParser {
 
           result.push(item);
         }
-        
+
         resolve(result);
       } catch (error) {
         reject(error);
@@ -419,8 +420,8 @@ class HTMLParser {
           let partResults = await this.processBasisTags(item);
           childrenArray.push(partResults);
         } else {
-          if(item.content&& item.content.length>0){
-            item.content = processHtmlTagContent(item)
+          if (item.content && item.content.length > 0) {
+            item.content = processHtmlTagContent(item);
           }
           childrenArray.push(item);
         }
@@ -530,11 +531,11 @@ class HTMLParser {
               }
               if (!defaultValue) {
                 value = {
-                  params: [{ Source: source, Member: member, Column: column }],
+                  Params: [{ Source: source, Member: member, Column: column }],
                 };
               } else {
                 value = {
-                  params: [
+                  Params: [
                     { Source: source, Member: member, Column: column },
                     { value: defaultValue },
                   ],
@@ -571,13 +572,13 @@ class HTMLParser {
                 }
                 if (!defaultValue) {
                   value = {
-                    params: [
+                    Params: [
                       { Source: source, Member: member, Column: column },
                     ],
                   };
                 } else {
                   value = {
-                    params: [
+                    Params: [
                       { Source: source, Member: member, Column: column },
                       { value: defaultValue },
                     ],
@@ -661,13 +662,13 @@ class HTMLParser {
                   }
                   if (!defaultValue) {
                     value = {
-                      params: [
+                      Params: [
                         { Source: source, Member: member, Column: column },
                       ],
                     };
                   } else {
                     value = {
-                      params: [
+                      Params: [
                         { Source: source, Member: member, Column: column },
                         { value: defaultValue },
                       ],
@@ -729,7 +730,6 @@ class HTMLParser {
                   finalContent = this.splitByBindings(tempString);
                   break;
                 case "layout":
-                  console.log(tempString);
                   finalContent = this.splitByBindings(tempString);
                   break;
                 case "replace":
@@ -823,13 +823,13 @@ class HTMLParser {
                   }
                   if (!defaultValue) {
                     value = {
-                      params: [
+                      Params: [
                         { Source: source, Member: member, Column: column },
                       ],
                     };
                   } else {
                     value = {
-                      params: [
+                      Params: [
                         { Source: source, Member: member, Column: column },
                         { value: defaultValue },
                       ],
@@ -908,15 +908,15 @@ class HTMLParser {
     }
     return il;
   }
-  processHtmlTagContent(item){
-    const elementConfig = this.parserConfig.htmlTags[item.core]
-    if(!elementConfig){
-      throw new Error("no config found for this element")
+  processHtmlTagContent(item) {
+    const elementConfig = this.parserConfig.htmlTags[item.core];
+    if (!elementConfig) {
+      throw new Error("no config found for this element");
     }
-    if(elementConfig["allow-content"]==false){
-      return ""
+    if (elementConfig["allow-content"] == false) {
+      return "";
     }
-    let resultString
+    let resultString;
     item.content.forEach(async (subItem) => {
       if (!subItem || !subItem.type) {
         return;
@@ -945,8 +945,8 @@ class HTMLParser {
           }
         }
       }
-    })
-    return this.splitByBindings(resultString)
+    });
+    return this.splitByBindings(resultString);
   }
   findMissingProperties(object1, object2) {
     const object1Keys = Object.keys(object1);
@@ -1004,12 +1004,12 @@ class HTMLParser {
         }
         if (!value) {
           object = {
-            params: [{ source: source, member: member, column: column }],
+            Params: [{ Source: source, Member: member, Column: column }],
           };
         } else {
           object = {
-            params: [
-              { source: source, member: member, column: column },
+            Params: [
+              { Source: source, Member: member, Column: column },
               { value: value },
             ],
           };
@@ -1046,41 +1046,27 @@ class HTMLParser {
     return splitArray;
   }
   static async parse(htmlName, filename, parserConfig) {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const htmlDir = path.join(__dirname, "src", htmlName + ".html");
-    const parser = new HTMLParser(htmlDir, "/configs");
-    await parser.readHtmlFile();
-    await parser.getTheParserConfig(path.join(__dirname,parserConfig));
-    const tokens = parser.parse();
-    const result = await parser.processTags(tokens);
-    const resultObj = await parser.processArray(result);
-    const final = resultObj.toFilteredObject();
-    await parser.writeJsonFile(
-      final,
-      path.join(__dirname, "result", filename + ".json")
-    );
-  }
-  static async parseForExelTest(htmlFile, originalJson) {
-    const __filename = fileURLToPath(import.meta.url);
-    const __dirname = path.dirname(__filename);
-    const parser = new HTMLParser("/", "/configs");
-    parser.html = htmlFile;
-    await parser.getTheParserConfig();
-    const tokens = parser.parse();
-    const result = await parser.processTags(tokens);
-    const resultObj = await parser.processArray(result);
-    const final = resultObj.toFilteredObject();
-    await parser.writeJsonFile(
-      final,
-      path.join(__dirname, "testfile", "result", "appResult" + ".json")
-    );
-    await fsPromises.writeFile(
-      path.join(__dirname, "testfile", "result", "original" + ".json"),
-      originalJson,
-      "utf-8"
-    );
+    try {
+      const __filename = fileURLToPath(import.meta.url);
+      const __dirname = path.dirname(__filename);
+      const htmlDir = path.join(__dirname, "src", htmlName + ".html");
+      const parser = new HTMLParser(htmlDir, "/configs");
+      await parser.readHtmlFile();
+      const parserPath = path.join(__dirname, parserConfig + ".json");
+      await parser.getTheParserConfig(parserPath);
+      const tokens = parser.parse();
+      const result = await parser.processTags(tokens);
+      console.log(result);
+      const resultObj = await parser.processArray(result);
+      const final = resultObj.toFilteredObject();
+      await parser.writeJsonFile(
+        final,
+        path.join(__dirname, "result", filename + ".json")
+      );
+    } catch (error) {
+      console.log(error.stack);
+    }
   }
 }
-HTMLParser.parse("index", "final", "./parserConfig.json");
+HTMLParser.parse("index", "final", "parserConfig");
 export default HTMLParser;

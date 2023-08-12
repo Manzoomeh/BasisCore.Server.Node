@@ -1,153 +1,123 @@
-<basis core="dbsource" source="basiscore" mid="5" name="dboffices" lid="1" usedforid="7937">
-  <member name="offices" type="view" />
-  <member name="data1" type="view" request="rdfa" />
+<basis core="dbsource" source="basiscore" mid="20" name="dblist2" catid="43398" lid="1">
+  <member name="list2" type="list" perpage="3" link="/tour.bc" order="date desc" />
+</basis> <!-- for ozviat -->
+<basis core="dbsource" source="trust_login" email="[##cms.form.email##]" mobile="[##cms.form.mob##]"
+  title="[##cms.form.name##]" captcha="[##cms.form.captcha##]" captchaid="[##cms.form.captchaid##]" name="db">
+  <member name="list66" type="scalar" request="newsmembersabt" />
 </basis>
-<basis core="dbsource" source="basiscore" mid="5" name="dbabout" lid="1" usedforid="8355">
-  <member name="about" type="view" />
-</basis>
-<basis core="dbsource" source="trust_login" name="captcha">
-  <member name="code1" type="scalar" request="captcha" />
-</basis>
-<!doctype html>
-<html>
-
-<head>
-  
-  <meta charset="utf-8">
-  <meta name="author" content="BasisCore">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>
-    <basis core="print" groupcol="something" datamembername="cms.seo">
-      <face>@title</face>
-    </basis>
-  </title>
-  <basis core="print" groupcol="something" datamembername="cms.seo">
-    <face>
-      <meta name="Description" content="@description" />
-    </face>
-  </basis>
-  <link rel="stylesheet" href="/css/css.css">
-  <link rel="stylesheet" href="/css/domain.css">
-  <link rel="stylesheet" href="css/domain1.css" type="text/css" />
-  <link rel="stylesheet" href="/css/font-awesome.min.css">
-  <link rel="stylesheet" type="text/css" href="/css/menu.css" />
-  <link rel="stylesheet" type="text/css" href="/css/RezervationDomain.css" />
-  <script src="/js/jquery.min.js" type="text/javascript"></script>
-  <script src="/js/modernizr.js"></script>
-  <script
-    type="text/javascript">  $(document).on("scroll", function () { if ($(document).width() > 768) { if ($(document).scrollTop() > 10) { $("#myHeader").removeClass("large").addClass("small"); } else { $("#myHeader").removeClass("small").addClass("large"); } } });  </script>
-  <script
-    src="http://maps.googleapis.com/maps/api/js?key=AIzaSyDY0kkJiTPVd2U7aTOAwhc9ySH6oHxOIYM&sensor=false"></script>
-  <script type="text/javascript" src='js/map.js'></script><!-- map contactus -->
-</head>
-
-<body>
-  <basis core="print" groupcol="something" datamembername="dboffices.data1">
-    <layout>@child</layout>
-    <face>
-      <div class="inner-container" itemprop="@vocabulary" itemscope itemtype="@link">
-    </face>
-  </basis>
-  <h1>hi
-  <div id="container-body">
-    <basis core="call" file="header.inc" />
-    <main class="cd-main-content">
-      <div class="loginRegister"></div>
-      <div class="clr"></div>
-      <div class="clr"></div>
-      <div id="mySlider" class="bc-col bc-heightmain bc-zindex-1"><img src="images/about.jpg" alt="" /></div>
-      <div class="clr"></div>
-      <div class="clr"></div> <!-- main body -->
-      <div class="bc-col bc-heightauto  bc-right" id="maincontent">
-        <div class="bc-main  bc-heightmain bc-heightauto">
-          <div class="titleAbout">
-            <h1>دمو نرم افزار رزرواسیون بیسیس فلای</h1>
-            <div class="clr"></div>
-            <p><span class="contactImg"></span>بیسیس فلای، بهترین پلتفرم برای سامانه آنلاین رزرواسیون</p>
-          </div> <!-- info mitra gahst -->
-          <div id="specialTour" class="bc-col bc-right">
-            <div class="bc-col  bc-heightmain bc-heightauto"> <!-- about us -->
-              <div class="bc-col l8 m12 s12 bc-heightauto  bc-right ">
-                <div class="tith2"> </div>
-                <div id="txtAbout">
-                  <basis core="print"  groupcol="something" datamembername="dboffices.offices">
-                    <face filter="typeid=144">@largetext</face>
-                  </basis>
-                </div> <!-- map -->
-                <div class="content_map"> </div>
-              </div> <!-- contact us -->
-              <div class="bc-col l4 m12 s12 bc-heightauto  bc-left " id="contactUsInfo">
-                <div class="tith2">
-                  <h2>تماس با بیسیس فلای:</h2>
-                </div>
-                <basis core="print"  groupcol="something" datamembername="dboffices.offices">
-                  <face filter="prpid=7999">
-                    <div class="p-text-inner">
-                      <div class="contactImg"></div>
-                      <p><span>نشانی: </span> تهران، خیابان شهید بهشتی، مابین سهروردی و میدان تختی، پلاک 183</p>
-                    </div>
-                  </face>
-                </basis>
-                <basis core="print" groupcol="something" datamembername="dboffices.offices">
-                  <face filter="prpid=8000">
-                    <div class="p-text-inner">
-                      <div class="contactImg"></div>
-                      <p itemprop="@vocabulary"><span>تلفن : </span>@answer</p>
-                    </div>
-                  </face>
-                </basis>
-                <basis core="print" groupcol="something" datamembername="dboffices.offices">
-                  <face filter="prpid=8393">
-                    <div class="p-text-inner">
-                      <div class="contactImg"></div>
-                      <p itemprop="@vocabulary"><span>تلفکس : </span>@answer</p>
-                    </div>
-                  </face>
-                </basis>
-                <basis core="print" groupcol="something" datamembername="dboffices.offices">
-                  <face filter="prpid=8001">
-                    <div class="p-text-inner">
-                      <div class="contactImg"></div>
-                      <p itemprop="@vocabulary"><span>ایمیل : </span> @answer</p>
-                    </div>
-                  </face>
-                </basis>
-                <div class="p-text-inner">
-                  <div class="contactImg"></div>
-                </div>
-                <div id="formContactus">
-                  <div class="tith2">
-                    <h2>فرم تماس با ما :</h2>
-                  </div>
-                  <form action="ContactForm.bc" method="post"> <input name="name" type="text"
-                      placeholder="نام و نام خانوادگی"> <input name="mob" type="tel" placeholder="شماره تلفن تماس">
-                    <input name="email" type="email" placeholder="ایمیل"> <textarea name="comment" cols="28" rows="2"
-                      placeholder="متن تماس" id="comment"></textarea>
-                    <basis datamembername="captcha.code1" groupcol="something"  core="print">
-                      <face>
-                        <p> <input type="text" name="captcha" id="captcha"> <span class="captcha11"> <input
-                              type="hidden" value="@captcha" name="captchaid"> <img class="cap" width="80" height="35"
-                              alt="همسفر" src="@captcha" /> </span> <a id="refImg" class="refreshimg1"
-                            title="Click to refresh image" href="#"><span class="contactImg"></span></a> </p>
-                      </face>
-                    </basis> <input name="send" type="submit" value="ارسال">
-                  </form>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
+<basis core="dbsource" source="trust_login" name="db">
+  <member name="captcha" type="scalar" request="captcha" />
+</basis> <!-- footer -->
+<div class="topborder"></div>
+<footer class="bc-container bc-padding-0 bc-right  bc-heightmain bc-heightauto">
+  <div class="bc-main  bc-heightmain bc-heightauto" id="footer-txt">
+    <div class="bc-col l3 m6 s12 bc-heightauto  bc-right cre-animate" data-easing="easeInOutBack" data-offset="70%"
+      data-delay="0" data-speed="1000" data-animation="slide-down-from-top"
+      style="position: relative; top: 0px; opacity: 1; transition-duration: 1000ms; transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); transition-delay: 0ms;">
+      <div class="titfooter">
+        <p>اطلاعات تماس</p>
+        <hr>
       </div>
-      <div class="clr"></div>
-      <div class="clr"></div>
-      <basis core="call" file="footer.inc" />
-    </main>
+      <div class="contact-add">
+        <div class="contact-img-add"><i class="fa fa-home" aria-hidden="true"></i></div>
+        <p class="contact-p-add"> ملاصدرا ، ابتدای شیخ بهایی ، پلاک 61 </p>
+      </div>
+      <div class="contact-add">
+        <div class="contact-img-add"><i class="fa fa-phone" aria-hidden="true"></i></div>
+        <p class="contact-p-add"> 02188042700</p>
+      </div>
+      <div class="contact-add">
+        <div class="contact-img-add"><i class="fa fa-phone" aria-hidden="true"></i></div>
+        <p class="contact-p-add"> 02157937</p>
+      </div>
+      <div class="contact-add">
+        <div class="contact-img-add"><i class="fa fa-phone" aria-hidden="true"></i></div>
+        <p class="contact-p-add">09028804270</p>
+      </div>
+      <div class="contact-add">
+        <div class="contact-img-add"><i class="fa fa-envelope-o" aria-hidden="true"></i></div>
+        <p class="contact-pen-add">keyvanparvaz_reservation@yahoo.com</p>
+      </div>
+      <div class="component"> <a href="https://t.me/keyvanparvaaz" class="icon icon-border twitter">Telegram</a> <a
+          href="https://www.instagram.com/keyvanparvaz/" class="icon icon-border googleplus">Instagram</a> <a
+          href="https://www.aparat.com/keyvanparvaaz" class="icon icon-border apparat">apaprat</a> </div>
+    </div>
+    <div class="bc-col l3 m6 s12 bc-heightauto  bc-right cre-animate" data-easing="easeInOutBack" data-offset="70%"
+      data-delay="500" data-speed="1000" data-animation="slide-down-from-top"
+      style="position: relative; top: 0px; opacity: 1; transition-duration: 1000ms; transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); transition-delay: 500ms;">
+      <div class="titfooter">
+        <p>دسترسی</p>
+        <hr>
+      </div>
+      <ul class="menubar">
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a href="/آب-و-هوا">آب وهوا </a></li>
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a href="/اختلاف-ساعت-دنیا">اختلاف ساعت</a></li>
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a href="/درباره-ما">درباره ما</a></li>
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a href="article.bc?id=2292972">قوانین و مقررات</a></li>
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a href="/ثبت-شکایت">ثبت شکایات</a> </li>
+      </ul>
+    </div>
+    <div class="bc-col l3 m6 s12 bc-heightauto  bc-right cre-animate" data-easing="easeInOutBack" data-offset="70%"
+      data-delay="500" data-speed="1000" data-animation="slide-down-from-top"
+      style="position: relative; top: 0px; opacity: 1; transition-duration: 1000ms; transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); transition-delay: 500ms;">
+      <div class="titfooter">
+        <p>اطلاعات مفید</p>
+        <hr>
+      </div>
+      <ul class="menubar">
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a href="https://ebooking.iranair.com/Schedule"
+            target="_blank">اطلاعات پروازی تمامی فرودگاه ها</a></li>
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a
+            href="https://sadadpsp.ir/tollpayment/#/tax/departuretax" target="_blank">پرداخت عوارض خروج</a> </li>
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a href="https://greenwichmeantime.com"
+            target="_blank">ساعت جهانی</a></li>
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a href="http://cip-mehrabad.com" target="_blank">تشریفات
+            اختصاصی مهرآباد(CIP)</a></li>
+        <li><i class="fa fa-angle-left" aria-hidden="true"></i><a href="https://www.ikac.ir/commercial-important-person"
+            target="_blank">تشریفات اختصاصی امام خمینی (CIP)</a></li>
+      </ul>
+    </div>
+    <!-- <div class="bc-col l3 m6 s12 bc-heightauto  bc-right cre-animate" data-easing="easeInOutBack" data-offset="70%" data-delay="500" data-speed="1500" data-animation="slide-down-from-top" style="position: relative; top: 0px; opacity: 1; transition-duration: 1500ms; transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); transition-delay: 500ms;">       <div class="titfooter">        <p>عضویت در خبرنامه</p>        <hr>       </div>       <form  action="get.bc" method="post"  id="newsletter">        <input name="name" type="text"  id="name" placeholder="نام و نام خانوادگی ">        <input name="mob" type="tel" id="mob" placeholder="تلفن همراه " >        <input name="email" type="email" id=" email" placeholder="پست الکترونیکی ">        <basis datamembername="db.captcha" core="print">         <face>          <input type="text" name="captcha" id="captcha"  placeholder="کد امنیتی "   />          <a href="#" id="refreshimg1"  class="refreshing55" title="Click to refresh image" style="width:50px; height:35px;margin:0px;float: right;" > <img src="/images/refresh.jpg" width="50" height="35"/> </a> <span class="captcha1" style="margin:0!important; float: right;">          <input type="hidden" name="captchaid" value="@captcha" />          <img src="@captcha" width="90" height="35"  class="cap" alt="کیوان پرواز" /> </span> </face>        </basis>        <input name="send" type="submit" value="ثبت نام" id="send">        <div class="answerloading"></div>        <div class="answer"></div>       </form>      </div> -->
+    <div class="bc-col l3 m6 s12 bc-heightauto bc-right cre-animate" data-easing="easeInOutBack" data-offset="70%"
+      data-delay="500" data-speed="1900" data-animation="slide-down-from-top"
+      style="position: relative; top: 0px; opacity: 1; transition-duration: 1900ms; transition-timing-function: cubic-bezier(0.68, -0.55, 0.265, 1.55); transition-delay: 500ms;">
+      <div class="titfooter">
+        <p>نمادها</p>
+        <hr>
+      </div>
+      <!-- <ul class="menubar">        <basis core="print" datamembername="dblist2.list2">         <face>          <li style="line-height:15px; font-size:12px; height:40px"><i class="fa fa-angle-left" aria-hidden="true" ></i><a href="@link">@title </a></li>         </face>        </basis>       </ul> -->
+      <div class="footer-mini-logo-wrapper">
+        <div class="footer-mini-logo"><a href="https://www.cao.ir" target="_blank"><img src="./images/cao.png" alt=""
+              width="60" height="48" /></a></div>
+        <div class="footer-mini-logo"><a href="http://aira.ir" target="_blank"><img src="./images/aira.png" alt=""
+              width="60" height="48" /></a></div>
+        <div class="footer-mini-logo"><a href="https://www.cao.ir/paxrights" target="_blank"><img
+              src="./images/cao-paxrights.png" alt="" width="60" height="48" /></a></div>
+        <div class="footer-mini-logo"> <a referrerpolicy="origin" target="_blank"
+            href="https://trustseal.enamad.ir/?id=32974&amp;Code=tBPPwhrjP5FW7en2Uwjh"><img referrerpolicy="origin"
+              src="https://Trustseal.eNamad.ir/logo.aspx?id=32974&amp;Code=tBPPwhrjP5FW7en2Uwjh" alt=""
+              style="cursor:pointer" width="60" height="48" id="tBPPwhrjP5FW7en2Uwjh" /></a></div>
+      </div> <!--<div class="footer-mini-logo">-->
+    </div>
   </div>
-  <script type="text/javascript" src="/js/jquery.validate.js"></script>
-  <script type="text/javascript" src="/js/autoNumeric.js"></script>
-  <script type="text/javascript">jQuery(function ($) { $(".pricetour").autoNumeric('init'); });</script>
-  <script src="/js/mobile.custom.min.js"></script>
-  <script src="/js/menu.js"></script>
-</body>
-
-</html>
+  </div>
+  </div>
+  </div> <!-- copy text -->
+  <div class="bc-main" id="copy-txt">
+    <div class="bc-col bc-half bc-right bc-heightmain">
+      <p> <a href="http://www.basisfly.com/طراحی-سایت-مخصوص-آژانس-مسافرتی" target="_blank">طراحی سایت آژانس مسافرتی</a>
+        و <a href="http://www.basisfly.com/" target="_blank">رزرواسیون آنلاین توسط بیسیس فلای </a> <img
+          src="images/basisfly.png" width="75" height="25" style="vertical-align: MIDDLE;" /> </p>
+    </div>
+    <div class="bc-col bc-half bc-left  bc-heightmain">
+      <p> Copyright © 2015 <span> keyvanparvaz.com</span> All Rights Reserved </p>
+    </div>
+  </div> <!-- /copy text -->
+</footer> <!-- /footer -->
+<script src="[##cms.cms.cdn##]/js/menu-responsive.js" type="text/javascript"></script>
+<script src="[##cms.cms.cdn##]/js/core.min.js" type="text/javascript"></script> <!---start GOFTINO code--->
+<script
+  type="text/javascript">    !function () { var i = "bESng6", a = window, d = document; function g() { var g = d.createElement("script"), s = "https://www.goftino.com/widget/" + i, l = localStorage.getItem("goftino_" + i); g.async = !0, g.src = l ? s + "?o=" + l : s; d.getElementsByTagName("head")[0].appendChild(g); } "complete" === d.readyState ? g() : a.attachEvent ? a.attachEvent("onload", g) : a.addEventListener("load", g, !1); }();  </script>
+<!---end GOFTINO code---> <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-BDW59D7R2F"></script>
+<script>    window.dataLayer = window.dataLayer || []; function gtag() { dataLayer.push(arguments); } gtag('js', new Date()); gtag('config', 'G-BDW59D7R2F');  </script>

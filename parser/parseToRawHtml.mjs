@@ -123,8 +123,9 @@ class ConvertTORawHtml {
    */
   async _processHtmlTagType(object) {
     return new Promise((resolve, reject) => {
+      console.log(object.content);
       const finalContent = Array.isArray(object.content)
-        ? processArrayWithBindings(object)
+        ? processArrayWithBindings(object.content)
         : object.content;
       const validHtmlTags = this.parserConfig.htmlTags;
       if (validHtmlTags.length == 0) {
@@ -158,17 +159,25 @@ class ConvertTORawHtml {
   }
   /**
    *
-   * @param {array} Array
+   * @param {array} content
    */
-  _processArrayWithBinding(Array) {
+  _processArrayWithBinding(content) {
     let finalString = "";
-    Array.forEach((element) => {
+    console.log(content);
+    content.forEach((element) => {
       if (typeof element == "string") {
         finalString += element;
       } else if (typeof element == "object") {
+        finalString += `'[##`;
         for (let bindings of element.Params) {
-          finalString += `[##${bindings.values.join(".")}##]`;
+          console.log(bindings);
+          finalString += `${bindings.Source}.${bindings.Member}.${bindings.Column}|`;
         }
+        if (element.Value) {
+          finalString += `(${element.Value})`;
+        }
+
+            return finalString.slice(0, -1) + `##]'`;
       } else {
         throw new Error("Invalid Type");
       }
@@ -181,7 +190,7 @@ class ConvertTORawHtml {
   async _processRawTextType(object) {
     return new Promise((resolve, reject) => {
       const finalContent = Array.isArray(object.content)
-        ? processArrayWithBindings(object)
+        ? this._processArrayWithBinding(object.content)
         : object.content;
       resolve(finalContent);
     });
@@ -200,8 +209,22 @@ class ConvertTORawHtml {
       for (let i in objectConfig.Attributes) {
         if (objectConfig.Attributes[i].To) {
           if (object[objectConfig.Attributes[i].To]) {
-            finalResult += `${i}='${object[objectConfig.Attributes[i].To]} '`;
-            delete object[objectConfig.Attributes[i].To];
+            if (typeof objectConfig.Attributes[i].To == "object") {
+              let finalString = `'${i}=[##`;
+              for (let bindings of objectConfig.Attributes[i].To.Params) {
+                console.log(bindings);
+                finalString += `${bindings.Source}.${bindings.Member}.${bindings.Column}|`;
+              }
+              if (objectConfig.Attributes[i].To.Value) {
+                finalString += `(${objectConfig.Attributes[i].To.Value})`;
+              }
+
+              finalResult += finalString.slice(0, -1) + `##] '`;
+              delete object[objectConfig.Attributes[i].To];
+            } else {
+              finalResult += `${i}='${object[objectConfig.Attributes[i].To]} '`;
+              delete object[objectConfig.Attributes[i].To];
+            }
           } else {
             if (objectConfig.Attributes[i].required == true) {
               throw new Error("the property required");
@@ -215,14 +238,39 @@ class ConvertTORawHtml {
               }
               continue;
             }
-            finalResult += `${i}='${object[i]}' `;
-            delete object[i];
+            if (typeof object[i] == "object") {
+              let finalString = `${i}='[##`;
+              for (let bindings of object[i].Params) {
+                finalString += `${bindings.Source}.${bindings.Member}.${bindings.Column}|`;
+              }
+              if (element.Value) {
+                finalString += `(${object[i].Value})`;
+              }
+              finalResult += finalString.slice(0, -1) +`##]' `;
+
+              delete object[i];
+            } else {
+              finalResult += `${i}='${object[i]}' `;
+              delete object[i];
+            }
           }
         }
       }
       if (objectConfig.AddExtraAttribute == true && object["extra-attribute"]) {
         for (let j in object["extra-attribute"]) {
-          finalResult += `${j}='${object["extra-attribute"][j]}' `;
+          if (typeof object["extra-attribute"][j] == "object") {
+            let finalString = `${j}='[##`;
+            for (let bindings of object["extra-attribute"][j].Params) {
+              finalString += `${bindings.Source}.${bindings.Member}.${bindings.Column}|`;
+            }
+            if (object["extra-attribute"][j].Value) {
+              finalString += `(${object["extra-attribute"][j].Value})`;
+            }
+
+              finalResult += finalString.slice(0, -1) + `##]'`;
+          } else {
+            finalResult += `${j}='${object["extra-attribute"][j]}' `;
+          }
         }
         delete object["extra-attribute"];
       } else if (
@@ -392,7 +440,7 @@ class ConvertTORawHtml {
       let finalArray = [];
       let childObject;
       for (let index in object.Commands) {
-        childObject = object.Commands[index]
+        childObject = object.Commands[index];
 
         if (
           !childObject ||
@@ -411,16 +459,14 @@ class ConvertTORawHtml {
           );
         } else {
           const resultString = await this._processBasisTagType(childObject);
-          console.log(resultString)
-         let childObjectResult = {
-           basis: resultString,
-           index,
-         };
-          console.log(childObjectResult)
+          console.log(resultString);
+          let childObjectResult = {
+            basis: resultString,
+            index,
+          };
+          console.log(childObjectResult);
           finalArray.push(childObjectResult);
         }
-     
-        
       }
       resolve(finalArray);
     });
@@ -432,7 +478,7 @@ class ConvertTORawHtml {
    * @param {string}parserConfig
    * @returns {promise<void>}
    */
-  static async reverseProcess(jsonName, resultName, parserConfig) {
+  static async process(jsonName, resultName, parserConfig) {
     try {
       const __filename = fileURLToPath(import.meta.url);
       const __dirname = path.dirname(__filename);
@@ -472,10 +518,10 @@ class ConvertTORawHtml {
       );
       const object = await convertTORawHtml._readJSONFile(jsonDir);
       const result = await convertTORawHtml.detectBasisTags(object);
-      console.log(result)
+      console.log(result);
       await fs.promises.writeFile(
         path.join(__dirname, "result", resultName + ".json"),
-        JSON.stringify(result) 
+        JSON.stringify(result)
       );
       return console.log("detecting JSON was succsessful");
     } catch (error) {
@@ -484,11 +530,7 @@ class ConvertTORawHtml {
   }
 }
 
-await ConvertTORawHtml.reverseProcess(
-  "final",
-  "htmresult",
-  "./parserConfig.json"
-);
+await ConvertTORawHtml.process("final", "htmresult", "./parserConfig.json");
 await ConvertTORawHtml.findBasisTags(
   "final",
   "htmresult",
