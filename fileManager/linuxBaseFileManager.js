@@ -26,7 +26,7 @@ class LinuxBaseFileManager {
   }
   convertToLinuxPath(windowsPath) {
     const normalizedPath = windowsPath.replace(/\\/g, "/"); // Replace backslashes with forward slashes
-    const splitPath = normalizedPath.split("/");
+    const splitPath = normalizedPath.split("/").shift(1).shift(1);
     const dynamicPath = process.env.DYNAMIC_PATH || "driveZ";
     // Change the first folder to "driveZ"
     if (splitPath.length > 1) {

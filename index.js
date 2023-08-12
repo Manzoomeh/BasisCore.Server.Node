@@ -1,6 +1,8 @@
 import HostManager from "./hostManager.js";
 import { HostManagerOptions } from "./Models/model.js";
 import fs from "fs"
+import dotenv from "dotenv"
+require("dotenv").config()
 /** @type {HostManagerOptions} */
 fs.readFile("./config/config.json",(err,data)=>{
 if(err){
