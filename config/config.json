@@ -1,0 +1,39 @@
+{
+  "Lazy": true,
+  "EndPoints": {
+    "Main01": {
+      "Type": "http",
+      "Addresses": [
+        {
+          "EndPoint": "0.0.0.0:80"
+        }
+      ],
+      "Active": true,
+      "Routing": "edgeService"
+    },
+    "Main03": {
+      "Type": "http",
+      "Addresses": [
+        {
+          "EndPoint": "0.0.0.0:443",
+          "Certificate": {
+            "Type": "ssl",
+            "PfxPath": "test-cert/basiscore.net.pfx",
+            "PfxPassword": "basiscore.net",
+            "Http2": true
+          }
+        }
+      ],
+      "Active": true,
+      "Routing": "edgeService"
+    }
+  },
+  "Services": {
+    "edgeService": {
+      "Type": "sql",
+      "Settings": {
+        "Connections.edge-socket.RoutingData": "192.168.96.76:1046"
+      }
+    }
+  }
+}
