@@ -1,6 +1,8 @@
 import IToken from "./IToken.js";
 
 export default class ValueToken extends IToken {
+  /** @type {ValueToken} */
+  static Null = new ValueToken(null);
   /**@type {string} */
   value;
 

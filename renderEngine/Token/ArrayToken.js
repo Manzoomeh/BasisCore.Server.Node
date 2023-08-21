@@ -1,10 +1,10 @@
-import IToken from "./IToken";
+import IToken from "./IToken.js";
 
 export default class ArrayToken extends IToken {
   /** @type {Array<IToken>} */
   values;
 
-  /** @param {Array<IToken>} */
+  /** @param {Array<IToken>} values*/
   constructor(values) {
     super();
     this.values = values;
