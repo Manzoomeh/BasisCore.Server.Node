@@ -2,3 +2,5 @@ node_modules
 output
 StreamerEngine.report.json
 deploy-files
+test-cert
+config
