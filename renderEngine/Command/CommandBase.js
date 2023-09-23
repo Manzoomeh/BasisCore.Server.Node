@@ -49,7 +49,7 @@ export default class CommandBase {
       switch (runType) {
         case RunTypes.AtServer: {
           const ifValue = await this._getIfValueAsync(context);
-          if (this.ifValue) {
+          if (ifValue) {
             //TODO: create scope
             retVal = await this._executeCommandAsync(context);
           } else {
@@ -67,6 +67,7 @@ export default class CommandBase {
         }
       }
     } catch (ex) {
+      console.error(ex);
       retVal = new ExceptionResult(ex, context);
       //TODO: log error
     }
@@ -90,7 +91,12 @@ export default class CommandBase {
   async _getIfValueAsync(context) {
     let retVal = false;
     try {
-      retVal = eval(await this.if.getValueAsync(context));
+      const value = await this.if.getValueAsync(context);
+      if (value) {
+        retVal = eval(value);
+      } else {
+        retVal = true;
+      }
     } catch {}
     return retVal;
   }

@@ -1,7 +1,12 @@
-import VoidResult from "../Models/VoidResult.js";
+import IContext from "../Context/IContext.js";
+import StringResult from "../Models/StringResult.js";
+import IDataSource from "../Source/IDataSource.js";
 import IToken from "../Token/IToken.js";
+import StringUtil from "../Token/StringUtil.js";
 import TokenUtil from "../Token/TokenUtil.js";
-import RowFaceCollection from "./Renderable/RowFaceCollection.js";
+import RenderParam from "./RenderParam.js";
+import FaceCollection from "./Renderable/FaceCollection.js";
+import RawFaceCollection from "./Renderable/RawFaceCollection.js";
 import SourceBaseCommand from "./SourceBaseCommand.js";
 
 export default class RenderableCommand extends SourceBaseCommand {
@@ -15,7 +20,7 @@ export default class RenderableCommand extends SourceBaseCommand {
   elseLayout;
   /**@type {IToken} */
   layout;
-  /**@type {RowFaceCollection} */
+  /**@type {RawFaceCollection} */
   rawFaces;
   /**@type {IToken} */
   replaces;
@@ -29,12 +34,12 @@ export default class RenderableCommand extends SourceBaseCommand {
       "incomplete-content"
     );
     this.elseLayout = TokenUtil.getFiled(commandIL, "else-layout-content");
-    this.Layout = TokenUtil.getFiled(commandIL, "layout-content");
-    //this.RowFaceCollection =
-    //   this.elseLayout = TokenUtil.getObjectFiledAsToken(
-    //     commandIL,
-    //     "else-layout-content"
-    //   );
+    this.layout = TokenUtil.getFiled(commandIL, "layout-content");
+    this.rawFaces = new RawFaceCollection(commandIL["faces"]);
+    // this.elseLayout = TokenUtil.getObjectFiledAsToken(
+    //   commandIL,
+    //   "else-layout-content"
+    // );
     //   this.elseLayout = TokenUtil.getObjectFiledAsToken(
     //   commandIL,
     //   "else-layout-content"
@@ -46,7 +51,51 @@ export default class RenderableCommand extends SourceBaseCommand {
    * @param {IContext} context
    * @returns {Promise<ICommandResult>}
    */
-  _renderAsync(source, context) {
-    return Promise.resolve(VoidResult.result);
+  async _renderAsync(source, context) {
+    var faceTask = this.rawFaces
+      ? this.rawFaces.getFaceListAsync(source, context)
+      : Promise.resolve([]);
+    const renderResult = await this.renderAsync__(
+      source,
+      context,
+      await faceTask
+    );
+    let result = null;
+    if ((renderResult?.length ?? 0) > 0) {
+      const layout = await this.layout.getValueAsync(context);
+      result = layout
+        ? StringUtil.replace(layout, "@child", renderResult)
+        : renderResult;
+    } else {
+      result = await this.elseLayout.getValueAsync(context);
+    }
+    return new StringResult(result);
+  }
+
+  /**
+   * @param {IDataSource} source
+   * @param {IContext} context
+   * @param {FaceCollection} faces
+   * @returns {string}
+   */
+  renderAsync__(source, context, faces) {
+    const param = new RenderParam(
+      null,
+      source?.data.length ?? 0,
+      0,
+      null,
+      null
+    );
+    let retVal = "";
+    if (source) {
+      source.data.forEach((row) => {
+        param.data = row;
+        const renderResult = faces.render(param, context);
+        if (renderResult) {
+          retVal += renderResult;
+        }
+      });
+      return Promise.resolve(retVal);
+    }
   }
 }

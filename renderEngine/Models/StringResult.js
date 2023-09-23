@@ -1,8 +1,16 @@
 import ICommandResult from "./ICommandResult.js";
 
-export default class VoidResult extends ICommandResult {
-  /**@type {ICommandResult} */
-  static result = new VoidResult();
+export default class StringResult extends ICommandResult {
+  /** @type {string} */
+  _result;
+
+  /**
+   * @param {string} result
+   */
+  constructor(result) {
+    super();
+    this._result = result;
+  }
 
   /**
    * @param {*} stream
@@ -10,6 +18,7 @@ export default class VoidResult extends ICommandResult {
    * @returns {Promise<void>}
    */
   writeAsync(stream, cancellationToken) {
+    console.log(this._result);
     return Promise.resolve();
   }
 }

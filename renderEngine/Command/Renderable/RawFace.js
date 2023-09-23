@@ -1,4 +1,5 @@
-import TokenUtil from "../../Token/TokenUtil";
+import IToken from "../../Token/IToken.js";
+import TokenUtil from "../../Token/TokenUtil.js";
 
 export default class RawFace {
   /**@type {IToken} */
@@ -18,8 +19,8 @@ export default class RawFace {
     this.applyReplace = TokenUtil.getFiled(ilObject, "replace");
     this.applyFunction = TokenUtil.getFiled(ilObject, "function");
     this.level = TokenUtil.getFiled(ilObject, "level");
-    this.rowType = TokenUtil.getFiled(ilObject, "rowType");
+    this.rowType = TokenUtil.getFiled(ilObject, "row-type");
     this.filter = TokenUtil.getFiled(ilObject, "filter");
-    this.template = TokenUtil.getFiled(ilObject, "content");
+    this.template = TokenUtil.getFiled(ilObject, "template");
   }
 }

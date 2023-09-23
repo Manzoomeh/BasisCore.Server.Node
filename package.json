@@ -27,6 +27,7 @@
   },
   "type": "module",
   "dependencies": {
+    "alasql": "^4.1.9",
     "busboy": "^1.6.0",
     "dayjs": "^1.11.6",
     "formdata-node": "^5.0.0",

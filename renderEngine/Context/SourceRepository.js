@@ -70,7 +70,7 @@ export default class SourceRepository {
     }
     if (handlers.tryAdd(handler)) {
       //this.logger.logInformation(`handler Added for ${key}...`);
-      console.log(`handler ${handler} Added for ${key}...`);
+      console.log(`handler Added for ${key}...`);
     }
   }
 
@@ -84,7 +84,7 @@ export default class SourceRepository {
     if (handlers) {
       if (handlers.tryRemove(handler)) {
         //this.logger.logInformation(`handler removed for ${key}...`);
-        console.log(`handler ${handler} removed for ${key}...`);
+        console.log(`handler removed for ${key}...`);
       }
     }
   }

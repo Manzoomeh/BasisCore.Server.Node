@@ -21,8 +21,8 @@ export default class SourceBaseCommand extends CommandBase {
   async _executeCommandAsync(context) {
     const sourceId = await this.sourceId.getValueAsync(context);
     const source = sourceId
-      ? null
-      : await context.waitToGetSourceAsync(sourceId);
+      ? await context.waitToGetSourceAsync(sourceId)
+      : null;
     context.cancellation.throwIfCancellationRequested();
     return await this._renderAsync(source, context);
   }
