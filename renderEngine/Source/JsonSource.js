@@ -12,6 +12,6 @@ export default class JsonSource extends IDataSource {
     this.data = data;
     this.type = DataSourceTypes.Json;
     this.id = id.toLowerCase();
-    this.columns = data ? Object.keys(this.data[0]) : [];
+    this.columns = data?.length > 0 ? Object.keys(this.data[0]) : [];
   }
 }

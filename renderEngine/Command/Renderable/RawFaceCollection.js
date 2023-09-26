@@ -79,7 +79,6 @@ export default class RawFaceCollection {
   }
 
   /**
-   *
    * @param {IDataSource} source
    * @param {string} filter
    * @returns {Array<any>}

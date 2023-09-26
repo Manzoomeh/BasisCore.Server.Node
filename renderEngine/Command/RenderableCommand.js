@@ -7,6 +7,8 @@ import TokenUtil from "../Token/TokenUtil.js";
 import RenderParam from "./RenderParam.js";
 import FaceCollection from "./Renderable/FaceCollection.js";
 import RawFaceCollection from "./Renderable/RawFaceCollection.js";
+import RawReplaceCollection from "./Renderable/RawReplaceCollection.js";
+import ReplaceCollection from "./Renderable/ReplaceCollection.js";
 import SourceBaseCommand from "./SourceBaseCommand.js";
 
 export default class RenderableCommand extends SourceBaseCommand {
@@ -22,7 +24,7 @@ export default class RenderableCommand extends SourceBaseCommand {
   layout;
   /**@type {RawFaceCollection} */
   rawFaces;
-  /**@type {IToken} */
+  /**@type {RawReplaceCollection} */
   replaces;
 
   constructor(commandIL) {
@@ -36,14 +38,7 @@ export default class RenderableCommand extends SourceBaseCommand {
     this.elseLayout = TokenUtil.getFiled(commandIL, "else-layout-content");
     this.layout = TokenUtil.getFiled(commandIL, "layout-content");
     this.rawFaces = new RawFaceCollection(commandIL["faces"]);
-    // this.elseLayout = TokenUtil.getObjectFiledAsToken(
-    //   commandIL,
-    //   "else-layout-content"
-    // );
-    //   this.elseLayout = TokenUtil.getObjectFiledAsToken(
-    //   commandIL,
-    //   "else-layout-content"
-    // );
+    this.replaces = new RawReplaceCollection(commandIL["replaces"]);
   }
 
   /**
@@ -52,13 +47,23 @@ export default class RenderableCommand extends SourceBaseCommand {
    * @returns {Promise<ICommandResult>}
    */
   async _renderAsync(source, context) {
-    var faceTask = this.rawFaces
+    const faceTask = this.rawFaces
       ? this.rawFaces.getFaceListAsync(source, context)
       : Promise.resolve([]);
+    const replace = this.replaces.processAsync(console);
+    const dividerRowCountTask =
+      this.dividerRowCount.getValueAsync(context) ?? 0;
+    const dividerTemplateTask = this.dividerTemplate.getValueAsync(context);
+    const incompleteTemplateTask =
+      this.incompleteTemplate.getValueAsync(context);
     const renderResult = await this.renderAsync__(
       source,
       context,
-      await faceTask
+      await faceTask,
+      await replace,
+      await dividerRowCountTask,
+      await dividerTemplateTask,
+      await incompleteTemplateTask
     );
     let result = null;
     if ((renderResult?.length ?? 0) > 0) {
@@ -75,16 +80,29 @@ export default class RenderableCommand extends SourceBaseCommand {
   /**
    * @param {IDataSource} source
    * @param {IContext} context
-   * @param {FaceCollection} faces
-   * @returns {string}
+   * @param {FaceCollection} faces,
+   * @param {ReplaceCollection} replaces ,
+   * @param {number} dividerRowCount ,
+   * @param {string} dividerTemplate ,
+   * @param {string} incompleteTemplate ,
+   * @returns {Promise<string>}
    */
-  renderAsync__(source, context, faces) {
+
+  renderAsync__(
+    source,
+    context,
+    faces,
+    replaces,
+    dividerRowCount,
+    dividerTemplate,
+    incompleteTemplate
+  ) {
     const param = new RenderParam(
-      null,
+      replaces,
       source?.data.length ?? 0,
-      0,
-      null,
-      null
+      dividerRowCount,
+      dividerTemplate,
+      incompleteTemplate
     );
     let retVal = "";
     if (source) {

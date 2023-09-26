@@ -1,8 +1,10 @@
 import FaceRowType from "./Renderable/FaceRowType.js";
+import ReplaceCollection from "./Renderable/ReplaceCollection.js";
 
 export default class RenderParam {
   /** @type {any} */
   data;
+  /** @type {ReplaceCollection} */
   replaces;
   /** @type {Array<string>} */
   levels;
@@ -41,15 +43,23 @@ export default class RenderParam {
     );
   }
 
+  /**
+   *
+   * @param {ReplaceCollection} replaces
+   * @param {number} renderableCount
+   * @param {number} recordPerRow
+   * @param {string} dividerTemplate
+   * @param {string} incompleteTemplate
+   */
   constructor(
     replaces,
     renderableCount,
-    recoredPerRow,
+    recordPerRow,
     dividerTemplate,
     incompleteTemplate
   ) {
     this.replaces = replaces;
-    this._cellPerRow = recoredPerRow;
+    this._cellPerRow = recordPerRow;
     this.dividerTemplate = dividerTemplate;
     this.incompleteTemplate = incompleteTemplate;
     this._renderableCount = renderableCount;
@@ -69,7 +79,6 @@ export default class RenderParam {
   }
 
   /**
-   *
    * @param {Array<string>} levels
    */
   setLevel(levels) {

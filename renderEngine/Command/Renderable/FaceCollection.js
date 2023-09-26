@@ -17,7 +17,6 @@ export default class FaceCollection extends Array {
       retVal = param.data[0]?.toString();
       param.setRendered();
     } else {
-      //let rowType = param.rowType;
       /** @type {Face} */
       const firstMatchFace = this.find((x) => {
         /** @type {Face} */
@@ -37,7 +36,7 @@ export default class FaceCollection extends Array {
             Object.values(param.data)
           );
           if (firstMatchFace.applyReplace && param.replaces) {
-            //TODO: add replace
+            param.replaces.apply(retVal, context.cancellation);
           }
           if (firstMatchFace.applyFunction) {
             //TODO: apply function
@@ -47,7 +46,7 @@ export default class FaceCollection extends Array {
         if (param.mustApplyDivider) {
           retVal += param.dividerTemplate;
         }
-        if (param.isEnd) {
+        if (param.isEnd && param.incompleteTemplate) {
           let tmp = param.emptyCell;
           while (tmp > 0) {
             context.cancellation.throwIfCancellationRequested();

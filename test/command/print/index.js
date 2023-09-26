@@ -26,9 +26,9 @@ var p = new Promise((r) => {
 const il = {
   $type: "Print",
   "data-member-name": "products.lego",
-  layout:
+  "layout-content":
     "<table width='500' border='1' id='@id'><tbody><tr> @child</tr></tbody></table>",
-  "else-layout": "محصولی موجود نیست",
+  "else-layout-content": "محصولی موجود نیست",
   faces: [
     {
       name: "face1",
@@ -44,7 +44,8 @@ const il = {
       function: true,
       "row-type": "odd",
       filter: "id<=2",
-      template: "<td style='color:blue-odd' id='@id'><p>--  @name<br></td>",
+      template:
+        "<td style='color:blue-odd' id='@id'>[(i)5]<p>--  @name<br></td>",
     },
     {
       name: "face1",
@@ -69,9 +70,9 @@ const il = {
       template: "<td style='color:green' id='@id'><p>  @name<br></td>",
     },
   ],
-  "divider-template": "</tr><tr> ",
-  "divider-rowcount": 3,
-  "incomplete-template": "<td style='color:red'>red</td>",
+  "divider-content": "</tr><tr> ",
+  "divider-rowcount": 2,
+  "incomplete-content": "<td style='color:red'>red</td>",
   replaces: [
     {
       tagname: "i",
