@@ -2,7 +2,9 @@ import tls from "tls";
 import fs from "fs";
 import {
   NonSecureHttpHostEndPoint,
+  NonSecureWebSocket,
   SecureHttpHostEndPoint,
+  SecureWebSocket,
 } from "./endPoint/endPoints.js";
 import {
   HostManagerOptions,
@@ -20,6 +22,7 @@ import {
   RouterHostService,
 } from "./services/hostServices.js";
 import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
+import PortListenerOptions from "./models/options/portListenerOptions.js";
 
 export default class HostManager {
   /**@type {HostEndPoint[]} */
@@ -70,6 +73,10 @@ export default class HostManager {
                 this.#createHttpEndPoint(name, endPointsOptions, service);
                 break;
               }
+              case "websocket": {
+                this.#createWebSocketEndPoint(name, endPointsOptions, service);
+                break;
+              }
               default: {
                 console.error(
                   `${endPointsOptions.Type} not support in this version of web server`
@@ -91,80 +98,124 @@ export default class HostManager {
    * @param {HostService} service
    * @returns {HostEndPoint}
    */
+  #createWebSocketEndPoint(name, options, service) {
+    options.Addresses.forEach((address) => {
+      const [ip, port] = address.EndPoint.split(":", 2);
+      if (address.Certificate) {
+        const secureContextOptions = this.#createSecureContextOptions(
+          name,
+          address
+        );
+        if (!address.Certificate.Http2) {
+          this.hosts.push(
+            new SecureWebSocket(ip, port, service, secureContextOptions)
+          );
+        } else {
+          this.hosts.push(
+            new H2HttpHostEndPoint(ip, port, service, secureContextOptions)
+          );
+        }
+      } else {
+        this.hosts.push(new NonSecureWebSocket(ip, port, service));
+      }
+    });
+  }
+
+  /**
+   * @param {string} name
+   * @param {PortListenerOptions} address
+   * @returns {tls.SecureContextOptions}
+   */
+  #createSecureContextOptions(name, address) {
+    /**@type {tls.SecureContextOptions}*/
+    const options = {};
+    switch (address.Certificate.Type) {
+      case "ssl": {
+        /**@type {SslCertificateOptions} */
+        const sslOptions = address.Certificate;
+        if (sslOptions.FilePath) {
+          options.cert = fs.readFileSync(sslOptions.FilePath);
+        }
+        if (sslOptions.KeyPath) {
+          options.key = fs.readFileSync(sslOptions.KeyPath);
+        }
+        if (sslOptions.PfxPath) {
+          options.pfx = fs.readFileSync(sslOptions.PfxPath);
+        }
+        if (sslOptions.PfxPassword) {
+          options.passphrase = sslOptions.PfxPassword;
+        }
+        break;
+      }
+      case "sni": {
+        /**@type {SniCertificateOptions} */
+        const sniOptions = address.Certificate;
+        /**@type {NodeJS.Dict<tls.SecureContextOptions>} */
+        const hostLookup = {};
+        sniOptions.Hosts.forEach((host) => {
+          /**@type {tls.SecureContextOptions}*/
+          const options = {};
+          if (sslOptions.FilePath) {
+            options.cert = fs.readFileSync(host.FilePath);
+          }
+          if (sslOptions.KeyPath) {
+            options.key = fs.readFileSync(host.KeyPath);
+          }
+          if (sslOptions.PfxPath) {
+            options.pfx = fs.readFileSync(host.PfxPath);
+          }
+          if (sslOptions.PfxPassword) {
+            options.passphrase = fs.readFileSync(host.PfxPassword);
+          }
+          host.HostNames.forEach((hostName) => {
+            hostLookup[hostName.toLowerCase()] = options;
+          });
+        });
+        const sniCallback = (serverName, callback) => {
+          const set = hostLookup[serverName.toLowerCase()];
+          if (set) {
+            callback(
+              null,
+              new tls.createSecureContext({
+                cert: set.cert,
+                key: set.key,
+              })
+            );
+          } else {
+            console.log(
+              `In sni setting no certificate found fot '${serverName}'`
+            );
+          }
+        };
+        options.SNICallback = sniCallback;
+        break;
+      }
+    }
+    return options;
+  }
+
+  /**
+   * @param {string} name
+   * @param {HostEndPointOptions} options
+   * @param {HostService} service
+   * @returns {HostEndPoint}
+   */
   #createHttpEndPoint(name, options, service) {
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
       if (address.Certificate) {
-        /**@type {tls.SecureContextOptions}*/
-        const options = {};
-        switch (address.Certificate.Type) {
-          case "ssl": {
-            /**@type {SslCertificateOptions} */
-            const sslOptions = address.Certificate;
-            if (sslOptions.FilePath) {
-              options.cert = fs.readFileSync(sslOptions.FilePath);
-            }
-            if (sslOptions.KeyPath) {
-              options.key = fs.readFileSync(sslOptions.KeyPath);
-            }
-            if (sslOptions.PfxPath) {
-              options.pfx = fs.readFileSync(sslOptions.PfxPath);
-            }
-            if (sslOptions.PfxPassword) {
-              options.passphrase = sslOptions.PfxPassword;
-            }
-            break;
-          }
-          case "sni": {
-            /**@type {SniCertificateOptions} */
-            const sniOptions = address.Certificate;
-            /**@type {NodeJS.Dict<tls.SecureContextOptions>} */
-            const hostLookup = {};
-            sniOptions.Hosts.forEach((host) => {
-              /**@type {tls.SecureContextOptions}*/
-              const options = {};
-              if (sslOptions.FilePath) {
-                options.cert = fs.readFileSync(host.FilePath);
-              }
-              if (sslOptions.KeyPath) {
-                options.key = fs.readFileSync(host.KeyPath);
-              }
-              if (sslOptions.PfxPath) {
-                options.pfx = fs.readFileSync(host.PfxPath);
-              }
-              if (sslOptions.PfxPassword) {
-                options.passphrase = fs.readFileSync(host.PfxPassword);
-              }
-              host.HostNames.forEach((hostName) => {
-                hostLookup[hostName.toLowerCase()] = options;
-              });
-            });
-            const sniCallback = (serverName, callback) => {
-              const set = hostLookup[serverName.toLowerCase()];
-              if (set) {
-                callback(
-                  null,
-                  new tls.createSecureContext({
-                    cert: set.cert,
-                    key: set.key,
-                  })
-                );
-              } else {
-                console.log(
-                  `In sni setting no certificate found fot '${serverName}'`
-                );
-              }
-            };
-            options.SNICallback = sniCallback;
-            break;
-          }
-        }
+        const secureContextOptions = this.#createSecureContextOptions(
+          name,
+          address
+        );
         if (!address.Certificate.Http2) {
           this.hosts.push(
-            new SecureHttpHostEndPoint(ip, port, service, options)
+            new SecureHttpHostEndPoint(ip, port, service, secureContextOptions)
           );
         } else {
-          this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options));
+          this.hosts.push(
+            new H2HttpHostEndPoint(ip, port, service, secureContextOptions)
+          );
         }
       } else {
         this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service));

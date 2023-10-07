@@ -117,20 +117,36 @@ const host = {
           // },
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "edgeService",
     },
-    Main07: {
+    webSocketWeb: {
       Type: "http",
       Addresses: [
         {
           EndPoint: "127.0.0.1:1564",
-          // Certificate: {
-          //   Type: "ssl",
-          //   FilePath: "test-cert/server.cert",
-          //   KeyPath: "test-cert/server.key",
-          //   Http2: false,
-          // },
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: true,
+          },
+        },
+      ],
+      Active: true,
+      Routing: "WebsocketFileService",
+    },
+    webSocketSocket: {
+      Type: "websocket",
+      Addresses: [
+        {
+          EndPoint: "127.0.0.1:1565",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: true,
+          },
         },
       ],
       Active: true,
@@ -149,7 +165,7 @@ const host = {
           },
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "fileService1",
     },
   },
@@ -182,6 +198,12 @@ const host = {
       },
       Settings: {
         Directory: "wwwroot",
+      },
+    },
+    WebsocketFileService: {
+      Type: "file",
+      Settings: {
+        Directory: "D:/Programming/Falsafi/Node/websocket",
       },
     },
   },
