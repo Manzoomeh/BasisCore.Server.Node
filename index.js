@@ -125,12 +125,12 @@ const host = {
       Addresses: [
         {
           EndPoint: "127.0.0.1:1564",
-          Certificate: {
-            Type: "ssl",
-            FilePath: "test-cert/server.cert",
-            KeyPath: "test-cert/server.key",
-            Http2: true,
-          },
+          // Certificate: {
+          //   Type: "ssl",
+          //   FilePath: "test-cert/server.cert",
+          //   KeyPath: "test-cert/server.key",
+          //   Http2: true,
+          // },
         },
       ],
       Active: true,
@@ -141,10 +141,25 @@ const host = {
       Addresses: [
         {
           EndPoint: "127.0.0.1:1565",
+        },
+      ],
+      Active: true,
+      Routing: "fileService1",
+    },
+    webSocketSocket_ssl: {
+      Type: "websocket",
+      Addresses: [
+        {
+          EndPoint: "127.0.0.1:1566",
           Certificate: {
             Type: "ssl",
-            FilePath: "test-cert/server.cert",
-            KeyPath: "test-cert/server.key",
+            KeyPath:
+              "D:/Programming/Falsafi/BasisCore/Server/BasisCore.Server.Node/test-cert/key.pem",
+            CertPath:
+              "D:/Programming/Falsafi/BasisCore/Server/BasisCore.Server.Node/test-cert/cert.pem",
+
+            //FilePath: "test-cert/server.cert",
+            //KeyPath: "test-cert/server.key",
             Http2: true,
           },
         },
