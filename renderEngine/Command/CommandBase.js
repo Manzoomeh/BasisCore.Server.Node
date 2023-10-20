@@ -5,6 +5,8 @@ import ExceptionResult from "../Models/ExceptionResult.js";
 import RunTypes from "../Enums/RunTypes.js";
 import VoidResult from "../Models/VoidResult.js";
 import TokenUtil from "../Token/TokenUtil.js";
+import CommandElement from "./CommandElement.js";
+import ElementBase from "./ElementBase.js";
 
 export default class CommandBase {
   /**@type {string} */
@@ -23,7 +25,6 @@ export default class CommandBase {
   extraAttributes;
 
   /**
-   *
    * @param {object} commandIL
    */
   constructor(commandIL) {
@@ -35,6 +36,17 @@ export default class CommandBase {
     this.renderTo = TokenUtil.getFiled(commandIL, "renderTo");
     //TODO:Fill extra attribute
     this.extraAttributes = null;
+    /**@type {NodeJS.Dict?} */
+    const items = commandIL["extra-attribute"];
+    if (items) {
+      this.extraAttributes = {};
+      Object.entries(items).map(
+        (pair) =>
+          (this.extraAttributes[pair[0]] = pair[1]
+            ? TokenUtil.ToToken(pair[1])
+            : ValueToken.Null)
+      );
+    }
   }
 
   /**
@@ -77,7 +89,7 @@ export default class CommandBase {
   /**
    *
    * @param {IContext} context
-   * @returns {RunTypes}
+   * @returns {Promise<RunTypes>}
    */
   async _getRunTypeValueAsync(context) {
     return (await this.runType.getValueAsync(context)) ?? RunTypes.AtServer;
@@ -86,7 +98,7 @@ export default class CommandBase {
   /**
    *
    * @param {IContext} context
-   * @returns {Boolean}
+   * @returns {Promise<Boolean>}
    */
   async _getIfValueAsync(context) {
     let retVal = false;
@@ -113,5 +125,29 @@ export default class CommandBase {
         context
       )
     );
+  }
+
+  /**
+   *
+   * @param {IContext} context
+   * @returns {Promise<CommandElement>}
+   */
+  async createHtmlElementAsync(context) {
+    const retVal = new CommandElement("basis");
+    await Promise.all([
+      retVal.addAttributeIfExistAsync("core", this.core, context),
+      retVal.addAttributeIfExistAsync("name", this.name, context),
+      retVal.addAttributeIfExistAsync("if", this.if, context),
+      retVal.addAttributeIfExistAsync("renderto", this.renderTo, context),
+      retVal.addAttributeIfExistAsync("rendertype", this.renderType, context),
+    ]);
+    if (this.runType) {
+      const runType = await this._getRunTypeValueAsync(context);
+      if (runType != RunTypes.None) {
+        retVal.addAttributeIfExistAsync("run", runType);
+      }
+    }
+
+    return retVal;
   }
 }

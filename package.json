@@ -23,7 +23,8 @@
     "dev": "node --openssl-legacy-provider index.js",
     "context": "node test/context/index.js",
     "token": "node test/token/index.js",
-    "print": "node test/command/print/index.js"
+    "print": "node test/command/print/index.js",
+    "source": "node test/command/dbsource/index.js"
   },
   "type": "module",
   "dependencies": {

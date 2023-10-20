@@ -17,13 +17,21 @@ export default class TokenUtil {
     } else if (Array.isArray(value)) {
       retVal = new ArrayToken(value.map(TokenUtil.ToToken));
     } else if (typeof value === "object") {
-      const element = new SimpleTokenElement(
-        value.Source,
-        value.Member,
-        value.Column,
-        value.Value
-      );
-      retVal = new ObjectToken([element]);
+      /** @type {SimpleTokenElement[]} */
+      const elements = [];
+      if (value.Params) {
+        value.Params.forEach((item) =>
+          elements.push(
+            new SimpleTokenElement(
+              item.Source,
+              item.Member,
+              item.Column,
+              item.Value
+            )
+          )
+        );
+      }
+      retVal = new ObjectToken(elements);
     } else {
       retVal = new ValueToken(value);
     }
