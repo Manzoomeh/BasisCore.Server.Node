@@ -29,4 +29,12 @@ export default class IContext {
     //TODO: must complete
     throw new Error("Method not implemented.");
   }
+
+  /**
+   * @param {string} sourceName
+   * @param {string} connectionName
+   * @param {NodeJS.Dict<object|string|number>} parameters
+   * @returns {Promise<DataSourceCollection>}
+   */
+  loadDataAsync(sourceName, connectionName, parameters) {}
 }

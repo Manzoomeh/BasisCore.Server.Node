@@ -1,5 +1,7 @@
+import BasisCoreException from "../../../../models/Exceptions/BasisCoreException.js";
 import IContext from "../../../Context/IContext.js";
 import VoidResult from "../../../Models/VoidResult.js";
+import DataSourceCollection from "../../../Source/DataSourceCollection.js";
 import IToken from "../../../Token/IToken.js";
 import TokenUtil from "../../../Token/TokenUtil.js";
 import CommandBase from "../../CommandBase.js";
@@ -21,7 +23,7 @@ export default class SourceCommand extends CommandBase {
     super(commandIL);
     this.members = new MemberCollection(commandIL["Members"]);
     this.params = new ParamItemCollection(commandIL["Params"]);
-    this.connectionName = TokenUtil.getFiled(commandIL, "ConnectionName");
+    this.connectionName = TokenUtil.getFiled(commandIL, "source");
     this.procedureName = TokenUtil.getFiled(commandIL, "ProcedureName");
   }
 
@@ -30,8 +32,21 @@ export default class SourceCommand extends CommandBase {
    * @returns {Promise<ICommandResult>}
    */
   async _executeCommandAsync(context) {
-    if (this.members?.length > 0) {
-      const name = this.name.getValueAsync(context);
+    if (this.members?.items.length > 0) {
+      const name = await this.name.getValueAsync(context);
+      const dataSet = await this.#loadDataAsync(name, context);
+      context.cancellation.throwIfCancellationRequested();
+      if (dataSet.items.length != this.members.items.length) {
+        throw new BasisCoreException(
+          `Command ${name} has ${this.members.items.length} member(s) but ${dataSet.items.length} result(s) returned from source!`
+        );
+      }
+      let index = 0;
+      for (const item of this.members.items) {
+        var source = dataSet.items[index++];
+        await item.addDataSourceAsync(source, name, context);
+      }
+      console.dir(set);
     }
     return VoidResult.result;
   }
@@ -39,10 +54,23 @@ export default class SourceCommand extends CommandBase {
   /**
    * @param {string} sourceName
    * @param {IContext} context
+   * @returns {Promise<DataSourceCollection>}
    */
   async #loadDataAsync(sourceName, context) {
-    const connectionName = await this.connectionName.getValueAsync(context);
-    const commandTask = this.toCustomFormatHtmlAsync(context);
+    //const connectionName = await this.connectionName.getValueAsync(context);
+    //const commandTask = this.toCustomFormatHtmlAsync(context);
+
+    const [connectionName, command, paramList] = await Promise.all([
+      this.connectionName.getValueAsync(context),
+      this.toCustomFormatHtmlAsync(context),
+      this._getParamsAsync(context),
+    ]);
+    const params = {
+      command,
+      dmnid: context.domainId,
+      params: paramList,
+    };
+    return await context.loadDataAsync(sourceName, connectionName, params);
   }
 
   /**
@@ -80,7 +108,7 @@ export default class SourceCommand extends CommandBase {
     }
     if ((this.params?.length ?? 0) > 0) {
       const paramsTag = new CommandElement("params");
-      for (const pair of this.params) {
+      for (const pair of this.params.items) {
         const addTag = new CommandElement("add");
         await Promise.all([
           addTag.addAttributeIfExistAsync("name", pair.name, context),
@@ -91,10 +119,31 @@ export default class SourceCommand extends CommandBase {
       tag.addChild(paramsTag);
     }
     if (this.members) {
-      for (const member of this.members) {
+      for (const member of this.members.items) {
         tag.childs.push(await member.createHtmlElementAsync(context));
       }
     }
     return tag;
+  }
+
+  /**
+   *
+   * @param {IContext} context
+   * @returns {Promise<NodeJS.Dict<string>>}
+   */
+  async _getParamsAsync(context) {
+    const retVal = {};
+    for (const item of this.params.items) {
+      const [name, value] = await Promise.all([
+        item.name instanceof IToken
+          ? await item.name.getValueAsync(context)
+          : item.name,
+        item.value instanceof IToken
+          ? await item.value.getValueAsync(context)
+          : item.value,
+      ]);
+      retVal[name] = value;
+    }
+    return retVal;
   }
 }

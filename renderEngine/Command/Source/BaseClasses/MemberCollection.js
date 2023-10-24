@@ -1,13 +1,14 @@
 import Member from "./Member.js";
 
-export default class MemberCollection extends Array {
+export default class MemberCollection {
+  /** @type {Member[]} */
+  items = [];
   /**
    * @param {object[]} ilObject
    */
   constructor(ilObject) {
-    super();
     if (Array.isArray(ilObject)) {
-      ilObject.map((x) => this.push(new Member(x)));
+      ilObject.map((x) => this.items.push(new Member(x)));
     }
   }
 }

@@ -26,4 +26,12 @@ export default class ContextBase extends IContext {
   waitToGetSourceAsync(sourceId) {
     return this.repository.waitToGetAsync(sourceId);
   }
+
+  /**
+   * @param {string} sourceName
+   * @param {string} connectionName
+   * @param {NodeJS.Dict<object|string|number>} parameters
+   * @returns {Promise<DataSourceCollection>}
+   */
+  loadDataAsync(sourceName, connectionName, parameters) {}
 }

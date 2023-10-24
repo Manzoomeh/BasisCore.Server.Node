@@ -71,7 +71,7 @@ export default class CommandElement extends ElementBase {
   getHtml() {
     let retVal = `<${this.name} `.concat(
       ...Object.entries(this.attributes).map(
-        (pair) => `${pair[0]}=\'${pair[1] ? pair[1].replace("'", '"') : ""}\'`
+        (pair) => `${pair[0]}=\'${pair[1] ? pair[1].replace("'", '"') : ""}\' `
       ),
       ">"
     );

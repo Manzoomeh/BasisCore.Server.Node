@@ -1,13 +1,14 @@
 import ParamItem from "./ParamItem.js";
 
-export default class ParamItemCollection extends Array {
+export default class ParamItemCollection {
+  /** @type {ParamItem[]} */
+  items = [];
   /**
    * @param {object[]} ilObject
    */
   constructor(ilObject) {
-    super();
     if (Array.isArray(ilObject)) {
-      ilObject.map((x) => this.push(new ParamItem(x)));
+      ilObject.map((x) => this.items.push(new ParamItem(x)));
     }
   }
 }

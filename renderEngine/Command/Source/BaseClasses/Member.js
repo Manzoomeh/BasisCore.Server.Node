@@ -1,4 +1,5 @@
 import IContext from "../../../Context/IContext.js";
+import IDataSource from "../../../Source/IDataSource.js";
 import IToken from "../../../Token/IToken.js";
 import TokenUtil from "../../../Token/TokenUtil.js";
 import ValueToken from "../../../Token/ValueToken.js";
@@ -66,5 +67,24 @@ export default class Member {
       await retVal.addRawContentIfExistAsync(this.rawContent, context);
     }
     return retVal;
+  }
+
+  /**
+   *
+   * @param {IDataSource} source
+   * @param {string} sourceSchemaName
+   * @param {IContext} context
+   * @returns {Promise<void>}
+   */
+  async addDataSourceAsync(source, sourceSchemaName, context) {
+    const [postSql, sort, preview] = await Promise.all([
+      this.postSql.getValueAsync(context),
+      this.sort.getValueAsync(context),
+      this.preview.getValueAsync(context),
+    ]);
+    const tableName = `${sourceSchemaName}.${this.name}`;
+    console.log([postSql, sort, preview], source);
+    if (postSql) {
+    }
   }
 }
