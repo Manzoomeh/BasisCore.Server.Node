@@ -6,7 +6,6 @@ import IToken from "../../../Token/IToken.js";
 import TokenUtil from "../../../Token/TokenUtil.js";
 import CommandBase from "../../CommandBase.js";
 import CommandElement from "../../CommandElement.js";
-import ElementBase from "../../ElementBase.js";
 import MemberCollection from "./MemberCollection.js";
 import ParamItemCollection from "./ParamItemCollection.js";
 
@@ -46,7 +45,6 @@ export default class SourceCommand extends CommandBase {
         var source = dataSet.items[index++];
         await item.addDataSourceAsync(source, name, context);
       }
-      console.dir(set);
     }
     return VoidResult.result;
   }
@@ -57,9 +55,6 @@ export default class SourceCommand extends CommandBase {
    * @returns {Promise<DataSourceCollection>}
    */
   async #loadDataAsync(sourceName, context) {
-    //const connectionName = await this.connectionName.getValueAsync(context);
-    //const commandTask = this.toCustomFormatHtmlAsync(context);
-
     const [connectionName, command, paramList] = await Promise.all([
       this.connectionName.getValueAsync(context),
       this.toCustomFormatHtmlAsync(context),
@@ -80,7 +75,7 @@ export default class SourceCommand extends CommandBase {
   async toCustomFormatHtmlAsync(context) {
     const tag = await this.createHtmlElementAsync(context);
     const paramsTag = tag.childs.indexOf((x) => x.name && x.name === "params");
-    if (paramsTag) {
+    if (paramsTag != -1) {
       tag.childs.splice(tag.childs.indexOf(paramsTag), 1);
     }
     return tag.getHtml();

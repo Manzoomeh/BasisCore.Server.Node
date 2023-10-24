@@ -17,15 +17,17 @@ const il = {
   },
   Members: [
     {
-      name: "action",
+      name: "memberName",
       "extra-attribute": {
         type: "list",
+        request: "test_request",
       },
     },
     {
-      name: "action1",
+      name: "memberName1",
       "extra-attribute": {
         type: "view",
+        request: "test_request",
       },
       postsql: "select id from [db.action1]",
     },
