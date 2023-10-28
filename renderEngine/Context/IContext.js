@@ -36,5 +36,12 @@ export default class IContext {
    * @param {NodeJS.Dict<object|string|number>} parameters
    * @returns {Promise<DataSourceCollection>}
    */
-  loadDataAsync(sourceName, connectionName, parameters) {}
+  loadDataAsync(sourceName, connectionName, parameters) {
+    throw new Error("Method not implemented.");
+  }
+
+  /** @param {IDataSource} dataSource */
+  addSource(dataSource) {
+    throw new Error("Method not implemented.");
+  }
 }

@@ -22,6 +22,8 @@ const il = {
         type: "list",
         request: "test_request",
       },
+      postsql: "select v,t from [db.memberName]",
+      sort: "v asc",
     },
     {
       name: "memberName1",
@@ -29,7 +31,6 @@ const il = {
         type: "view",
         request: "test_request",
       },
-      postsql: "select id from [db.action1]",
     },
   ],
   Params: [
@@ -61,7 +62,7 @@ const il = {
             },
           ],
         },
-        " app",
+        "app",
       ],
     },
   ],

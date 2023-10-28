@@ -1,5 +1,6 @@
 import IContext from "../../../Context/IContext.js";
 import IDataSource from "../../../Source/IDataSource.js";
+import SourceUtil from "../../../Source/SourceUtil.js";
 import IToken from "../../../Token/IToken.js";
 import TokenUtil from "../../../Token/TokenUtil.js";
 import ValueToken from "../../../Token/ValueToken.js";
@@ -24,7 +25,7 @@ export default class Member {
    * @param {object} commandIL
    */
   constructor(commandIL) {
-    this.name = TokenUtil.getFiled(commandIL, "name");
+    this.name = commandIL["name"];
     this.preview = TokenUtil.getFiled(commandIL, "preview");
     this.sort = TokenUtil.getFiled(commandIL, "sort");
     this.postSql = TokenUtil.getFiled(commandIL, "postsql");
@@ -82,9 +83,7 @@ export default class Member {
       this.sort.getValueAsync(context),
       this.preview.getValueAsync(context),
     ]);
-    const tableName = `${sourceSchemaName}.${this.name}`;
-    console.log([postSql, sort, preview], source);
-    if (postSql) {
-    }
+    source.id = `${sourceSchemaName}.${this.name}`;
+    SourceUtil.addToContext(source, context, preview, sort, postSql);
   }
 }

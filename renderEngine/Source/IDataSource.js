@@ -6,5 +6,7 @@ export default class IDataSource {
   /**@type {string} */
   id;
   /**@type {Array<string>} */
-  columns;
+  get columns() {
+    return this.data?.length > 0 ? Object.keys(this.data[0]) : [];
+  }
 }
