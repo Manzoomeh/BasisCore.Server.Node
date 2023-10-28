@@ -5,13 +5,13 @@ export default class RawReplace {
   /** @type {IToken} */
   tagName;
   /** @type {IToken} */
-  content;
+  template;
 
   /**
    * @param {object[]} ilObject
    */
   constructor(ilObject) {
-    this.tagName = TokenUtil.getFiled(ilObject, "tagName");
-    this.content = TokenUtil.getFiled(ilObject, "content");
+    this.tagName = TokenUtil.getFiled(ilObject, "tagname");
+    this.template = TokenUtil.getFiled(ilObject, "template");
   }
 }

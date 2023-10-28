@@ -24,6 +24,7 @@
     "context": "node test/context/index.js",
     "token": "node test/token/index.js",
     "print": "node test/command/print/index.js",
+    "printWithDb": "node test/command/print/withDbSource.js",
     "source": "node test/command/dbsource/index.js"
   },
   "type": "module",

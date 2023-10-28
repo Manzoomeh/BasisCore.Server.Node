@@ -53,7 +53,6 @@ export default class SourceUtil {
     //TODO
     if (preview) {
     }
-    //console.log(source);
     context.addSource(source);
   }
 }

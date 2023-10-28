@@ -5,7 +5,6 @@ export default class ReplaceCollection {
   items;
 
   /**
-   *
    * @param {NodeJS.Dict<string>} collection
    */
   constructor(collection) {
@@ -13,7 +12,6 @@ export default class ReplaceCollection {
   }
 
   /**
-   *
    * @param {string} content
    * @param {CancellationToken} cancellationToken
    */
@@ -35,18 +33,25 @@ export default class ReplaceCollection {
           const param = content.substring(to, startIndex);
           const template = this.items[tagName];
           if (template) {
-            const newContent = applyTemplate(content, template);
+            const newContent = this.applyTemplate(param, template);
+            retVal = retVal.replace(`[(${tagName})${param}]`, newContent);
           }
         }
       }
+      startIndex = content.indexOf("[(", startIndex);
     }
     return retVal;
   }
 
-  applyTemplate(content, template) {
-    // if(template){
-    //     let index =
-    // }
-    return content;
+  /**
+   * @param {string} param
+   * @param {string} template
+   * @returns {string}
+   */
+  applyTemplate(param, template) {
+    param.split("|").forEach((item, index) => {
+      template = template.replace(`@val${index + 1}`, item);
+    });
+    return template;
   }
 }

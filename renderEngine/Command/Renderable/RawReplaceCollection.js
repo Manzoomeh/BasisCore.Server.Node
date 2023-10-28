@@ -18,12 +18,12 @@ export default class RawReplaceCollection {
    * @returns {Promise<ReplaceCollection>}
    */
   async processAsync(context) {
-    const tasks = this.items.map(async (x) => {
-      return [
-        await x.tagName.getValueAsync(context),
-        await x.content.getValueAsync(context),
-      ];
-    });
+    const tasks = this.items.map((x) =>
+      Promise.all([
+        x.tagName.getValueAsync(context),
+        x.template.getValueAsync(context),
+      ])
+    );
     const result = await Promise.all(tasks);
     return new ReplaceCollection(Object.fromEntries(result));
   }

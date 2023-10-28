@@ -36,7 +36,7 @@ export default class FaceCollection extends Array {
             Object.values(param.data)
           );
           if (firstMatchFace.applyReplace && param.replaces) {
-            param.replaces.apply(retVal, context.cancellation);
+            retVal = param.replaces.apply(retVal, context.cancellation);
           }
           if (firstMatchFace.applyFunction) {
             //TODO: apply function
