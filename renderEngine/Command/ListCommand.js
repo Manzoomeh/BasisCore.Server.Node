@@ -1,7 +1,10 @@
 import RenderableCommand from "./RenderableCommand.js";
 
 export default class ListCommand extends RenderableCommand {
-  constructor(commandIL) {
-    super(commandIL);
+  /**
+   * @param {object} listCommandIl
+   */
+  constructor(listCommandIl) {
+    super(listCommandIl);
   }
 }

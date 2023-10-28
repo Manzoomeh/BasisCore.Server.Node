@@ -33,7 +33,6 @@ export default class CommandBase {
     this.runType = TokenUtil.getFiled(commandIl, "runType");
     this.renderType = TokenUtil.getFiled(commandIl, "renderType");
     this.renderTo = TokenUtil.getFiled(commandIl, "renderTo");
-    //TODO:Fill extra attribute
     this.extraAttributes = null;
     /**@type {NodeJS.Dict?} */
     const items = commandIl["extra-attribute"];

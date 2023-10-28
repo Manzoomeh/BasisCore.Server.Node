@@ -1,7 +1,10 @@
 import RenderableCommand from "./RenderableCommand.js";
 
 export default class PrintCommand extends RenderableCommand {
-  constructor(commandIL) {
-    super(commandIL);
+  /**
+   * @param {object} printCommandIl
+   */
+  constructor(printCommandIl) {
+    super(printCommandIl);
   }
 }

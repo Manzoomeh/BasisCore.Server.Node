@@ -4,10 +4,10 @@ import SourceCommand from "./BaseClasses/SourceCommand.js";
 
 export default class InlineSource extends SourceCommand {
   /**
-   * @param {Object} commandIl
+   * @param {object} inlineSourceIl
    */
-  constructor(commandIl) {
-    super(commandIl);
+  constructor(inlineSourceIl) {
+    super(inlineSourceIl);
   }
 
   /**

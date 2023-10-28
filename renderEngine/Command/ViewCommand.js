@@ -4,9 +4,12 @@ import RenderableCommand from "./RenderableCommand.js";
 export default class ViewCommand extends RenderableCommand {
   /** @type {IToken} */
   groupColumn;
-  constructor(commandIL) {
-    super(commandIL);
-    this.groupColumn = TokenUtil.getFiled(commandIL, "groupcol");
+  /**
+   * @param {object} viewCommandIl
+   */
+  constructor(viewCommandIl) {
+    super(viewCommandIl);
+    this.groupColumn = TokenUtil.getFiled(viewCommandIl, "groupcol");
   }
   /**
    * @param {IDataSource} source

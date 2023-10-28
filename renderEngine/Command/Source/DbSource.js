@@ -2,9 +2,9 @@ import SourceCommand from "./BaseClasses/SourceCommand.js";
 
 export default class DbSource extends SourceCommand {
   /**
-   * @param {Object} commandIL
+   * @param {object} dbSourceIl
    */
-  constructor(commandIL) {
-    super(commandIL);
+  constructor(dbSourceIl) {
+    super(dbSourceIl);
   }
 }

@@ -27,18 +27,30 @@ export default class RenderableCommand extends SourceBaseCommand {
   /**@type {RawReplaceCollection} */
   replaces;
 
-  constructor(commandIL) {
-    super(commandIL);
-    this.dividerTemplate = TokenUtil.getFiled(commandIL, "divider-content");
-    this.dividerRowCount = TokenUtil.getFiled(commandIL, "divider-rowcount");
+  /**
+   * @param {object} renderableCommandIl
+   */
+  constructor(renderableCommandIl) {
+    super(renderableCommandIl);
+    this.dividerTemplate = TokenUtil.getFiled(
+      renderableCommandIl,
+      "divider-content"
+    );
+    this.dividerRowCount = TokenUtil.getFiled(
+      renderableCommandIl,
+      "divider-rowcount"
+    );
     this.incompleteTemplate = TokenUtil.getFiled(
-      commandIL,
+      renderableCommandIl,
       "incomplete-content"
     );
-    this.elseLayout = TokenUtil.getFiled(commandIL, "else-layout-content");
-    this.layout = TokenUtil.getFiled(commandIL, "layout-content");
-    this.rawFaces = new RawFaceCollection(commandIL["faces"]);
-    this.replaces = new RawReplaceCollection(commandIL["replaces"]);
+    this.elseLayout = TokenUtil.getFiled(
+      renderableCommandIl,
+      "else-layout-content"
+    );
+    this.layout = TokenUtil.getFiled(renderableCommandIl, "layout-content");
+    this.rawFaces = new RawFaceCollection(renderableCommandIl["faces"]);
+    this.replaces = new RawReplaceCollection(renderableCommandIl["replaces"]);
   }
 
   /**

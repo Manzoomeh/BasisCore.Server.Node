@@ -8,10 +8,12 @@ import TokenUtil from "../Token/TokenUtil.js";
 export default class SourceBaseCommand extends CommandBase {
   /**@type {IToken} */
   sourceId;
-
-  constructor(commandIL) {
-    super(commandIL);
-    this.sourceId = TokenUtil.getFiled(commandIL, "data-member-name");
+  /**
+   * @param {object} sourceBaseCommandIl
+   */
+  constructor(sourceBaseCommandIl) {
+    super(sourceBaseCommandIl);
+    this.sourceId = TokenUtil.getFiled(sourceBaseCommandIl, "data-member-name");
   }
 
   /**
