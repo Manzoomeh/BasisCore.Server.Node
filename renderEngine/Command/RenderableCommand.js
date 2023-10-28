@@ -47,23 +47,29 @@ export default class RenderableCommand extends SourceBaseCommand {
    * @returns {Promise<ICommandResult>}
    */
   async _renderAsync(source, context) {
-    const faceTask = this.rawFaces
-      ? this.rawFaces.getFaceListAsync(source, context)
-      : Promise.resolve([]);
-    const replace = this.replaces.processAsync(console);
-    const dividerRowCountTask =
-      this.dividerRowCount.getValueAsync(context) ?? 0;
-    const dividerTemplateTask = this.dividerTemplate.getValueAsync(context);
-    const incompleteTemplateTask =
-      this.incompleteTemplate.getValueAsync(context);
-    const renderResult = await this.renderAsync__(
+    const [
+      face,
+      replace,
+      dividerRowCount,
+      dividerTemplate,
+      incompleteTemplate,
+    ] = await Promise.all([
+      this.rawFaces
+        ? this.rawFaces.getFaceListAsync(source, context)
+        : Promise.resolve([]),
+      this.replaces.processAsync(console),
+      this.dividerRowCount.getValueAsync(context) ?? Promise.resolve(0),
+      this.dividerTemplate.getValueAsync(context),
+      this.incompleteTemplate.getValueAsync(context),
+    ]);
+    const renderResult = await this.renderInternallyAsync(
       source,
       context,
-      await faceTask,
-      await replace,
-      await dividerRowCountTask,
-      await dividerTemplateTask,
-      await incompleteTemplateTask
+      face,
+      replace,
+      dividerRowCount,
+      dividerTemplate,
+      incompleteTemplate
     );
     let result = null;
     if ((renderResult?.length ?? 0) > 0) {
@@ -87,8 +93,7 @@ export default class RenderableCommand extends SourceBaseCommand {
    * @param {string} incompleteTemplate ,
    * @returns {Promise<string>}
    */
-
-  renderAsync__(
+  renderInternallyAsync(
     source,
     context,
     faces,

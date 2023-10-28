@@ -21,7 +21,6 @@ export default class Member {
   rawContent;
 
   /**
-   *
    * @param {object} commandIL
    */
   constructor(commandIL) {
@@ -71,7 +70,6 @@ export default class Member {
   }
 
   /**
-   *
    * @param {IDataSource} source
    * @param {string} sourceSchemaName
    * @param {IContext} context

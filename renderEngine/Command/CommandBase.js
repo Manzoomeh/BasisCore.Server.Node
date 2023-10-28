@@ -6,7 +6,6 @@ import RunTypes from "../Enums/RunTypes.js";
 import VoidResult from "../Models/VoidResult.js";
 import TokenUtil from "../Token/TokenUtil.js";
 import CommandElement from "./CommandElement.js";
-import ElementBase from "./ElementBase.js";
 
 export default class CommandBase {
   /**@type {string} */
@@ -25,19 +24,19 @@ export default class CommandBase {
   extraAttributes;
 
   /**
-   * @param {object} commandIL
+   * @param {object} commandIl
    */
-  constructor(commandIL) {
-    this.core = TokenUtil.getFiled(commandIL, "core");
-    this.name = TokenUtil.getFiled(commandIL, "name");
-    this.if = TokenUtil.getFiled(commandIL, "if");
-    this.runType = TokenUtil.getFiled(commandIL, "runType");
-    this.renderType = TokenUtil.getFiled(commandIL, "renderType");
-    this.renderTo = TokenUtil.getFiled(commandIL, "renderTo");
+  constructor(commandIl) {
+    this.core = TokenUtil.getFiled(commandIl, "core");
+    this.name = TokenUtil.getFiled(commandIl, "name");
+    this.if = TokenUtil.getFiled(commandIl, "if");
+    this.runType = TokenUtil.getFiled(commandIl, "runType");
+    this.renderType = TokenUtil.getFiled(commandIl, "renderType");
+    this.renderTo = TokenUtil.getFiled(commandIl, "renderTo");
     //TODO:Fill extra attribute
     this.extraAttributes = null;
     /**@type {NodeJS.Dict?} */
-    const items = commandIL["extra-attribute"];
+    const items = commandIl["extra-attribute"];
     if (items) {
       this.extraAttributes = {};
       Object.entries(items).map(

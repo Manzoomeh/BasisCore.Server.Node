@@ -4,11 +4,19 @@ export default class MemberCollection {
   /** @type {Member[]} */
   items = [];
   /**
-   * @param {object[]} ilObject
+   * @param {object[]} memberIl
    */
-  constructor(ilObject) {
-    if (Array.isArray(ilObject)) {
-      ilObject.map((x) => this.items.push(new Member(x)));
+  constructor(memberIl) {
+    if (Array.isArray(memberIl)) {
+      memberIl.map((x) => this.items.push(this._createMember(x)));
     }
+  }
+
+  /**
+   * @param {object} ilObject
+   * @returns {Member}
+   */
+  _createMember(ilObject) {
+    return new Member(ilObject);
   }
 }

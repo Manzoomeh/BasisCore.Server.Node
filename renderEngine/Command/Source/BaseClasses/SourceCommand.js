@@ -16,14 +16,22 @@ export default class SourceCommand extends CommandBase {
   members;
   procedureName;
   /**
-   * @param {Object} commandIL
+   * @param {Object} commandIl
    */
-  constructor(commandIL) {
-    super(commandIL);
-    this.members = new MemberCollection(commandIL["Members"]);
-    this.params = new ParamItemCollection(commandIL["Params"]);
-    this.connectionName = TokenUtil.getFiled(commandIL, "source");
-    this.procedureName = TokenUtil.getFiled(commandIL, "ProcedureName");
+  constructor(commandIl) {
+    super(commandIl);
+    this.members = this.createMemberCollection(commandIl["Members"]);
+    this.params = new ParamItemCollection(commandIl["Params"]);
+    this.connectionName = TokenUtil.getFiled(commandIl, "source");
+    this.procedureName = TokenUtil.getFiled(commandIl, "ProcedureName");
+  }
+
+  /**
+   * @param {object[]} ilObject
+   * @returns {MemberCollection}
+   */
+  createMemberCollection(ilObject) {
+    return new MemberCollection(ilObject);
   }
 
   /**

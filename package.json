@@ -25,13 +25,15 @@
     "token": "node test/token/index.js",
     "print": "node test/command/print/index.js",
     "printWithDb": "node test/command/print/withDbSource.js",
-    "source": "node test/command/dbsource/index.js"
+    "source": "node test/command/dbsource/index.js",
+    "inlinesource": "node test/command/inlinesource/simple.js"
   },
   "type": "module",
   "dependencies": {
     "alasql": "^4.1.9",
     "busboy": "^1.6.0",
     "dayjs": "^1.11.6",
+    "fast-xml-parser": "^4.3.2",
     "formdata-node": "^5.0.0",
     "got": "^12.6.0",
     "http-status-codes": "^2.2.0",
