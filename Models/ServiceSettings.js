@@ -1,9 +1,12 @@
 import ConnectionInfo from "./Connection/ConnectionInfo.js";
 import ConnectionUtil from "./Connection/ConnectionUtil.js";
 import BasisConnectionSourceNotFoundException from "./Exceptions/BasisConnectionSourceNotFoundException.js";
+import InvalidConfigException from "./Exceptions/InvalidConfigException.js";
 import { HostServiceOptions } from "./model.js";
 
 export default class ServiceSettings {
+  /** @type {HostServiceOptions} */
+  _options;
   /** @type {NodeJS.Dict<ConnectionInfo>} */
   _connections;
   /** @type {ConnectionInfo} */
@@ -16,6 +19,7 @@ export default class ServiceSettings {
    * @param {HostServiceOptions} options
    */
   constructor(options) {
+    this._options = options;
     this._connections = {};
     ConnectionUtil.loadConnections(options.Settings).forEach(
       (connection) => (this._connections[connection.name] = connection)
@@ -40,5 +44,18 @@ export default class ServiceSettings {
       return this._connections[connectionName];
     }
     throw new BasisConnectionSourceNotFoundException(connectionName);
+  }
+
+  /**
+   * @param {string} key
+   * @returns {string}
+   */
+  getDefault(key) {
+    const defaultKey = `default.${key}`;
+    console.log("sdsd");
+    const value = this._options.Settings[defaultKey];
+    if (!value) {
+      throw new InvalidConfigException("host configuration file", defaultKey);
+    }
   }
 }

@@ -13,21 +13,21 @@ export default class IContext {
    * @returns {IDataSource}
    */
   tryGetSource(sourceId) {
-    throw new Error("Method not implemented.");
+    throw new Error("Method 'tryGetSource' not implemented.");
   }
   /**
    * @param {string} sourceId
    * @returns {Promise<IDataSource>}
    */
   waitToGetSourceAsync(sourceId) {
-    throw new Error("Method not implemented.");
+    throw new Error("Method 'waitToGetSourceAsync' not implemented.");
   }
   /**
    * @param {string} connectionName
    * @returns {Promise<boolean>} */
   checkConnectionAsync(connectionName) {
     //TODO: must complete
-    throw new Error("Method not implemented.");
+    throw new Error("Method 'checkConnectionAsync' not implemented.");
   }
 
   /**
@@ -37,11 +37,19 @@ export default class IContext {
    * @returns {Promise<DataSourceCollection>}
    */
   loadDataAsync(sourceName, connectionName, parameters) {
-    throw new Error("Method not implemented.");
+    throw new Error("Method 'loadDataAsync' not implemented.");
   }
 
   /** @param {IDataSource} dataSource */
   addSource(dataSource) {
-    throw new Error("Method not implemented.");
+    throw new Error("Method 'addSource' not implemented.");
+  }
+
+  /**
+   * @param {string} key
+   * @returns {string}
+   */
+  getDefault(key) {
+    throw new Error("Method 'getDefault' not implemented.");
   }
 }

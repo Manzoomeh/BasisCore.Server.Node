@@ -1,7 +1,10 @@
+import IContext from "../Context/IContext.js";
 import IToken from "../Token/IToken.js";
+import TokenUtil from "../Token/TokenUtil.js";
 import RenderableCommand from "./RenderableCommand.js";
 
 export default class ViewCommand extends RenderableCommand {
+  static groupcol_Name = "groupcol";
   /** @type {IToken} */
   groupColumn;
   /**
@@ -9,8 +12,12 @@ export default class ViewCommand extends RenderableCommand {
    */
   constructor(viewCommandIl) {
     super(viewCommandIl);
-    this.groupColumn = TokenUtil.getFiled(viewCommandIl, "groupcol");
+    this.groupColumn = TokenUtil.getFiled(
+      viewCommandIl,
+      ViewCommand.groupcol_Name
+    );
   }
+
   /**
    * @param {IDataSource} source
    * @param {IContext} context
@@ -21,7 +28,7 @@ export default class ViewCommand extends RenderableCommand {
    * @param {string} incompleteTemplate ,
    * @returns {Promise<string>}
    */
-  renderInternallyAsync(
+  async renderInternallyAsync(
     source,
     context,
     faces,
@@ -29,5 +36,12 @@ export default class ViewCommand extends RenderableCommand {
     dividerRowCount,
     dividerTemplate,
     incompleteTemplate
-  ) {}
+  ) {
+    const groupColumn = await TokenUtil.getValueOrSystemDefaultAsync(
+      this.groupColumn,
+      ViewCommand.groupcol_Name
+    );
+
+    console.log("q", groupColumn);
+  }
 }

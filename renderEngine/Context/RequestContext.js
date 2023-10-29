@@ -24,7 +24,7 @@ export default class RequestContext extends ContextBase {
   async loadDataAsync(sourceName, connectionName, parameters) {
     try {
       /** @type {ConnectionInfo} */
-      var connection = this._settings.getConnection(connectionName);
+      const connection = this._settings.getConnection(connectionName);
       /** @type {DataSourceCollection} */
       return await connection.loadDataAsync(parameters, this.cancellation);
     } catch (ex) {
@@ -33,5 +33,13 @@ export default class RequestContext extends ContextBase {
         ex
       );
     }
+  }
+
+  /**
+   * @param {string} key
+   * @returns {string}
+   */
+  getDefault(key) {
+    return this._settings.getDefault(key);
   }
 }

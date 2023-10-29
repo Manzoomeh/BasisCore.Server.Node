@@ -1,4 +1,4 @@
-import InvalidConfigException from "../../renderEngine/Models/Exceptions/InvalidConfigException.js";
+import InvalidConfigException from "../Exceptions/InvalidConfigException.js";
 import ConnectionInfo from "./ConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
 

@@ -2,7 +2,7 @@ import VoidResult from "../../Models/VoidResult.js";
 import { InMemoryMemberCollection } from "./BaseClasses/InMemoryMemberCollection.js";
 import SourceCommand from "./BaseClasses/SourceCommand.js";
 
-export default class InlineSource extends SourceCommand {
+export default class InlineSourceCommand extends SourceCommand {
   /**
    * @param {object} inlineSourceIl
    */

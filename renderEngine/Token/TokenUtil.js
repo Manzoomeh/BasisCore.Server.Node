@@ -3,6 +3,7 @@ import SimpleTokenElement from "./SimpleTokenElement.js";
 import ValueToken from "./ValueToken.js";
 import ArrayToken from "./ArrayToken.js";
 import ObjectToken from "./ObjectToken.js";
+import IContext from "../Context/IContext.js";
 
 export default class TokenUtil {
   /**
@@ -39,7 +40,6 @@ export default class TokenUtil {
   }
 
   /**
-   *
    * @param {object} object
    * @param {string} filedName
    * @returns {IToken}
@@ -47,5 +47,17 @@ export default class TokenUtil {
   static getFiled(object, filedName) {
     const value = object[filedName];
     return value ? TokenUtil.ToToken(value) : ValueToken.Null;
+  }
+
+  /**
+   * @param {IToken} token
+   * @param {string} filedName
+   * @param {IContext} context
+   * @returns {Promise<string>}
+   */
+  static async getValueOrSystemDefaultAsync(token, filedName, context) {
+    return token
+      ? await token.getValueAsync(context)
+      : context.getDefault(filedName);
   }
 }
