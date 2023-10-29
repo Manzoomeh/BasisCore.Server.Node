@@ -40,7 +40,6 @@ export default class SourceUtil {
    * @param {boolean} preview
    * @param {string} sort
    * @param {string} postSql
-
    */
   static addToContext(source, context, preview, sort, postSql) {
     if (postSql) {

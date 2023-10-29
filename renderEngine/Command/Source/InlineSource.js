@@ -24,7 +24,7 @@ export default class InlineSource extends SourceCommand {
    */
   async _executeCommandAsync(context) {
     if ((this.members?.items.length ?? 0) > 0) {
-      const name = this.name.getValueAsync(context);
+      const name = await this.name.getValueAsync(context);
       await Promise.all(
         this.members.items.map((x) => x.addDataSourceAsync(name, context))
       );

@@ -48,12 +48,43 @@ const il = {
         <row valueID="1878636" mid="20" groupid="1123" prpid="10000503" usedforid="1255248" typeid="199" multi="0" ord="0" vocabulary="شهر_مقصد" question="شهر مقصد" answer="استانبول" />
         <row valueID="1878671" mid="20" groupid="987" prpid="10000504" usedforid="1255248" typeid="199" multi="0" ord="0" vocabulary="خط_هوایی" question="خط هوایی" answer="Atlasglobal Airlines" />`,
     },
+    {
+      name: "menu",
+      preview: "true",
+      content: `<row name="Home" id="01" parentid="00" />
+      <row name="Irantour" id="02" parentid="00" />
+      <row name="HotelReservation" id="03" parentid="00" />
+      <row name="Gallery" id="04" parentid="00" />
+      <row name="AboutUs" id ="05" parentid="00" />
+      <row name="culturalTours" id="06" parentid="02" />
+      <row name ="ClimbingTour" id ="07" parentid="02" />
+      <row name="PilgrimageTour" id="08" parentid="02" />
+      <row name="Esfahan" id="09" parentid="06" />
+      <row name="Shiraz" id="10" parentid="06" />
+      <row name="Kashan" id="11" parentid="09" />
+      <row name="NajafAbad" id="12" parentid="09" />
+      <row name="ShahinShar" id="13" parentid="09" />
+      <row name="Marvdasht" id="14" parentid="10" />
+      <row name="Kazeroon" id="15" parentid="10" />
+      <row name="Tehran" id="16" parentid="07" />
+      <row name="Lavasanat" id="17" parentid="16" />
+      <row name="Damavand" id="18" parentid="16" />
+      <row name="GholleDamavand" id="19" parentid="18" />
+      <row name="Khorasan" id="20" parentid="08" />
+      <row name="Ghom" id="21" parentid="08" />
+      <row name="KhorasanRasavi" id="22" parentid="20" />
+      <row name="KhorasanShomali" id="23" parentid="20" />
+      <row name="KhorasanJonoobi" id="24" parentid="20" />
+      <row name="Mashahad" id="25" parentid="22" />
+      <row name="Neyshbur" id="26" parentid="22" />
+      <row name="Hotels" id="27" parentid="03" />
+      <row name="ReservationForm" id="28" parentid="3" />
+      <row name="Iran" id="29" parentid="04" />
+      <row name="OurTours" id="30" parentid="04" />
+      <row name="VideoClips" id="31" parentid="04" />
+      <row name="ContactUs" id="32" parentid="05" />`,
+    },
   ],
 };
-
-//var l = new RawFaceCollection(il.faces);
-//console.log(l);
 const print = new InlineSource(il);
-//console.log(print);
-const result = await print.executeAsync(context);
-console.log(result);
+console.log(await print.executeAsync(context));

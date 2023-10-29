@@ -27,7 +27,7 @@ export default class CommandBase {
    * @param {object} commandIl
    */
   constructor(commandIl) {
-    this.core = TokenUtil.getFiled(commandIl, "core");
+    this.core = commandIl["core"];
     this.name = TokenUtil.getFiled(commandIl, "name");
     this.if = TokenUtil.getFiled(commandIl, "if");
     this.runType = TokenUtil.getFiled(commandIl, "runType");

@@ -1,5 +1,6 @@
 import { XMLParser } from "fast-xml-parser";
 import InMemoryMember from "./InMemoryMember.js";
+import JsonSource from "../../../Source/JsonSource.js";
 
 export default class TableMember extends InMemoryMember {
   /**
@@ -15,10 +16,11 @@ export default class TableMember extends InMemoryMember {
    */
   async _parseDataAsync(context) {
     const content = await this.rawContent.getValueAsync(context);
-    console.log(content);
-    const parser = new XMLParser();
-    const json = parser.parse(`<Data>${content}</Data>`);
-    console.log(json);
-    throw new Error("executeCommandAsync not implemented");
+    const parser = new XMLParser({
+      ignoreAttributes: false,
+      attributeNamePrefix: "",
+    });
+    const json = parser.parse(content);
+    return new JsonSource(json.row, this.name);
   }
 }
