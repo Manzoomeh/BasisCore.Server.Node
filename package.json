@@ -27,7 +27,8 @@
     "printWithDb": "node test/command/print/withDbSource.js",
     "source": "node test/command/dbsource/index.js",
     "inlinesource": "node test/command/inlinesource/simple.js",
-    "view": "node test/command/view/simple.js"
+    "view": "node test/command/view/simple.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "type": "module",
   "dependencies": {
@@ -43,5 +44,8 @@
     "mime-types": "^2.1.35",
     "mssql": "^9.3.2",
     "pako": "^2.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
