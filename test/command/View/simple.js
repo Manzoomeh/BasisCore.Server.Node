@@ -63,11 +63,9 @@ const viewIl = {
   core: "view",
   "data-member-name": "view.item",
   GroupColumn: "prpid",
-  layout: [
-    {
-      content: '<table border="1" width="600" dir="rtl"  >@child</table  >',
-    },
-  ],
+  "layout-content":
+    '<table border="1" width="600" dir="rtl"  >@child</table  >',
+
   faces: [
     {
       level: "1",

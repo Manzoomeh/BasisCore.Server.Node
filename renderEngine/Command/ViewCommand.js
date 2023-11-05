@@ -7,6 +7,7 @@ import alasql from "alasql";
 import RenderParam from "./RenderParam.js";
 import FaceCollection from "./Renderable/FaceCollection.js";
 import ReplaceCollection from "./Renderable/ReplaceCollection.js";
+import StringUtil from "../Token/StringUtil.js";
 
 export default class ViewCommand extends RenderableCommand {
   /** @type {IToken} */
@@ -86,10 +87,9 @@ export default class ViewCommand extends RenderableCommand {
             level2Result += renderResult;
           }
         });
-        retVal += level1Result.replace("@child", level2Result);
+        retVal += StringUtil.replace(level1Result, "@child", level2Result);
       });
     }
-    //console.log(result);
     return retVal;
   }
 }
