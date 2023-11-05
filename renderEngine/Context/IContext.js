@@ -47,9 +47,10 @@ export default class IContext {
 
   /**
    * @param {string} key
+   * @param {string?} defaultValue
    * @returns {string}
    */
-  getDefault(key) {
+  getDefault(key, defaultValue) {
     throw new Error("Method 'getDefault' not implemented.");
   }
 }

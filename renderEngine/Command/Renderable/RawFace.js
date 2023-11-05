@@ -13,7 +13,7 @@ export default class RawFace {
   /**@type {IToken} */
   filter;
   /**@type {IToken} */
-  template;
+  content;
 
   constructor(ilObject) {
     this.applyReplace = TokenUtil.getFiled(ilObject, "replace");
@@ -21,6 +21,6 @@ export default class RawFace {
     this.level = TokenUtil.getFiled(ilObject, "level");
     this.rowType = TokenUtil.getFiled(ilObject, "row-type");
     this.filter = TokenUtil.getFiled(ilObject, "filter");
-    this.template = TokenUtil.getFiled(ilObject, "template");
+    this.content = TokenUtil.getFiled(ilObject, "content");
   }
 }

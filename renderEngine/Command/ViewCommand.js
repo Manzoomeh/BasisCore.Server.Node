@@ -2,9 +2,13 @@ import IContext from "../Context/IContext.js";
 import IToken from "../Token/IToken.js";
 import TokenUtil from "../Token/TokenUtil.js";
 import RenderableCommand from "./RenderableCommand.js";
+import IDataSource from "../Source/IDataSource.js";
+import alasql from "alasql";
+import RenderParam from "./RenderParam.js";
+import FaceCollection from "./Renderable/FaceCollection.js";
+import ReplaceCollection from "./Renderable/ReplaceCollection.js";
 
 export default class ViewCommand extends RenderableCommand {
-  static groupcol_Name = "groupcol";
   /** @type {IToken} */
   groupColumn;
   /**
@@ -12,20 +16,17 @@ export default class ViewCommand extends RenderableCommand {
    */
   constructor(viewCommandIl) {
     super(viewCommandIl);
-    this.groupColumn = TokenUtil.getFiled(
-      viewCommandIl,
-      ViewCommand.groupcol_Name
-    );
+    this.groupColumn = TokenUtil.getFiled(viewCommandIl, "GroupColumn");
   }
 
   /**
    * @param {IDataSource} source
    * @param {IContext} context
-   * @param {FaceCollection} faces,
-   * @param {ReplaceCollection} replaces ,
-   * @param {number} dividerRowCount ,
-   * @param {string} dividerTemplate ,
-   * @param {string} incompleteTemplate ,
+   * @param {FaceCollection?} faces,
+   * @param {ReplaceCollection?} replaces ,
+   * @param {number?} dividerRowCount ,
+   * @param {string?} dividerTemplate ,
+   * @param {string?} incompleteTemplate ,
    * @returns {Promise<string>}
    */
   async renderInternallyAsync(
@@ -37,11 +38,58 @@ export default class ViewCommand extends RenderableCommand {
     dividerTemplate,
     incompleteTemplate
   ) {
-    const groupColumn = await TokenUtil.getValueOrSystemDefaultAsync(
-      this.groupColumn,
-      ViewCommand.groupcol_Name
-    );
-
-    console.log("q", groupColumn);
+    /** @type {string} */
+    let retVal = null;
+    if ((source.data?.length ?? 0) > 0) {
+      retVal = "";
+      console.table(source.data);
+      const groupColumn = await TokenUtil.getValueOrSystemDefaultAsync(
+        this.groupColumn,
+        "ViewCommand.GroupColumn",
+        context,
+        "prpid"
+      );
+      const groupKeyList = alasql(
+        `SELECT ${groupColumn} AS key FROM ? GROUP BY ${groupColumn}`,
+        [source.data]
+      );
+      console.table(groupKeyList);
+      const rootRenderParam = new RenderParam(
+        replaces,
+        groupKeyList.length,
+        dividerRowCount,
+        dividerTemplate,
+        incompleteTemplate
+      );
+      rootRenderParam.setLevel("1");
+      groupKeyList.forEach((item) => {
+        const groupItems = alasql(
+          `SELECT VALUE FROM ? WHERE ${groupColumn} = ?`,
+          [source.data, item.key]
+        );
+        //send first row for create level 1
+        rootRenderParam.data = groupItems[0];
+        const level1Result = faces.render(rootRenderParam, context) ?? "";
+        let level2Result = "";
+        var childRenderParam = new RenderParam(
+          replaces,
+          groupItems.length,
+          dividerRowCount,
+          dividerTemplate,
+          incompleteTemplate
+        );
+        childRenderParam.setLevel("2");
+        groupItems.forEach((row) => {
+          childRenderParam.data = row;
+          const renderResult = faces.render(childRenderParam, context);
+          if (renderResult) {
+            level2Result += renderResult;
+          }
+        });
+        retVal += level1Result.replace("@child", level2Result);
+      });
+    }
+    //console.log(result);
+    return retVal;
   }
 }

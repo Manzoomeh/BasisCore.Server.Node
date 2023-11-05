@@ -37,9 +37,10 @@ export default class RequestContext extends ContextBase {
 
   /**
    * @param {string} key
+   * @param {string?} defaultValue
    * @returns {string}
    */
-  getDefault(key) {
-    return this._settings.getDefault(key);
+  getDefault(key, defaultValue = null) {
+    return this._settings.getDefault(key, defaultValue);
   }
 }

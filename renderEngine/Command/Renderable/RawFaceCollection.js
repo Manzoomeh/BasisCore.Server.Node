@@ -28,14 +28,14 @@ export default class RawFaceCollection {
       const applyFunction = x.applyFunction.getValueAsync(context);
       const rowType = x.rowType.getValueAsync(context, FaceRowType.notset);
       const filter = x.filter.getValueAsync(context);
-      const template = x.template.getValueAsync(context);
+      const template = x.content.getValueAsync(context);
       const level = x.level.getValueAsync(context);
 
       const retVal = new Face();
       retVal.applyFunction = await applyFunction;
       retVal.applyReplace = await applyReplace;
       retVal.rowType = FaceRowType[(await rowType) ?? FaceRowType.notset];
-      retVal.formattedTemplate = this.formatTemplate(source, await template);
+      retVal.formattedContent = this.formatTemplate(source, await template);
       retVal.relatedRows = this.getRelatedRows(
         source,
         this.formatFilter(source, await filter)

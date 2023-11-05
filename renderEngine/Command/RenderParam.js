@@ -4,9 +4,9 @@ import ReplaceCollection from "./Renderable/ReplaceCollection.js";
 export default class RenderParam {
   /** @type {any} */
   data;
-  /** @type {ReplaceCollection} */
+  /** @type {ReplaceCollection?} */
   replaces;
-  /** @type {Array<string>} */
+  /** @type {Array<string>?} */
   levels;
   /** @type {number} */
   _renderableCount;
@@ -14,9 +14,9 @@ export default class RenderParam {
   _renderedCount;
   /** @type {number} */
   _cellPerRow;
-  /** @type {string} */
+  /** @type {string?} */
   dividerTemplate;
-  /** @type {string} */
+  /** @type {string?} */
   incompleteTemplate;
   /** @type {number} */
   _renderedCell;
@@ -45,11 +45,11 @@ export default class RenderParam {
 
   /**
    *
-   * @param {ReplaceCollection} replaces
-   * @param {number} renderableCount
-   * @param {number} recordPerRow
-   * @param {string} dividerTemplate
-   * @param {string} incompleteTemplate
+   * @param {ReplaceCollection?} replaces
+   * @param {number?} renderableCount
+   * @param {number?} recordPerRow
+   * @param {string?} dividerTemplate
+   * @param {string?} incompleteTemplate
    */
   constructor(
     replaces,

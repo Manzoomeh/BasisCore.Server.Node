@@ -10,7 +10,7 @@ export default class Face {
   /** @type {object[]} */
   relatedRows;
   /** @type {string} */
-  formattedTemplate;
+  formattedContent;
   /** @type {Array<string>?} */
   levels;
 }

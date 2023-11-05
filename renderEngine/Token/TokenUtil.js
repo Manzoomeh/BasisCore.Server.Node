@@ -53,11 +53,18 @@ export default class TokenUtil {
    * @param {IToken} token
    * @param {string} filedName
    * @param {IContext} context
+   * @param {string?} defaultValue
    * @returns {Promise<string>}
    */
-  static async getValueOrSystemDefaultAsync(token, filedName, context) {
-    return token
-      ? await token.getValueAsync(context)
-      : context.getDefault(filedName);
+  static async getValueOrSystemDefaultAsync(
+    token,
+    filedName,
+    context,
+    defaultValue = null
+  ) {
+    return (
+      (await token.getValueAsync(context)) ??
+      context.getDefault(filedName, defaultValue)
+    );
   }
 }

@@ -7,10 +7,10 @@ export default class RawReplaceCollection {
   items;
 
   /**
-   * @param {object[]} ilObject
+   * @param {object[]?} ilObject
    */
   constructor(ilObject) {
-    this.items = ilObject.map((x) => new RawReplace(x));
+    this.items = ilObject?.map((x) => new RawReplace(x));
   }
 
   /**
@@ -18,13 +18,18 @@ export default class RawReplaceCollection {
    * @returns {Promise<ReplaceCollection>}
    */
   async processAsync(context) {
-    const tasks = this.items.map((x) =>
-      Promise.all([
-        x.tagName.getValueAsync(context),
-        x.template.getValueAsync(context),
-      ])
-    );
-    const result = await Promise.all(tasks);
-    return new ReplaceCollection(Object.fromEntries(result));
+    /** @type {ReplaceCollection} */
+    let retVal = null;
+    if (this.items) {
+      const tasks = this.items.map((x) =>
+        Promise.all([
+          x.tagName.getValueAsync(context),
+          x.template.getValueAsync(context),
+        ])
+      );
+      const result = await Promise.all(tasks);
+      retVal = new ReplaceCollection(Object.fromEntries(result));
+    }
+    return retVal;
   }
 }

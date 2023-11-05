@@ -30,9 +30,9 @@ export default class FaceCollection extends Array {
         );
       });
       if (firstMatchFace) {
-        if (firstMatchFace.formattedTemplate) {
+        if (firstMatchFace.formattedContent) {
           retVal = StringUtil.format(
-            firstMatchFace.formattedTemplate,
+            firstMatchFace.formattedContent,
             Object.values(param.data)
           );
           if (firstMatchFace.applyReplace && param.replaces) {
@@ -43,7 +43,7 @@ export default class FaceCollection extends Array {
           }
         }
         param.setRendered();
-        if (param.mustApplyDivider) {
+        if (param.mustApplyDivider && param.dividerTemplate) {
           retVal += param.dividerTemplate;
         }
         if (param.isEnd && param.incompleteTemplate) {

@@ -48,12 +48,15 @@ export default class ServiceSettings {
 
   /**
    * @param {string} key
+   * @param {string?} defaultValue
    * @returns {string}
    */
-  getDefault(key) {
+  getDefault(key, defaultValue = null) {
     const defaultKey = `default.${key}`;
     console.log("sdsd");
-    const value = this._options.Settings[defaultKey];
+    const value = this._options?.Settings
+      ? this._options.Settings[defaultKey]
+      : defaultValue;
     if (!value) {
       throw new InvalidConfigException("host configuration file", defaultKey);
     }

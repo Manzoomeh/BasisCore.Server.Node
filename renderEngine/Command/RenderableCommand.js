@@ -98,11 +98,11 @@ export default class RenderableCommand extends SourceBaseCommand {
   /**
    * @param {IDataSource} source
    * @param {IContext} context
-   * @param {FaceCollection} faces,
-   * @param {ReplaceCollection} replaces ,
-   * @param {number} dividerRowCount ,
-   * @param {string} dividerTemplate ,
-   * @param {string} incompleteTemplate ,
+   * @param {FaceCollection?} faces,
+   * @param {ReplaceCollection?} replaces ,
+   * @param {number?} dividerRowCount ,
+   * @param {string?} dividerTemplate ,
+   * @param {string?} incompleteTemplate ,
    * @returns {Promise<string>}
    */
   renderInternallyAsync(

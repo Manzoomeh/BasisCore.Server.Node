@@ -59,59 +59,24 @@ const inlineSourceIl = {
 };
 
 const viewIl = {
-  $type: "Print",
+  $type: "view",
+  core: "view",
   "data-member-name": "view.item",
-  "layout-content":
-    "<table width='500' border='1' id='@id'><tbody><tr> @child</tr></tbody></table>",
-  "else-layout-content": "محصولی موجود نیست",
-  faces: [
+  GroupColumn: "prpid",
+  layout: [
     {
-      name: "face1",
-      replace: true,
-      function: true,
-      "row-type": "even",
-      filter: "id<=2",
-      template: "<td style='color:blue' id='@id'><p>--  @name<br></td>",
-    },
-    {
-      name: "face1",
-      replace: true,
-      function: true,
-      "row-type": "odd",
-      filter: "id<=2",
-      template:
-        "<td style='color:blue-odd' id='@id'>[(i)5|@id]<p>--  @name<br></td>",
-    },
-    {
-      name: "face1",
-      replace: true,
-      function: true,
-      "row-type": "even",
-      filter: "id>2",
-      template: "<td style='color:green' id='@id'><p>--  @name<br></td>",
-    },
-    {
-      name: "face1",
-      replace: true,
-      function: true,
-      "row-type": "odd",
-      template: "<td style='color:blue' id='@id'><p>  @name<br></td>",
-    },
-    {
-      name: "face1",
-      replace: true,
-      function: true,
-      "row-type": "odd",
-      template: "<td style='color:green' id='@id'><p>  @name<br></td>",
+      content: '<table border="1" width="600" dir="rtl"  >@child</table  >',
     },
   ],
-  "divider-content": "</tr><tr> ",
-  "divider-rowcount": 2,
-  "incomplete-content": "<td style='color:red'>red</td>",
-  replaces: [
+  faces: [
     {
-      tagname: "i",
-      template: "<span style='color:red'>@val1 - @val2</span>",
+      level: "1",
+      content:
+        '<tr  ><td width="200"  >@question</td  ><td  >@child</td  ></tr  >',
+    },
+    {
+      level: "2",
+      content: "@answer,",
     },
   ],
 };
