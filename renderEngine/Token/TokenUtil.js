@@ -67,4 +67,14 @@ export default class TokenUtil {
       context.getDefault(filedName, defaultValue)
     );
   }
+
+  /**
+   * @param {IToken} token
+   * @param {IContext} context
+   * @param {string?} defaultValue
+   * @returns {Promise<string>}
+   */
+  static async getValueOrDefaultAsync(token, context, defaultValue = null) {
+    return (await token.getValueAsync(context)) ?? defaultValue;
+  }
 }

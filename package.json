@@ -27,7 +27,8 @@
     "printWithDb": "node test/command/print/withDbSource.js",
     "source": "node test/command/dbsource/index.js",
     "inlinesource": "node test/command/inlinesource/simple.js",
-    "view": "node test/command/view/simple.js"
+    "view": "node test/command/view/simple.js",
+    "tree": "node test/command/tree/simple.js"
   },
   "type": "module",
   "dependencies": {

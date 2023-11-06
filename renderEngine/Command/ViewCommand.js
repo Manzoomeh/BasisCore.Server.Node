@@ -43,7 +43,6 @@ export default class ViewCommand extends RenderableCommand {
     let retVal = null;
     if ((source.data?.length ?? 0) > 0) {
       retVal = "";
-      console.table(source.data);
       const groupColumn = await TokenUtil.getValueOrSystemDefaultAsync(
         this.groupColumn,
         "ViewCommand.GroupColumn",
@@ -54,7 +53,6 @@ export default class ViewCommand extends RenderableCommand {
         `SELECT ${groupColumn} AS key FROM ? GROUP BY ${groupColumn}`,
         [source.data]
       );
-      console.table(groupKeyList);
       const rootRenderParam = new RenderParam(
         replaces,
         groupKeyList.length,
@@ -72,7 +70,7 @@ export default class ViewCommand extends RenderableCommand {
         rootRenderParam.data = groupItems[0];
         const level1Result = faces.render(rootRenderParam, context) ?? "";
         let level2Result = "";
-        var childRenderParam = new RenderParam(
+        const childRenderParam = new RenderParam(
           replaces,
           groupItems.length,
           dividerRowCount,

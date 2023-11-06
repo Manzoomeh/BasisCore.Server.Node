@@ -14,4 +14,16 @@ export default class Util {
   static isNullOrEmpty(value) {
     return value == null || value.length == 0;
   }
+
+  /**
+   * @param {Array<object>} array
+   * @param {string} key
+   * @returns {NodeJS.Dict<Array<object>>}
+   */
+  static groupBy(array, key) {
+    return array.reduce((rv, x) => {
+      (rv[x[key]] = rv[x[key]] || []).push(x);
+      return rv;
+    }, {});
+  }
 }
