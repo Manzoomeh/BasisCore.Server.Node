@@ -20,6 +20,7 @@ import {
   RouterHostService,
 } from "./services/hostServices.js";
 import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
+import { HttpHostService } from "./services/HttpHostService.js";
 
 export default class HostManager {
   /**@type {HostEndPoint[]} */
@@ -185,7 +186,8 @@ export default class HostManager {
         try {
           switch (serviceOptions.Type.toLowerCase()) {
             case "sql": {
-              retVal.push(this.#createSqlDispatcher(name, serviceOptions));
+              retVal.push(new HttpHostService(name, serviceOptions));
+              //retVal.push(this.#createSqlDispatcher(name, serviceOptions));
               break;
             }
             case "file": {

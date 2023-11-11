@@ -1,4 +1,5 @@
 import InvalidConfigException from "../Exceptions/InvalidConfigException.js";
+import WebServerException from "../Exceptions/WebServerException.js";
 import ConnectionInfo from "./ConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
 
@@ -25,7 +26,9 @@ export default class ConnectionUtil {
             break;
           }
           default: {
-            throw new InvalidConfigException("HostSettings.Settings", key);
+            throw new WebServerException(
+              `Provider type ${parts[1]} not support in connection manager`
+            );
           }
         }
         retVal.push(connection);

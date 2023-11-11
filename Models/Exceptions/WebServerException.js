@@ -1,4 +1,6 @@
-export default class BasisCoreException extends Error {
+import BasisCoreException from "./BasisCoreException.js";
+
+export default class WebServerException extends BasisCoreException {
   /**
    * @param {string?} message
    * @param {Error?} innerException

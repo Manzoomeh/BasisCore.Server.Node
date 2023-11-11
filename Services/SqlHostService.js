@@ -2,6 +2,7 @@ import HostService from "./hostService.js";
 import Request from "../models/request.js";
 import Response from "../models/response.js";
 import sql from "mssql";
+import { HostServiceOptions } from "../models/model.js";
 
 export default class SqlProxyHostService extends HostService {
   /** @type {string} */
@@ -49,6 +50,7 @@ export default class SqlProxyHostService extends HostService {
    * @returns {Promise<Response>}
    */
   async processAsync(request, fileContents) {
+    console.log(request);
     try {
       await this._processUploadAsync(fileContents, request);
       const params = this._convertToTable(request);
