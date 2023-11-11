@@ -81,7 +81,7 @@ export default class Member {
       this.sort.getValueAsync(context),
       this.preview.getValueAsync(context),
     ]);
-    source.id = `${sourceSchemaName}.${this.name}`;
+    source.id = `${sourceSchemaName}.${this.name}`.toLowerCase();
     SourceUtil.addToContext(source, context, preview, sort, postSql);
   }
 }
