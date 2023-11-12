@@ -204,7 +204,7 @@ describe("testing InlineSource with Command", () => {
           "<td style='color:green' id='usedforid'><p> @valueID @mid @groupid @prpid @usedforid @typeid @multi @ord<br></td>",
       });
       const print = new PrintCommand(printIl);
-      const [result,_] = await Promise.all([
+      const [result, _] = await Promise.all([
         print.executeAsync(context),
         inlinesource.executeAsync(context)
       ])
@@ -272,6 +272,51 @@ describe("testing InlineSource with Command", () => {
     const inlinesource = new InlineSource(il);
     await inlinesource.executeAsync(context);
     expect(context.tryGetSource("view.menu").data.length).toBe(32);
+  });
+  test("preview has no effect on data on context without await ", async () => {
+    il.Members[0].preview = false;
+    const inlinesource = new InlineSource(il);
+
+    const [
+      executeResult, source
+    ] = await Promise.all([
+      inlinesource.executeAsync(context),
+      context.waitToGetSourceAsync("view.item")
+    ])
+    expect(source.data[0]).toStrictEqual({
+      RowNumber: 1,
+      answer: "تور استانبول",
+      groupid: "249",
+      mid: "20",
+      multi: "0",
+      ord: "699",
+      prpid: "8070",
+      question: "نام تور برنامه ریزی شده",
+      typeid: "150",
+      usedforid: "1255248",
+      valueID: "12688722",
+      vocabulary: "نام_تور_برنامه_ریزی_شده",
+    });
+  });
+  test("the context should have the same length as  row numbers without await ", async () => {
+    const inlinesource = new InlineSource(il);
+    const [
+      executeResult, source
+    ] = await Promise.all([
+      inlinesource.executeAsync(context),
+      context.waitToGetSourceAsync("view.item")
+    ])
+    expect(source.data.length).toBe(27);
+  });
+  test("the context should have the same length as  row numbers in member 2", async () => {
+    const inlinesource = new InlineSource(il);
+    const [
+      executeResult, source
+    ] = await Promise.all([
+      inlinesource.executeAsync(context),
+      context.waitToGetSourceAsync("view.menu")
+    ])
+    expect(source.data.length).toBe(32);
   });
 });
 // describe("the context for second member most have all properties", () => {

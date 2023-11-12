@@ -40,6 +40,7 @@ export default class ServiceSettings {
    * @returns {IConnectionInfo}
    */
   getConnection(connectionName) {
+    connectionName = connectionName.toLowerCase()
     if (connectionName in this._connections) {
       return this._connections[connectionName];
     }
