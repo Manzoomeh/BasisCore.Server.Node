@@ -1,6 +1,7 @@
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import IDataSource from "../../renderEngine/Source/IDataSource.js";
+import Request from "../request.js";
 
 export default class ConnectionInfo {
   /** @type {string} */
@@ -30,7 +31,7 @@ export default class ConnectionInfo {
   }
 
   /**
-   * @param {any} httpRequest
+   * @param {Request} httpRequest
    * @param {CancellationToken} cancellationToken
    * @returns {Promise<IDataSource>}
    */

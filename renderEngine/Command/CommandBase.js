@@ -112,7 +112,6 @@ export default class CommandBase {
   }
 
   /**
-   *
    * @param {IContext} context
    * @returns {Promise<ICommandResult>}
    */

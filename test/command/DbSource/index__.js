@@ -18,7 +18,7 @@ const sqlConfig = {
 try {
   // make sure that any items are correctly URL encoded in the connection string
   await sql.connect(
-    "Server=.;Database=ClientApp;User Id=sa;Password=1234;trustServerCertificate=true"
+    "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true"
   );
   //const result = await sql.query(`select top (10) * from PinMessageLogs`);
   //   const result =

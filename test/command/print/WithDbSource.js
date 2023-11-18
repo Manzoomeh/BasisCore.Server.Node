@@ -18,24 +18,24 @@ var hostOptions = {
     CallMaxDepth: 1,
     "Connections.sql.RoutingData": {
       connectionString:
-        "Server=.;Database=ClientApp;User Id=sa;Password=1234;trustServerCertificate=true",
+        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
       procedure: "[dbo].[DBSourceProcedure]",
       requestTimeout: 2000,
       testTimeOut: 1000,
     },
     "Connections.sql.CallCommand": {
       connectionString:
-        "Server=.;Database=ClientApp;User Id=sa;Password=1234;trustServerCertificate=true",
+        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
       procedure: "[dbo].[DBSourceProcedure]",
     },
     "Connections.sql.ILUpdate": {
       connectionString:
-        "Server=.;Database=ClientApp;User Id=sa;Password=1234;trustServerCertificate=true",
+        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
       procedure: "[dbo].[DBSourceProcedure]",
     },
     "Connections.sql.source1": {
       connectionString:
-        "Server=.;Database=ClientApp;User Id=sa;Password=1234;trustServerCertificate=true",
+        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
       procedure: "[dbo].[DBSourceProcedure]",
     },
   },

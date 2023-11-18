@@ -40,8 +40,9 @@ export default class ServiceSettings {
    * @returns {IConnectionInfo}
    */
   getConnection(connectionName) {
-    if (connectionName in this._connections) {
-      return this._connections[connectionName];
+    const key = connectionName.toLowerCase();
+    if (key in this._connections) {
+      return this._connections[key];
     }
     throw new BasisConnectionSourceNotFoundException(connectionName);
   }
