@@ -2,7 +2,7 @@ import CancellationToken from "../Cancellation/CancellationToken.js";
 
 export default class ICommandResult {
   /**
-   * @param {*} stream
+   * @param {Array<string>} stream
    * @param {CancellationToken} cancellationToken
    * @returns {Promise<void>}
    */

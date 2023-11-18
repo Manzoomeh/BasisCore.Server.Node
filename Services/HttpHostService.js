@@ -25,7 +25,6 @@ export class HttpHostService extends HostService {
         request,
         null
       );
-      console.log(data);
       return this._createResponse({
         cms: data,
       });

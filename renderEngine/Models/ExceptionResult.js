@@ -18,11 +18,11 @@ export default class ExceptionResult extends ICommandResult {
   }
 
   /**
-   * @param {*} stream
+   * @param {Array<string>} stream
    * @param {CancellationToken} cancellationToken
    * @returns {Promise<void>}
    */
   writeAsync(stream, cancellationToken) {
-    throw new Error("Method not implemented.");
+    stream?.push(this.exception.message);
   }
 }
