@@ -53,7 +53,7 @@ export default class TreeCommand extends RenderableCommand {
       retVal = "";
       /** @type {Array<object>} */
       const processedRows = [];
-      const [relationColumnName, foreignKey, principalKey, nullValue] =
+      const [relationColumnName, foreignKey, principalKey, tempNullValue] =
         await Promise.all([
           await TokenUtil.getValueOrDefaultAsync(
             this.relationColumnName,
@@ -71,6 +71,12 @@ export default class TreeCommand extends RenderableCommand {
           ),
           await TokenUtil.getValueOrDefaultAsync(this.nullValue, context, "0"),
         ]);
+
+      const nullValue =
+        typeof source.data[0][foreignKey] === "number"
+          ? Number(tempNullValue)
+          : tempNullValue;
+
       const rootRecord = alasql(`SELECT VALUE FROM ? WHERE ${foreignKey} = ?`, [
         source.data,
         nullValue,
