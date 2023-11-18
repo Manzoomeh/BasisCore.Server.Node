@@ -1,4 +1,4 @@
-import CommandUtil from "../../../test/command/CommndUtil.js";
+import CommandUtil from "../../../test/command/CommandUtil.js";
 import IContext from "../../Context/IContext.js";
 import GroupResult from "../../Models/GroupResult.js";
 import CommandBase from "../CommandBase.js";

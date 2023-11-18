@@ -16,7 +16,6 @@ export default class SourceRepository {
   }
 
   /**
-   *
    * @param {string} sourceId
    * @returns {Promise<IDataSource>}
    */
@@ -29,14 +28,13 @@ export default class SourceRepository {
     } else {
       retVal = new Promise((resolve) => {
         sourceId = sourceId?.toLowerCase();
-        //this.logger.logInformation(`wait for ${sourceId}`);
         /** @type {SourceEventHandler} */
         const handler = (source) => {
           this.removeHandler(sourceId, handler);
           resolve(source);
         };
         this.addHandler(sourceId, handler);
-        console.log(`wait for ${sourceId}`);
+        //console.log(`wait for ${sourceId}`);
       });
     }
     return retVal;
@@ -52,9 +50,8 @@ export default class SourceRepository {
       //todo
       //this.logger.logSource(source);
     }
-    console.log(`${source.id} Added...`);
+    //console.log(`${source.id} Added...`);
     this.eventManager.get(source.id)?.trigger(source);
-    //this.logger.logInformation(`${source.id} Added...`);
   }
 
   /**
@@ -69,8 +66,7 @@ export default class SourceRepository {
       this.eventManager.set(key, handlers);
     }
     if (handlers.tryAdd(handler)) {
-      //this.logger.logInformation(`handler Added for ${key}...`);
-      console.log(`handler Added for ${key}...`);
+      //console.log(`handler Added for ${key}...`);
     }
   }
 
@@ -83,8 +79,7 @@ export default class SourceRepository {
     let handlers = this.eventManager.get(key);
     if (handlers) {
       if (handlers.tryRemove(handler)) {
-        //this.logger.logInformation(`handler removed for ${key}...`);
-        console.log(`handler removed for ${key}...`);
+        //console.log(`handler removed for ${key}...`);
       }
     }
   }
