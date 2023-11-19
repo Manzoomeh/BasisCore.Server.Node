@@ -155,13 +155,13 @@ const host = {
   },
   Services: {
     edgeService: {
-      Type: "sql",
+      Type: "http",
       Settings: {
         "Connections1.edge-socket.RoutingData": "127.0.0.1:1026",
       },
     },
     sqlService: {
-      Type: "sql",
+      Type: "http",
       Settings: {
         "Connections.sql.RoutingData": {
           connectionString:

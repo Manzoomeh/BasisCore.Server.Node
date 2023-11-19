@@ -68,7 +68,7 @@ export default class HostService {
   _createResponse(request) {
     /**@type {Response} */
     let retVal = null;
-    switch (request.cms.webserver.index) {
+    switch (request.webserver.index) {
       case "1": {
         retVal = new Index1Response(request);
         break;

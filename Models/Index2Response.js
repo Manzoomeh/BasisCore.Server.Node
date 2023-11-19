@@ -14,23 +14,23 @@ export default class Index2Response extends RequestBaseResponse {
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
   async getResultAsync() {
-    var path = this._request.cms.webserver.filepath;
+    var path = this._request.webserver.filepath;
     if (fs.existsSync(path)) {
       const content = await fs.promises.readFile(path);
       return [
-        parseInt(this._request.cms.webserver.headercode.split(" ")[0]),
+        parseInt(this._request.webserver.headercode.split(" ")[0]),
         {
-          ...{ "content-type": this._request.cms.webserver.mime },
-          ...(this._request.cms.webserver.gzip == "true" && {
+          ...{ "content-type": this._request.webserver.mime },
+          ...(this._request.webserver.gzip == "true" && {
             "Content-Encoding": "gzip",
           }),
-          ...(this._request.cms.webserver.etag && {
-            ETag: this._request.cms.webserver.etag,
+          ...(this._request.webserver.etag && {
+            ETag: this._request.webserver.etag,
           }),
-          ...(this._request.cms.webserver.lastmodified && {
-            "Last-Modified": this._request.cms.webserver.lastmodified,
+          ...(this._request.webserver.lastmodified && {
+            "Last-Modified": this._request.webserver.lastmodified,
           }),
-          ...(this._request.cms.http && this._request.cms.http),
+          ...(this._request.http && this._request.http),
         },
         content,
       ];

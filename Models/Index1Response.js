@@ -16,7 +16,7 @@ export default class Index1Response extends RequestBaseResponse {
    */
   async getResultAsync() {
     try {
-      const commandIl = JSON.parse(this._request.cms.cms.content);
+      const commandIl = JSON.parse(this._request.cms.page_il);
       const command = CommandUtil.createCommand(commandIl);
       const context = new RequestContext(this.settings);
       context.cancellation = new CancellationToken();
@@ -24,13 +24,13 @@ export default class Index1Response extends RequestBaseResponse {
       const renderResultList = [];
       await result.writeAsync(renderResultList, context.cancellation);
       return [
-        parseInt(this._request.cms.webserver.headercode.split(" ")[0]),
+        parseInt(this._request.webserver.headercode.split(" ")[0]),
         {
-          ...{ "content-type": this._request.cms.webserver.mime },
-          ...(this._request.cms.webserver.gzip === "true" && {
+          ...{ "content-type": this._request.webserver.mime },
+          ...(this._request.webserver.gzip === "true" && {
             "Content-Encoding": "gzip",
           }),
-          ...this._request.cms.http,
+          ...this._request.http,
         },
         renderResultList.join(""),
       ];

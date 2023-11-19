@@ -1,5 +1,6 @@
 import HostService from "./hostService.js";
 import ServiceSettings from "../models/ServiceSettings.js";
+import WebServerException from "../models/Exceptions/WebServerException.js";
 
 export class HttpHostService extends HostService {
   /** @type {ServiceSettings} */
@@ -11,6 +12,11 @@ export class HttpHostService extends HostService {
   constructor(name, options) {
     super(name, options);
     this.settings = new ServiceSettings(options);
+    if (!this.settings.routerConnection) {
+      throw new WebServerException(
+        `Router connection not set in '${name}' http base host service!`
+      );
+    }
   }
 
   /**
@@ -25,9 +31,7 @@ export class HttpHostService extends HostService {
         request,
         null
       );
-      return this._createResponse({
-        cms: data,
-      });
+      return this._createResponse(data);
     } catch (er) {
       console.error(er);
       throw er;

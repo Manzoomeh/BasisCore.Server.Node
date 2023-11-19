@@ -183,9 +183,8 @@ export default class HostManager {
         const serviceOptions = services[name];
         try {
           switch (serviceOptions.Type.toLowerCase()) {
-            case "sql": {
+            case "http": {
               retVal.push(new HttpHostService(name, serviceOptions));
-              //retVal.push(this.#createSqlDispatcher(name, serviceOptions));
               break;
             }
             case "file": {

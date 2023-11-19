@@ -1,6 +1,7 @@
 import InvalidConfigException from "../Exceptions/InvalidConfigException.js";
 import WebServerException from "../Exceptions/WebServerException.js";
 import ConnectionInfo from "./ConnectionInfo.js";
+import EdgeConnectionInfo from "./EdgeConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
 
 export default class ConnectionUtil {
@@ -25,9 +26,13 @@ export default class ConnectionUtil {
             connection = new SqlConnectionInfo(parts[2], settings[item]);
             break;
           }
+          case "edge": {
+            connection = new EdgeConnectionInfo(parts[2], settings[item]);
+            break;
+          }
           default: {
             throw new WebServerException(
-              `Provider type ${parts[1]} not support in connection manager`
+              `Provider type '${parts[1]}' not support in connection manager`
             );
           }
         }
