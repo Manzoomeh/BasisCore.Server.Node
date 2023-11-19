@@ -14,13 +14,13 @@ export default class Index5Response extends RequestBaseResponse {
    */
   async getResultAsync() {
     return [
-      parseInt(this._request.cms.webserver.headercode.split(" ")[0]),
+      parseInt(this._request.webserver.headercode.split(" ")[0]),
       {
-        ...{ "content-type": this._request.cms.webserver.mime },
-        ...(this._request.cms.webserver.gzip && {
+        ...{ "content-type": this._request.webserver.mime },
+        ...(this._request.webserver.gzip && {
           "Content-Encoding": "gzip",
         }),
-        ...this._request.cms.http,
+        ...this._request.http,
       },
       this._request.cms.content,
     ];

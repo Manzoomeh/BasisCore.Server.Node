@@ -1,0 +1,34 @@
+import HostManager from "../../../hostManager.js";
+import { HostManagerOptions } from "../../../models/model.js";
+
+/** @type {HostManagerOptions} */
+const host = {
+  Lazy: true,
+  EndPoints: {
+    Main06: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "127.0.0.1:1563",
+        },
+      ],
+      Active: true,
+      Routing: "mainService",
+    },
+  },
+  Services: {
+    mainService: {
+      Type: "http",
+      Settings: {
+        "Connections.sql.RoutingData": {
+          connectionString:
+            "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
+          procedure: "[dbo].[cms]",
+        },
+      },
+    },
+  },
+};
+
+const service = HostManager.fromJson(host);
+service.listen();
