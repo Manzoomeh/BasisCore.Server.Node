@@ -29,7 +29,10 @@
     "inlinesource": "node test/command/inlinesource/simple.js",
     "view": "node test/command/view/simple.js",
     "tree": "node test/command/tree/simple.js",
-    "chart": "node test/command/chart/simple.js"
+    "chart": "node test/command/chart/simple.js",
+    "group": "node test/command/group/simple.js",
+    "con-sql": "node test/connection/sql/simple.js",
+    "con-edge": "node test/connection/edge/simple.js"
   },
   "type": "module",
   "dependencies": {

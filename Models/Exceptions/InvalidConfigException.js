@@ -9,7 +9,7 @@ export default class InvalidConfigException extends BasisCoreException {
   constructor(configFile, configKey, expectedType) {
     super(
       `In '${configFile}' File, Key '${configKey}' Not Properly Set!${
-        !expectedType ? `Expected Type is '${expectedType}'.` : ""
+        expectedType ? `Expected Type is '${expectedType}'.` : ""
       }`
     );
   }

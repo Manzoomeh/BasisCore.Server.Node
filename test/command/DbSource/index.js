@@ -2,7 +2,6 @@ import ServiceSettings from "../../../models/ServiceSettings.js";
 import { HostServiceOptions } from "../../../models/model.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 import DbSource from "../../../renderEngine/Command/Source/DbSource.js";
-import ContextBase from "../../../renderEngine/Context/ContextBase.js";
 import RequestContext from "../../../renderEngine/Context/RequestContext.js";
 import JsonSource from "../../../renderEngine/Source/JsonSource.js";
 
@@ -10,7 +9,7 @@ const il = {
   $type: "dbsource",
   core: "dbsource",
   name: "db",
-  source: "source1",
+  source: "Source1",
   "extra-attribute": {
     parentid: "0",
     comment: "_comment",
@@ -80,24 +79,24 @@ var hostOptions = {
     CallMaxDepth: 1,
     "Connections.sql.RoutingData": {
       connectionString:
-        "Server=.;Database=ClientApp;User Id=sa;Password=1234;trustServerCertificate=true",
+        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
       procedure: "[dbo].[DBSourceProcedure]",
       requestTimeout: 2000,
       testTimeOut: 1000,
     },
     "Connections.sql.CallCommand": {
       connectionString:
-        "Server=.;Database=ClientApp;User Id=sa;Password=1234;trustServerCertificate=true",
+        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
       procedure: "[dbo].[DBSourceProcedure]",
     },
     "Connections.sql.ILUpdate": {
       connectionString:
-        "Server=.;Database=ClientApp;User Id=sa;Password=1234;trustServerCertificate=true",
+        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
       procedure: "[dbo].[DBSourceProcedure]",
     },
     "Connections.sql.source1": {
       connectionString:
-        "Server=.;Database=ClientApp;User Id=sa;Password=1234;trustServerCertificate=true",
+        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
       procedure: "[dbo].[DBSourceProcedure]",
     },
   },

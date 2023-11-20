@@ -12,14 +12,13 @@ import {
   SniCertificateOptions,
 } from "./models/model.js";
 import {
-  EdgeProxyHostService,
   HostService,
-  SqlProxyHostService,
   StaticFileProxyHostService,
   HostEndPoint,
   RouterHostService,
 } from "./services/hostServices.js";
 import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
+import { HttpHostService } from "./services/HttpHostService.js";
 
 export default class HostManager {
   /**@type {HostEndPoint[]} */
@@ -184,8 +183,8 @@ export default class HostManager {
         const serviceOptions = services[name];
         try {
           switch (serviceOptions.Type.toLowerCase()) {
-            case "sql": {
-              retVal.push(this.#createSqlDispatcher(name, serviceOptions));
+            case "http": {
+              retVal.push(new HttpHostService(name, serviceOptions));
               break;
             }
             case "file": {
@@ -205,31 +204,6 @@ export default class HostManager {
       }
     }
     return retVal;
-  }
-
-  /**
-   * @param {string} name
-   * @param {HostServiceOptions} options
-   * @returns {HostService}
-   */
-  #createSqlDispatcher(name, options) {
-    /**@type {HostService} */
-    let service = null;
-    const sqlConnection = options.Settings["Connections.sql.RoutingData"];
-    if (sqlConnection) {
-      service = new SqlProxyHostService(name, sqlConnection, options);
-    } else {
-      const edgeConnection =
-        options.Settings["Connections.edge-socket.RoutingData"];
-      if (edgeConnection) {
-        const [ip, port] = edgeConnection.split(":");
-        service = new EdgeProxyHostService(name, ip, port, options);
-      }
-    }
-    if (!service) {
-      throw new Error(`can't detect dispatcher for service '${name}'!`);
-    }
-    return service;
   }
 
   /**

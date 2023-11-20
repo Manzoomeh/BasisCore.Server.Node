@@ -13,12 +13,12 @@ export default class StringResult extends ICommandResult {
   }
 
   /**
-   * @param {*} stream
+   * @param {Array<string>} stream
    * @param {CancellationToken} cancellationToken
    * @returns {Promise<void>}
    */
   writeAsync(stream, cancellationToken) {
-    console.log(this._result);
+    stream?.push(this._result);
     return Promise.resolve();
   }
 }

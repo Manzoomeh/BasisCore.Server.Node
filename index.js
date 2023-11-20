@@ -118,7 +118,7 @@ const host = {
         },
       ],
       Active: true,
-      Routing: "edgeService",
+      Routing: "sqlService",
     },
     Main07: {
       Type: "http",
@@ -133,7 +133,7 @@ const host = {
           // },
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "fileService1",
     },
     Main08: {
@@ -149,22 +149,25 @@ const host = {
           },
         },
       ],
-      Active: true,
+      Active: false,
       Routing: "fileService1",
     },
   },
   Services: {
     edgeService: {
-      Type: "sql",
+      Type: "http",
       Settings: {
-        "Connections.edge-socket.RoutingData": "127.0.0.1:1026",
+        "Connections1.edge-socket.RoutingData": "127.0.0.1:1026",
       },
     },
     sqlService: {
-      Type: "sql",
+      Type: "http",
       Settings: {
-        "Connections.sql.RoutingData":
-          "Driver={SQL Server Native Client 11.0};Server=localhost;Database=temp;Uid=sa;Pwd=1234;Trusted_Connection=True;TrustServerCertificate=True;",
+        "Connections.sql.RoutingData": {
+          connectionString:
+            "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
+          procedure: "[dbo].[cms]",
+        },
       },
     },
     fileService: {
