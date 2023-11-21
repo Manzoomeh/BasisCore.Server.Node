@@ -103,12 +103,6 @@ export default class SourceCommand extends CommandBase {
       ),
       tag.addAttributeIfExistAsync("source", this.connectionName, context),
     ]);
-    if (this.extraAttributes) {
-      Object.entries(this.extraAttributes).forEach(
-        async (pair) =>
-          await tag.addAttributeIfExistAsync(pair[0], pair[1], context)
-      );
-    }
     if ((this.params?.length ?? 0) > 0) {
       const paramsTag = new CommandElement("params");
       for (const pair of this.params.items) {

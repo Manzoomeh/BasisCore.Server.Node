@@ -125,7 +125,6 @@ export default class CommandBase {
   }
 
   /**
-   *
    * @param {IContext} context
    * @returns {Promise<CommandElement>}
    */
@@ -143,6 +142,13 @@ export default class CommandBase {
       if (runType != RunTypes.None) {
         retVal.addAttributeIfExistAsync("run", runType);
       }
+    }
+    if (this.extraAttributes) {
+      await Promise.all(
+        Object.entries(this.extraAttributes).map((pair) =>
+          tag.addAttributeIfExistAsync(pair[0], pair[1], context)
+        )
+      );
     }
 
     return retVal;
