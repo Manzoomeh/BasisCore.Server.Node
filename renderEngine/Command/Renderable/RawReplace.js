@@ -12,6 +12,6 @@ export default class RawReplace {
    */
   constructor(ilObject) {
     this.tagName = TokenUtil.getFiled(ilObject, "tagname");
-    this.template = TokenUtil.getFiled(ilObject, "template");
+    this.template = TokenUtil.getFiled(ilObject, "content");
   }
 }
