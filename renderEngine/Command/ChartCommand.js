@@ -53,7 +53,6 @@ export default class ChartCommand extends SourceBaseCommand {
     const { width, height, marginX, marginY, backgroundColor, textColor } =
       this.chartSetting.style;
 
-    // Create the chart based on the chart type
     const document = dom.window.document;
 
     // Create the SVG element
@@ -69,6 +68,7 @@ export default class ChartCommand extends SourceBaseCommand {
 
     document.body.appendChild(svg);
 
+    // Create the chart based on the chart type
     switch (this.chartSetting.chartType) {
       case "bar":
         this.createBarChart(data);
@@ -230,8 +230,7 @@ export default class ChartCommand extends SourceBaseCommand {
    */
 
   async renderInternallyAsync(source, context) {
-    if ((source.data?.length ?? 0) > 0) {
-      /** @type {string} */
+    if (source.data?.length > 0) {
       return this.createChart(source.data);
     }
   }
