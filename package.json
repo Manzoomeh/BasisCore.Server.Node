@@ -31,7 +31,8 @@
     "tree": "node test/command/tree/simple.js",
     "group": "node test/command/group/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
-    "con-edge": "node test/connection/edge/simple.js"
+    "con-edge": "node test/connection/edge/simple.js",
+    "text": "node test/command/rawtext/simple.js"
   },
   "type": "module",
   "dependencies": {
