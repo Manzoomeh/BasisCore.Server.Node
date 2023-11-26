@@ -121,7 +121,7 @@ export default class TreeCommand extends RenderableCommand {
         /** @type {NodeJS.Dict<string>} */
         const groups = {};
         if (childRows.length > 0) {
-          const newLevel = ++level;
+          const newLevel = level + 1;
           const childRenderParam = new RenderParam(
             replaces,
             childRows.length,
@@ -132,7 +132,8 @@ export default class TreeCommand extends RenderableCommand {
           if (Util.isNullOrEmpty(relationColumnName)) {
             childRows.forEach((row) => {
               childRenderParam.data = row;
-              childRenderResult += renderLevel(childRenderParam, newLevel);
+              childRenderResult +=
+                renderLevel(childRenderParam, newLevel) ?? "";
             });
             groups[""] = childRenderResult;
           } else {
