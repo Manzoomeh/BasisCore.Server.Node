@@ -35,9 +35,9 @@ export default class ApiCommand extends CommandBase {
    */
   async _executeCommandAsync(context) {
     const method = this.method.value.toUpperCase();
-    if (method != "POST" && method != "GET") {
+    if (method != "POST" && method != "GET" && method != "PUT" && method != "PATCH" && method != "DELETE") {
       throw new BasisCoreException(
-        "Request of the API command should be get or post"
+        "Request of the API command should be correct"
       );
     }
     const requestConfig = {
