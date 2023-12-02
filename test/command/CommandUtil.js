@@ -1,3 +1,4 @@
+import ApiCommand from "../../renderEngine/Command/ApiCommand.js";
 import GroupCommand from "../../renderEngine/Command/Collection/GroupCommand.js";
 import CommandBase from "../../renderEngine/Command/CommandBase.js";
 import PrintCommand from "../../renderEngine/Command/PrintCommand.js";
@@ -49,6 +50,10 @@ export default class CommandUtil {
       case "rawtext": {
         retVal = new RawText(commandIl);
         break;
+      }
+      case "api":{
+        retVal = new ApiCommand(commandIl)
+        break
       }
     }
     return retVal;
