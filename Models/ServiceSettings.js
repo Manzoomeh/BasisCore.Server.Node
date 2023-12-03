@@ -40,10 +40,18 @@ export default class ServiceSettings {
    * @returns {IConnectionInfo}
    */
   getConnection(connectionName) {
-    const key = connectionName.toLowerCase();
-    if (key in this._connections) {
-      return this._connections[key];
+    const lowercasedConnections = {};
+    Object.keys(this._connections).forEach((existingKey) => {
+      lowercasedConnections[existingKey.toLowerCase()] =
+        this._connections[existingKey];
+    });
+    if (connectionName.toLowerCase() in lowercasedConnections) {
+      return lowercasedConnections[connectionName.toLowerCase()];
     }
+    let str = ``;
+    Object.keys(lowercasedConnections).forEach((element) => {
+      str += element;
+    });
     throw new BasisConnectionSourceNotFoundException(connectionName);
   }
 

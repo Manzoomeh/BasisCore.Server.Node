@@ -18,7 +18,7 @@ export default class CommandUtil {
     //TODO:must be better with dic of ctor
     /** @type {CommandBase?} */
     let retVal = null;
-    switch (commandIl.$type) {
+    switch (commandIl.$type.toLowerCase()) {
       case "print": {
         retVal = new PrintCommand(commandIl);
         break;
