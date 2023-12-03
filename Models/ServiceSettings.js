@@ -22,7 +22,8 @@ export default class ServiceSettings {
     this._options = options;
     this._connections = {};
     ConnectionUtil.loadConnections(options.Settings).forEach(
-      (connection) => (this._connections[connection.name] = connection)
+      (connection) =>
+        (this._connections[connection.name.toLowerCase()] = connection)
     );
     if ("routingdata" in this._connections) {
       this.routerConnection = this._connections.routingdata;
@@ -40,9 +41,8 @@ export default class ServiceSettings {
    * @returns {IConnectionInfo}
    */
   getConnection(connectionName) {
-    const key = connectionName.toLowerCase();
-    if (key in this._connections) {
-      return this._connections[key];
+    if (connectionName.toLowerCase() in this._connections) {
+      return this._connections[connectionName.toLowerCase()];
     }
     throw new BasisConnectionSourceNotFoundException(connectionName);
   }
