@@ -23,7 +23,7 @@ export default class ServiceSettings {
     this._connections = {};
     ConnectionUtil.loadConnections(options.Settings).forEach(
       (connection) =>
-        (this._connections[connection.name.toLowerCase()] = connection)
+        (this._connections[connection.name] = connection)
     );
     if ("routingdata" in this._connections) {
       this.routerConnection = this._connections.routingdata;
