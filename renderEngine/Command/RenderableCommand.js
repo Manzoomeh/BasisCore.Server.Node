@@ -127,6 +127,7 @@ export default class RenderableCommand extends SourceBaseCommand {
         param.data = row;
         const renderResult = faces.render(param, context);
         if (renderResult) {
+          
           retVal += renderResult;
         }
       });
