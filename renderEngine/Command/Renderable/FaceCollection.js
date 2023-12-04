@@ -30,8 +30,6 @@ export default class FaceCollection extends Array {
         );
       });
       if (firstMatchFace) {
-        param.data = this.changeNullToBlank(param.data);
-        console.log(param.data)
         if (firstMatchFace.formattedContent) {
           retVal = StringUtil.format(
             firstMatchFace.formattedContent,
@@ -61,16 +59,5 @@ export default class FaceCollection extends Array {
       }
     }
     return retVal;
-  }
-  changeNullToBlank(obj) {
-    for (const key in obj) {
-      if (
-        obj.hasOwnProperty(key) &&
-        (obj[key] === null || obj[key] === undefined)
-      ) {
-        obj[key] = "";
-      }
-    }
-    return obj
   }
 }
