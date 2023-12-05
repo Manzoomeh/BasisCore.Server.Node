@@ -18,7 +18,7 @@ export default class StringUtil {
    */
   static format(str, args) {
     args.forEach((data, index) => {
-      str = str.replace(new RegExp("\\{" + index + "\\}", "gi"), data);
+      str = str.replace(new RegExp("\\{" + index + "\\}", "gi"), data ?? "");
     });
     return str;
   }
