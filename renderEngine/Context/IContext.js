@@ -12,6 +12,12 @@ export default class IContext {
    * @param {string} sourceId
    * @returns {IDataSource}
    */
+  addFunction(key, userFunction) {
+    throw new Error("method addFunction is not implemented.");
+  }
+  executeFunction(key, ...rest) {
+    throw new Error("method executeFunction is not implemented.")
+  }
   tryGetSource(sourceId) {
     throw new Error("Method 'tryGetSource' not implemented.");
   }

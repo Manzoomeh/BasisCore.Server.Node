@@ -117,7 +117,7 @@ export default class HostManager {
           case "sni": {
             /**@type {SniCertificateOptions} */
             const sniOptions = address.Certificate;
-            /**@type {NodeJS.Dict<tls.SecureContextOptions>} */
+            /**@type {NodeJS.<tls.SecureContextOptions>} */
             const hostLookup = {};
             sniOptions.Hosts.forEach((host) => {
               /**@type {tls.SecureContextOptions}*/
