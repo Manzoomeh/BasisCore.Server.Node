@@ -8,7 +8,7 @@ import InlineSourceCommand from "../../renderEngine/Command/Source/InlineSourceC
 import TreeCommand from "../../renderEngine/Command/TreeCommand.js";
 import ViewCommand from "../../renderEngine/Command/ViewCommand.js";
 import ListCommand from "../../renderEngine/Command/ListCommand.js";
-
+import ScriptCommand from "../../renderEngine/ScriptCommand.js";
 export default class CommandUtil {
   /**
    * @param {Object} commandIl
@@ -54,6 +54,9 @@ export default class CommandUtil {
       case "api":{
         retVal = new ApiCommand(commandIl)
         break
+      }
+      case "script" : {
+        retVal = new ScriptCommand(commandIl)
       }
     }
     return retVal;
