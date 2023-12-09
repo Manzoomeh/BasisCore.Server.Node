@@ -1,10 +1,10 @@
-import IContext from "./Context/IContext.js";
-import CommandBase from "./Command/CommandBase.js";
-import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
-import IToken from "./Token/IToken.js";
-import TokenUtil from "./Token/TokenUtil.js";
-import ContextBase from "./Context/ContextBase.js";
-import VoidResult from "./Models/VoidResult.js";
+import IContext from "../Context/IContext.js";
+import CommandBase from "./CommandBase.js";
+import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
+import IToken from "../Token/IToken.js";
+import TokenUtil from "../Token/TokenUtil.js";
+import ContextBase from "../Context/ContextBase.js";
+import VoidResult from "../Models/VoidResult.js";
 
 export default class ScriptCommand extends CommandBase {
   constructor(scriptIL) {
@@ -24,13 +24,9 @@ export default class ScriptCommand extends CommandBase {
       case "javascript":
         this.findJsFunctions(context);
         break;
-      case "python":
-        break;
-      case "c#":
-        break;
       default:
         throw new BasisCoreException(
-          `invalid language for tag script;script is not supported in ${this.language}`
+          `Invalid language for tag script; script is not supported in ${this.language}`
         );
     }
     return VoidResult.result;
@@ -76,7 +72,8 @@ export default class ScriptCommand extends CommandBase {
       const parameters = match[2];
       const functionCode = match[3];
       const finalFunction = new Function(
-        ...parameters.split(","),functionCode
+        ...parameters.split(","),
+        functionCode
       );
       context.addFunction(functionName, finalFunction);
     }

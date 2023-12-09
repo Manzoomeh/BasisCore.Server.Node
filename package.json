@@ -35,7 +35,8 @@
     "text": "node test/command/rawtext/simple.js",
     "api": "node test/command/API/simple.js",
     "testApi": "node test/command/API/runTestApp.js",
-    "script" : "node test/command/Script/simple.js",
+    "script": "node test/command/Script/simple.js",
+    "scriptWithPrint": "node test/command/Script/executeFunctionWithPrint.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
   },
   "type": "module",

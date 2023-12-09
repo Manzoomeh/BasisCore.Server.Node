@@ -1,4 +1,4 @@
-import ScriptCommand from "../../../renderEngine/ScriptCommand.js";
+import ScriptCommand from "../../../renderEngine/Command/ScriptCommand.js";
 import ContextBase from "../../../renderEngine/Context/ContextBase.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 
@@ -13,7 +13,7 @@ const il = {
   content: `  function add(a, b) {
     return a + b;
   }
-  const subtract = (a, b) => {
+  function subtract(a, b){
     return a - b;
   }
  this is a test string

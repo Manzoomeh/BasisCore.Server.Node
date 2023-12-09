@@ -8,7 +8,7 @@ import InlineSourceCommand from "../../renderEngine/Command/Source/InlineSourceC
 import TreeCommand from "../../renderEngine/Command/TreeCommand.js";
 import ViewCommand from "../../renderEngine/Command/ViewCommand.js";
 import ListCommand from "../../renderEngine/Command/ListCommand.js";
-import ScriptCommand from "../../renderEngine/ScriptCommand.js";
+import ScriptCommand from "../../renderEngine/Command/ScriptCommand.js";
 export default class CommandUtil {
   /**
    * @param {Object} commandIl

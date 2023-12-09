@@ -1,12 +1,31 @@
+import ScriptCommand from "../../../renderEngine/Command/ScriptCommand.js";
+import ContextBase from "../../../renderEngine/Context/ContextBase.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 import PrintCommand from "../../../renderEngine/Command/PrintCommand.js";
-import RawFaceCollection from "../../../renderEngine/Command/Renderable/RawFaceCollection.js";
-import ContextBase from "../../../renderEngine/Context/ContextBase.js";
-import JsonSource from "../../../renderEngine/Source/JsonSource.js";
 
+import JsonSource from "../../../renderEngine/Source/JsonSource.js";
 const context = new ContextBase();
 context.cancellation = new CancellationToken();
+const scriptIl = {
+  $type: "script",
+  core: "script",
+  name: "script",
+  runType: "AtServer",
+  language: "javascript",
+  content: `  function add(a, b) {
 
+    return Number(a) + Number(b);
+  }
+  function subtract(a, b){
+    return a - b;
+  }
+ this is a test string
+  const divide = (e, f) => {
+    return e / f;
+  }`,
+};
+const command = new ScriptCommand(scriptIl);
+await command.executeAsync(context);
 context.addSource(new JsonSource([{ data: "ali" }], "tesT1"));
 var p = new Promise((r) => {
   setTimeout(() => {
@@ -32,42 +51,10 @@ const il = {
   faces: [
     {
       name: "face1",
-      replace: true,
       function: true,
-      "row-type": "even",
-      filter: "id<=2",
-      content: "<td style='color:blue' id='@id'><p>--  @name<br></td>",
-    },
-    {
-      name: "face1",
-      replace: true,
-      function: true,
-      "row-type": "odd",
-      filter: "id<=2",
+      filter : "id=1",
       content:
-        "<td style='color:blue-odd' id='@id'>[(i)5]<p>--  @name<br></td>",
-    },
-    {
-      name: "face1",
-      replace: true,
-      function: true,
-      "row-type": "even",
-      filter: "id>2",
-      content: "<td style='color:green' id='@id'><p>--  @name<br></td>",
-    },
-    {
-      name: "face1",
-      replace: true,
-      function: true,
-      "row-type": "odd",
-      content: "<td style='color:blue' id='@id'><p>  @name<br></td>",
-    },
-    {
-      name: "face1",
-      replace: true,
-      function: true,
-      "row-type": "odd",
-      content: "<td style='color:green' id='@id'><p>  @name<br></td>",
+        "<td style='color:blue' id='@id'><p>--  @name  javascript::add(1,5)<br></td>",
     },
   ],
   "divider-content": "</tr><tr> ",
@@ -76,7 +63,7 @@ const il = {
   replaces: [
     {
       tagname: "i",
-      content: "<span style='color:red'>@val1</span>",
+      template: "<span style='color:red'>@val1</span>",
     },
   ],
 };
@@ -87,3 +74,5 @@ const print = new PrintCommand(il);
 //console.log(print);
 const result = await print.executeAsync(context);
 console.log(result);
+
+

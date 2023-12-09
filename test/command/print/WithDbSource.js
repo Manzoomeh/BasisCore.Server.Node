@@ -61,7 +61,7 @@ const printIl = {
       function: true,
       "row-type": "even",
       filter: "id<=2",
-      template: "<td style='color:blue' id='@id'><p>--  @name<br></td>",
+      content: "<td style='color:blue' id='@id'><p>--  @name<br></td>",
     },
     {
       name: "face1",
@@ -69,7 +69,7 @@ const printIl = {
       function: true,
       "row-type": "odd",
       filter: "id<=2",
-      template:
+      content:
         "<td style='color:blue-odd' id='@id'>[(i)5|@id]<p>--  @name<br></td>",
     },
     {
@@ -78,21 +78,21 @@ const printIl = {
       function: true,
       "row-type": "even",
       filter: "id>2",
-      template: "<td style='color:green' id='@id'><p>--  @name<br></td>",
+      content: "<td style='color:green' id='@id'><p>--  @name<br></td>",
     },
     {
       name: "face1",
       replace: true,
       function: true,
       "row-type": "odd",
-      template: "<td style='color:blue' id='@id'><p>  @name<br></td>",
+      content: "<td style='color:blue' id='@id'><p>  @name<br></td>",
     },
     {
       name: "face1",
       replace: true,
       function: true,
       "row-type": "odd",
-      template: "<td style='color:green' id='@id'><p>  @name<br></td>",
+      content: "<td style='color:green' id='@id'><p>  @name<br></td>",
     },
   ],
   "divider-content": "</tr><tr> ",
@@ -101,7 +101,7 @@ const printIl = {
   replaces: [
     {
       tagname: "i",
-      template: "<span style='color:red'>@val1 - @val2</span>",
+      content: "<span style='color:red'>@val1 - @val2</span>",
     },
   ],
 };
