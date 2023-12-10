@@ -1,3 +1,5 @@
 node_modules
 output
 StreamerEngine.report.json
+bug.js
+__tests__

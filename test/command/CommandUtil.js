@@ -1,10 +1,13 @@
+import ApiCommand from "../../renderEngine/Command/ApiCommand.js";
 import GroupCommand from "../../renderEngine/Command/Collection/GroupCommand.js";
 import CommandBase from "../../renderEngine/Command/CommandBase.js";
 import PrintCommand from "../../renderEngine/Command/PrintCommand.js";
+import RawText from "../../renderEngine/Command/RawText.js";
 import DbSource from "../../renderEngine/Command/Source/DbSource.js";
 import InlineSourceCommand from "../../renderEngine/Command/Source/InlineSourceCommand.js";
 import TreeCommand from "../../renderEngine/Command/TreeCommand.js";
 import ViewCommand from "../../renderEngine/Command/ViewCommand.js";
+import ListCommand from "../../renderEngine/Command/ListCommand.js";
 
 export default class CommandUtil {
   /**
@@ -15,7 +18,7 @@ export default class CommandUtil {
     //TODO:must be better with dic of ctor
     /** @type {CommandBase?} */
     let retVal = null;
-    switch (commandIl.$type) {
+    switch (commandIl.$type.toLowerCase()) {
       case "print": {
         retVal = new PrintCommand(commandIl);
         break;
@@ -41,8 +44,16 @@ export default class CommandUtil {
         break;
       }
       case "list": {
-        retVal = new ViewCommand(commandIl);
+        retVal = new ListCommand(commandIl);
         break;
+      }
+      case "rawtext": {
+        retVal = new RawText(commandIl);
+        break;
+      }
+      case "api":{
+        retVal = new ApiCommand(commandIl)
+        break
       }
     }
     return retVal;
