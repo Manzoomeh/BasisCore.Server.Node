@@ -24,8 +24,7 @@ const scriptIl = {
     return e / f;
   }`,
 };
-const command = new ScriptCommand(scriptIl);
-await command.executeAsync(context);
+
 context.addSource(new JsonSource([{ data: "ali" }], "tesT1"));
 var p = new Promise((r) => {
   setTimeout(() => {
@@ -71,8 +70,12 @@ const il = {
 //var l = new RawFaceCollection(il.faces);
 //console.log(l);
 const print = new PrintCommand(il);
+const command = new ScriptCommand(scriptIl);
+
 //console.log(print);
-const result = await print.executeAsync(context);
+const [result,scriptResult] = await Promise.all([
+  print.executeAsync(context),command.executeAsync(context)
+])
 console.log(result);
 
 
