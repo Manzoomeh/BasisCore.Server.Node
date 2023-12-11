@@ -18,7 +18,7 @@ export default class RawText extends CommandBase {
    * @returns {Promise<ICommandResult>}
    */
   async executeAsync(context) {
-    const content = this.content.getValueAsync(context);
+    const content = await this.content.getValueAsync(context);
     return new StringResult(content);
   }
 }
