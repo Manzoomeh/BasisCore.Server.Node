@@ -35,7 +35,8 @@
     "text": "node test/command/rawtext/simple.js",
     "api": "node test/command/API/simple.js",
     "testApi": "node test/command/API/runTestApp.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "convertor": "node test/convertFromJsonPartToJsonObject.js"
   },
   "type": "module",
   "dependencies": {

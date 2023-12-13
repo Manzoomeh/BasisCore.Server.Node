@@ -1,10 +1,10 @@
-import JsonSingleValue from "./Models/JsonSingleValue.js";
-import JsonValue from "./Models/JsonValue.js";
-import JsonArray from "./Models/JsonArray.js";
-import ArrayObject from "./Models/ArrayObject.js";
-import JsonObject from "./Models/JsonObject.js";
-import FormJsonPart from "./Models/FormJsonPart.js";
-import { ModelObject } from "./Models/ModelObject.js";
+import JsonSingleValue from "../Models/JsonSingleValue.js";
+import JsonValue from "../Models/JsonValue.js";
+import JsonArray from "../Models/JsonArray.js";
+import ArrayObject from "../Models/ArrayObject.js";
+import JsonObject from "../Models/JsonObject.js";
+import FormJsonPart from "../Models/FormJsonPart.js";
+import { ModelObject } from "../Models/ModelObject.js";
 /**
  * @param {FormJsonPart[]} parts
  * @returns
@@ -18,7 +18,6 @@ function ConvertFormJsonPartToJsonObject(parts) {
     }
 
     if (parents.length === 1) {
-      console.log(parents[0], value);
       jsonObj.Properties.push(new JsonSingleValue(parents[0], value));
     } else {
       if (retVal === null) {
