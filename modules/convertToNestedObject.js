@@ -68,6 +68,8 @@ function convertToNestedStructure(array) {
  * @param {ModelObject} object
  */
 function convert(object) {
+  console.log(object)
+  console.log(JSON.stringify(object))
   let val = [];
   const name = object.Name;
   const properties = object.Properties;
