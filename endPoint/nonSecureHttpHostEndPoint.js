@@ -21,7 +21,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   }
 
   _createServer() {
-    return http.createServer(async (req, res) => {
+    return http.createServer(this.__covertHeaderToNestedStructureMiddleware, async (req, res) => {
       try {
         /** @type {Request} */
         let cms = null;

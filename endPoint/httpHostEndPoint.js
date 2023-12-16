@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import url from "url";
 import HostEndPoint from "./hostEndPoint.js";
 import Request from "../models/request.js";
-
+import convertToNestedStructure from "../modules/convertToNestedObject.js";
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /**
@@ -19,7 +19,21 @@ class HttpHostEndPoint extends HostEndPoint {
   _createServer() {
     throw Error("_createServer not implemented in this type of end point!");
   }
-
+  /**
+   * @param {http.IncomingMessage} req - The request object.
+   * @param {http.ServerResponse} res - The response object.
+   * @param {function} next - The next function to call the next middleware in the chain.
+   * @returns {void}
+   */
+  __covertHeaderToNestedStructureMiddleware(req, res, next) {
+    try {
+      req.headers = convertToNestedStructure(req.headers);
+      next();
+    } catch (error) {
+      console.error("Error converting headers:", error);
+      res.status(500).end("Internal Server Error");
+    }
+  }
   listen() {
     const server = this._createServer();
     server
