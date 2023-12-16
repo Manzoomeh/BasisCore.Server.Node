@@ -30,7 +30,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
         /**@type {NodeJS.Dict<string>} */
         const formFields = {};
         /**@type {NodeJS.Dict<string>} */
-        const jsonHeader = {};
+        const jsonHeaders = {};
         const createCmsAndCreateResponseAsync = async () => {
           cms = await this._createCmsObjectAsync(
             req.url,
@@ -62,7 +62,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
           });
           bb.on("field", (name, val, info) => {
             formFields[name] = val;
-            if (name.startedWith("_")) {
+            if (name.replace(/\s/g, "").startsWith("_")) {
               jsonHeaders[name] = val;
             }
           });

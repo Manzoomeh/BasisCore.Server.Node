@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import url from "url";
 import HostEndPoint from "./hostEndPoint.js";
 import Request from "../models/request.js";
-import convertToNestedStructure from "../modules/convertToNestedObject.js";
+import convertToNestedStructure,{convertObjectToNestedStructure} from "../modules/convertToNestedObject.js";
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /**
@@ -47,7 +47,7 @@ class HttpHostEndPoint extends HostEndPoint {
     method,
     headers,
     formFields,
-    jsonHeader,
+    jsonHeaders,
     socket
   ) {
     const rawUrl = urlStr.substring(1);
@@ -72,8 +72,9 @@ class HttpHostEndPoint extends HostEndPoint {
       }
     }
     headers["Form"] = formFields;
-    if (Object.keys(jsonHeader).length > 0) {
-      headers["json"] = convertToNestedStructure(Object.entries(jsonHeader));
+    if (Object.keys(jsonHeaders).length > 0) {
+     
+      headers["json"] = convertObjectToNestedStructure(jsonHeaders);
     } else {
       headers["json"] = {};
     }

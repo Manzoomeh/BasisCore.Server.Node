@@ -4,6 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import SecureHttpHostEndPoint from "./secureHttpHostEndPoint.js";
 import HostService from "../services/hostService.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
+
 import http from "http";
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {HostService} */
@@ -109,7 +110,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             });
             bb.on("field", (name, val, info) => {
               formFields[name] = val;
-              if (name.startedWith("_")) {
+              if (name.replace(/\s/g, "").startsWith("_")) {
                 jsonHeaders[name] = val;
               }
             });
