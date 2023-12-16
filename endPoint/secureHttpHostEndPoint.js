@@ -66,7 +66,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
             });
             bb.on("field", (name, val, info) => {
               formFields[name] = val;
-              if (name.replace(/\s/g, "").startsWith("_")) {
+              if (name.startsWith("_")) {
                 jsonHeaders[name] = val;
               }
             });

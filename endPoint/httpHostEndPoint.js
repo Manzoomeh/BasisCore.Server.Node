@@ -19,6 +19,7 @@ class HttpHostEndPoint extends HostEndPoint {
   _createServer() {
     throw Error("_createServer not implemented in this type of end point!");
   }
+
   /**
    * @param {http.IncomingMessage} req - The request object.
    * @param {http.ServerResponse} res - The response object.
@@ -73,7 +74,6 @@ class HttpHostEndPoint extends HostEndPoint {
     }
     headers["Form"] = formFields;
     if (Object.keys(jsonHeaders).length > 0) {
-     
       headers["json"] = convertObjectToNestedStructure(jsonHeaders);
     } else {
       headers["json"] = {};
@@ -88,6 +88,7 @@ class HttpHostEndPoint extends HostEndPoint {
       time2: now.format("HHmmss"),
       date3: now.format("YYYY.MM.DD"),
     };
+    console.log(request)
     return request;
   }
 }
