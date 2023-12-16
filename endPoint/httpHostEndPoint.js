@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import url from "url";
 import HostEndPoint from "./hostEndPoint.js";
 import Request from "../models/request.js";
-
+import convertToNestedStructure,{convertObjectToNestedStructure} from "../modules/convertToNestedObject.js";
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /**
@@ -20,6 +20,12 @@ class HttpHostEndPoint extends HostEndPoint {
     throw Error("_createServer not implemented in this type of end point!");
   }
 
+  /**
+   * @param {http.IncomingMessage} req - The request object.
+   * @param {http.ServerResponse} res - The response object.
+   * @param {function} next - The next function to call the next middleware in the chain.
+   * @returns {void}
+   */
   listen() {
     const server = this._createServer();
     server
@@ -37,7 +43,14 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {Socket} socket
    * @returns {Promise<Request>}
    */
-  async _createCmsObjectAsync(urlStr, method, headers, formFields, socket) {
+  async _createCmsObjectAsync(
+    urlStr,
+    method,
+    headers,
+    formFields,
+    jsonHeaders,
+    socket
+  ) {
     const rawUrl = urlStr.substring(1);
     const urlObject = url.parse(rawUrl, true);
     headers["request-id"] = (++requestId).toString();
@@ -60,6 +73,11 @@ class HttpHostEndPoint extends HostEndPoint {
       }
     }
     headers["Form"] = formFields;
+    if (Object.keys(jsonHeaders).length > 0) {
+      headers["json"] = convertObjectToNestedStructure(jsonHeaders);
+    } else {
+      headers["json"] = {};
+    }
     const now = dayjs();
     const request = new Request();
     request.request = headers;
@@ -70,6 +88,7 @@ class HttpHostEndPoint extends HostEndPoint {
       time2: now.format("HHmmss"),
       date3: now.format("YYYY.MM.DD"),
     };
+    console.log(request)
     return request;
   }
 }
