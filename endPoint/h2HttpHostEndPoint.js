@@ -4,7 +4,7 @@ import { StatusCodes } from "http-status-codes";
 import SecureHttpHostEndPoint from "./secureHttpHostEndPoint.js";
 import HostService from "../services/hostService.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
-
+import convertToNestedStructure from "../modules/convertToNestedObject.js";
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {HostService} */
   #service;
@@ -60,6 +60,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     return http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
+        headers = convertToNestedStructure(headers)
         /** @type {Request} */
         let cms = null;
         /**@type {BinaryContent[]} */
