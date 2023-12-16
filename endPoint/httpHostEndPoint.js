@@ -27,7 +27,7 @@ class HttpHostEndPoint extends HostEndPoint {
    */
   __covertHeaderToNestedStructureMiddleware(req, res, next) {
     try {
-      req.headers = convertToNestedStructure(req.headers);
+      req.headers = convertToNestedStructure(Object.entries(req.headers));
       next();
     } catch (error) {
       console.error("Error converting headers:", error);

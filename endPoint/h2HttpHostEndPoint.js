@@ -60,7 +60,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     return http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
-        headers = convertToNestedStructure(headers)
+        headers = convertToNestedStructure(Object.entries(headers));
         /** @type {Request} */
         let cms = null;
         /**@type {BinaryContent[]} */

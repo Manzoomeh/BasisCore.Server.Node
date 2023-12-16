@@ -1,5 +1,5 @@
-import JsonObject from "./JsonObject.js";
-export default class JsonArray extends JsonObject {
+import JsonValue from "./JsonValue";
+export default class JsonArray extends JsonValue {
   constructor(name) {
     super(name);
   }
