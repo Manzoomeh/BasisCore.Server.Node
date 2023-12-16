@@ -21,7 +21,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   }
 
   _createServer() {
-    return http.createServer(this.__covertHeaderToNestedStructureMiddleware, async (req, res) => {
+    return http.createServer(async (req, res) => {
       try {
         /** @type {Request} */
         let cms = null;
@@ -29,12 +29,15 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
         const fileContents = [];
         /**@type {NodeJS.Dict<string>} */
         const formFields = {};
+        /**@type {NodeJS.Dict<string>} */
+        const jsonHeader = {};
         const createCmsAndCreateResponseAsync = async () => {
           cms = await this._createCmsObjectAsync(
             req.url,
             req.method,
             req.headers,
             formFields,
+            jsonHeaders,
             req.socket
           );
           const result = await this.#service.processAsync(cms, fileContents);
@@ -59,6 +62,9 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
           });
           bb.on("field", (name, val, info) => {
             formFields[name] = val;
+            if (name.startedWith("_")) {
+              jsonHeaders[name] = val;
+            }
           });
           bb.on("close", createCmsAndCreateResponseAsync);
           req.pipe(bb);

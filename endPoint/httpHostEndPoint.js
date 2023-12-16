@@ -25,15 +25,6 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {function} next - The next function to call the next middleware in the chain.
    * @returns {void}
    */
-  __covertHeaderToNestedStructureMiddleware(req, res, next) {
-    try {
-      req.headers = convertToNestedStructure(Object.entries(req.headers));
-      next();
-    } catch (error) {
-      console.error("Error converting headers:", error);
-      res.status(500).end("Internal Server Error");
-    }
-  }
   listen() {
     const server = this._createServer();
     server
@@ -51,7 +42,14 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {Socket} socket
    * @returns {Promise<Request>}
    */
-  async _createCmsObjectAsync(urlStr, method, headers, formFields, socket) {
+  async _createCmsObjectAsync(
+    urlStr,
+    method,
+    headers,
+    formFields,
+    jsonHeader,
+    socket
+  ) {
     const rawUrl = urlStr.substring(1);
     const urlObject = url.parse(rawUrl, true);
     headers["request-id"] = (++requestId).toString();
@@ -74,6 +72,11 @@ class HttpHostEndPoint extends HostEndPoint {
       }
     }
     headers["Form"] = formFields;
+    if (Object.keys(jsonHeader).length > 0) {
+      headers["json"] = convertToNestedStructure(Object.entries(jsonHeader));
+    } else {
+      headers["json"] = {};
+    }
     const now = dayjs();
     const request = new Request();
     request.request = headers;
