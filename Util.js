@@ -1,3 +1,4 @@
+import {convertObjectToNestedStructure} from "./modules/convertToNestedObject";
 export default class Util {
   /**
    * @param {*} value
@@ -25,5 +26,8 @@ export default class Util {
       (rv[x[key]] = rv[x[key]] || []).push(x);
       return rv;
     }, {});
+  }
+  static convertObjectToNestedStructure(object){
+    return convertObjectToNestedStructure(object)
   }
 }
