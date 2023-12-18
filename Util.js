@@ -1,3 +1,4 @@
+import {convertObjectToNestedStructure} from "./modules/objectUtil";
 export default class Util {
   /**
    * @param {*} value
