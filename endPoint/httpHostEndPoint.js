@@ -20,12 +20,6 @@ class HttpHostEndPoint extends HostEndPoint {
     throw Error("_createServer not implemented in this type of end point!");
   }
 
-  /**
-   * @param {http.IncomingMessage} req - The request object.
-   * @param {http.ServerResponse} res - The response object.
-   * @param {function} next - The next function to call the next middleware in the chain.
-   * @returns {void}
-   */
   listen() {
     const server = this._createServer();
     server
