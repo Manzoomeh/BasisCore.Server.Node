@@ -32,11 +32,17 @@
     "group": "node test/command/group/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
     "con-edge": "node test/connection/edge/simple.js",
-    "call": "node test/command/call/simple.js"
+    "call": "node test/command/call/simple.js",
+    "text": "node test/command/rawtext/simple.js",
+    "api": "node test/command/API/simple.js",
+    "testApi": "node test/command/API/runTestApp.js",
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "convertor": "node test/convertFromJsonPartToJsonObject.js"
   },
   "type": "module",
   "dependencies": {
     "alasql": "^4.1.9",
+    "axios": "^1.6.2",
     "busboy": "^1.6.0",
     "dayjs": "^1.11.6",
     "fast-xml-parser": "^4.3.2",
@@ -48,5 +54,8 @@
     "mime-types": "^2.1.35",
     "mssql": "^9.3.2",
     "pako": "^2.1.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
   }
 }
