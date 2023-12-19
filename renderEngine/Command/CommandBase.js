@@ -8,7 +8,7 @@ import TokenUtil from "../Token/TokenUtil.js";
 import CommandElement from "./CommandElement.js";
 
 export default class CommandBase {
-  /**@type {string} */
+  /**@type {IToken} */
   core;
   /**@type {IToken} */
   name;
@@ -27,7 +27,7 @@ export default class CommandBase {
    * @param {object} commandIl
    */
   constructor(commandIl) {
-    this.core = commandIl["core"];
+    this.core = TokenUtil.getFiled(commandIl, "core");
     this.name = TokenUtil.getFiled(commandIl, "name");
     this.if = TokenUtil.getFiled(commandIl, "if");
     this.runType = TokenUtil.getFiled(commandIl, "runType");

@@ -56,7 +56,7 @@ export default class CallCommand extends CommandBase {
         }
       }
     } else {
-      retVal = CallResult();
+      retVal = new CallResult();
       retVal.commands.push(command);
     }
     return retVal;

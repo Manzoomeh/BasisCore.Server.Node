@@ -45,7 +45,7 @@ export default class TokenUtil {
    * @returns {IToken}
    */
   static getFiled(object, filedName) {
-    const value = object[filedName];
+    const value = filedName in object ? object[filedName] : null;
     return value ? TokenUtil.ToToken(value) : ValueToken.Null;
   }
 

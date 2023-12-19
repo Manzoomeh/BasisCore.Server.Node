@@ -132,7 +132,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
       request.input("sitesize", pageSize);
       request.input("command", rawCommand);
       /** @type {Array<ILoadPageResult>} */
-      const rows = (await request.execute(this.settings.procedure)).recordsets;
+      const rows = (await request.execute(this.settings.procedure)).recordset;
       if (rows.length != 1) {
         throw new WebServerException(
           `Call Command Expect 1 File '${pageName}' But Get ${rows.length} File(s) From '${this.settings.procedure}' Procedure`

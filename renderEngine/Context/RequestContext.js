@@ -7,6 +7,8 @@ import { read, utimes } from "fs";
 import StringUtil from "../Token/StringUtil.js";
 import Util from "../../Util.js";
 import GroupCommand from "../Command/Collection/GroupCommand.js";
+import CommandBase from "../Command/CommandBase.js";
+import CommandUtil from "../../test/command/CommandUtil.js";
 
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
@@ -67,6 +69,7 @@ export default class RequestContext extends ContextBase {
       //TODO: IL must implement
     }
     console.log(result);
-    return new GroupCommand(result.page_il);
+    /** @type {CommandBase} */
+    return CommandUtil.createCommand(JSON.parse(result.page_il));
   }
 }
