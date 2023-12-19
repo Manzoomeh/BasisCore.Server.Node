@@ -5,6 +5,7 @@ import SecureHttpHostEndPoint from "./secureHttpHostEndPoint.js";
 import HostService from "../services/hostService.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 
+import http from "http";
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {HostService} */
   #service;
@@ -65,6 +66,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         /**@type {BinaryContent[]} */
         const fileContents = [];
         /**@type {NodeJS.Dict<string>} */
+        const jsonHeaders = {};
+        /**@type {NodeJS.Dict<string>} */
         const formFields = {};
         const method = headers[":method"];
         const url = headers[":path"];
@@ -74,6 +77,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             method,
             headers,
             formFields,
+            jsonHeaders,
             stream.session.socket
           );
           const result = await this.#service.processAsync(cms, fileContents);
@@ -106,6 +110,9 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             });
             bb.on("field", (name, val, info) => {
               formFields[name] = val;
+              if (name.startsWith("_")) {
+                jsonHeaders[name] = val;
+              }
             });
             bb.on("close", createCmsAndCreateResponseAsync);
             stream.pipe(bb);

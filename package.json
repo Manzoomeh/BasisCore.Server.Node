@@ -37,7 +37,8 @@
     "testApi": "node test/command/API/runTestApp.js",
     "script": "node test/command/Script/simple.js",
     "scriptWithPrint": "node test/command/Script/executeFunctionWithPrint.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "convertor": "node test/convertFromJsonPartToJsonObject.js"
   },
   "type": "module",
   "dependencies": {
