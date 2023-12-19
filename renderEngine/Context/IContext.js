@@ -66,7 +66,7 @@ export default class IContext {
   /**
    * @param {string} pageName
    * @param {string} rawCommand
-   * @param {number} pageSize
+   * @param {string} pageSize
    * @param {number} callDepth
    * @return {Promise<CommandBase>}
    */

@@ -18,7 +18,7 @@ export default class CallCommand extends CommandBase {
    */
   constructor(callCommandIl) {
     super(callCommandIl);
-    this.file = TokenUtil.getFiled(callCommandIl, "file");
+    this.file = TokenUtil.getFiled(callCommandIl, "FileName");
     this.pageSize = TokenUtil.getFiled(callCommandIl, "pagesize");
   }
 

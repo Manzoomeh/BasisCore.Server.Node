@@ -3,6 +3,10 @@ import ContextBase from "./ContextBase.js";
 import ConnectionInfo from "../../models/Connection/ConnectionInfo.js";
 import DataSourceCollection from "../Source/DataSourceCollection.js";
 import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
+import { read, utimes } from "fs";
+import StringUtil from "../Token/StringUtil.js";
+import Util from "../../Util.js";
+import GroupCommand from "../Command/Collection/GroupCommand.js";
 
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
@@ -42,5 +46,27 @@ export default class RequestContext extends ContextBase {
    */
   getDefault(key, defaultValue = null) {
     return this._settings.getDefault(key, defaultValue);
+  }
+
+  /**
+   * @param {string} pageName
+   * @param {string} rawCommand
+   * @param {string} pageSize
+   * @param {number} callDepth
+   * @return {Promise<CommandBase>}
+   */
+  async loadPageAsync(pageName, rawCommand, pageSize, callDepth) {
+    var result = await this._settings.callConnection.loadPageAsync(
+      pageName,
+      rawCommand,
+      pageSize,
+      this.domainId,
+      this.cancellation
+    );
+    if (result.il_call == 1 || Util.isNullOrEmpty(result.page_il)) {
+      //TODO: IL must implement
+    }
+    console.log(result);
+    return new GroupCommand(result.page_il);
   }
 }

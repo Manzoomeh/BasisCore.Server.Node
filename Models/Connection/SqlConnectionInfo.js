@@ -4,6 +4,8 @@ import SqlSettingData from "./SqlSettingData.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import Request from "../request.js";
+import ExceptionResult from "../../renderEngine/Models/ExceptionResult.js";
+import WebServerException from "../Exceptions/WebServerException.js";
 
 export default class SqlConnectionInfo extends ConnectionInfo {
   /** @type {SqlSettingData} */
@@ -98,5 +100,47 @@ export default class SqlConnectionInfo extends ConnectionInfo {
       retVal[row.ParamType][row.ParamName] = row.ParamValue;
     });
     return retVal;
+  }
+
+  /**
+   * @param {string} pageName
+   * @param {string} rawCommand
+   * @param {number} pageSize
+   * @param {number} domainId
+   * @param {CancellationToken} cancellationToken
+   * @returns {Promise<ILoadPageResult>}
+   */
+  async loadPageAsync(
+    pageName,
+    rawCommand,
+    pageSize,
+    domainId,
+    cancellationToken
+  ) {
+    /** @type {sql.ConnectionPool?} */
+    let pool = null;
+    try {
+      pool = await sql.connect(
+        this.settings.connectionString +
+          (this.settings.requestTimeout
+            ? `;requestTimeout=${this.settings.requestTimeout}`
+            : "")
+      );
+      const request = new sql.Request();
+      request.input("fileNames", pageName);
+      request.input("dmnid", domainId);
+      request.input("sitesize", pageSize);
+      request.input("command", rawCommand);
+      /** @type {Array<ILoadPageResult>} */
+      const rows = (await request.execute(this.settings.procedure)).recordsets;
+      if (rows.length != 1) {
+        throw new WebServerException(
+          `Call Command Expect 1 File '${pageName}' But Get ${rows.length} File(s) From '${this.settings.procedure}' Procedure`
+        );
+      }
+      return rows[0];
+    } finally {
+      await pool?.close();
+    }
   }
 }
