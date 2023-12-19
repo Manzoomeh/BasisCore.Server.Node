@@ -6,6 +6,7 @@ import axios from "axios";
 import JsonSource from "../Source/JsonSource.js";
 import IToken from "../Token/IToken.js";
 import TokenUtil from "../Token/TokenUtil.js";
+import VoidResult from "../Models/VoidResult.js";
 export default class ApiCommand extends CommandBase {
   /*** @type {IToken}*/
   url;
@@ -55,14 +56,13 @@ export default class ApiCommand extends CommandBase {
     requestConfig.contentType = this.contentType.value;
 
     const response = await axios(requestConfig);
-    console.log(response.headers);
     const contentType = response.headers["content-type"];
-    console.log(contentType);
     const data = {
       content: response.data,
       contentType,
     };
     const sourceName = this.name.value;
     context.addSource(new JsonSource([data], sourceName));
+    return VoidResult.result
   }
 }

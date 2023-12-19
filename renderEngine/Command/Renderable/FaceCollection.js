@@ -39,7 +39,7 @@ export default class FaceCollection extends Array {
             retVal = param.replaces.apply(retVal, context.cancellation);
           }
           if (firstMatchFace.applyFunction) {
-            //TODO: apply function
+            retVal = this.executeContentScripts(retVal, context);
           }
         }
         param.setRendered();
@@ -59,5 +59,36 @@ export default class FaceCollection extends Array {
       }
     }
     return retVal;
+  }
+  /**
+   *
+   * @param {string} content
+   * @param {IContext} context
+   * @returns {string}
+   */
+  executeContentScripts(content, context) {
+    const regex = /(?:javascript|python|c#)::\w+\([^)]*\)/g;
+    const matches = content.match(regex);
+    let retVal;
+    if (matches) {
+      retVal = content.replace(regex, (match, index) => {
+        return this.executeScript(match, context);
+      });
+    }
+    return retVal ?? content;
+  }
+  /**
+   *
+   * @param {string} script
+   * @param {IContext} context
+   */
+  executeScript(script, context) {
+    const [language, executeCommand] = script.split("::");
+    const regex = /\(([^)]+)\)/;
+    const match = executeCommand.match(regex);
+    const parameters = match[1].split(",");
+    const functionName = executeCommand.split("(")[0].trim();
+    const retVal =  context.executeFunction(functionName, ...parameters);
+    return retVal
   }
 }
