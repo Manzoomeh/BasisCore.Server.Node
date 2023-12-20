@@ -8,6 +8,7 @@ import InlineSourceCommand from "../../renderEngine/Command/Source/InlineSourceC
 import TreeCommand from "../../renderEngine/Command/TreeCommand.js";
 import ViewCommand from "../../renderEngine/Command/ViewCommand.js";
 import ListCommand from "../../renderEngine/Command/ListCommand.js";
+import CallCommand from "../../renderEngine/Command/Collection/CallCommand.js";
 
 export default class CommandUtil {
   /**
@@ -19,6 +20,10 @@ export default class CommandUtil {
     /** @type {CommandBase?} */
     let retVal = null;
     switch (commandIl.$type.toLowerCase()) {
+      case "rawtext": {
+        retVal = new RawText(commandIl);
+        break;
+      }
       case "print": {
         retVal = new PrintCommand(commandIl);
         break;
@@ -47,13 +52,13 @@ export default class CommandUtil {
         retVal = new ListCommand(commandIl);
         break;
       }
-      case "rawtext": {
-        retVal = new RawText(commandIl);
+      case "call": {
+        retVal = new CallCommand(commandIl);
         break;
       }
-      case "api":{
-        retVal = new ApiCommand(commandIl)
-        break
+      case "api": {
+        retVal = new ApiCommand(commandIl);
+        break;
       }
     }
     return retVal;

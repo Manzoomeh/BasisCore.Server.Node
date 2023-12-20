@@ -1,4 +1,5 @@
 import CancellationToken from "../Cancellation/CancellationToken.js";
+import CommandBase from "../Command/CommandBase.js";
 import IDataSource from "../Source/IDataSource.js";
 
 export default class IContext {
@@ -60,5 +61,16 @@ export default class IContext {
    */
   createContext(title) {
     return this;
+  }
+
+  /**
+   * @param {string} pageName
+   * @param {string} rawCommand
+   * @param {string} pageSize
+   * @param {number} callDepth
+   * @return {Promise<CommandBase>}
+   */
+  loadPageAsync(pageName, rawCommand, pageSize, callDepth) {
+    throw new Error("Method 'loadPageAsync' not implemented.");
   }
 }

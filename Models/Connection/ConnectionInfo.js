@@ -2,6 +2,7 @@ import CancellationToken from "../../renderEngine/Cancellation/CancellationToken
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import IDataSource from "../../renderEngine/Source/IDataSource.js";
 import Request from "../request.js";
+import ILoadPageResult from "./ILoadPageResult.js";
 
 export default class ConnectionInfo {
   /** @type {string} */
@@ -37,5 +38,17 @@ export default class ConnectionInfo {
    */
   getRoutingDataAsync(httpRequest, cancellationToken) {
     throw new Error(`routing not support in  ${this.name}!`);
+  }
+
+  /**
+   * @param {string} pageName
+   * @param {string} rawCommand
+   * @param {number} pageSize
+   * @param {number} domainId
+   * @param {CancellationToken} cancellationToken
+   * @returns {Promise<ILoadPageResult>}
+   */
+  loadPageAsync(pageName, rawCommand, pageSize, domainId, cancellationToken) {
+    throw new Error("ConnectionInfo.loadPageAsync() method not implemented.");
   }
 }
