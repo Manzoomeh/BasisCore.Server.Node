@@ -1,8 +1,8 @@
 import ServiceSettings from "../../../models/ServiceSettings.js";
 import { HostServiceOptions } from "../../../models/model.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
-import CallCommand from "../../../renderEngine/Command/Collection/CallCommand.js";
 import RequestContext from "../../../renderEngine/Context/RequestContext.js";
+import CommandUtil from "../CommandUtil.js";
 
 /** @type {HostServiceOptions} */
 const options = {
@@ -19,15 +19,35 @@ var setting = new ServiceSettings(options);
 const context = new RequestContext(setting);
 context.cancellation = new CancellationToken();
 
-const callIl = {
-  $type: "call",
-  core: "call",
-  FileName: "simple.inc",
+const il = {
+  $type: "group",
+  core: "group",
+  name: "ROOT_GROUP",
+  Commands: [
+    {
+      $type: "call",
+      core: "call",
+      FileName: "deep.inc",
+    },
+    {
+      $type: "Print",
+      "data-member-name": "view.menu",
+      "layout-content":
+        "<table width='500' border='1' id='@id'><tbody> @child</tbody></table>",
+      "else-layout-content": "محصولی موجود نیست",
+      faces: [
+        {
+          name: "face1",
+          content: "<tr><td style='color:blue' id='@id'>@name</td></tr>",
+        },
+      ],
+    },
+  ],
 };
 
-const call = new CallCommand(callIl);
+const command = CommandUtil.createCommand(il);
 try {
-  const result = await call.callAsync(context);
+  const result = await command.executeAsync(context);
   console.log(result);
 } catch (ex) {
   console.error(ex);

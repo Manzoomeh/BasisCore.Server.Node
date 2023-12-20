@@ -24,10 +24,10 @@ export default class CallCommand extends CommandBase {
 
   /**
    * @param {IContext} context
-   * @returns {Promise<ICommandResult>}
+   * @returns {Promise<CommandBase[]>}
    */
-  async _executeCommandAsync(context) {
-    /** @type {CallResult} */
+  async callAsync(context) {
+    /** @type {CommandBase[]} */
     let retVal;
     const [pageName, pageSize, html] = await Promise.all([
       this.file.getValueAsync(context),
@@ -43,21 +43,19 @@ export default class CallCommand extends CommandBase {
     );
     if (command instanceof CallCommand) {
       command.callDepth = this.callDepth + 1;
-      retVal = await command.executeAsync(context);
+      retVal = await command.callAsync(context);
     } else if (command instanceof GroupCommand) {
-      retVal = CallResult();
+      retVal = [];
       for (const item in command.commands) {
         if (item instanceof CallCommand) {
           /** @type {CallResult} */
-          const tmpResult = await item.executeAsync(context);
-          retVal.commands.push(...tmpResult.commands);
+          retVal.commands.push(...(await item.callAsync(context)));
         } else {
           retVal.commands.push(item);
         }
       }
     } else {
-      retVal = new CallResult();
-      retVal.commands.push(command);
+      retVal = [command];
     }
     return retVal;
   }
