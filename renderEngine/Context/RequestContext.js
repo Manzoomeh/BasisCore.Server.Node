@@ -68,7 +68,6 @@ export default class RequestContext extends ContextBase {
     if (result.il_call == 1 || Util.isNullOrEmpty(result.page_il)) {
       //TODO: IL must implement
     }
-    console.log(result);
     /** @type {CommandBase} */
     return CommandUtil.createCommand(JSON.parse(result.page_il));
   }
