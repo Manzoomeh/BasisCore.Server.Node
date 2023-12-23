@@ -42,6 +42,7 @@ export default class ApiCommand extends CommandBase {
     const requestConfig = {
       method,
       headers: {},
+      body : JSON.stringify(this?.body)
     };
     if (this.noCache.toLowerCase == "true") {
       requestConfig.headers["pragma"] = "no-cache";
@@ -54,7 +55,6 @@ export default class ApiCommand extends CommandBase {
 
     const response = await fetch(this.url.value,requestConfig);
     const contentType = response.headers.get("content-type");
-    console.log(contentType);
     const data = {
       content: await response.json(),
       contentType,
