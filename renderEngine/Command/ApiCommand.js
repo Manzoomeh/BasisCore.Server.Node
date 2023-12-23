@@ -34,7 +34,13 @@ export default class ApiCommand extends CommandBase {
    */
   async _executeCommandAsync(context) {
     const method = this.method.value.toUpperCase();
-    if (method != "POST" && method != "GET" && method != "PUT" && method != "PATCH" && method != "DELETE") {
+    if (
+      method != "POST" &&
+      method != "GET" &&
+      method != "PUT" &&
+      method != "PATCH" &&
+      method != "DELETE"
+    ) {
       throw new BasisCoreException(
         "Request of the API command should be correct"
       );
@@ -42,18 +48,20 @@ export default class ApiCommand extends CommandBase {
     const requestConfig = {
       method,
       headers: {},
-      body : JSON.stringify(this?.body)
     };
+    if (method != "GET") {
+      requestConfig.body = JSON.stringify(this?.body);
+    }
     if (this.noCache.toLowerCase == "true") {
       requestConfig.headers["pragma"] = "no-cache";
       requestConfig.headers["cache-control"] = "no-cache";
     }
     if (!mimeTypes.contentType(this.contentType.value)) {
-      throw new BasisCoreException("Invalid Content-type")
+      throw new BasisCoreException("Invalid Content-type");
     }
     requestConfig.contentType = this.contentType.value;
 
-    const response = await fetch(this.url.value,requestConfig);
+    const response = await fetch(this.url.value, requestConfig);
     const contentType = response.headers.get("content-type");
     const data = {
       content: await response.json(),
