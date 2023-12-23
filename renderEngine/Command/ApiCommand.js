@@ -2,7 +2,6 @@ import IContext from "../Context/IContext.js";
 import CommandBase from "./CommandBase.js";
 import * as mimeTypes from "mime-types";
 import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
-import axios from "axios";
 import JsonSource from "../Source/JsonSource.js";
 import IToken from "../Token/IToken.js";
 import TokenUtil from "../Token/TokenUtil.js";
@@ -42,7 +41,6 @@ export default class ApiCommand extends CommandBase {
     }
     const requestConfig = {
       method,
-      url: this.url.value,
       headers: {},
     };
     if (this.noCache.toLowerCase == "true") {
@@ -54,12 +52,11 @@ export default class ApiCommand extends CommandBase {
     }
     requestConfig.contentType = this.contentType.value;
 
-    const response = await axios(requestConfig);
-    console.log(response.headers);
-    const contentType = response.headers["content-type"];
+    const response = await fetch(this.url.value,requestConfig);
+    const contentType = response.headers.get("content-type");
     console.log(contentType);
     const data = {
-      content: response.data,
+      content: await response.json(),
       contentType,
     };
     const sourceName = this.name.value;
