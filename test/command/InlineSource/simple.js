@@ -1,8 +1,10 @@
+import ServiceSettings from "../../../models/ServiceSettings.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
-import ContextBase from "../../../renderEngine/Context/ContextBase.js";
+import RequestContext from "../../../renderEngine/Context/RequestContext.js";
 
-const context = new ContextBase();
+var setting = new ServiceSettings({});
+const context = new RequestContext(setting);
 context.cancellation = new CancellationToken();
 
 const il = {

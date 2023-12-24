@@ -8,7 +8,7 @@ import TokenUtil from "../Token/TokenUtil.js";
 import CommandElement from "./CommandElement.js";
 
 export default class CommandBase {
-  /**@type {string} */
+  /**@type {IToken} */
   core;
   /**@type {IToken} */
   name;
@@ -27,7 +27,7 @@ export default class CommandBase {
    * @param {object} commandIl
    */
   constructor(commandIl) {
-    this.core = commandIl["core"];
+    this.core = TokenUtil.getFiled(commandIl, "core");
     this.name = TokenUtil.getFiled(commandIl, "name");
     this.if = TokenUtil.getFiled(commandIl, "if");
     this.runType = TokenUtil.getFiled(commandIl, "runType");
@@ -125,7 +125,6 @@ export default class CommandBase {
   }
 
   /**
-   *
    * @param {IContext} context
    * @returns {Promise<CommandElement>}
    */
@@ -143,6 +142,13 @@ export default class CommandBase {
       if (runType != RunTypes.None) {
         retVal.addAttributeIfExistAsync("run", runType);
       }
+    }
+    if (this.extraAttributes) {
+      await Promise.all(
+        Object.entries(this.extraAttributes).map((pair) =>
+          tag.addAttributeIfExistAsync(pair[0], pair[1], context)
+        )
+      );
     }
 
     return retVal;

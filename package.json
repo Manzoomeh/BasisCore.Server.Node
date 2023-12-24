@@ -34,15 +34,18 @@
     "group": "node test/command/group/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
     "con-edge": "node test/connection/edge/simple.js",
+    "call": "node test/command/call/simple.js",
+    "call-group": "node test/command/call/in-group.js",
+    "call-deep": "node test/command/call/deep.js",
     "text": "node test/command/rawtext/simple.js",
     "api": "node test/command/API/simple.js",
     "testApi": "node test/command/API/runTestApp.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js"
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+    "convertor": "node test/convertFromJsonPartToJsonObject.js"
   },
   "type": "module",
   "dependencies": {
     "alasql": "^4.1.9",
-    "axios": "^1.6.2",
     "busboy": "^1.6.0",
     "d3": "^7.8.5",
     "dayjs": "^1.11.6",

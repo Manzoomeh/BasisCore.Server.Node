@@ -3,7 +3,7 @@ import dayjs from "dayjs";
 import url from "url";
 import HostEndPoint from "./hostEndPoint.js";
 import Request from "../models/request.js";
-
+import ObjectUtil from "../modules/objectUtil.js";
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /**
@@ -37,7 +37,14 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {Socket} socket
    * @returns {Promise<Request>}
    */
-  async _createCmsObjectAsync(urlStr, method, headers, formFields, socket) {
+  async _createCmsObjectAsync(
+    urlStr,
+    method,
+    headers,
+    formFields,
+    jsonHeaders,
+    socket
+  ) {
     const rawUrl = urlStr.substring(1);
     const urlObject = url.parse(rawUrl, true);
     headers["request-id"] = (++requestId).toString();
@@ -60,6 +67,11 @@ class HttpHostEndPoint extends HostEndPoint {
       }
     }
     headers["Form"] = formFields;
+    if (Object.keys(jsonHeaders).length > 0) {
+      headers["json"] = ObjectUtil.convertObjectToNestedStructure(jsonHeaders);
+    } else {
+      headers["json"] = {};
+    }
     const now = dayjs();
     const request = new Request();
     request.request = headers;
@@ -70,6 +82,7 @@ class HttpHostEndPoint extends HostEndPoint {
       time2: now.format("HHmmss"),
       date3: now.format("YYYY.MM.DD"),
     };
+    console.log(request)
     return request;
   }
 }
