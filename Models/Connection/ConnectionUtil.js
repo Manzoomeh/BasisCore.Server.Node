@@ -3,7 +3,7 @@ import WebServerException from "../Exceptions/WebServerException.js";
 import ConnectionInfo from "./ConnectionInfo.js";
 import EdgeConnectionInfo from "./EdgeConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
-
+import SqliteConnectionInfo from "./SqLiteConnectionInfo.js";
 export default class ConnectionUtil {
   /**
    * @param {NodeJS.Dict<any>} settings
@@ -25,6 +25,10 @@ export default class ConnectionUtil {
           case "sql": {
             connection = new SqlConnectionInfo(parts[2], settings[item]);
             break;
+          }
+          case "sqlite" : {
+            connection = new SqliteConnectionInfo(parts[2], settings[item]);
+            break
           }
           case "edge": {
             connection = new EdgeConnectionInfo(parts[2], settings[item]);
