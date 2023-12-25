@@ -1,11 +1,12 @@
 import CancellationToken from "../renderEngine/Cancellation/CancellationToken.js";
 import RequestContext from "../renderEngine/Context/RequestContext.js";
 import CommandUtil from "../test/command/CommandUtil.js";
+import IRoutingRequest from "./IRoutingRequest.js";
 import RequestBaseResponse from "./requestBaseResponse.js";
 
 export default class Index1Response extends RequestBaseResponse {
   /**
-   * @param {Request} request
+   * @param { IRoutingRequest} request
    */
   constructor(request) {
     super(request);

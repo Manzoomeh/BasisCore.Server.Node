@@ -32,6 +32,8 @@
     "group": "node test/command/group/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
     "con-edge": "node test/connection/edge/simple.js",
+    "con-inline": "node test/connection/inline/simple.js",
+    "con-inline-s": "node test/connection/inline/sosimple.js",
     "call": "node test/command/call/simple.js",
     "call-group": "node test/command/call/in-group.js",
     "call-deep": "node test/command/call/deep.js",
