@@ -9,7 +9,7 @@ GO
 --the new version for cms 2-9-93 s.e.a
 -------------------------------------------------------------------------------------------------------
  
-ALTER PROCEDURE [dbo].[cms]
+CREATE PROCEDURE [dbo].[cms]
         @params DBSourceParamCollection READONLY
 AS
 begin
