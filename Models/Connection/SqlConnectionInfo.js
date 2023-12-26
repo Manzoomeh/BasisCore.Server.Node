@@ -4,8 +4,8 @@ import SqlSettingData from "./SqlSettingData.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import Request from "../request.js";
-import ExceptionResult from "../../renderEngine/Models/ExceptionResult.js";
 import WebServerException from "../Exceptions/WebServerException.js";
+import IRoutingRequest from "../IRoutingRequest.js";
 
 export default class SqlConnectionInfo extends ConnectionInfo {
   /** @type {SqlSettingData} */
@@ -66,7 +66,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
   /**
    * @param {Request} request
    * @param {CancellationToken} cancellationToken
-   * @returns {Promise<IDataSource>}
+   * @returns {Promise<IRoutingRequest>}
    */
   async getRoutingDataAsync(request, cancellationToken) {
     const params = new sql.Table();
@@ -92,6 +92,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
       { params: params },
       cancellationToken
     );
+    /** @type {IRoutingRequest} */
     const retVal = {};
     result.items[0].data.forEach((row) => {
       if (!retVal[row.ParamType]) {

@@ -22,7 +22,7 @@ const host = {
       Settings: {
         "Connections.sql.RoutingData": {
           connectionString:
-            "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
+            "Server=.;Database=Manzoomeh-node;User Id=sa;Password=1234;trustServerCertificate=true",
           procedure: "[dbo].[cms]",
         },
       },

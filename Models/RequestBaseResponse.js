@@ -1,11 +1,11 @@
-import Request from "./request.js";
+import IRoutingRequest from "./IRoutingRequest.js";
 import Response from "./response.js";
 
 export default class RequestBaseResponse extends Response {
-  /**@type {Request} request */
+  /**@type {IRoutingRequest} request */
   _request;
   /**
-   * @param {Request} request
+   * @param {IRoutingRequest} request
    */
   constructor(request) {
     super();
