@@ -16,6 +16,7 @@ export default class Index1Response extends RequestBaseResponse {
    */
   async getResultAsync() {
     try {
+      console.log("il",this._request.cms.page_il)
       const commandIl = JSON.parse(this._request.cms.page_il);
       const command = CommandUtil.createCommand(commandIl);
       const context = new RequestContext(this.settings);

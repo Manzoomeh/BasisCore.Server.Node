@@ -4,7 +4,12 @@ DELIMITER //
 CREATE PROCEDURE cms()
 BEGIN
     SELECT * from temp_table
+    
     union all
+    		select 'webserver', 'mime', 'text/html; charset=UTF-8'
+		union all
+    		select 'webserver', 'headercode', '200 Ok'    
+		union all
 	select 'http','Expires', 'max-age=522280,public'
 	union all
 	select 'http','date',  NOW()
@@ -13,7 +18,7 @@ BEGIN
 	union all
 	select 'cms','content', ''
 	union all
-	select 'cms','page_il', '{"$type":"group","core":"group","name":"ROOT_GROUP","Commands":[{"$type":"inlinesource","core":"inlinesource","name":"basisName","Members":[{"name":"memberName","content":"\r\n <row fieldName1=\"test1\" fieldName2=\"1-2\" fieldName3=\"fieldName3-1\" />\r\n <row fieldName1=\"test2\" fieldName2=\"2-2\" fieldName3=\"fieldName3-2\" />\r\n <row fieldName1=\"test3\" fieldName2=\"3-2\" fieldName3=\"fieldName3-3\" />\r\n <row fieldName1=\"test4\" fieldName2=\"4-2\" fieldName3=\"fieldName3-4\" />\r\n <row fieldName1=\"test5\" fieldName2=\"5-2\" fieldName3=\"fieldName3-5\" />\r\n "}]},{"$type":"print","core":"print","data-member-name":"basisName.memberName","layout-content":"\r\n <ul>\r\n @child\r\n </ul>\r\n ","faces":[{"content":"\r\n <li> @fieldName1 (@fieldName2) - (@fieldName3) </li>\r\n "}]}]}'
+	select 'cms','page_il', '{"$type":"group","core":"group","name":"ROOT_GROUP","Commands":[{"core":"rawtext","$type":"rawtext","content":"hi from mysql"}]}'
 	union all
 	select 'cms','il_call',  'true'
 	union all
