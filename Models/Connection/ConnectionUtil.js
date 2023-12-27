@@ -2,6 +2,7 @@ import InvalidConfigException from "../Exceptions/InvalidConfigException.js";
 import WebServerException from "../Exceptions/WebServerException.js";
 import ConnectionInfo from "./ConnectionInfo.js";
 import EdgeConnectionInfo from "./EdgeConnectionInfo.js";
+import InlineConnectionInfo from "./InlineConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
 import MySqlConnectionInfo from "./MySqlConnectionInfo.js";
 export default class ConnectionUtil {
@@ -33,6 +34,10 @@ export default class ConnectionUtil {
           case "mysql":{
             connection = new MySqlConnectionInfo(parts[2],settings[item])
             break
+          }
+          case "inline": {
+            connection = new InlineConnectionInfo(parts[2], settings[item]);
+            break;
           }
           default: {
             throw new WebServerException(
