@@ -68,7 +68,6 @@ export default class HostService {
   _createResponse(request) {
     /**@type {Response} */
     let retVal = null;
-    console.log(request)
     switch (request.webserver.index) {
       case "1": {
         retVal = new Index1Response(request);
