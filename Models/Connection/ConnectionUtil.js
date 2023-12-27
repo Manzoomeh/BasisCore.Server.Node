@@ -3,7 +3,7 @@ import WebServerException from "../Exceptions/WebServerException.js";
 import ConnectionInfo from "./ConnectionInfo.js";
 import EdgeConnectionInfo from "./EdgeConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
-
+import MySqlConnectionInfo from "./MySqlConnectionInfo.js";
 export default class ConnectionUtil {
   /**
    * @param {NodeJS.Dict<any>} settings
@@ -29,6 +29,10 @@ export default class ConnectionUtil {
           case "edge": {
             connection = new EdgeConnectionInfo(parts[2], settings[item]);
             break;
+          }
+          case "mysql":{
+            connection = new MySqlConnectionInfo(parts[2],settings[item])
+            break
           }
           default: {
             throw new WebServerException(

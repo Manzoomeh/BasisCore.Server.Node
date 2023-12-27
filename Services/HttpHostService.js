@@ -31,6 +31,7 @@ export class HttpHostService extends HostService {
         request,
         null
       );
+      console.log(data)
       return this._createResponse(data);
     } catch (er) {
       console.error(er);

@@ -39,7 +39,8 @@
     "api": "node test/command/API/simple.js",
     "testApi": "node test/command/API/runTestApp.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "convertor": "node test/convertFromJsonPartToJsonObject.js"
+    "convertor": "node test/convertFromJsonPartToJsonObject.js",
+    "con-mysql": "node test/connection/mysql/simple.js"
   },
   "type": "module",
   "dependencies": {
@@ -54,6 +55,7 @@
     "memorystream": "^0.3.1",
     "mime-types": "^2.1.35",
     "mssql": "^9.3.2",
+    "mysql2": "^3.6.5",
     "pako": "^2.1.0"
   },
   "devDependencies": {

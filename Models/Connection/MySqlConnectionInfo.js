@@ -26,47 +26,67 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    /** @type {mySql.Pool?} */
-    let pool = null;
-    pool = mySql.createPool({
-      host: this.settings.host,
-      user: this.settings.password,
-      database: this.settings.database,
-    });
-    pool.getConnection(async (err, connection) => {
-      if (err) {
-        throw err;
-      }
-      const input = {};
-      for (const key in parameters) {
-        if (Object.hasOwnProperty.call(parameters, key)) {
-          const value = parameters[key];
-          if (!Array.isArray(value)) {
-            /**@typedef {Object} keyValue
-             * @property {string} name
-             * @property {string} value
-             */
-            /** @type keyValue[]*/
-            const tvp = [];
-            for (const field in value) {
-              if (Object.hasOwnProperty.call(value, field)) {
-                const fieldValue = value[field];
-                /**@type keyValue */
-                let temp = {};
-                temp.name = field;
-                temp.value = fieldValue;
-                tvp.push(temp);
+    return new Promise((resolve, reject) => {
+      let pool = null;
+      let result;
+      pool = mySql.createPool({
+        host: this.settings.host,
+        user: this.settings.user,
+        password: this.settings.password,
+        database: this.settings.database,
+      });
+
+      pool.getConnection(async (err, connection) => {
+        if (err) {
+          reject(err);
+          return;
+        }
+
+        try {
+          const input = {};
+          for (const key of parameters) {
+            if (Object.hasOwnProperty.call(parameters, key)) {
+              const value = parameters[key];
+              if (!Array.isArray(value)) {
+                const tvp = [];
+                for (const field in value) {
+                  if (Object.hasOwnProperty(value, field)) {
+                    const fieldValue = value[field];
+                    console.log(field, fieldValue);
+                    let temp = {};
+                    temp.name = field;
+                    temp.value = fieldValue;
+                    tvp.push(temp);
+                  }
+                }
+                input[key] = tvp;
+              } else {
+                input[key] = value;
               }
             }
-            input[key] = tvp;
-          } else {
-            input[key] = value;
           }
+
+          await this.createTemporaryTableAndInsertData(
+            "temp_table",
+            input.params,
+            connection
+          );
+
+          const procedureResult = await this.executeProcedure(
+            connection,
+            this.settings.procedure,
+            "temp_table"
+          );
+
+          result = new DataSourceCollection(procedureResult);
+          resolve(result);
+        } catch (error) {
+          reject(error);
+        } finally {
+          // Make sure to release the connection back to the pool
+          connection.release();
         }
-      }
-      return new DataSourceCollection(
-        await this.executeProcedure(connection, this.settings.procedure, input)
-      );
+      });
     });
   }
 
@@ -76,7 +96,6 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
    * @returns {Promise<IDataSource>}
    */
   async getRoutingDataAsync(request, cancellationToken) {
-    /*** @type {MysqlRow[]} */
     const params = [];
     for (const type in request) {
       const group = request[type];
@@ -84,24 +103,33 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
         if (name === "query") {
           const query = group[name];
           for (const key in query) {
-            params.push(new MysqlRow(name, key, query[key].toString()));
+            const row = new MysqlRow(name, key, query[key].toString());
+            params.push(row);
+            
           }
         } else {
-          params.push(new MysqlRow(type, name, group[name].toString()));
+          const row = new MysqlRow(type, name, group[name].toString());
+          params.push(row);
+          
         }
       }
     }
+
     const result = await this.loadDataAsync(
       { params: params },
       cancellationToken
     );
     const retVal = {};
-    result.items[0].data.forEach((row) => {
-      if (!retVal[row.ParamType]) {
-        retVal[row.ParamType] = {};
-      }
-      retVal[row.ParamType][row.ParamName] = row.ParamValue;
-    });
+
+    if (result && result.items && result.items[0] && result.items[0].data) {
+      result.items[0].data.forEach((row) => {
+        if (!retVal[row.ParamType]) {
+          retVal[row.ParamType] = {};
+        }
+
+        retVal[row.ParamType][row.ParamKey] = row.ParamValue;
+      });
+    }
     return retVal;
   }
 
@@ -125,13 +153,14 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
     pool = mySql.createPool({
       host: this.settings.host,
       user: this.settings.user,
-      password :this.settings.password,
+      password: this.settings.password,
       database: this.settings.database,
     });
     pool.getConnection(async (err, connection) => {
       if (err) {
         throw err;
       }
+
       const rows = await this.executeProcedure(
         connection,
         this.settings.procedure,
@@ -158,9 +187,7 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
    */
   executeProcedure(connection, procedureName, parameters) {
     return new Promise((resolve, reject) => {
-      const query = `CALL ${procedureName}(${parameters
-        .map(() => "?")
-        .join(",")})`;
+      const query = `CALL ${procedureName}()`;
       connection.query(query, parameters, (err, results) => {
         if (err) {
           reject(err);
@@ -169,5 +196,33 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
       });
     });
   }
-}
+  createTemporaryTableAndInsertData(tableName, dataArray, connection) {
+    return new Promise((resolve, reject) => {
+      const createTableQuery = `
+      CREATE TEMPORARY TABLE IF NOT EXISTS ${tableName} (
+        paramType VARCHAR(255),
+        paramKey VARCHAR(255),
+        paramValue VARCHAR(255)
+      )
+    `;
+      connection.query(createTableQuery, (err, results) => {
+        if (err) {
+          return reject(err);
+        }
+        const dataToInsert = dataArray.map((item) => [
+          item.type,
+          item.key,
+          item.value,
+        ]);
+        const insertQuery = `INSERT INTO ${tableName} (paramType, paramKey, paramValue) VALUES ?`;
 
+        connection.query(insertQuery, [dataToInsert], (err, results) => {
+          if (err) {
+            return reject(err);
+          }
+          resolve(results);
+        });
+      });
+    });
+  }
+}
