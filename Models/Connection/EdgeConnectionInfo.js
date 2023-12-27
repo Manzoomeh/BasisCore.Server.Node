@@ -1,4 +1,3 @@
-import sql from "mssql";
 import net from "net";
 import ConnectionInfo from "./ConnectionInfo.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
@@ -10,7 +9,6 @@ import EdgeMessage from "../../edge/edgeMessage.js";
 export default class EdgeConnectionInfo extends ConnectionInfo {
   /** @type {IEdgeSettingData} */
   settings;
-
   /** @type {string} */
   #ip;
   /** @type {number} */
@@ -40,7 +38,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
   /**
    * @param {Request} request
    * @param {CancellationToken} cancellationToken
-   * @returns {Promise<IDataSource>}
+   * @returns {Promise<IRoutingRequest>}
    */
   async getRoutingDataAsync(request, cancellationToken) {
     const task = new Promise((resolve, reject) => {
@@ -83,7 +81,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
   /**
    * @param {Request} request
    * @param {BinaryContent[]} fileContents
-   * @returns {Promise<Response>}
+   * @returns {Promise<RoutingRequest>}
    */
   async processAsync(request, fileContents) {
     await this._processUploadAsync(fileContents, request);

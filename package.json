@@ -32,6 +32,8 @@
     "group": "node test/command/group/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
     "con-edge": "node test/connection/edge/simple.js",
+    "con-inline": "node test/connection/inline/simple.js",
+    "con-inline-s": "node test/connection/inline/sosimple.js",
     "call": "node test/command/call/simple.js",
     "call-group": "node test/command/call/in-group.js",
     "call-deep": "node test/command/call/deep.js",
@@ -44,7 +46,6 @@
   "type": "module",
   "dependencies": {
     "alasql": "^4.1.9",
-    "axios": "^1.6.2",
     "busboy": "^1.6.0",
     "dayjs": "^1.11.6",
     "fast-xml-parser": "^4.3.2",

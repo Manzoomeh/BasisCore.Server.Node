@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}\\test/command/call/deep.js"
+      "program": "${workspaceFolder}\\test/connection/inline/simple.js"
     }
   ]
 }
