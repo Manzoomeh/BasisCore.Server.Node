@@ -82,7 +82,6 @@ class HttpHostEndPoint extends HostEndPoint {
       time2: now.format("HHmmss"),
       date3: now.format("YYYY.MM.DD"),
     };
-    console.log(request)
     return request;
   }
 }

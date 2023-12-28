@@ -1,11 +1,7 @@
 export default class Request {
-  /**
-   * @type {NodeJS.Dict<string|string[]>}
-   */
+  /** @type {NodeJS.Dict<string|string[]>} */
   cms;
-  /**
-   * @type {NodeJS.Dict<string|string[]>}
-   */
+  /** @type {NodeJS.Dict<string|string[]>} */
   request;
 
   /**

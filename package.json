@@ -34,6 +34,8 @@
     "group": "node test/command/group/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
     "con-edge": "node test/connection/edge/simple.js",
+    "con-inline": "node test/connection/inline/simple.js",
+    "con-inline-s": "node test/connection/inline/sosimple.js",
     "call": "node test/command/call/simple.js",
     "call-group": "node test/command/call/in-group.js",
     "call-deep": "node test/command/call/deep.js",
@@ -41,7 +43,8 @@
     "api": "node test/command/API/simple.js",
     "testApi": "node test/command/API/runTestApp.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "convertor": "node test/convertFromJsonPartToJsonObject.js"
+    "convertor": "node test/convertFromJsonPartToJsonObject.js",
+    "con-mysql": "node test/connection/mysql/simple.js"
   },
   "type": "module",
   "dependencies": {
@@ -58,6 +61,7 @@
     "mime-types": "^2.1.35",
     "mssql": "^9.3.2",
     "node-fetch": "^3.3.2",
+    "mysql2": "^3.6.5",
     "pako": "^2.1.0"
   },
   "devDependencies": {

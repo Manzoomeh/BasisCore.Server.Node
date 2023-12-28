@@ -34,7 +34,7 @@ export default class ConnectionInfo {
   /**
    * @param {Request} httpRequest
    * @param {CancellationToken} cancellationToken
-   * @returns {Promise<IDataSource>}
+   * @returns {Promise<IRoutingRequest>}
    */
   getRoutingDataAsync(httpRequest, cancellationToken) {
     throw new Error(`routing not support in  ${this.name}!`);
