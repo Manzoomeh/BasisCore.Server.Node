@@ -20,10 +20,12 @@ const host = {
     mainService: {
       Type: "http",
       Settings: {
-        "Connections.sql.RoutingData": {
-          connectionString:
-            "Server=.;Database=Manzoomeh-node;User Id=sa;Password=1234;trustServerCertificate=true",
-          procedure: "[dbo].[cms]",
+        "Connections.mysql.RoutingData": {
+          host: "127.0.0.1",
+          user: "root",
+          password: "09177283475",
+          database : "test-ab",
+          procedure: "cms",
         },
       },
     },

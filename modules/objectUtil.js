@@ -56,19 +56,21 @@ export default class ObjectUtil {
     return JSON.stringify(this.convert(retVal));
   }
   static convertToNestedStructure(array) {
+     const objectUtil = new ObjectUtil();
     const parts = array.map((element) => {
       for (let property in element) {
         return new FormJsonPart(property, element[property]);
       }
     });
-    return this.ConvertFormJsonPartToJsonObject(parts);
+    return objectUtil.ConvertFormJsonPartToJsonObject(parts);
   }
   static convertObjectToNestedStructure(object) {
+    const objectUtil = new ObjectUtil()
     const parts = [];
     for (let property in object) {
       parts.push(new FormJsonPart(property, object[property]));
     }
-    return this.ConvertFormJsonPartToJsonObject(parts);
+    return objectUtil.ConvertFormJsonPartToJsonObject(parts);
   }
 
   /**
@@ -82,19 +84,19 @@ export default class ObjectUtil {
     if (name.includes("__")) {
       let inner_obj = {};
       for (let element of properties) {
-        inner_obj = { ...inner_obj, ...convert(element) };
+        inner_obj = { ...inner_obj, ...this.convert(element) };
       }
       return inner_obj;
     } else {
       if (properties.length > 0) {
         for (let element of properties) {
           if (element.Name.includes("__")) {
-            val.push(convert(element));
+            val.push(this.convert(element));
           } else {
             if (Array.isArray(val)) {
               val = {};
             }
-            const convertedElement = convert(element);
+            const convertedElement = this.convert(element);
             for (let key in convertedElement) {
               let value = convertedElement[key];
               val[key] = value;
