@@ -8,6 +8,23 @@ export default class Util {
   }
 
   /**
+   * @param {Window} window
+   * @returns {boolean}
+   */
+
+  static startFetch(window) {
+    window.fetching = true;
+  }
+  /**
+   * @param {Window} window
+   * @returns {boolean}
+   */
+
+  static endFetch(window) {
+    window.fetching = false;
+  }
+
+  /**
    * @param {string} value
    * @returns {boolean}
    */
