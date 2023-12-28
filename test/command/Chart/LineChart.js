@@ -1,7 +1,8 @@
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
-import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
 import ContextBase from "../../../renderEngine/Context/ContextBase.js";
 import ChartCommand from "../../../renderEngine/Command/Chart/ChartCommand.js";
+import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
+console.log("hereee");
 
 const context = new ContextBase();
 context.cancellation = new CancellationToken();
