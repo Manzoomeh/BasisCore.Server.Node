@@ -2,7 +2,7 @@ import ServiceSettings from "../../../models/ServiceSettings.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 import ViewBCCommand from "../../../renderEngine/Command/ViewBCCommand.js";
 import RequestContext from "../../../renderEngine/Context/RequestContext.js";
-
+import fs from "fs";
 const settings = new ServiceSettings({});
 const context = new RequestContext(settings);
 context.cancellation = new CancellationToken();
@@ -50,6 +50,7 @@ const bcComponentIl = {
 const view = new ViewBCCommand(bcComponentIl);
 try {
   const result = await view.executeAsync(context);
+  fs.writeFileSync("./test.html", result._result);
   console.log(result);
 } catch (ex) {
   console.error(ex);
