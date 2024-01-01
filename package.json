@@ -42,7 +42,11 @@
     "testApi": "node test/command/API/runTestApp.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "convertor": "node test/convertFromJsonPartToJsonObject.js",
+<<<<<<< HEAD
     "mongo": "node test/connection/mongo/simple.js"
+=======
+    "con-mysql": "node test/connection/mysql/simple.js"
+>>>>>>> 589c2c61423584156cdda14ed9748312f42fd5a8
   },
   "type": "module",
   "dependencies": {
@@ -58,8 +62,13 @@
     "mime-types": "^2.1.35",
     "mongodb": "^6.3.0",
     "mssql": "^9.3.2",
+<<<<<<< HEAD
     "pako": "^2.1.0",
     "supertest": "^6.3.3"
+=======
+    "mysql2": "^3.6.5",
+    "pako": "^2.1.0"
+>>>>>>> 589c2c61423584156cdda14ed9748312f42fd5a8
   },
   "devDependencies": {
     "jest": "^29.7.0"
