@@ -14,7 +14,7 @@ const bcComponentIl = {
   html: `
   <Basis
   core="api"
-  url="https://basispanel.ir/schema/fa/3850909?hashid=B507C66A-A731-4D80-B5DD-96A19E772E24"
+  url="https://basispanel.ir/schema/basiscore/fa/1446403?hashid=E0F910E3-FE30-4F16-804C-C3C5D850EDA7"
   method="get"
   run="atclient"
 >
@@ -26,7 +26,7 @@ const bcComponentIl = {
   schemaUrl="https://basispanel.ir/schema"
   displayMode="view"
   triggers="cms.form"
-  qs_rkey="B507C66A-A731-4D80-B5DD-96A19E772E24"
+  qs_rkey="1446403?hashid=E0F910E3-FE30-4F16-804C-C3C5D850EDA7"
 >
 </Basis>
 <script>
@@ -42,7 +42,6 @@ const bcComponentIl = {
     },
   };
 </script>
-
   
 
 `,

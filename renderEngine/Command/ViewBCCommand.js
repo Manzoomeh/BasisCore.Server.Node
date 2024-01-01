@@ -48,9 +48,18 @@ export default class ViewBCCommand {
       ).innerHTML;
 
       var label = [];
-      questionTag
-        .querySelectorAll("label")
-        .forEach((e) => label.push(e.innerHTML));
+      if (questionTag.querySelector("[data-bc-part-checkbox]") != undefined) {
+        questionTag
+          .querySelector("[data-bc-answer-container]")
+          .querySelectorAll("[data-sys-text]")
+          .forEach((e) => {
+            label.push(e.textContent);
+          });
+      } else {
+        questionTag
+          .querySelectorAll("label")
+          .forEach((e) => label.push(e.innerHTML));
+      }
 
       extractedData[questionTitle] = label;
     });
