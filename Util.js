@@ -13,7 +13,7 @@ export default class Util {
    */
 
   static startFetch(window) {
-    window.fetching = true;
+    !window.fetching ? (window.fetching = 1) : (window.fetching += 1);
   }
   /**
    * @param {Window} window
@@ -21,7 +21,7 @@ export default class Util {
    */
 
   static endFetch(window) {
-    window.fetching = false;
+    window.fetching = window.fetching - 1;
   }
 
   /**

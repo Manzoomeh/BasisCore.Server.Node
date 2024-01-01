@@ -12,24 +12,24 @@ const bcComponentIl = {
   type: "html",
   core: "bcview",
   html: `
-    <Basis
-      core="api"
-      url="http://localhost:3000/schema/answers?id={##inline.object.id##}"
-      method="get"
-      run="atclient"
-    >
-    </Basis>
-    <Basis
-      core="schema"
-      datamembername="answer.data"
-      run="atclient"
-      schemaUrl="http://localhost:3000/schema/questions"
-      displayMode="view"
-      triggers="cms.form"
-      qs_rkey="123"
-    >
-    </Basis>
-  <script>
+  <Basis
+  core="api"
+  url="https://basispanel.ir/schema/fa/3850909?hashid=B507C66A-A731-4D80-B5DD-96A19E772E24"
+  method="get"
+  run="atclient"
+>
+</Basis>
+<Basis
+  core="schema"
+  datamembername="answer.data"
+  run="atclient"
+  schemaUrl="https://basispanel.ir/schema"
+  displayMode="view"
+  triggers="cms.form"
+  qs_rkey="B507C66A-A731-4D80-B5DD-96A19E772E24"
+>
+</Basis>
+<script>
   var host = {
     sources: {
       "inline.object": [{ id: 1423331 }],
@@ -41,8 +41,9 @@ const bcComponentIl = {
       "default.binding.regex": "\\{##([^#]*)##\\}",
     },
   };
-  </script>
-  <
+</script>
+
+  
 
 `,
 };

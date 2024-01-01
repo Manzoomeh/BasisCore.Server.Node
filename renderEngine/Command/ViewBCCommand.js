@@ -3,6 +3,7 @@ import IToken from "../Token/IToken.js";
 import TokenUtil from "../Token/TokenUtil.js";
 import fetch, { Request } from "node-fetch";
 import fs from "fs";
+import http from "http";
 import { JSDOM } from "jsdom";
 import Util from "../../Util.js";
 export default class ViewBCCommand {
@@ -20,6 +21,8 @@ export default class ViewBCCommand {
   constructor(ViewBCCommandIl) {
     this.html = TokenUtil.getFiled(ViewBCCommandIl, "html");
     this.type = TokenUtil.getFiled(ViewBCCommandIl, "type");
+
+    // Create a fetch function with the custom Agent
   }
 
   /*
@@ -59,7 +62,7 @@ export default class ViewBCCommand {
     });
   }
   waitForRequests(dom, resolve) {
-    if (this.timeout >= 5000 || dom.window.fetching === false) {
+    if (this.timeout >= 5000 && dom.window.fetching == 0) {
       if (this.type.value == "json") {
         const retval = this.getSchemaJsonFromHTML(dom.window);
         resolve(retval);
