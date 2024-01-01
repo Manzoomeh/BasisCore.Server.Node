@@ -6,6 +6,7 @@ import fs from "fs";
 import http from "http";
 import { JSDOM } from "jsdom";
 import Util from "../../Util.js";
+import { lab } from "d3";
 export default class ViewBCCommand {
   /**@type {IToken} */
   html;
@@ -48,18 +49,53 @@ export default class ViewBCCommand {
       ).innerHTML;
 
       var label = [];
-      if (questionTag.querySelector("[data-bc-part-checkbox]") != undefined) {
-        questionTag
-          .querySelector("[data-bc-answer-container]")
-          .querySelectorAll("[data-sys-text]")
-          .forEach((e) => {
-            label.push(e.textContent);
-          });
+      const answers = questionTag.querySelectorAll("[data-bc-answer]");
+      const titles = [];
+
+      console.log("answers.length :>> ", answers);
+      if (answers.length > 1) {
+        questionTag.querySelectorAll("[data-bc-answer-title]").forEach((k) => {
+          titles.push(k.textContent);
+        });
+        const ret = {
+          titles,
+          values: [],
+        };
+        answers.forEach((j) => {
+          const values = [];
+          j.querySelectorAll("[data-bc-part]").forEach((l) =>
+            values.push(l.textContent)
+          );
+          ret.values.push(values);
+        });
+        label.push(ret);
       } else {
-        questionTag
-          .querySelectorAll("label")
-          .forEach((e) => label.push(e.innerHTML));
+        if (questionTag.querySelector("[data-bc-part-checkbox]") != undefined) {
+          questionTag
+            .querySelector("[data-bc-answer-container]")
+            .querySelectorAll("[data-sys-text]")
+            .forEach((e) => {
+              label.push(e.textContent);
+            });
+        } else {
+          questionTag
+            .querySelectorAll("[data-bc-part]")
+            .forEach((e) => label.push(e.innerHTML));
+        }
       }
+
+      // if (questionTag.querySelector("[data-bc-part-checkbox]") != undefined) {
+      //   questionTag
+      //     .querySelector("[data-bc-answer-container]")
+      //     .querySelectorAll("[data-sys-text]")
+      //     .forEach((e) => {
+      //       label.push(e.textContent);
+      //     });
+      // } else {
+      //   questionTag
+      //     .querySelectorAll("label")
+      //     .forEach((e) => label.push(e.innerHTML));
+      // }
 
       extractedData[questionTitle] = label;
     });
