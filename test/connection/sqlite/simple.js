@@ -1,34 +1,8 @@
-import HostManager from "../../../hostManager.js";
-import { HostManagerOptions } from "../../../models/model.js";
+import SqliteConnectionInfo from "./../../../Models/Connection/SqliteConnectionInfo.js";
+const Sqlite = new SqliteConnectionInfo("test",{
+  dbPath:"test.db",
+ query: "SELECT * FROM user_table"
+});
 
-/** @type {HostManagerOptions} */
-const host = {
-  Lazy: true,
-  EndPoints: {
-    Main06: {
-      Type: "http",
-      Addresses: [
-        {
-          EndPoint: "127.0.0.1:1563",
-        },
-      ],
-      Active: true,
-      Routing: "mainService",
-    },
-  },
-  Services: {
-    mainService: {
-      Type: "http",
-      Settings: {
-        "Connections.sqlite.RoutingData": {
-          dbPath: "test.db",
-          procedure: "[dbo].[cms]",
-          requestTimeout : 10000000
-        },
-      },
-    },
-  },
-};
-
-const service = HostManager.fromJson(host);
-service.listen();
+console.log(await Sqlite.loadDataAsync());
+console.log(await Sqlite.loadDataAsync());
