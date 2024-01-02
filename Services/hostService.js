@@ -6,6 +6,7 @@ import Response from "../models/response.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import StreamerEngine from "../fileStreamer/StreamerEngine.js";
 import { HostServiceOptions } from "../models/model.js";
+import IRoutingRequest from "../models/IRoutingRequest.js";
 
 export default class HostService {
   /**@type {string} */
@@ -62,7 +63,7 @@ export default class HostService {
   }
 
   /**
-   * @param {Request} request
+   * @param {IRoutingRequest} request
    * @returns {Response}
    */
   _createResponse(request) {

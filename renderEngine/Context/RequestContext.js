@@ -3,10 +3,7 @@ import ContextBase from "./ContextBase.js";
 import ConnectionInfo from "../../models/Connection/ConnectionInfo.js";
 import DataSourceCollection from "../Source/DataSourceCollection.js";
 import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
-import { read, utimes } from "fs";
-import StringUtil from "../Token/StringUtil.js";
 import Util from "../../Util.js";
-import GroupCommand from "../Command/Collection/GroupCommand.js";
 import CommandBase from "../Command/CommandBase.js";
 import CommandUtil from "../../test/command/CommandUtil.js";
 
@@ -58,7 +55,7 @@ export default class RequestContext extends ContextBase {
    * @return {Promise<CommandBase>}
    */
   async loadPageAsync(pageName, rawCommand, pageSize, callDepth) {
-    var result = await this._settings.callConnection.loadPageAsync(
+    const result = await this._settings.callConnection.loadPageAsync(
       pageName,
       rawCommand,
       pageSize,
@@ -70,5 +67,14 @@ export default class RequestContext extends ContextBase {
     }
     /** @type {CommandBase} */
     return CommandUtil.createCommand(JSON.parse(result.page_il));
+  }
+
+  /**
+   * @param {string} connectionName
+   * @returns {Promise<boolean>} */
+  checkConnectionAsync(connectionName) {
+    /** @type {ConnectionInfo} */
+    const connection = this._settings.getConnection(connectionName);
+    return connection.testConnectionAsync();
   }
 }

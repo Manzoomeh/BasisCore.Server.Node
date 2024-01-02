@@ -146,7 +146,7 @@ export default class CommandBase {
     if (this.extraAttributes) {
       await Promise.all(
         Object.entries(this.extraAttributes).map((pair) =>
-          tag.addAttributeIfExistAsync(pair[0], pair[1], context)
+        retVal.addAttributeIfExistAsync(pair[0], pair[1], context)
         )
       );
     }

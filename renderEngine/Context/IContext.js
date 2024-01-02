@@ -23,11 +23,11 @@ export default class IContext {
   waitToGetSourceAsync(sourceId) {
     throw new Error("Method 'waitToGetSourceAsync' not implemented.");
   }
+
   /**
    * @param {string} connectionName
    * @returns {Promise<boolean>} */
   checkConnectionAsync(connectionName) {
-    //TODO: must complete
     throw new Error("Method 'checkConnectionAsync' not implemented.");
   }
 

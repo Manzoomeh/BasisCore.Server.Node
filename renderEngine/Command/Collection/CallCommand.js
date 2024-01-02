@@ -1,6 +1,4 @@
 import IContext from "../../Context/IContext.js";
-import CallResult from "../../Models/CallResult.js";
-import ICommandResult from "../../Models/ICommandResult.js";
 import IToken from "../../Token/IToken.js";
 import TokenUtil from "../../Token/TokenUtil.js";
 import CommandBase from "../CommandBase.js";
@@ -46,12 +44,12 @@ export default class CallCommand extends CommandBase {
       retVal = await command.callAsync(context);
     } else if (command instanceof GroupCommand) {
       retVal = [];
-      for (const item in command.commands) {
+      for (let i = 0; i < command.commands.length; i++) {
+        const item = command.commands[i];
         if (item instanceof CallCommand) {
-          /** @type {CallResult} */
-          retVal.commands.push(...(await item.callAsync(context)));
+          retVal.push(...(await item.callAsync(context)));
         } else {
-          retVal.commands.push(item);
+          retVal.push(item);
         }
       }
     } else {

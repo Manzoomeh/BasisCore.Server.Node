@@ -1,6 +1,7 @@
 import HostService from "./hostService.js";
 import ServiceSettings from "../models/ServiceSettings.js";
 import WebServerException from "../models/Exceptions/WebServerException.js";
+import Request from "../models/request.js";
 
 export class HttpHostService extends HostService {
   /** @type {ServiceSettings} */

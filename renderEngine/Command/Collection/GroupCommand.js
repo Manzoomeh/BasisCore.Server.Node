@@ -30,7 +30,6 @@ export default class GroupCommand extends CommandBase {
         commands.push(command);
       }
     }
-    console.log(this.commands, commands);
     const results = await Promise.all(
       commands.map((x) => x.executeAsync(newContext))
     );
