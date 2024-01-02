@@ -40,7 +40,9 @@
     "testApi": "node test/command/API/runTestApp.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "convertor": "node test/convertFromJsonPartToJsonObject.js",
-    "con-sqlite": "node test/connection/sqlite/simple.js"
+    "con-sqlite": "node test/connection/sqlite/simple.js",
+    "testConnectionEdge": "node test/connection/edge/testConnection.js",
+    "testConnectionSql": "node test/connection/sql/testConnection.js"
   },
   "type": "module",
   "dependencies": {
