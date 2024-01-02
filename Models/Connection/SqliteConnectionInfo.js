@@ -30,9 +30,8 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
     let database;
     try {
       database = await AsyncDatabase.open("./test.db");
-      const result = await database.run(this.settings.query);
-      console.log(result);
-      const retVal = new DataSourceCollection(result);
+      const result = await database.get(this.settings.query);
+      const retVal = new DataSourceCollection(Array.isArray(result) ? result : [result]);
       return retVal;
     } finally {
       database.close();
