@@ -46,15 +46,6 @@ export default class MongoConnectionInfo extends ConnectionInfo {
 
   /**
    * @param {Request} request
-   * @param {CancellationToken} cancellationToken
-   * @returns {Promise<IDataSource>}
-   */
-  async getRoutingDataAsync(request, cancellationToken) {
-    throw new Error("get routing data is not supported!");
-  }
-
-  /**
-   * @param {Request} request
    * @param {BinaryContent[]} fileContents
    * @returns {Promise<Response>}
    */
