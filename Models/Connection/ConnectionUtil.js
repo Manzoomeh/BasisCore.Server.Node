@@ -4,7 +4,11 @@ import ConnectionInfo from "./ConnectionInfo.js";
 import EdgeConnectionInfo from "./EdgeConnectionInfo.js";
 import InlineConnectionInfo from "./InlineConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
+<<<<<<< HEAD
+import SqliteConnectionInfo from "./SqLiteConnectionInfo.js";
+=======
 import MySqlConnectionInfo from "./MySqlConnectionInfo.js";
+>>>>>>> af629fb0fc77acbb6b41a8f2eb2cc09db2e8e42c
 export default class ConnectionUtil {
   /**
    * @param {NodeJS.Dict<any>} settings
@@ -26,6 +30,10 @@ export default class ConnectionUtil {
           case "sql": {
             connection = new SqlConnectionInfo(parts[2], settings[item]);
             break;
+          }
+          case "sqlite" : {
+            connection = new SqliteConnectionInfo(parts[2], settings[item]);
+            break
           }
           case "edge": {
             connection = new EdgeConnectionInfo(parts[2], settings[item]);
