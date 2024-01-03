@@ -47,6 +47,7 @@ export default class ConnectionUtil {
           }
           case "mongodb": {
             connection = new MongoConnectionInfo(parts[2], settings[item]);
+            break
           }
           default: {
             throw new WebServerException(

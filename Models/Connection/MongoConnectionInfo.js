@@ -36,7 +36,7 @@ export default class MongoConnectionInfo extends ConnectionInfo {
         throw new BasisCoreException("invalid method");
       }
       const result = await collection[this.settings.method](this.settings.query)
-      return new DataSourceCollection(await result.toArray());
+      return new DataSourceCollection([await result.toArray()]);
     } catch (err) {
       throw err;
    } finally {

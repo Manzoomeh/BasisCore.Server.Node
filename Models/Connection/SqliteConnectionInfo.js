@@ -29,12 +29,26 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
   async loadDataAsync(parameters, cancellationToken) {
     let database;
     try {
-      database = await AsyncDatabase.open("./test.db");
-      const result = await database.get(this.settings.query);
-      const retVal = new DataSourceCollection(Array.isArray(result) ? result : [result]);
+      database = new sqlite3.Database(this.settings.dbPath);
+
+      const rows = await new Promise((resolve, reject) => {
+        database.all(this.settings.query, (err, rows) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+      });
+      const retVal = new DataSourceCollection(
+       [ Array.isArray(rows) ? rows : [rows]]
+      );
+
       return retVal;
     } finally {
-      database.close();
+      if (database) {
+        database.close();
+      }
     }
   }
 
