@@ -74,7 +74,7 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
         return new DataSourceCollection([procedureResult[0][0]]);
       }
     } finally {
-      await this.pool.end();
+      // await this.pool.end();
     }
   }
   /**
