@@ -43,7 +43,8 @@
     "con-sqlite": "node test/connection/sqlite/simple.js",
     "testConnectionEdge": "node test/connection/edge/testConnection.js",
     "testConnectionSql": "node test/connection/sql/testConnection.js",
-    "dbsourceMongo": "node test/command/dbsource/mongo.js"
+    "dbsourceMongo": "node test/command/dbsource/mongo.js",
+    "dbsourceMysql": "node test/command/dbsource/mysql.js"
   },
   "type": "module",
   "dependencies": {

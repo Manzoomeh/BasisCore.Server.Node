@@ -4,10 +4,6 @@ import SqliteSettingData from "./SqliteSettingData.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import Request from "../request.js";
-import ExceptionResult from "../../renderEngine/Models/ExceptionResult.js";
-import WebServerException from "../Exceptions/WebServerException.js";
-import { AsyncDatabase } from "promised-sqlite3";
-import Param from "../param.js";
 export default class SqliteConnectionInfo extends ConnectionInfo {
   /** @type {SqliteSettingData} */
   settings;
