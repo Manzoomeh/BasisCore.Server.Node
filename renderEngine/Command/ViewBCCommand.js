@@ -80,7 +80,9 @@ export default class ViewBCCommand {
         } else {
           questionTag
             .querySelectorAll("[data-bc-part]")
-            .forEach((e) => label.push(e.innerHTML));
+            .forEach(
+              (e) => e.textContent.trim() && label.push(e.textContent.trim())
+            );
         }
       }
 
