@@ -113,4 +113,17 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
     const result = await task;
     return this._createResponse(result);
   }
+  /**@returns {Promise<boolean>} */
+  async testConnectionAsync() {
+    return new Promise((resolve) => {
+      const client = new net.Socket();
+      client.on("error", (e) => {
+        resolve(false);
+      });
+      client.connect(this.#port, this.#ip, () => {
+        client.end();
+        resolve(true);
+      });
+    });
+  }
 }

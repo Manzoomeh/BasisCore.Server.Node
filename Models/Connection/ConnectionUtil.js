@@ -4,11 +4,9 @@ import ConnectionInfo from "./ConnectionInfo.js";
 import EdgeConnectionInfo from "./EdgeConnectionInfo.js";
 import InlineConnectionInfo from "./InlineConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
-<<<<<<< HEAD
+import MongoConnectionInfo from "./MongoConnectionInfo.js";
 import SqliteConnectionInfo from "./SqLiteConnectionInfo.js";
-=======
 import MySqlConnectionInfo from "./MySqlConnectionInfo.js";
->>>>>>> af629fb0fc77acbb6b41a8f2eb2cc09db2e8e42c
 export default class ConnectionUtil {
   /**
    * @param {NodeJS.Dict<any>} settings
@@ -31,21 +29,25 @@ export default class ConnectionUtil {
             connection = new SqlConnectionInfo(parts[2], settings[item]);
             break;
           }
-          case "sqlite" : {
+          case "sqlite": {
             connection = new SqliteConnectionInfo(parts[2], settings[item]);
-            break
+            break;
           }
           case "edge": {
             connection = new EdgeConnectionInfo(parts[2], settings[item]);
             break;
           }
-          case "mysql":{
-            connection = new MySqlConnectionInfo(parts[2],settings[item])
-            break
+          case "mysql": {
+            connection = new MySqlConnectionInfo(parts[2], settings[item]);
+            break;
           }
           case "inline": {
             connection = new InlineConnectionInfo(parts[2], settings[item]);
             break;
+          }
+          case "mongodb": {
+            connection = new MongoConnectionInfo(parts[2], settings[item]);
+            break
           }
           default: {
             throw new WebServerException(

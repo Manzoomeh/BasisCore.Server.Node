@@ -4,10 +4,6 @@ import SqliteSettingData from "./SqliteSettingData.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import Request from "../request.js";
-import ExceptionResult from "../../renderEngine/Models/ExceptionResult.js";
-import WebServerException from "../Exceptions/WebServerException.js";
-import { AsyncDatabase } from "promised-sqlite3";
-import Param from "../param.js";
 export default class SqliteConnectionInfo extends ConnectionInfo {
   /** @type {SqliteSettingData} */
   settings;
@@ -29,12 +25,26 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
   async loadDataAsync(parameters, cancellationToken) {
     let database;
     try {
-      database = await AsyncDatabase.open("./test.db");
-      const result = await database.get(this.settings.query);
-      const retVal = new DataSourceCollection(Array.isArray(result) ? result : [result]);
+      database = new sqlite3.Database(this.settings.dbPath);
+
+      const rows = await new Promise((resolve, reject) => {
+        database.all(this.settings.query, (err, rows) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(rows);
+          }
+        });
+      });
+      const retVal = new DataSourceCollection(
+       [ Array.isArray(rows) ? rows : [rows]]
+      );
+
       return retVal;
     } finally {
-      database.close();
+      if (database) {
+        database.close();
+      }
     }
   }
 

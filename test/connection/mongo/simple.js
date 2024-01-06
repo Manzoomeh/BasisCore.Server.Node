@@ -10,4 +10,4 @@ const mongo = new MongoConnectionInfo("test",{
 
 console.log(await mongo.loadDataAsync())
 console.log(await mongo.loadDataAsync())
-console.log(await mongo.testConnectionAsync() )
+console.log(await mongo.testConnectionAsync())
