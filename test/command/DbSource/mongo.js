@@ -44,4 +44,5 @@ let il = {
     context.cancellation = new CancellationToken();
     const source = new DbSource(il);
     await source.executeAsync(context);
-    console.log(context)
+    const result = await context.waitToGetSourceAsync("test.test");
+    console.log(result);
