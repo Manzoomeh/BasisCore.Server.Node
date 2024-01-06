@@ -4,7 +4,6 @@ import MySqlSettingData from "./MySqlSettingData.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import Request from "../request.js";
-import ExceptionResult from "../../renderEngine/Models/ExceptionResult.js";
 import WebServerException from "../Exceptions/WebServerException.js";
 import MysqlRow from "../mysqlRow.js";
 import SqlSettingData from "./SqlSettingData.js";
@@ -164,13 +163,7 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
    */
   async executeProcedure(procedureName, parameters) {
     const query = `CALL ${procedureName}(${
-      parameters
-        ? parameters
-            .map((param) => {
-              return "?";
-            })
-            .join(",")
-        : ""
+      parameters ? parameters.map((param) => "?").join(",") : ""
     })`;
     const results = await this.pool.query(query, parameters);
     return results;
