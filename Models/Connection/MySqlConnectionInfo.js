@@ -164,7 +164,9 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
    */
   async executeProcedure(procedureName, parameters) {
     const query = `CALL ${procedureName}(${
-      Array.isArray(parameters) ? parameters.join(",") : ""
+      Array.isArray(parameters) ? parameters.map((param)=>{
+        return "?"
+      }).join(",") : ""
     })`;
     const results = await this.pool.query(query, parameters);
     return results;
