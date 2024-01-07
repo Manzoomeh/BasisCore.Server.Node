@@ -144,4 +144,17 @@ export default class SqlConnectionInfo extends ConnectionInfo {
       await pool?.close();
     }
   }
+  async testConnectionAsync() {
+    try {
+      await sql.connect(
+        this.settings.connectionString +
+          (this.settings.requestTimeout
+            ? `;requestTimeout=${this.settings.requestTimeout}`
+            : "")
+      );
+      return true;
+    } catch (error) {
+      return false;
+    }
+  }
 }

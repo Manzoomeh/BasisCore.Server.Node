@@ -4,6 +4,8 @@ import ConnectionInfo from "./ConnectionInfo.js";
 import EdgeConnectionInfo from "./EdgeConnectionInfo.js";
 import InlineConnectionInfo from "./InlineConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
+import MongoConnectionInfo from "./MongoConnectionInfo.js";
+import SqliteConnectionInfo from "./SqLiteConnectionInfo.js";
 import MySqlConnectionInfo from "./MySqlConnectionInfo.js";
 export default class ConnectionUtil {
   /**
@@ -27,17 +29,25 @@ export default class ConnectionUtil {
             connection = new SqlConnectionInfo(parts[2], settings[item]);
             break;
           }
+          case "sqlite": {
+            connection = new SqliteConnectionInfo(parts[2], settings[item]);
+            break;
+          }
           case "edge": {
             connection = new EdgeConnectionInfo(parts[2], settings[item]);
             break;
           }
-          case "mysql":{
-            connection = new MySqlConnectionInfo(parts[2],settings[item])
-            break
+          case "mysql": {
+            connection = new MySqlConnectionInfo(parts[2], settings[item]);
+            break;
           }
           case "inline": {
             connection = new InlineConnectionInfo(parts[2], settings[item]);
             break;
+          }
+          case "mongodb": {
+            connection = new MongoConnectionInfo(parts[2], settings[item]);
+            break
           }
           default: {
             throw new WebServerException(

@@ -95,7 +95,8 @@ export default class TreeCommand extends RenderableCommand {
       );
       for (const row of rootRecord) {
         rootRenderParam.data = row;
-        retVal += renderLevel(rootRenderParam, 1);
+        let temp = renderLevel(rootRenderParam, 1)
+        retVal += temp ? temp : "" ;
       }
       /**
        * @param {RenderParam} parentRenderParam
