@@ -34,8 +34,6 @@
     "group": "node test/command/group/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
     "con-edge": "node test/connection/edge/simple.js",
-    "con-inline": "node test/connection/inline/simple.js",
-    "con-inline-s": "node test/connection/inline/sosimple.js",
     "call": "node test/command/call/simple.js",
     "call-group": "node test/command/call/in-group.js",
     "call-deep": "node test/command/call/deep.js",
@@ -44,11 +42,17 @@
     "testApi": "node test/command/API/runTestApp.js",
     "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
     "convertor": "node test/convertFromJsonPartToJsonObject.js",
+    "con-sqlite": "node test/connection/sqlite/simple.js",
+    "testConnectionEdge": "node test/connection/edge/testConnection.js",
+    "testConnectionSql": "node test/connection/sql/testConnection.js",
+    "dbsourceMongo": "node test/command/dbsource/mongo.js",
+    "dbsourceMysql": "node test/command/dbsource/mysql.js",
     "con-mysql": "node test/connection/mysql/simple.js"
   },
   "type": "module",
   "dependencies": {
     "alasql": "^4.1.9",
+    "axios": "^1.6.2",
     "busboy": "^1.6.0",
     "dayjs": "^1.11.6",
     "fast-xml-parser": "^4.3.2",
@@ -59,12 +63,16 @@
     "jsdom": "^23.0.1",
     "memorystream": "^0.3.1",
     "mime-types": "^2.1.35",
+    "mongodb": "^6.3.0",
     "mssql": "^9.3.2",
     "node-fetch": "^3.3.2",
     "mysql2": "^3.6.5",
-    "pako": "^2.1.0"
+    "pako": "^2.1.0",
+    "promised-sqlite3": "^2.1.0",
+    "sqlite3": "^5.1.6"
   },
   "devDependencies": {
-    "jest": "^29.7.0"
+    "jest": "^29.7.0",
+    "supertest": "^6.3.3"
   }
 }

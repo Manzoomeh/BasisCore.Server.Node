@@ -1,3 +1,0 @@
-{"$type":"group","core":"group","name":"ROOT_GROUP","Commands":[{
-    "core" : "rawtext","content" : "hi from mysql"
-}]}

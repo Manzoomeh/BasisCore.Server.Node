@@ -4,7 +4,6 @@ import MySqlSettingData from "./MySqlSettingData.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import Request from "../request.js";
-import ExceptionResult from "../../renderEngine/Models/ExceptionResult.js";
 import WebServerException from "../Exceptions/WebServerException.js";
 import MysqlRow from "../mysqlRow.js";
 import SqlSettingData from "./SqlSettingData.js";
@@ -36,36 +35,47 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    const input = {};
-    for (const key in parameters) {
-      if (Object.hasOwnProperty.call(parameters, key)) {
-        const value = parameters[key];
-        if (!Array.isArray(value)) {
-          const tvp = [];
-          for (const field in value) {
-            if (Object.hasOwnProperty(value, field)) {
-              const fieldValue = value[field];
-              let temp = {};
-              temp.name = field;
-              temp.value = fieldValue;
-              tvp.push(temp);
+    try {
+      const input = {};
+      if (Object.keys(parameters.params).length != 0) {
+        for (const key in parameters) {
+          if (Object.hasOwnProperty.call(parameters, key)) {
+            const value = parameters[key];
+            if (!Array.isArray(value)) {
+              const tvp = [];
+              for (const field in value) {
+                if (Object.hasOwnProperty(value, field)) {
+                  const fieldValue = value[field];
+                  let temp = {};
+                  temp.name = field;
+                  temp.value = fieldValue;
+                  tvp.push(temp);
+                }
+              }
+              input[key] = tvp;
+            } else {
+              input[key] = value;
             }
           }
-          input[key] = tvp;
-        } else {
-          input[key] = value;
         }
+        await this.createTemporaryTableAndInsertData(
+          "temp_table",
+          input.params
+        );
+
+        const procedureResult = await this.executeProcedure(
+          this.procedure,
+          "temp_table"
+        );
+        return new DataSourceCollection(procedureResult);
+      } else {
+        const procedureResult = await this.executeProcedure(this.procedure);
+        return new DataSourceCollection([procedureResult[0][0]]);
       }
+    } finally {
+      // await this.pool.end();
     }
-    await this.createTemporaryTableAndInsertData("temp_table", input.params);
-
-    const procedureResult = await this.executeProcedure(
-      this.procedure,
-      "temp_table"
-    );
-    return new DataSourceCollection(procedureResult) ;
   }
-
   /**
    * @param {Request} request
    * @param {CancellationToken} cancellationToken
@@ -95,7 +105,7 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
     );
     const retVal = {};
 
-    if (result && result.items && result.items[0] && result.items[0].data) {
+    if (result) {
       result.items[0].data[0].forEach((row) => {
         if (!retVal[row.paramType]) {
           retVal[row.paramType] = {};
@@ -152,7 +162,9 @@ export default class MySqlConnectionInfo extends ConnectionInfo {
    * @throws {Error}
    */
   async executeProcedure(procedureName, parameters) {
-    const query = `CALL ${procedureName}(${Array.isArray(parameters) ? parameters.join(","): ""})`;
+    const query = `CALL ${procedureName}(${
+      parameters ? parameters.map((param) => "?").join(",") : ""
+    })`;
     const results = await this.pool.query(query, parameters);
     return results;
   }
