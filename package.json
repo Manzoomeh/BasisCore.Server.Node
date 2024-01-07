@@ -45,7 +45,8 @@
     "testConnectionSql": "node test/connection/sql/testConnection.js",
     "dbsourceMongo": "node test/command/dbsource/mongo.js",
     "dbsourceMysql": "node test/command/dbsource/mysql.js",
-    "con-mysql": "node test/connection/mysql/simple.js"
+    "con-mysql": "node test/connection/mysql/simple.js",
+    "il" : "node test\\final\\server.js"
   },
   "type": "module",
   "dependencies": {
