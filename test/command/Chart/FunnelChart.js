@@ -2,7 +2,7 @@ import CancellationToken from "../../../renderEngine/Cancellation/CancellationTo
 import ContextBase from "../../../renderEngine/Context/ContextBase.js";
 import ChartCommand from "../../../renderEngine/Command/Chart/ChartCommand.js";
 import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
-
+import fs from "fs";
 const context = new ContextBase();
 context.cancellation = new CancellationToken();
 
@@ -14,19 +14,12 @@ const il = {
     {
       name: "data",
       preview: "true",
-      content: `<row x="0"  y="3" column='male'/> 
-        <row x="1"  y="1"  column='male'/>
-        <row x="2"  y="8"  column='male'/>
-        <row x="3"  y="6" column='male'/>
-        <row x="4"  y="7"  column='male'/>
-       <row x="5"  y="4" column='male'/>
-       <row x="0"  y="5" column='female'/> 
-        <row x="1"  y="2"  column='female'/>
-        <row x="2"  y="2"  column='female'/>
-        <row x="3"  y="1" column='female'/>
-        <row x="4"  y="4"  column='female'/>
-       <row x="5"  y="6" column='female'/>
-       `,
+      content: `<row column="january"  y="3" /> 
+        <row column="february"  y="1"  />
+        <row column="march"  y="8"  />
+        <row column="april"  y="6" />
+        <row column="may"  y="7"  />
+       <row column="june"  y="4" />`,
     },
   ],
 };
@@ -37,9 +30,8 @@ const chartIl = {
   "layout-content": "<div>@child</div >",
   setting: {
     //available chart types : line | bar | funnel
-    chartType: "line",
+    chartType: "funnel",
     columnKey: "column",
-    xKey: "x",
     yKey: "y",
     chartTitle: "chart title",
     axisLabel: true,
@@ -49,7 +41,7 @@ const chartIl = {
       height: 400,
       marginY: 40,
       marginX: 40,
-      textColor: "blue",
+      textColor: "black",
     },
     hover: true,
   },
@@ -57,4 +49,6 @@ const chartIl = {
 const db = new InlineSourceCommand(il);
 await db.executeAsync(context);
 const chart = new ChartCommand(chartIl);
-console.log(await chart.executeAsync(context));
+const res = await chart.executeAsync(context);
+console.log(res);
+fs.writeFileSync("test.html", res._result);

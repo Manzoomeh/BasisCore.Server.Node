@@ -30,6 +30,7 @@
     "view": "node test/command/view/simple.js",
     "tree": "node test/command/tree/simple.js",
     "barchart": "node test/command/chart/BarChart.js",
+    "funnelchart": "node test/command/chart/FunnelChart.js",
     "linechart": "node test/command/chart/LineChart.js",
     "group": "node test/command/group/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
@@ -47,7 +48,7 @@
     "testConnectionSql": "node test/connection/sql/testConnection.js",
     "dbsourceMongo": "node test/command/dbsource/mongo.js",
     "dbsourceMysql": "node test/command/dbsource/mysql.js",
-    "con-mysql" : "node test/connection/mysql/simple.js"
+    "con-mysql": "node test/connection/mysql/simple.js"
   },
   "type": "module",
   "dependencies": {

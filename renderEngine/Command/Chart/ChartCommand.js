@@ -7,6 +7,7 @@ import { JSDOM } from "jsdom";
 import BarChart from "./BarChart.js";
 import LineChart from "./LineChart.js";
 import ICommandResult from "../../Models/ICommandResult.js";
+import FunnelChart from "./FunnelChart.js";
 export default class ChartCommand extends SourceBaseCommand {
   /** @type {IChartSetting} */
   chartSetting;
@@ -38,7 +39,6 @@ export default class ChartCommand extends SourceBaseCommand {
    * @returns {Promise<ICommandResult>}
    */
   async _renderAsync(source, context) {
-    console.log("heree");
     const renderResult = await this.renderInternallyAsync(source, context);
     let result = null;
     if ((renderResult?.length ?? 0) > 0) {
@@ -49,7 +49,6 @@ export default class ChartCommand extends SourceBaseCommand {
     } else {
       result = await this.elseLayout.getValueAsync(context);
     }
-    console.log("result :>> ", result);
     return new StringResult(result);
   }
 
@@ -91,6 +90,14 @@ export default class ChartCommand extends SourceBaseCommand {
           document
         );
         break;
+      case "funnel":
+        this.chartManager = new FunnelChart(
+          data,
+          this.chartSetting,
+          this.chart,
+          document
+        );
+        break;
       default:
         throw new Error(
           `Chart type ${this.chartSetting.chartType} is not supported`
@@ -108,7 +115,6 @@ export default class ChartCommand extends SourceBaseCommand {
    */
 
   async renderInternallyAsync(source, context) {
-    console.log("here");
     if (source.data?.length > 0) {
       return this.createChart(source.data);
     }

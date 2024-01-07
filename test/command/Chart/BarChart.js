@@ -29,7 +29,7 @@ const chartIl = {
   "data-member-name": "chart.data",
   "layout-content": "<div>@child</div >",
   setting: {
-    //available chart types : line | bar
+    //available chart types : line | bar | funnel
     chartType: "bar",
     columnKey: "column",
     yKey: "y",
