@@ -8,6 +8,7 @@ import StreamerEngine from "../fileStreamer/StreamerEngine.js";
 import { HostServiceOptions } from "../models/model.js";
 import IRoutingRequest from "../models/IRoutingRequest.js";
 import ServiceSettings from "../models/ServiceSettings.js";
+
 export default class HostService {
   /**@type {string} */
   name;
@@ -28,7 +29,6 @@ export default class HostService {
     if (this._options.Streamer) {
       this._engine = new StreamerEngine(this._options.Streamer);
     }
-
     this.settings = new ServiceSettings(options);
   }
 
