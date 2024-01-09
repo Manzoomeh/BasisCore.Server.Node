@@ -39,7 +39,8 @@ export default class MongoConnectionInfo extends ConnectionInfo {
       return new DataSourceCollection([await result.toArray()]);
     } catch (err) {
       throw err;
-   } finally {
+   }
+    finally {
     await this.client.close();
     }
   }

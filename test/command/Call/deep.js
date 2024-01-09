@@ -48,7 +48,6 @@ const il = {
 const command = CommandUtil.createCommand(il);
 try {
   const result = await command.executeAsync(context);
-  console.log(result);
 } catch (ex) {
   console.error(ex);
 }

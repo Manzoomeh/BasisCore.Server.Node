@@ -7,8 +7,8 @@ export default class Index2Response extends RequestBaseResponse {
   /**
    * @param {IRoutingRequest} request
    */
-  constructor(request) {
-    super(request);
+  constructor(request,setting) {
+    super(request,setting);
   }
   /**
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}

@@ -4,15 +4,13 @@ import WebServerException from "../models/Exceptions/WebServerException.js";
 import Request from "../models/request.js";
 
 export class HttpHostService extends HostService {
-  /** @type {ServiceSettings} */
-  settings;
+
   /**
    * @param {string} name
    * @param {HostServiceOptions} options
    */
   constructor(name, options) {
     super(name, options);
-    this.settings = new ServiceSettings(options);
     if (!this.settings.routerConnection) {
       throw new WebServerException(
         `Router connection not set in '${name}' http base host service!`
