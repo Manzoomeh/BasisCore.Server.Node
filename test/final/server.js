@@ -26,12 +26,12 @@ const host = {
       Settings: {
         "Connections.sql.RoutingData": {
           connectionString:
-            "Server=172.20.20.200;Database=test;User Id=sa;Password=Salam1Salam2;trustServerCertificate=true",
+            "Server=.;Database=test;User Id=sa;Password=passowrd;trustServerCertificate=true",
           procedure: "[dbo].[cms02]",
         },
         "Connections.sql.CallCommand": {
           connectionString:
-            "Server=172.20.20.200;Database=test1;User Id=sa;Password=Salam1Salam2;trustServerCertificate=true",
+            "Server=.;Database=test1;User Id=sa;Password=password;trustServerCertificate=true",
           procedure: "[dbo].[SbCallProcedure]",
         },
         "Connections.mongodb.findObjects": {
