@@ -1,12 +1,10 @@
 import StringResult from "../Models/StringResult.js";
-import IToken from "../Token/IToken.js";
 import TokenUtil from "../Token/TokenUtil.js";
 import fetch, { Request } from "node-fetch";
 import fs from "fs";
-import http from "http";
 import { JSDOM } from "jsdom";
 import Util from "../../Util.js";
-import { lab } from "d3";
+import IToken from "../Token/IToken.js";
 export default class ViewBCCommand {
   /**@type {IToken} */
   html;
@@ -26,9 +24,6 @@ export default class ViewBCCommand {
     // Create a fetch function with the custom Agent
   }
 
-  /*
-   * @returns {Promise<ICommandResult>}
-   */
   async executeAsync() {
     const renderResult = await this.renderInternallyAsync(this.html);
     return new StringResult(renderResult);

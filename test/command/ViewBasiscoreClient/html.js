@@ -24,7 +24,7 @@ const bcComponentIl = {
   datamembername="answer.data"
   run="atclient"
   schemaUrl="https://basispanel.ir/schema"
-  displayMode="view"
+  displayMode="edit"
   triggers="cms.form"
   qs_rkey="1446403?hashid=E0F910E3-FE30-4F16-804C-C3C5D850EDA7"
 >
