@@ -1,33 +1,9 @@
 import HostManager from "../../hostManager.js";
 import IRoutingRequest from "../../models/IRoutingRequest.js";
 import { HostManagerOptions } from "../../models/model.js";
+import ConnectionInfo from "../../models/Connection/ConnectionInfo.js";
 import Request from "../../models/request.js";
 import { il } from "./il.js";
-class SimpleInlineProvider {
-  /**
-   * @param {Request} httpRequest
-   * @param {CancellationToken} cancellationToken
-   * @returns {Promise<IDataSource>}
-   */
-  getRoutingDataAsync(httpRequest, cancellationToken) {
-    const d = new Date();
-    const rawTextIl = il;
-    /** @type {IRoutingRequest} */
-    const result = {
-      ...httpRequest,
-      ...{
-        webserver: {
-          headercode: "200 OK",
-          index: "1",
-          mime: "text/html",
-        },
-      },
-    };
-    result.cms.page_il = JSON.stringify(rawTextIl);
-
-    return Promise.resolve(result);
-  }
-}
 
 /** @type {HostManagerOptions} */
 const host = {
@@ -48,11 +24,15 @@ const host = {
     mainService: {
       Type: "http",
       Settings: {
-        "Connections.inline.RoutingData": new SimpleInlineProvider(),
-        "Connections.sql.CallCommand": {
+        "Connections.sql.RoutingData": {
           connectionString:
             "Server=172.20.20.200;Database=test;User Id=sa;Password=Salam1Salam2;trustServerCertificate=true",
-          procedure: "[dbo].[Call]",
+          procedure: "[dbo].[cms02]",
+        },
+        "Connections.sql.CallCommand": {
+          connectionString:
+            "Server=172.20.20.200;Database=test1;User Id=sa;Password=Salam1Salam2;trustServerCertificate=true",
+          procedure: "[dbo].[SbCallProcedure]",
         },
         "Connections.mongodb.findObjects": {
           endpoint: "mongodb://127.0.0.1:27017",

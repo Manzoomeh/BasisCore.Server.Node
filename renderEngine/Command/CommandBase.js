@@ -54,7 +54,7 @@ export default class CommandBase {
   async executeAsync(context) {
     /** @type {ICommandResult?} */
     let retVal = null;
-    try {
+    // try {
       const runType = await this._getRunTypeValueAsync(context);
       switch (runType) {
         case RunTypes.AtServer: {
@@ -76,11 +76,12 @@ export default class CommandBase {
           break;
         }
       }
-    } catch (ex) {
-      console.error(ex);
-      retVal = new ExceptionResult(ex, context);
-      //TODO: log error
-    }
+    // } catch (ex) {
+    //   console.error(ex);
+    //   retVal = new ExceptionResult(ex, context);
+    //   //TODO: log error
+    // }
+    console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$",this,retVal)
     return retVal;
   }
 

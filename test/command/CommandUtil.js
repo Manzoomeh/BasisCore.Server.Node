@@ -16,51 +16,54 @@ export default class CommandUtil {
    * @returns {CommandBase}
    */
   static createCommand(commandIl) {
+    if(!commandIl){
+      console.trace("show")
+    }
     //TODO:must be better with dic of ctor
     /** @type {CommandBase?} */
     let retVal = null;
-    switch (commandIl.$type.toLowerCase()) {
-      case "rawtext": {
-        retVal = new RawText(commandIl);
-        break;
+      switch (commandIl.$type.toLowerCase()) {
+        case "rawtext": {
+          retVal = new RawText(commandIl);
+          break;
+        }
+        case "print": {
+          retVal = new PrintCommand(commandIl);
+          break;
+        }
+        case "group": {
+          retVal = new GroupCommand(commandIl);
+          break;
+        }
+        case "dbsource": {
+          retVal = new DbSource(commandIl);
+          break;
+        }
+        case "inlinesource": {
+          retVal = new InlineSourceCommand(commandIl);
+          break;
+        }
+        case "tree": {
+          retVal = new TreeCommand(commandIl);
+          break;
+        }
+        case "view": {
+          retVal = new ViewCommand(commandIl);
+          break;
+        }
+        case "list": {
+          retVal = new ListCommand(commandIl);
+          break;
+        }
+        case "call": {
+          retVal = new CallCommand(commandIl);
+          break;
+        }
+        case "api": {
+          retVal = new ApiCommand(commandIl);
+          break;
+        }
       }
-      case "print": {
-        retVal = new PrintCommand(commandIl);
-        break;
-      }
-      case "group": {
-        retVal = new GroupCommand(commandIl);
-        break;
-      }
-      case "dbsource": {
-        retVal = new DbSource(commandIl);
-        break;
-      }
-      case "inlinesource": {
-        retVal = new InlineSourceCommand(commandIl);
-        break;
-      }
-      case "tree": {
-        retVal = new TreeCommand(commandIl);
-        break;
-      }
-      case "view": {
-        retVal = new ViewCommand(commandIl);
-        break;
-      }
-      case "list": {
-        retVal = new ListCommand(commandIl);
-        break;
-      }
-      case "call": {
-        retVal = new CallCommand(commandIl);
-        break;
-      }
-      case "api": {
-        retVal = new ApiCommand(commandIl);
-        break;
-      }
-    }
     return retVal;
   }
 }

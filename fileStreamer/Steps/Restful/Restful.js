@@ -17,7 +17,6 @@ export default class Restful extends Step {
       const blob = new Blob(content.payload, { type: content.mime });
       form.set(content.name, blob);
       const response = await got.post(options.url, { body: form }).json();
-      console.log(response);
     } catch (er) {
       content.AddLog("rest-error", er);
       content.status = Status.StepError;

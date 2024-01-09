@@ -56,6 +56,9 @@ export default class RequestContext extends ContextBase {
    * @return {Promise<CommandBase>}
    */
   async loadPageAsync(pageName, rawCommand, pageSize, callDepth) {
+    if(!this._settings.callConnection){
+      console.trace("log")
+    }
     const result = await this._settings.callConnection.loadPageAsync(
       pageName,
       rawCommand,

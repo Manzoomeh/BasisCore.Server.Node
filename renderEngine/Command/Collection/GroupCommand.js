@@ -20,6 +20,7 @@ export default class GroupCommand extends CommandBase {
    * @returns {Promise<ICommandResult>}
    */
   async _executeCommandAsync(context) {
+
     var newContext = context.createContext("group");
     const commands = [];
     for (let i = 0; i < this.commands.length; i++) {
