@@ -44,8 +44,8 @@ export default class LineChart {
     if (!columnKey) {
       const line = d3
         .line()
-        .x((d) => xScale(d[xKey]))
-        .y((d) => yScale(d[yKey]));
+        .x((d) => this.xScale(d[xKey]))
+        .y((d) => this.yScale(d[yKey]));
       this.chart
         .append("path")
         .datum(this.data)

@@ -15,10 +15,12 @@ export default class ChartCommand extends SourceBaseCommand {
   layout;
   /**@type {object} */
   chart;
+  /**@type {BarChart | LineChart | FunnelChart} */
+
+  chartManager;
   /**
    * @param {object} chartCommandIl
    */
-  chartManager;
   constructor(chartCommandIl) {
     super(chartCommandIl);
     this.layout = TokenUtil.getFiled(chartCommandIl, "layout-content");

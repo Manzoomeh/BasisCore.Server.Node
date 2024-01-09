@@ -4,6 +4,8 @@ export default class IChartSetting {
   /** @type {'bar'|'line'} */
   chartType;
   /** @type {string} */
+  columnKey;
+  /** @type {string} */
   xKey;
   /** @type {string} */
   yKey;
@@ -12,7 +14,6 @@ export default class IChartSetting {
   legend;
   /** @type {boolean?} */
   axisLabel;
-  /** @type {number} */
   /** @type {IChartStyle?} */
   style;
 }
