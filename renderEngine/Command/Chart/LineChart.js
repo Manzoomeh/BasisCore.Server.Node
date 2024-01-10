@@ -49,7 +49,7 @@ export default class LineChart {
       this.chart
         .append("path")
         .datum(this.data)
-        .attr("title", (d) => d[columnKey])
+        .attr("title", (d) => d[xKey])
         .attr("d", (d) => line)
         .attr("class", "line")
         .style("fill", "none")
