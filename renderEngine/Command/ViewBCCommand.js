@@ -59,7 +59,7 @@ export default class ViewBCCommand {
         answers.forEach((j) => {
           const values = [];
           j.querySelectorAll("[data-bc-part]").forEach((l) =>
-            values.push(l.textContent)
+            values.push(l.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim())
           );
           ret.values.push(values);
         });
@@ -70,13 +70,19 @@ export default class ViewBCCommand {
             .querySelector("[data-bc-answer-container]")
             .querySelectorAll("[data-sys-text]")
             .forEach((e) => {
-              label.push(e.textContent);
+              label.push(
+                e.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim()
+              );
             });
         } else {
           questionTag
             .querySelectorAll("[data-bc-part]")
             .forEach(
-              (e) => e.textContent.trim() && label.push(e.textContent.trim())
+              (e) =>
+                e.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim() &&
+                label.push(
+                  e.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim()
+                )
             );
         }
       }
