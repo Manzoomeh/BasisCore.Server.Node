@@ -60,7 +60,7 @@ export default class IContext {
    * @returns {IContext}
    */
   createContext(title) {
-    return this;
+    throw new Error("Method 'createContext' not implemented.");
   }
 
   /**
