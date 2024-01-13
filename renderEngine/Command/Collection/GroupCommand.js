@@ -2,6 +2,7 @@ import CommandUtil from "../../../test/command/CommandUtil.js";
 import IContext from "../../Context/IContext.js";
 import GroupResult from "../../Models/GroupResult.js";
 import CommandBase from "../CommandBase.js";
+import SourceCommand from "../Source/BaseClasses/SourceCommand.js";
 import CallCommand from "./CallCommand.js";
 
 export default class GroupCommand extends CommandBase {
@@ -30,8 +31,18 @@ export default class GroupCommand extends CommandBase {
         commands.push(command);
       }
     }
+    /** @type {Array<CommandBase>} */
+    var sourceCommands = [];
+    /** @type {Array<CommandBase>} */
+    var otherCommands = [];
+    commands.forEach((x) =>
+      x instanceof SourceCommand
+        ? sourceCommands.push(x)
+        : otherCommands.push(x)
+    );
+    await Promise.all(sourceCommands.map((x) => x.executeAsync(newContext)));
     const results = await Promise.all(
-      commands.map((x) => x.executeAsync(newContext))
+      otherCommands.map((x) => x.executeAsync(newContext))
     );
     return new GroupResult(results);
   }
