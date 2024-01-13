@@ -47,7 +47,6 @@ export default class ViewBCCommand {
       const answers = questionTag.querySelectorAll("[data-bc-answer]");
       const titles = [];
 
-      console.log("answers.length :>> ", answers);
       if (answers.length > 1) {
         questionTag.querySelectorAll("[data-bc-answer-title]").forEach((k) => {
           titles.push(k.textContent);
@@ -58,9 +57,13 @@ export default class ViewBCCommand {
         };
         answers.forEach((j) => {
           const values = [];
-          j.querySelectorAll("[data-bc-part]").forEach((l) =>
-            values.push(l.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim())
-          );
+          j.querySelector("[data-bc-part-container]")
+            .querySelectorAll("[data-bc-part]")
+            .forEach((l) =>
+              values.push(
+                l.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim()
+              )
+            );
           ret.values.push(values);
         });
         label.push(ret);
