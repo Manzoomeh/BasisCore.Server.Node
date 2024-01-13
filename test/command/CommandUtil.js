@@ -16,9 +16,6 @@ export default class CommandUtil {
    * @returns {CommandBase}
    */
   static createCommand(commandIl) {
-    if(!commandIl){
-      console.trace("show")
-    }
     //TODO:must be better with dic of ctor
     /** @type {CommandBase?} */
     let retVal = null;
