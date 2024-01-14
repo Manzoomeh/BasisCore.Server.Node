@@ -38,7 +38,7 @@ export default class ViewBCCommand {
     var questionTags = window.document.querySelectorAll("[data-bc-question]");
     var extractedData = {};
 
-    questionTags.forEach(function (questionTag) {
+    questionTags.forEach((questionTag) => {
       var questionTitle = questionTag.querySelector(
         "[data-bc-question-title]"
       ).innerHTML;
@@ -73,20 +73,21 @@ export default class ViewBCCommand {
             .querySelector("[data-bc-answer-container]")
             .querySelectorAll("[data-sys-text]")
             .forEach((e) => {
-              label.push(
-                e.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim()
-              );
+              label.push(this.extractValue(e.textContent));
             });
         } else {
-          questionTag
-            .querySelectorAll("[data-bc-part]")
-            .forEach(
+          const parts = questionTag.querySelectorAll(
+            "[data-bc-part]:not([data-part-btn-container])"
+          );
+          if (parts.length > 1) {
+            parts.forEach(
               (e) =>
-                e.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim() &&
-                label.push(
-                  e.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim()
-                )
+                this.extractValue(e.textContent) &&
+                label.push(this.extractValue(e.textContent))
             );
+          } else {
+            label = this.extractValue(parts[0]?.textContent);
+          }
         }
       }
 
@@ -111,6 +112,17 @@ export default class ViewBCCommand {
     return new Promise((resolve) => {
       this.waitForRequests(dom, resolve);
     });
+  }
+  isNumeric(string) {
+    return /^\d+$/.test(string);
+  }
+  extractValue(textContent) {
+    const res = textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim();
+    if (this.isNumeric(res)) {
+      return Number(res);
+    } else {
+      return res;
+    }
   }
   waitForRequests(dom, resolve) {
     if (this.timeout >= 5000 && dom.window.fetching == 0) {
