@@ -5,8 +5,8 @@ export default class Index5Response extends RequestBaseResponse {
   /**
    * @param {IRoutingRequest} request
    */
-  constructor(request) {
-    super(request);
+  constructor(request,setting) {
+    super(request,setting);
   }
 
   /**

@@ -7,6 +7,7 @@ import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import StreamerEngine from "../fileStreamer/StreamerEngine.js";
 import { HostServiceOptions } from "../models/model.js";
 import IRoutingRequest from "../models/IRoutingRequest.js";
+import ServiceSettings from "../models/ServiceSettings.js";
 
 export default class HostService {
   /**@type {string} */
@@ -15,6 +16,8 @@ export default class HostService {
   _options;
   /** @type {StreamerEngine} */
   _engine = null;
+  /** @type {ServiceSettings} */
+  settings;
 
   /**
    * @param {string} name
@@ -26,6 +29,7 @@ export default class HostService {
     if (this._options.Streamer) {
       this._engine = new StreamerEngine(this._options.Streamer);
     }
+    this.settings = new ServiceSettings(options);
   }
 
   /**
@@ -71,19 +75,19 @@ export default class HostService {
     let retVal = null;
     switch (request.webserver.index) {
       case "1": {
-        retVal = new Index1Response(request);
+        retVal = new Index1Response(request,this.settings);
         break;
       }
       case "2": {
-        retVal = new Index2Response(request);
+        retVal = new Index2Response(request,this.settings);
         break;
       }
       case "4": {
-        retVal = new Index2Response(request);
+        retVal = new Index2Response(request,this.settings);
         break;
       }
       case "5": {
-        retVal = new Index5Response(request);
+        retVal = new Index5Response(request,this.settings);
         break;
       }
       default: {

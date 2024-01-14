@@ -2,14 +2,17 @@ import CancellationToken from "../renderEngine/Cancellation/CancellationToken.js
 import RequestContext from "../renderEngine/Context/RequestContext.js";
 import CommandUtil from "../test/command/CommandUtil.js";
 import IRoutingRequest from "./IRoutingRequest.js";
+import ServiceSettings from "./ServiceSettings.js";
 import RequestBaseResponse from "./requestBaseResponse.js";
 
 export default class Index1Response extends RequestBaseResponse {
   /**
-   * @param { IRoutingRequest} request
+   *
+   * @param {IRoutingRequest} request
+   * @param {ServiceSettings} settings
    */
-  constructor(request) {
-    super(request);
+  constructor(request, settings) {
+    super(request, settings);
   }
 
   /**
@@ -19,7 +22,7 @@ export default class Index1Response extends RequestBaseResponse {
     try {
       const commandIl = JSON.parse(this._request.cms.page_il);
       const command = CommandUtil.createCommand(commandIl);
-      const context = new RequestContext(this.settings);
+      const context = new RequestContext(this._settings);
       context.cancellation = new CancellationToken();
       const result = await command.executeAsync(context);
       const renderResultList = [];

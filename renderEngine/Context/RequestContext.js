@@ -6,7 +6,7 @@ import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
 import Util from "../../Util.js";
 import CommandBase from "../Command/CommandBase.js";
 import CommandUtil from "../../test/command/CommandUtil.js";
-
+import LocalContext from "./LocalContext.js";
 
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
@@ -15,8 +15,16 @@ export default class RequestContext extends ContextBase {
    * @param {ServiceSettings} settings
    */
   constructor(settings) {
-    super();
+    super(null);
     this._settings = settings;
+  }
+
+  /**
+   * @param {string} title
+   * @returns {IContext}
+   */
+  createContext(title) {
+    return new LocalContext(this);
   }
 
   /**

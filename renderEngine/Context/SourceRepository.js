@@ -6,13 +6,29 @@ export default class SourceRepository {
   sources = new Map();
   /** @type {Map<string,SourceEventManager>} */
   eventManager = new Map();
+  /** @type {SourceRepository?} */
+  _owner;
+  /** @type {SourceEventManager} */
+  _onSourceAdded;
+  /**
+   * @param {SourceRepository?} owner
+   */
+  constructor(owner) {
+    this._owner = owner;
+    this._owner?._onSourceAdded.tryAdd((x) => this.addSource(x, false));
+    this._onSourceAdded = new SourceEventManager();
+  }
 
   /**
    * @param {string} sourceId
    * @returns {IDataSource?}
    */
   tryToGet(sourceId) {
-    return this.sources.get(sourceId?.toLowerCase()) ?? null;
+    return (
+      this.sources.get(sourceId?.toLowerCase()) ??
+      this._owner?.tryToGet(sourceId) ??
+      null
+    );
   }
 
   /**
@@ -52,6 +68,7 @@ export default class SourceRepository {
     }
     //console.log(`${source.id} Added...`);
     this.eventManager.get(source.id)?.trigger(source);
+    this._onSourceAdded.trigger(source);
   }
 
   /**

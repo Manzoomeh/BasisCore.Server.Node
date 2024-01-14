@@ -22,7 +22,9 @@
     "stage": "node index.js ",
     "dev": "node --openssl-legacy-provider index.js",
     "context": "node test/context/index.js",
-    "token": "node test/token/index.js",
+    "context-local": "node test/context/local-context.js",
+    "token": "node test/token/simple.js",
+    "token-il": "node test/token/il.js",
     "print": "node test/command/print/index.js",
     "printWithDb": "node test/command/print/withDbSource.js",
     "source": "node test/command/dbsource/index.js",
@@ -47,7 +49,9 @@
     "testConnectionSql": "node test/connection/sql/testConnection.js",
     "dbsourceMongo": "node test/command/dbsource/mongo.js",
     "dbsourceMysql": "node test/command/dbsource/mysql.js",
-    "con-mysql": "node test/connection/mysql/simple.js"
+    "con-mysql": "node test/connection/mysql/simple.js",
+    "il": "nodemon test\\final\\server.js",
+    "createSqlCms": "node test\\final\\createSqlCms.js"
   },
   "type": "module",
   "dependencies": {

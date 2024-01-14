@@ -28,7 +28,6 @@ const callIl = {
 const call = new CallCommand(callIl);
 try {
   const result = await call.callAsync(context);
-  console.log(result);
 } catch (ex) {
   console.error(ex);
 }
