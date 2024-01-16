@@ -47,7 +47,7 @@ export default class LocalContext extends ContextBase {
    * @return {Promise<CommandBase>}
    */
   async loadPageAsync(pageName, rawCommand, pageSize, callDepth) {
-    return this._owner.loadPageAsync(pageName, rawCommand, pageName, callDepth);
+    return this._owner.loadPageAsync(pageName, rawCommand, pageSize, callDepth);
   }
 
   /**
