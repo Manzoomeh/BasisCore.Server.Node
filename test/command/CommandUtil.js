@@ -16,7 +16,6 @@ export default class CommandUtil {
    * @returns {CommandBase}
    */
   static createCommand(commandIl) {
-
     //TODO:must be better with dic of ctor
     /** @type {CommandBase?} */
     let retVal = null;
