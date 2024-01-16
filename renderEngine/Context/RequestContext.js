@@ -11,12 +11,14 @@ import LocalContext from "./LocalContext.js";
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
   _settings;
+  _domainId
   /**
    * @param {ServiceSettings} settings
    */
-  constructor(settings) {
+  constructor(settings,domainId) {
     super(null);
     this._settings = settings;
+    this._domainId = domainId
   }
 
   /**
