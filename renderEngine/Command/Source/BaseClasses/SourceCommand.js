@@ -22,7 +22,7 @@ export default class SourceCommand extends CommandBase {
     super(sourceCommandIl);
     this.members = this.createMemberCollection(sourceCommandIl["Members"]);
     this.params = new ParamItemCollection(sourceCommandIl["Params"]);
-    this.connectionName = TokenUtil.getFiled(sourceCommandIl, "source");
+    this.connectionName = TokenUtil.getFiled(sourceCommandIl, "ConnectionName");
     this.procedureName = TokenUtil.getFiled(sourceCommandIl, "ProcedureName");
   }
 
