@@ -3,6 +3,7 @@ import IToken from "../../Token/IToken.js";
 import TokenUtil from "../../Token/TokenUtil.js";
 import CommandBase from "../CommandBase.js";
 import GroupCommand from "../Collection/GroupCommand.js";
+import RunTypes from "../../Enums/RunTypes.js";
 
 export default class CallCommand extends CommandBase {
   /** @type {IToken} */
@@ -25,6 +26,14 @@ export default class CallCommand extends CommandBase {
    * @returns {Promise<CommandBase[]>}
    */
   async callAsync(context) {
+    const runType = await this._getRunTypeValueAsync(context);
+    const ifValue = await this._getIfValueAsync(context);
+    if (!ifValue) {
+      return [];
+    }
+    if (runType.toLowerCase() == RunTypes.AtClient) {
+      return [];
+    }
     /** @type {CommandBase[]} */
     let retVal;
     const [pageName, pageSize, html] = await Promise.all([

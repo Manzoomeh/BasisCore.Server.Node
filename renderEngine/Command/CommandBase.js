@@ -30,7 +30,7 @@ export default class CommandBase {
     this.core = TokenUtil.getFiled(commandIl, "core");
     this.name = TokenUtil.getFiled(commandIl, "name");
     this.if = TokenUtil.getFiled(commandIl, "if");
-    this.runType = TokenUtil.getFiled(commandIl, "runType");
+    this.runType = TokenUtil.getFiled(commandIl, "run");
     this.renderType = TokenUtil.getFiled(commandIl, "renderType");
     this.renderTo = TokenUtil.getFiled(commandIl, "renderTo");
     this.extraAttributes = null;
@@ -56,7 +56,7 @@ export default class CommandBase {
     let retVal = null;
     try {
       const runType = await this._getRunTypeValueAsync(context);
-      switch (runType) {
+      switch (runType.toLowerCase()) {
         case RunTypes.AtServer: {
           const ifValue = await this._getIfValueAsync(context);
           if (ifValue) {
@@ -90,7 +90,7 @@ export default class CommandBase {
    * @returns {Promise<RunTypes>}
    */
   async _getRunTypeValueAsync(context) {
-    return (await this.runType.getValueAsync(context)) ?? RunTypes.AtServer;
+    return (await this.runType.value) ?? RunTypes.AtServer;
   }
 
   /**
@@ -146,7 +146,7 @@ export default class CommandBase {
     if (this.extraAttributes) {
       await Promise.all(
         Object.entries(this.extraAttributes).map((pair) =>
-        retVal.addAttributeIfExistAsync(pair[0], pair[1], context)
+          retVal.addAttributeIfExistAsync(pair[0], pair[1], context)
         )
       );
     }
