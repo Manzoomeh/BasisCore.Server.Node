@@ -16,12 +16,10 @@ export default class ViewBCCommand {
   /**
    * @param {object} ViewBCCommandIl
    */
-
+  responses = [];
   constructor(ViewBCCommandIl) {
     this.html = TokenUtil.getFiled(ViewBCCommandIl, "html");
     this.type = TokenUtil.getFiled(ViewBCCommandIl, "type");
-
-    // Create a fetch function with the custom Agent
   }
 
   async executeAsync() {
@@ -34,15 +32,48 @@ export default class ViewBCCommand {
    * @returns {object}
    */
 
-  getSchemaJsonFromHTML(window) {
+  async getSchemaJsonFromHTML(window) {
+    const res1 = this.responses[0];
+    const res2 = this.responses[1];
+    const data = {};
+
+    if (res1.sources[0].data[0].properties) {
+      data["answers"] = res1.sources[0].data[0].properties;
+      data["questions"] = res2.sources[0].data[0].questions;
+    } else {
+      data["answers"] = res2.sources[0].data[0].properties;
+      data["questions"] = res1.sources[0].data[0].questions;
+    }
+    // data.answers.map((e) => {
+    //   const questionTag = window.document
+    //     .querySelector('[data-bc-schema-info-prpid="1360"]')
+    //     .closest("data-bc-question");
+    //   const parts = questionTag.querySelectorAll(
+    //     "[data-bc-part]:not([data-part-btn-container])"
+    //   );
+    //   if (e.multi) {
+    //     if (parts.length > 1) {
+    //       parts.forEach(
+    //         (e) =>
+    //           this.extractValue(e.textContent) &&
+    //           label.push(this.extractValue(e.textContent))
+    //       );
+    //     } else {
+    //       label = this.extractValue(parts[0]?.textContent);
+    //     }
+    //   }
+    // });
     var questionTags = window.document.querySelectorAll("[data-bc-question]");
     var extractedData = {};
-
     questionTags.forEach((questionTag) => {
       var questionTitle = questionTag.querySelector(
         "[data-bc-question-title]"
       ).innerHTML;
-
+      const prpId = Number(
+        questionTag
+          .querySelector("[data-bc-question-title]")
+          .getAttribute("data-bc-schema-info-prpid")
+      );
       var label = [];
       const answers = questionTag.querySelectorAll("[data-bc-answer]");
       const titles = [];
@@ -59,9 +90,13 @@ export default class ViewBCCommand {
           const values = [];
           j.querySelector("[data-bc-part-container]")
             .querySelectorAll("[data-bc-part]")
-            .forEach((l) =>
+            .forEach((l, i) =>
               values.push(
-                l.textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim()
+                this.extractValue(
+                  l.textContent,
+                  data.questions.find((i) => i.prpId == prpId).parts[i]
+                    .validations.dataType || "text"
+                )
               )
             );
           ret.values.push(values);
@@ -73,7 +108,7 @@ export default class ViewBCCommand {
             .querySelector("[data-bc-answer-container]")
             .querySelectorAll("[data-sys-text]")
             .forEach((e) => {
-              label.push(this.extractValue(e.textContent));
+              label.push(this.extractValue(e.textContent, "text"));
             });
         } else {
           const parts = questionTag.querySelectorAll(
@@ -81,12 +116,22 @@ export default class ViewBCCommand {
           );
           if (parts.length > 1) {
             parts.forEach(
-              (e) =>
+              (e, i) =>
                 this.extractValue(e.textContent) &&
-                label.push(this.extractValue(e.textContent))
+                label.push(
+                  this.extractValue(
+                    e.textContent,
+                    data.questions.find((i) => i.prpId == prpId).parts[i]
+                      .validations.dataType || "text"
+                  )
+                )
             );
           } else {
-            label = this.extractValue(parts[0]?.textContent);
+            label = this.extractValue(
+              parts[0]?.textContent,
+              data.questions.find((i) => i.prpId == prpId).parts[0].validations
+                ?.dataType || "text"
+            );
           }
         }
       }
@@ -108,6 +153,7 @@ export default class ViewBCCommand {
     });
     return extractedData;
   }
+
   waitForRequestsWrapper(dom) {
     return new Promise((resolve) => {
       this.waitForRequests(dom, resolve);
@@ -116,9 +162,10 @@ export default class ViewBCCommand {
   isNumeric(string) {
     return /^\d+$/.test(string);
   }
-  extractValue(textContent) {
+  extractValue(textContent, type) {
     const res = textContent.replace(/[\n\r]+|[\s]{2,}/g, " ").trim();
-    if (this.isNumeric(res)) {
+
+    if (type == "int") {
       return Number(res);
     } else {
       return res;
@@ -138,14 +185,34 @@ export default class ViewBCCommand {
       setTimeout(() => this.waitForRequests(dom, resolve), 1000); // Check again after 1 second
     }
   }
+
   async renderInternallyAsync() {
+    const addToResponses = async (e) => {
+      const clone = e.clone();
+      const clonedResponse = new Response(clone.body);
+      try {
+        const m = await clonedResponse.json();
+        this.responses.push(m);
+      } catch (e) {}
+
+      return e;
+    };
     const dom = new JSDOM(this.html.value, {
       resources: "usable",
       runScripts: "dangerously",
       beforeParse(window) {
         window.fetch = function () {
           Util.startFetch(window);
-          return fetch.apply(this, arguments).finally(Util.endFetch(window));
+          return fetch
+            .apply(this, arguments)
+            .then((e) => {
+              addToResponses(e);
+              return e;
+            })
+            .finally((e) => {
+              Util.endFetch(window);
+              return e;
+            });
         };
         window.Request = Request;
       },
