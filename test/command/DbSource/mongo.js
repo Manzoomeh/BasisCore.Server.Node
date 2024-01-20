@@ -26,7 +26,7 @@ let il = {
   $type: "dbsource",
   core: "dbsource",
   name: "test",
-  source: "findProducts",
+  ConnectionName: "findProducts",
   "extra-attribute": {
     parentid: "0",
   },

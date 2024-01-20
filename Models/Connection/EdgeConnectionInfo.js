@@ -5,6 +5,7 @@ import CancellationToken from "../../renderEngine/Cancellation/CancellationToken
 import Request from "../request.js";
 import IEdgeSettingData from "./IEdgeSettingData.js";
 import EdgeMessage from "../../edge/edgeMessage.js";
+import WebServerException from "../Exceptions/WebServerException.js";
 
 export default class EdgeConnectionInfo extends ConnectionInfo {
   /** @type {IEdgeSettingData} */
@@ -32,14 +33,21 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    const response = await fetch("http://" +this.settings.endpoint, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(parameters),
-    });
-    return response.json();
+    try {
+      const response = await fetch("http://" + this.settings.endpoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(parameters),
+      });
+      return this.convertJSONToDataSet(response.json());
+    } catch (error) {
+      throw new WebServerException(
+        "Invalid api url or The result of the api is not a valid JSON ! + " +
+          error
+      );
+    }
   }
 
   /**
@@ -132,5 +140,24 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
         resolve(true);
       });
     });
+  }
+  /**
+   *
+   * @param {string} jsonString
+   * @returns {DataSourceCollection}
+   */
+  convertJSONToDataSet(jsonString) {
+    let content = JSON.parse(jsonString);
+    if (content?.sources && Array.isArray(content?.sources)) {
+      let retVal = [];
+      content.sources.forEach((source) => {
+        retVal.push(source.data);
+      });
+      return new DataSourceCollection(retVal);
+    } else {
+      throw new WebServerException(
+        "Error from Edge Connection ;the sources are not available."
+      );
+    }
   }
 }

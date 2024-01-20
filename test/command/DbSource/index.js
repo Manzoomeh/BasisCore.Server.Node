@@ -9,7 +9,7 @@ const il = {
   $type: "dbsource",
   core: "dbsource",
   name: "db",
-  source: "Source1",
+  ConnectionName: "Source1",
   "extra-attribute": {
     parentid: "0",
     comment: "_comment",

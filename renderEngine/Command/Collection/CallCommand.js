@@ -28,42 +28,43 @@ export default class CallCommand extends CommandBase {
   async callAsync(context) {
     const runType = await this._getRunTypeValueAsync(context);
     const ifValue = await this._getIfValueAsync(context);
-    if (!ifValue) {
-      return [];
-    }
-    if (runType.toLowerCase() == RunTypes.AtClient) {
-      return [];
-    }
-    /** @type {CommandBase[]} */
     let retVal;
-    const [pageName, pageSize, html] = await Promise.all([
-      this.file.getValueAsync(context),
-      this.pageSize.getValueAsync(context),
-      this.createHtmlElementAsync(context),
-    ]);
-    context.cancellation.throwIfCancellationRequested();
-    const command = await context.loadPageAsync(
-      pageName,
-      html.getHtml(),
-      pageSize,
-      this.callDepth + 1
-    );
-    if (command instanceof CallCommand) {
-      command.callDepth = this.callDepth + 1;
-      retVal = await command.callAsync(context);
-    } else if (command instanceof GroupCommand) {
-      retVal = [];
-      for (let i = 0; i < command.commands.length; i++) {
-        const item = command.commands[i];
-        if (item instanceof CallCommand) {
-          retVal.push(...(await item.callAsync(context)));
-        } else {
-          retVal.push(item);
-        }
-      }
+    if (!ifValue) {
+      retVal = []
+    } else if (runType.toLowerCase() == RunTypes.AtClient) {
+      retVal = []
     } else {
-      retVal = [command];
+      /** @type {CommandBase[]} */
+      const [pageName, pageSize, html] = await Promise.all([
+        this.file.getValueAsync(context),
+        this.pageSize.getValueAsync(context),
+        this.createHtmlElementAsync(context),
+      ]);
+      context.cancellation.throwIfCancellationRequested();
+      const command = await context.loadPageAsync(
+        pageName,
+        html.getHtml(),
+        pageSize,
+        this.callDepth + 1
+      );
+      if (command instanceof CallCommand) {
+        command.callDepth = this.callDepth + 1;
+        retVal = await command.callAsync(context);
+      } else if (command instanceof GroupCommand) {
+        retVal = [];
+        for (let i = 0; i < command.commands.length; i++) {
+          const item = command.commands[i];
+          if (item instanceof CallCommand) {
+            retVal.push(...(await item.callAsync(context)));
+          } else {
+            retVal.push(item);
+          }
+        }
+      } else {
+        retVal = [command];
+      }
     }
+
     return retVal;
   }
 
