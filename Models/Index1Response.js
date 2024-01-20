@@ -22,7 +22,10 @@ export default class Index1Response extends RequestBaseResponse {
     try {
       const commandIl = JSON.parse(this._request.cms.page_il);
       const command = CommandUtil.createCommand(commandIl);
-      const context = new RequestContext(this._settings);
+      const context = new RequestContext(
+        this._settings,
+        Number(this._request.cms?.dmnid)
+      );
       context.cancellation = new CancellationToken();
       const result = await command.executeAsync(context);
       const renderResultList = [];

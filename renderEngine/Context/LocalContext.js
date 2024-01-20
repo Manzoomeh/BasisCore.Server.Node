@@ -7,7 +7,7 @@ export default class LocalContext extends ContextBase {
    * @param {ContextBase} owner
    */
   constructor(owner) {
-    super(owner.repository);
+    super(owner.repository,owner.domainId);
     this._owner = owner;
     this.cancellation = owner.cancellation;
   }
@@ -47,7 +47,7 @@ export default class LocalContext extends ContextBase {
    * @return {Promise<CommandBase>}
    */
   async loadPageAsync(pageName, rawCommand, pageSize, callDepth) {
-    return this._owner.loadPageAsync(pageName, rawCommand, pageName, callDepth);
+    return this._owner.loadPageAsync(pageName, rawCommand, pageSize, callDepth);
   }
 
   /**

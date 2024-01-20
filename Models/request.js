@@ -3,7 +3,10 @@ export default class Request {
   cms;
   /** @type {NodeJS.Dict<string|string[]>} */
   request;
-
+  /** @type {NodeJS.Dict<string|string[]>} */
+  query;
+  /** @type {NodeJS.Dict<string|string[]>} */
+  Form;
   /**
    * @returns {string}
    */

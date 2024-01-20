@@ -14,8 +14,8 @@ export default class RequestContext extends ContextBase {
   /**
    * @param {ServiceSettings} settings
    */
-  constructor(settings) {
-    super(null);
+  constructor(settings,domainId) {
+    super(null,domainId);
     this._settings = settings;
   }
 
@@ -35,6 +35,7 @@ export default class RequestContext extends ContextBase {
    */
   async loadDataAsync(sourceName, connectionName, parameters) {
     try {
+      parameters.dmnid = this.domainId
       /** @type {ConnectionInfo} */
       const connection = this._settings.getConnection(connectionName);
       /** @type {DataSourceCollection} */

@@ -51,9 +51,10 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
       fileContents,
       socket
     );
+    cms.request["host"] = requestHeaders[":authority"];
     cms.request[
       "full-url"
-    ] = `${requestHeaders[":authority"]}${requestHeaders[":path"]}`;
+    ] = `${cms.request["host"]}${requestHeaders[":path"]}`;
     return cms;
   }
 

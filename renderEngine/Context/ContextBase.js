@@ -5,12 +5,12 @@ import SourceRepository from "./SourceRepository.js";
 export default class ContextBase extends IContext {
   /** @type {SourceRepository} */
   repository;
-
   /**
-   * @param {SourceRepository?} repository
+   * @param {SourceRepository?} repository,
+   * @param {string} domainId
    */
-  constructor(repository) {
-    super();
+  constructor(repository,domainId) {
+    super(domainId);
     this.repository = new SourceRepository(repository);
   }
 

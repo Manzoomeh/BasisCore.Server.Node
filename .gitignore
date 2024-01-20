@@ -4,3 +4,5 @@ StreamerEngine.report.json
 bug.js
 __tests__
 *.test.db
+il.json
+objCompare

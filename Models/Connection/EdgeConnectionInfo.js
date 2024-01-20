@@ -32,7 +32,14 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    return super.loadDataAsync(parameters, cancellationToken);
+    const response = await fetch("http://" +this.settings.endpoint, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(parameters),
+    });
+    return response.json();
   }
 
   /**
