@@ -49,24 +49,12 @@ class HttpHostEndPoint extends HostEndPoint {
     const urlObject = url.parse(rawUrl, true);
     headers["request-id"] = (++requestId).toString();
     headers["methode"] = method.toLowerCase();
-    headers["rawurl"] = rawUrl;
-    headers["url"] = urlObject.pathname ?? "";
-    headers["full-url"] = `${headers["host"]}${urlStr}`;
+    headers["rawurl"] = decodeURIComponent(rawUrl);
+    headers["url"] = decodeURIComponent(urlObject.pathname ?? "");
+    headers["full-url"] = decodeURIComponent(`${headers["host"]}${urlStr}`);
     headers["hostip"] = socket.localAddress;
     headers["hostport"] = socket.localPort.toString();
     headers["clientip"] = socket.remoteAddress;
-    if (urlObject.query) {
-      const query = {};
-      let hasQuery = false;
-      for (const key in urlObject.query) {
-        query[key] = urlObject.query[key];
-        hasQuery = true;
-      }
-      if (hasQuery) {
-        headers["query"] = query;
-      }
-    }
-    headers["Form"] = formFields;
     if (Object.keys(jsonHeaders).length > 0) {
       headers["json"] = ObjectUtil.convertObjectToNestedStructure(jsonHeaders);
     } else {
@@ -82,6 +70,18 @@ class HttpHostEndPoint extends HostEndPoint {
       time2: now.format("HHmmss"),
       date3: now.format("YYYY.MM.DD"),
     };
+    if (urlObject.query) {
+      const query = {};
+      let hasQuery = false;
+      for (const key in urlObject.query) {
+        query[key] = urlObject.query[key];
+        hasQuery = true;
+      }
+      if (hasQuery) {
+        request["query"] = query;
+      }
+    }
+    request["Form"] = formFields;
     return request;
   }
 }
