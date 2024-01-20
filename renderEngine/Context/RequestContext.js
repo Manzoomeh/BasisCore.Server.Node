@@ -37,7 +37,7 @@ export default class RequestContext extends ContextBase {
    */
   async loadDataAsync(sourceName, connectionName, parameters) {
     try {
-      parameters.dmnid = this.domainId
+      parameters.dmnid = this._domainId
       /** @type {ConnectionInfo} */
       const connection = this._settings.getConnection(connectionName);
       /** @type {DataSourceCollection} */
@@ -71,7 +71,7 @@ export default class RequestContext extends ContextBase {
       pageName,
       rawCommand,
       pageSize,
-      this.domainId,
+      this._domainId,
       this.cancellation
     );
     if (result.il_call == 1 || Util.isNullOrEmpty(result.page_il)) {
