@@ -9,6 +9,9 @@ export default class IContext {
   domainId;
   /**@type {CancellationToken} */
   cancellation;
+  constructor(domainId){
+    this.domainId = domainId
+  }
   /**
    * @param {string} sourceId
    * @returns {IDataSource}

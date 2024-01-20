@@ -7,7 +7,7 @@ export default class LocalContext extends ContextBase {
    * @param {ContextBase} owner
    */
   constructor(owner) {
-    super(owner.repository);
+    super(owner.repository,owner.domainId);
     this._owner = owner;
     this.cancellation = owner.cancellation;
   }
