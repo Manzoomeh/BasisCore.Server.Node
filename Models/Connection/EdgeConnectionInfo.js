@@ -39,7 +39,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
       },
       body: JSON.stringify(parameters),
     });
-    return new DataSourceCollection(response.json());
+        return response.json();
   }
 
   /**
