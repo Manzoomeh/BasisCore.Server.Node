@@ -90,7 +90,7 @@ export default class CommandBase {
    * @returns {Promise<RunTypes>}
    */
   async _getRunTypeValueAsync(context) {
-    return (await this.runType.value) ?? RunTypes.AtServer;
+    return (await this.runType.getValueAsync(context)) ?? RunTypes.AtServer;
   }
 
   /**
