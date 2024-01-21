@@ -6,6 +6,7 @@ import Request from "../request.js";
 import IEdgeSettingData from "./IEdgeSettingData.js";
 import EdgeMessage from "../../edge/edgeMessage.js";
 import WebServerException from "../Exceptions/WebServerException.js";
+import FormData from "form-data";
 
 export default class EdgeConnectionInfo extends ConnectionInfo {
   /** @type {IEdgeSettingData} */
@@ -34,14 +35,15 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    */
   async loadDataAsync(parameters, cancellationToken) {
     try {
+      const form = new FormData();
+      form.append("dmnid", parameters.dmnid),
+        form.append("command", parameters.command);
       const response = await fetch("http://" + this.settings.endpoint, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(parameters),
+        body: form,
+        headers: form.getHeaders(),
       });
-      return this.convertJSONToDataSet(response.json());
+      return this.convertJSONToDataSet(await response.json());
     } catch (error) {
       throw new WebServerException(
         "Invalid api url or The result of the api is not a valid JSON ! + " +
