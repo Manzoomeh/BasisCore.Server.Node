@@ -40,6 +40,9 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
       const response = await fetch("http://" + this.settings.endpoint, {
         method: "POST",
         body: form,
+        headers: {
+          "Content-Type": "multipart/form-data; charset=utf-8",
+        },
       });
       return this.convertJSONToDataSet(await response.json());
     } catch (error) {
