@@ -6,7 +6,6 @@ import Request from "../request.js";
 import IEdgeSettingData from "./IEdgeSettingData.js";
 import EdgeMessage from "../../edge/edgeMessage.js";
 import WebServerException from "../Exceptions/WebServerException.js";
-import FormData from "form-data";
 
 export default class EdgeConnectionInfo extends ConnectionInfo {
   /** @type {IEdgeSettingData} */
@@ -36,12 +35,11 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
   async loadDataAsync(parameters, cancellationToken) {
     try {
       const form = new FormData();
-      form.append("dmnid", parameters.dmnid),
-        form.append("command", parameters.command);
+      form.set("dmnid", parameters.dmnid),
+      form.set("command", parameters.command);
       const response = await fetch("http://" + this.settings.endpoint, {
         method: "POST",
         body: form,
-        headers: form.getHeaders(),
       });
       return this.convertJSONToDataSet(await response.json());
     } catch (error) {
