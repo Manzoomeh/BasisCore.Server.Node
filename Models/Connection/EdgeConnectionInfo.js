@@ -41,7 +41,8 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
         method: "POST",
         body: form,
         headers: {
-          "Content-Type": "multipart/form-data; charset=utf-8",
+          "Content-Type": "multipart/form-data",
+          "charset" : "utf-8"
         },
       });
       return this.convertJSONToDataSet(await response.json());
@@ -149,8 +150,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    * @param {string} jsonString
    * @returns {DataSourceCollection}
    */
-  convertJSONToDataSet(jsonString) {
-    let content = JSON.parse(jsonString);
+  convertJSONToDataSet(content) {
     if (content?.sources && Array.isArray(content?.sources)) {
       let retVal = [];
       content.sources.forEach((source) => {
