@@ -95,3 +95,24 @@ public override async Task<DataSet> LoadDataAsync(CancellationToken cancellation
     var result = await SendMessageAsync(byteMessage, cancellationToken).ConfigureAwait(false);
     return result.FromSocketResultToDataSet();
 }
+public override async Task<DataSet> LoadDataAsync(CancellationToken cancellationToken, IDictionary<string, object> parameters)
+{
+    var args = new Dictionary<string, object>(3);
+    if (parameters.TryGetValue("command", out var command))
+    {
+        args["command"] = command;
+    }
+    if (parameters.TryGetValue("dmnid", out var dmnid))
+    {
+        args["dmnid"] = dmnid;
+    }
+    if (parameters.TryGetValue("params", out var paramsTable) && paramsTable is DataTable tmpTbl && tmpTbl.Rows.Count > 0)
+    {
+        var newParamsList = tmpTbl.AsEnumerable().ToDictionary(x => x.Field<string>("name"), x => x.Field<string>("value"));
+        args["params"] = newParamsList;
+    }
+    var arg = JsonSerializer.Serialize(args);
+    byte[] byteMessage = Encoding.UTF8.GetBytes(arg);
+    var result = await SendMessageAsync(byteMessage, cancellationToken).ConfigureAwait(false);
+    return result.FromSocketResultToDataSet();
+}

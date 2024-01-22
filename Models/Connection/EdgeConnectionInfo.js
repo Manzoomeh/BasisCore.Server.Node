@@ -6,7 +6,13 @@ import Request from "../request.js";
 import IEdgeSettingData from "./IEdgeSettingData.js";
 import EdgeMessage from "../../edge/edgeMessage.js";
 import WebServerException from "../Exceptions/WebServerException.js";
-
+import { receiveMessageOnPort } from "worker_threads";
+/**
+ * @typedef {Object} LoadDataRequest
+ * @property {string} dmnid --domainID
+ * @property {string} command --the basis core command
+ * @property {NodeJS.Dict<string>} params -- other parameters
+ */
 export default class EdgeConnectionInfo extends ConnectionInfo {
   /** @type {IEdgeSettingData} */
   settings;
@@ -34,23 +40,18 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    */
   async loadDataAsync(parameters, cancellationToken) {
     try {
-      const form = new FormData();
-      form.set("dmnid", parameters.dmnid),
-      form.set("command", parameters.command);
-      const response = await fetch("http://" + this.settings.endpoint, {
-        method: "POST",
-        body: form,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "charset" : "utf-8"
-        },
-      });
-      return this.convertJSONToDataSet(await response.json());
+      /**
+       * @type LoadDataRequest
+       */
+      const loadDataRequest = {
+        dmnid: parameters.dmnid,
+        command: parameters.command,
+        params: parameters.params ?? {},
+      };
+      const response = await this.task(loadDataRequest);
+      return this.convertJSONToDataSet(response);
     } catch (error) {
-      throw new WebServerException(
-        "Invalid api url or The result of the api is not a valid JSON ! + " +
-          error
-      );
+      throw new WebServerException(error + "  " + this.settings.endpoint);
     }
   }
 
@@ -60,31 +61,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    * @returns {Promise<IRoutingRequest>}
    */
   async getRoutingDataAsync(request, cancellationToken) {
-    const task = new Promise((resolve, reject) => {
-      const buffer = [];
-      const client = new net.Socket()
-        .on("data", (data) => buffer.push(data))
-        .on("close", function () {
-          const data = Buffer.concat(buffer);
-          try {
-            const msg = EdgeMessage.createFromBuffer(data);
-            resolve(JSON.parse(msg.payload));
-          } catch (e) {
-            reject(e);
-          }
-        })
-        .on("error", (e) => {
-          console.error(e);
-          reject(e);
-        })
-        .connect(this.#port, this.#ip, () => {
-          const msg = EdgeMessage.createAdHocMessageFromObject({
-            cms: request,
-          });
-          msg.writeTo(client);
-        });
-    });
-    const result = await task;
+    const result = await this.task(request);
     //TODO: must edit in edge side
     if (result.cms.webserver) {
       result.webserver = result.cms.webserver;
@@ -105,31 +82,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
   async processAsync(request, fileContents) {
     await this._processUploadAsync(fileContents, request);
     /** @type {Promise<Request>} */
-    const task = new Promise((resolve, reject) => {
-      const buffer = [];
-      const client = new net.Socket()
-        .on("data", (data) => buffer.push(data))
-        .on("close", function () {
-          const data = Buffer.concat(buffer);
-          try {
-            const msg = EdgeMessage.createFromBuffer(data);
-            resolve(JSON.parse(msg.payload));
-          } catch (e) {
-            reject(e);
-          }
-        })
-        .on("error", (e) => {
-          console.error(e);
-          reject(e);
-        })
-        .connect(this.#port, this.#ip, () => {
-          const msg = EdgeMessage.createAdHocMessageFromObject({
-            cms: request,
-          });
-          msg.writeTo(client);
-        });
-    });
-    const result = await task;
+    const result = await this.task(request);
     return this._createResponse(result);
   }
   /**@returns {Promise<boolean>} */
@@ -150,7 +103,8 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    * @param {string} jsonString
    * @returns {DataSourceCollection}
    */
-  convertJSONToDataSet(content) {
+  convertJSONToDataSet(jsonString) {
+    const content = JSON.parse(jsonString);
     if (content?.sources && Array.isArray(content?.sources)) {
       let retVal = [];
       content.sources.forEach((source) => {
@@ -162,5 +116,41 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
         "Error from Edge Connection ;the sources are not available."
       );
     }
+  }
+  /**
+   *
+   * @param {Request|LoadDataRequest} request
+   * @returns {Promise<NodeJS.Dict<string>>}
+   */
+  task(request) {
+    return new Promise((resolve, reject) => {
+      const buffer = [];
+      const client = new net.Socket()
+        .on("data", (data) => buffer.push(data))
+        .on("close", function () {
+          const data = Buffer.concat(buffer);
+          try {
+            const msg = EdgeMessage.createFromBuffer(data);
+            resolve(JSON.parse(msg.payload));
+          } catch (e) {
+            reject(e);
+          }
+        })
+        .on("error", (e) => {
+          console.error(e);
+          reject(e);
+        })
+        .connect(this.#port, this.#ip, () => {
+          let msg;
+          if (request?.command) {
+            msg = EdgeMessage.createAdHocMessageFromObject(request);
+          } else {
+            msg = EdgeMessage.createAdHocMessageFromObject({
+              cms: request,
+            });
+          }
+          msg.writeTo(client);
+        });
+    });
   }
 }
