@@ -103,8 +103,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    * @param {string} jsonString
    * @returns {DataSourceCollection}
    */
-  convertJSONToDataSet(jsonString) {
-    const content = JSON.parse(jsonString);
+  convertJSONToDataSet(content) {
     if (content?.sources && Array.isArray(content?.sources)) {
       let retVal = [];
       content.sources.forEach((source) => {
