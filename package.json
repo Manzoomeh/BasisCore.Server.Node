@@ -28,6 +28,7 @@
     "print": "node test/command/print/index.js",
     "printWithDb": "node test/command/print/withDbSource.js",
     "source": "node test/command/dbsource/index.js",
+    "source-ex": "node test/command/dbsource/exprision-binding.js",
     "inlinesource": "node test/command/inlinesource/simple.js",
     "view": "node test/command/view/simple.js",
     "tree": "node test/command/tree/simple.js",
