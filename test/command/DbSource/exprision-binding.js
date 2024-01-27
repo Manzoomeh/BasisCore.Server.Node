@@ -20,8 +20,17 @@ const il = {
           Member: "query",
           Column: "id",
         },
+      ],
+    },
+    comment2: {
+      Params: [
         {
-          Value: "666",
+          Source: "cms",
+          Member: "query",
+          Column: "id",
+        },
+        {
+          Value: "value",
         },
       ],
     },
@@ -96,16 +105,6 @@ var hostOptions = {
       requestTimeout: 2000,
       testTimeOut: 1000,
     },
-    "Connections.sql.CallCommand": {
-      connectionString:
-        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
-      procedure: "[dbo].[DBSourceProcedure]",
-    },
-    "Connections.sql.ILUpdate": {
-      connectionString:
-        "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
-      procedure: "[dbo].[DBSourceProcedure]",
-    },
     "Connections.sql.source1": {
       connectionString:
         "Server=.;Database=temp;User Id=sa;Password=1234;trustServerCertificate=true",
@@ -116,22 +115,7 @@ var hostOptions = {
 var setting = new ServiceSettings(hostOptions);
 const context = new RequestContext(setting);
 context.cancellation = new CancellationToken();
+//context.addSource(new JsonSource([{ id: 1 }], "cms.query"));
 context.addSource(new JsonSource([{ comment2: "ali" }], "db.tbl2"));
-// const command = `<basis core="dbsource" source="basiscore" name="basisName" >
-// <member type="list" name="memberName" request="test_request"/>
-// <member type="view" name="memberName" request="test_request"/>
-// </basis>`;
-// const params = {
-//   command: command,
-//   dmnid: 123,
-// };
-// var data = await context.loadDataAsync("qam", "routingdata", params);
-// console.dir(data);
-//context.addSource(new JsonSource([{ comment: "ali" }], "db.tbl1"));
-
 const source = new DbSource(il);
-//console.log((await source.createHtmlElementAsync(context)).getHtml());
 console.log(await source.executeAsync(context));
-//console.log(print);
-//const result = await source.executeAsync(context);
-//console.log(result);

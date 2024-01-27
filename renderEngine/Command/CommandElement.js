@@ -1,5 +1,6 @@
 import IContext from "../Context/IContext.js";
 import IToken from "../Token/IToken.js";
+import ValueToken from "../Token/ValueToken.js";
 import ElementBase from "./ElementBase.js";
 import RawHtmlElement from "./RawHtmlElement.js";
 
@@ -62,8 +63,8 @@ export default class CommandElement extends ElementBase {
   async addAttributeIfExistAsync(name, value, context) {
     const k =
       value instanceof IToken ? await value.getValueAsync(context) : value;
-    if (k !== null) {
-      this.attributes[name] = k;
+    if (value != null && value != ValueToken.Null) {
+      this.attributes[name] = k ?? "";
     }
     return this;
   }
