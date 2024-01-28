@@ -24,7 +24,7 @@ export default class Index1Response extends RequestBaseResponse {
       const command = CommandUtil.createCommand(commandIl);
       const context = new RequestContext(
         this._settings,
-        Number(this._request.cms?.dmnid)
+        this._request
       );
       context.cancellation = new CancellationToken();
       const result = await command.executeAsync(context);
