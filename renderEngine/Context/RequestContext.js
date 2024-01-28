@@ -20,11 +20,9 @@ export default class RequestContext extends ContextBase {
     super(null, Number(request.cms?.dmnid));
     this._settings = settings;
     for (let mainKey in request) {
+    
       const mainValue = request[mainKey];
-      for (let secondKey in mainValue) {
-        let value = mainValue[secondKey];
-        this.addSource(new JsonSource([value], `${mainKey}.${secondKey}`));
-      }
+        this.addSource(new JsonSource([mainValue], `cms.${mainKey}`));
     }
   }
 
