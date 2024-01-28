@@ -48,7 +48,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
         command: parameters.command,
         params: parameters.params ?? {},
       };
-      const response = await this.send(loadDataRequest);
+      const response = await this.sendAsync(loadDataRequest);
       return this.convertJSONToDataSet(response);
     } catch (error) {
       throw new WebServerException(error + "  " + this.settings.endpoint);
@@ -61,7 +61,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    * @returns {Promise<IRoutingRequest>}
    */
   async getRoutingDataAsync(request, cancellationToken) {
-    const result = await this.send(request);
+    const result = await this.sendAsync(request);
     //TODO: must edit in edge side
     if (result.cms.webserver) {
       result.webserver = result.cms.webserver;
@@ -82,7 +82,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
   async processAsync(request, fileContents) {
     await this._processUploadAsync(fileContents, request);
     /** @type {Promise<Request>} */
-    const result = await this.send(request);
+    const result = await this.sendAsync(request);
     return this._createResponse(result);
   }
   /**@returns {Promise<boolean>} */
@@ -121,7 +121,7 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
    * @param {Request|LoadDataRequest} request
    * @returns {Promise<NodeJS.Dict<string>>}
    */
-  send(request) {
+  sendAsync(request) {
     return new Promise((resolve, reject) => {
       const buffer = [];
       const client = new net.Socket()
