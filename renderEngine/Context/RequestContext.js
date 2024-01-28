@@ -22,7 +22,7 @@ export default class RequestContext extends ContextBase {
     for (let mainKey in request) {
       const mainValue = request[mainKey];
       for (let secondKey in mainValue) {
-        value = mainValue[secondKey];
+        let value = mainValue[secondKey];
         this.addSource(new JsonSource([value], `${mainKey}.${secondKey}`));
       }
     }
