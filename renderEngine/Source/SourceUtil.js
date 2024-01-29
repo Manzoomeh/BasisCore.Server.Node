@@ -29,9 +29,14 @@ export default class SourceUtil {
    */
   static addRowNumber(source) {
     let index = 1;
-    source.data.forEach((row) => {
-      row["RowNumber"] = index++;
-    });
+    if (Array.isArray(source.data)) {
+      source.data.forEach((row) => {
+        row["RowNumber"] = index++;
+      });
+    } else {
+      source.data["RowNumber"] = index;
+      source.data = [source.data];
+    }
   }
 
   /**
