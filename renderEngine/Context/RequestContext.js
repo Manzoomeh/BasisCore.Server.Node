@@ -7,16 +7,22 @@ import Util from "../../Util.js";
 import CommandBase from "../Command/CommandBase.js";
 import CommandUtil from "../../test/command/CommandUtil.js";
 import LocalContext from "./LocalContext.js";
-
+import IRoutingRequest from "../../models/IRoutingRequest.js";
+import JsonSource from "../Source/JsonSource.js";
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
   _settings;
   /**
    * @param {ServiceSettings} settings
+   * @param {IRoutingRequest} request
    */
-  constructor(settings,domainId) {
-    super(null,domainId);
+  constructor(settings, request) {
+    super(null, Number(request.cms?.dmnid));
     this._settings = settings;
+    for (let mainKey in request) {
+      const mainValue = request[mainKey];
+      this.addSource(new JsonSource([mainValue], `cms.${mainKey}`));
+    }
   }
 
   /**
@@ -35,7 +41,7 @@ export default class RequestContext extends ContextBase {
    */
   async loadDataAsync(sourceName, connectionName, parameters) {
     try {
-      parameters.dmnid = this.domainId
+      parameters.dmnid = this.domainId;
       /** @type {ConnectionInfo} */
       const connection = this._settings.getConnection(connectionName);
       /** @type {DataSourceCollection} */

@@ -4,300 +4,237 @@
   "name": "ROOT_GROUP",
   "Commands": [
     {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "<h1>-----------------------------call command - just render a simple text------------------------------------<h1>"
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "py_basiscore",
+      "name": "db",
+      "extra-attribute": {
+        "lid": "1",
+        "mid": "1",
+        "usedforid": {
+          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+        }
+      },
+      "Members": [
+        { "extra-attribute": { "type": "view" }, "name": "article_view" }
+      ]
     },
     {
-      "$type": "call",
-      "core": "call",
-      "FileName": "render.inc"
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "py_basiscore",
+      "name": "db",
+      "extra-attribute": {
+        "lid": "1",
+        "mid": "1",
+        "usedforid": {
+          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+        }
+      },
+      "Members": [
+        { "extra-attribute": { "type": "list" }, "name": "article_date" }
+      ]
     },
     {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "<h1>-----------------------------call command - source and render------------------------------------<h1>"
-    },
-    {
-      "$type": "call",
-      "core": "call",
-      "FileName": "sourceAndRender.inc"
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "<h1>-----------------------------call command - call a group with call------------------------------------<h1>"
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "<h1>-----------------------------a group with inlinesource and render with print------------------------------------<h1>"
-    },
-    {
-      "$type": "group",
-      "core": "group",
-      "name": "inlineSourceAndPrint",
-      "Commands": [
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "basiscore",
+      "name": "db",
+      "extra-attribute": {
+        "lid": "1",
+        "mid": "1",
+        "usedforid": {
+          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+        }
+      },
+      "Members": [
         {
-          "$type": "inlinesource",
-          "core": "inlinesource",
-          "name": "view",
-          "Members": [
-            {
-              "name": "item",
-              "preview": "true",
-              "content": "<row valueID=\"12688722\" mid=\"20\" groupid=\"249\" prpid=\"8070\" usedforid=\"1255248\" typeid=\"150\" multi=\"0\" ord=\"699\" vocabulary=\"نام_تور_برنامه_ریزی_شده\" question=\"نام تور برنامه ریزی شده\" answer=\"تور استانبول\" /> \n        <row valueID=\"12688725\" mid=\"20\" groupid=\"249\" prpid=\"8074\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"779\" vocabulary=\"روزهای_رفت\" question=\"روزهای رفت\" answer=\"دوشنبه\" />\n        <row valueID=\"12688726\" mid=\"20\" groupid=\"249\" prpid=\"8074\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"779\" vocabulary=\"روزهای_رفت\" question=\"\" answer=\"سه شنبه\" />\n        <row valueID=\"12688727\" mid=\"20\" groupid=\"249\" prpid=\"8074\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"779\" vocabulary=\"روزهای_رفت\" question=\"\" answer=\"چهارشنبه\" />\n        <row valueID=\"12688728\" mid=\"20\" groupid=\"249\" prpid=\"8074\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"779\" vocabulary=\"روزهای_رفت\" question=\"\" answer=\"پنجشنبه\" />\n        <row valueID=\"12688729\" mid=\"20\" groupid=\"249\" prpid=\"8074\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"779\" vocabulary=\"روزهای_رفت\" question=\"\" answer=\"جمعه\" />\n        <row valueID=\"12688730\" mid=\"20\" groupid=\"249\" prpid=\"8074\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"779\" vocabulary=\"روزهای_رفت\" question=\"\" answer=\"شنبه\" />\n        <row valueID=\"12688731\" mid=\"20\" groupid=\"249\" prpid=\"8074\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"779\" vocabulary=\"روزهای_رفت\" question=\"\" answer=\"یکشنبه\" />\n        <row valueID=\"12688732\" mid=\"20\" groupid=\"249\" prpid=\"8075\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"799\" vocabulary=\"روزهای_برگشت\" question=\"روزهای برگشت\" answer=\"دوشنبه\" /> \n        <row valueID=\"12688733\" mid=\"20\" groupid=\"249\" prpid=\"8075\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"799\" vocabulary=\"روزهای_برگشت\" question=\"\" answer=\"سه شنبه\" />\n        <row valueID=\"12688734\" mid=\"20\" groupid=\"249\" prpid=\"8075\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"799\" vocabulary=\"روزهای_برگشت\" question=\"\" answer=\"چهارشنبه\" /> \n        <row valueID=\"12688735\" mid=\"20\" groupid=\"249\" prpid=\"8075\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"799\" vocabulary=\"روزهای_برگشت\" question=\"\" answer=\"پنجشنبه\" /> \n        <row valueID=\"12688736\" mid=\"20\" groupid=\"249\" prpid=\"8075\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"799\" vocabulary=\"روزهای_برگشت\" question=\"\" answer=\"جمعه\" /> \n        <row valueID=\"12688737\" mid=\"20\" groupid=\"249\" prpid=\"8075\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"799\" vocabulary=\"روزهای_برگشت\" question=\"\" answer=\"شنبه\" />\n        <row valueID=\"12688738\" mid=\"20\" groupid=\"249\" prpid=\"8075\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"799\" vocabulary=\"روزهای_برگشت\" question=\"\" answer=\"یکشنبه\" /> \n        <row valueID=\"12688723\" mid=\"20\" groupid=\"249\" prpid=\"8076\" usedforid=\"1255248\" typeid=\"128\" multi=\"0\" ord=\"739\" vocabulary=\"مدت_اقامت\" question=\"مدت اقامت\" answer=\"6 شب و 7 روز\" />\n        <row valueID=\"12688724\" mid=\"20\" groupid=\"249\" prpid=\"8077\" usedforid=\"1255248\" typeid=\"128\" multi=\"0\" ord=\"759\" vocabulary=\"تاریخ_اعتبار\" question=\"تاریخ اعتبار\" answer=\"15MAR-28MAR\" />\n        <row valueID=\"12688739\" mid=\"20\" groupid=\"249\" prpid=\"8080\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"825\" vocabulary=\"خدمات\" question=\"خدمات\" answer=\"صبحانه\" /> \n        <row valueID=\"12688740\" mid=\"20\" groupid=\"249\" prpid=\"8080\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"825\" vocabulary=\"خدمات\" question=\"\" answer=\"ترانسفر فرودگاهی\" />\n        <row valueID=\"12688741\" mid=\"20\" groupid=\"249\" prpid=\"8080\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"825\" vocabulary=\"خدمات\" question=\"\" answer=\"گشت شهری با نهار\" /> \n        <row valueID=\"12688745\" mid=\"20\" groupid=\"249\" prpid=\"8082\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"945\" vocabulary=\"محل_اقامت\" question=\"محل اقامت\" answer=\"هتل\" />\n        <row valueID=\"12688746\" mid=\"20\" groupid=\"249\" prpid=\"8083\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"965\" vocabulary=\"حمل_و_نقل\" question=\"حمل و نقل\" answer=\"هواپیما\" /> \n        <row valueID=\"12688742\" mid=\"20\" groupid=\"249\" prpid=\"8087\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"839\" vocabulary=\"نوع_پرواز\" question=\"نوع پرواز\" answer=\"چارتر\" /> \n        <row valueID=\"12688743\" mid=\"20\" groupid=\"249\" prpid=\"8088\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"859\" vocabulary=\"کلاس_پرواز\" question=\"کلاس پرواز\" answer=\"کلاس اقتصادی\" />\n        <row valueID=\"12688744\" mid=\"20\" groupid=\"249\" prpid=\"8089\" usedforid=\"1255248\" typeid=\"140\" multi=\"0\" ord=\"879\" vocabulary=\"نوع_بلیط\" question=\"نوع بلیط\" answer=\"بلیط رفت و برگشت\" />\n        <row valueID=\"12688750\" mid=\"20\" groupid=\"249\" prpid=\"8097\" usedforid=\"1255248\" typeid=\"144\" multi=\"1\" ord=\"1179\" vocabulary=\"توضیحات_تور\" question=\"توضیحات تور\" answer=\"نرخ نوزاد 200.000 تومان می باشد.\" />\n        <row valueID=\"12748850\" mid=\"20\" groupid=\"249\" prpid=\"8181\" usedforid=\"1255248\" typeid=\"251\" multi=\"1\" ord=\"1199\" vocabulary=\"شروع_قیمت_ها_از_\" question=\"شروع قیمت ها از\" answer=\"1845000تومان\" /> "
-            },
-            {
-              "name": "menu",
-              "preview": "true",
-              "content": "<row name=\"Home\" id=\"01\" parentid=\"00\" />\n      <row name=\"Irantour\" id=\"02\" parentid=\"00\" />\n      <row name=\"HotelReservation\" id=\"03\" parentid=\"00\" />\n      <row name=\"Gallery\" id=\"04\" parentid=\"00\" />\n      <row name=\"AboutUs\" id =\"05\" parentid=\"00\" />\n      <row name=\"culturalTours\" id=\"06\" parentid=\"02\" />\n      <row name =\"ClimbingTour\" id =\"07\" parentid=\"02\" />\n      <row name=\"PilgrimageTour\" id=\"08\" parentid=\"02\" />\n      <row name=\"Esfahan\" id=\"09\" parentid=\"06\" />\n      <row name=\"Shiraz\" id=\"10\" parentid=\"06\" />\n      <row name=\"Kashan\" id=\"11\" parentid=\"09\" />\n      <row name=\"NajafAbad\" id=\"12\" parentid=\"09\" />\n      <row name=\"ShahinShar\" id=\"13\" parentid=\"09\" />\n      <row name=\"Marvdasht\" id=\"14\" parentid=\"10\" />\n      <row name=\"Kazeroon\" id=\"15\" parentid=\"10\" />\n      <row name=\"Tehran\" id=\"16\" parentid=\"07\" />\n      <row name=\"Lavasanat\" id=\"17\" parentid=\"16\" />\n      <row name=\"Damavand\" id=\"18\" parentid=\"16\" />\n      <row name=\"GholleDamavand\" id=\"19\" parentid=\"18\" />\n      <row name=\"Khorasan\" id=\"20\" parentid=\"08\" />\n      <row name=\"Ghom\" id=\"21\" parentid=\"08\" />\n      <row name=\"KhorasanRasavi\" id=\"22\" parentid=\"20\" />\n      <row name=\"KhorasanShomali\" id=\"23\" parentid=\"20\" />\n      <row name=\"KhorasanJonoobi\" id=\"24\" parentid=\"20\" />\n      <row name=\"Mashahad\" id=\"25\" parentid=\"22\" />\n      <row name=\"Neyshbur\" id=\"26\" parentid=\"22\" />\n      <row name=\"Hotels\" id=\"27\" parentid=\"03\" />\n      <row name=\"ReservationForm\" id=\"28\" parentid=\"3\" />\n      <row name=\"Iran\" id=\"29\" parentid=\"04\" />\n      <row name=\"OurTours\" id=\"30\" parentid=\"04\" />\n      <row name=\"VideoClips\" id=\"31\" parentid=\"04\" />\n      <row name=\"ContactUs\" id=\"32\" parentid=\"05\" />"
-            }
-          ]
-        },
+          "extra-attribute": { "request": "navigationcat", "type": "tree" },
+          "name": "navigationcat",
+          "postsql": "select * from [db.navigationcat] where parentid = parentcatid"
+        }
+      ]
+    },
+    {
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "py_basiscore",
+      "name": "db",
+      "extra-attribute": {
+        "mid": "1",
+        "lid": "1",
+        "usedforid": {
+          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+        }
+      },
+      "Members": [
         {
-          "$type": "Print",
-          "data-member-name": "view.menu",
-          "layout-content": "<table width=\"500\" border=\"1\" id=\"@id\"><tbody><tr> @child</tr></tbody></table>",
-          "else-layout-content": "محصولی موجود نیست",
-          "divider-content": "</tr><tr> ",
-          "divider-rowcount": 2,
-          "incomplete-content": "<td style=\"color: red\">red</td>",
-          "faces": [
-            {
-              "name": "face1",
-              "replace": true,
-              "function": true,
-              "content": "<td style=\"color: green\" id=\"usedforid\"><p> @name <br></td>"
-            }
-          ],
-          "replaces": [
-            {
-              "tagname": "i",
-              "content": "<span style=\"color: red\">@val1</span>"
-            }
-          ]
-        },
+          "name": "data2",
+          "extra-attribute": { "type": "view", "request": "rdfa" }
+        }
+      ]
+    },
+    {
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "hosting",
+      "name": "tag",
+      "extra-attribute": {
+        "urlid": {
+          "Params": [{ "Source": "cms", "Member": "seo", "Column": "urlid" }]
+        }
+      },
+      "Members": [
         {
-          "$type": "rawtext",
-          "core": "rawtext",
-          "content": "<h1>-----------------------------ilinesource print devider------------------------------------<h1>"
-        },
-        {
-          "$type": "Print",
-          "core": "print",
-          "data-member-name": "view.item",
-          "layout-content": "<table width=\"500\" border=\"1\" id=\"@id\"><tbody><tr> @child</tr></tbody></table>",
-          "else-layout-content": "محصولی موجود نیست",
-          "divider-content": "</tr><tr> ",
-          "divider-rowcount": 2,
-          "incomplete-content": "<td style=\"color: red\">red</td>",
-          "faces": [
-            {
-              "name": "face1",
-              "replace": true,
-              "function": true,
-              "content": "<td style=\"color: green\" id=\"usedforid\"><p> @valueID @mid @groupid @prpid @usedforid @typeid @multi @ord<br></td>"
-            }
-          ],
-          "replaces": [
-            {
-              "tagname": "i",
-              "content": "<span style=\"color: red\">@val1</span>"
-            }
-          ]
+          "extra-attribute": { "type": "list", "request": "taglist" },
+          "name": "list",
+          "postsql": "select * from [tag.list] where key = 'canonical'"
         }
       ]
     },
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "<h1>-----------------------------this is a test for block-base feature; so until next end it must be empty------------------------------------<h1>"
+      "content": [
+        "\r\n<!DOCTYPE html >\r\n<html lang=\"fa\">\r\n <head> \r\n <meta charset=\"utf-8\">\r\n <title>",
+        {
+          "Params": [{ "Source": "cms", "Member": "seo", "Column": "title" }]
+        },
+        "</title>\r\n <meta name=\"description\" content=\"",
+        {
+          "Params": [
+            { "Source": "cms", "Member": "seo", "Column": "description" }
+          ]
+        },
+        "\"/>\r\n \r\n "
+      ]
     },
+    { "$type": "call", "core": "call", "FileName": "style_desktop.html" },
     {
-      "$type": "Print",
+      "$type": "print",
       "core": "print",
-      "data-member-name": "view.menu",
-      "layout-content": "<table width=\"500\" border=\"1\" id=\"@id\"><tbody><tr> @child</tr></tbody></table>",
-      "else-layout-content": "محصولی موجود نیست",
-      "divider-content": "</tr><tr> ",
-      "divider-rowcount": 2,
-      "incomplete-content": "<td style=\"color:red\">red</td>",
+      "data-member-name": "tag.list",
       "faces": [
         {
-          "name": "face1",
-          "replace": true,
-          "function": true,
-          "content": "<td style=\"color: green\" id=\"usedforid\"><p> @name <br></td>"
+          "content": [
+            "\r\n\t\t\t<link rel=\"canonical\" href=\"https://",
+            {
+              "Params": [
+                { "Source": "cms", "Member": "request", "Column": "host" }
+              ]
+            },
+            "/@value\" />\r\n\t\t"
+          ]
         }
       ],
-      "replaces": [
+      "else-layout-content": [
+        "\r\n\t\t\t<link rel=\"canonical\" href=\"https://",
         {
-          "tagname": "i",
-          "content": "<span style=\"color: red\">@val1</span>"
+          "Params": [{ "Source": "cms", "Member": "request", "Column": "host" }]
+        },
+        "/",
+        {
+          "Params": [{ "Source": "cms", "Member": "request", "Column": "url" }]
+        },
+        "\" />\r\n\t\t"
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "\r\n </head>\r\n <body>\r\n "
+    },
+    { "$type": "call", "core": "call", "FileName": "header_desktop.html" },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "\r\n <div class=\"article_list_resize\">\r\n <div class=\"article_list\">\r\n <div class=\"article_header\">\r\n <div class=\"breadcrumb\">\r\n <ul>\r\n <li>\r\n <a href=\"/طرز-تهیه\">وبلاگ</a>\r\n </li>\r\n <li>\r\n /\r\n </li>\r\n "
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db.navigationcat",
+      "faces": [
+        {
+          "filter": "parentcatid not in ('52544') ",
+          "content": "\r\n <li>\r\n <a href=\"/@link\">@title</a>\r\n </li>\r\n <li>\r\n /\r\n </li>\r\n "
+        }
+      ]
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db.article_view",
+      "faces": [
+        {
+          "filter": "typeid = 150",
+          "content": "\r\n <li>\r\n <span>\r\n @answer\r\n </span>\r\n </li>\r\n "
         }
       ]
     },
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "<h1>-----------------------------end--------------------------------<h1>"
+      "content": [
+        "\r\n \r\n </ul>\r\n </div>\r\n <!-- <div class=\"article_cats\">\r\n <ul>\r\n <li>\r\n <a href=\"\">غذای ملل</a>\r\n </li>\r\n <li>\r\n <a href=\"\">غذای ملل</a>\r\n </li>\r\n <li>\r\n <a href=\"\">غذای ملل</a>\r\n </li><li>\r\n <a href=\"\">غذای ملل</a>\r\n </li>\r\n </ul>\r\n </div> -->\r\n </div>\r\n <div class=\"clr\"></div>\r\n <div class=\"content_resize\" itemscope=\"",
+        {
+          "Params": [
+            { "Source": "db", "Member": "data2", "Column": "vocabulary" }
+          ]
+        },
+        "\" itemtype=\"",
+        {
+          "Params": [{ "Source": "db", "Member": "data2", "Column": "link" }]
+        },
+        "\">\r\n <div class=\"content\" >\r\n <div class=\"article_title\">\r\n "
+      ]
     },
     {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "<h1>-----------------------------a group with  mysql dbsource and print--------------------------------<h1>"
-    },
-    {
-      "$type": "group",
-      "core": "group",
-      "name": "dbsourceMySqlAndPrint",
-      "Commands": [
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db.article_view",
+      "faces": [
         {
-          "$type": "dbsource",
-          "core": "dbsource",
-          "name": "test",
-          "source": "findProducts",
-          "extra-attribute": {
-            "parentid": "0"
-          },
-          "Members": [
-            {
-              "name": "test",
-              "extra-attribute": {
-                "type": "list",
-                "run": "atClient"
-              }
-            }
-          ]
-        },
-        {
-          "$type": "Print",
-          "core": "print",
-          "data-member-name": "test.test",
-          "layout-content": "<table width=\"500\" border=\"1\"><tbody><tr> @child</tr></tbody></table>",
-          "else-layout-content": "محصولی موجود نیست",
-          "divider-content": "</tr><tr> ",
-          "divider-rowcount": 2,
-          "incomplete-content": "<td style=\"color: red\">red</td>",
-          "faces": [
-            {
-              "name": "face1",
-              "replace": true,
-              "function": true,
-              "content": "<td style=\"color: green\" id=\"usedforid\"><p>{productName:@ProductName,price:@Price,Category:@Category,Manufacturer:@Manufacturer}<br></td>"
-            }
-          ],
-          "replaces": [
-            {
-              "tagname": "i",
-              "content": "<span style=\"color: red\">@val1</span>"
-            }
-          ]
-        },
-        {
-          "$type": "rawtext",
-          "core": "rawtext",
-          "content": "<h1>-----------------------------until end must be empty--------------------------------<h1>"
-        },
-        {
-          "$type": "Print",
-          "core": "print",
-          "data-member-name": "view.item",
-          "layout-content": "<table width=\"500\" border=\"1\" id=\"@id\"><tbody><tr> @child</tr></tbody></table>",
-          "else-layout-content": "محصولی موجود نیست",
-          "divider-content": "</tr><tr> ",
-          "divider-rowcount": 2,
-          "incomplete-content": "<td style=\"color: red\">red</td>",
-          "faces": [
-            {
-              "name": "face1",
-              "replace": true,
-              "function": true,
-              "content": "<td style=\"color: green\" id=\"usedforid\"><p> @valueID @mid @groupid @prpid @usedforid @typeid @multi @ord<br></td>"
-            }
-          ],
-          "replaces": [
-            {
-              "tagname": "i",
-              "content": "<span style=\"color: red\">@val1</span>"
-            }
-          ]
-        },
-        {
-          "$type": "rawtext",
-          "core": "rawtext",
-          "content": "<h1>-----------------------------end--------------------------------<h1>"
+          "filter": "typeid = 150",
+          "content": "\r\n <h1 itemprop=\"@vocabulary\" >\r\n @answer\r\n </h1>\r\n "
         }
       ]
     },
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "<h1>-----------------------------group with a  mongodb dbsource and with tree call in group and same tree in root--------------------------------<h1>"
+      "content": [
+        "\r\n </div>\r\n <div class=\"article_date\">\r\n <span class=\"num\" itemprop=\"@vocabulary\" >",
+        {
+          "Params": [
+            { "Source": "db", "Member": "article_date", "Column": "date" }
+          ]
+        },
+        "</span>\r\n <i class=\"fa fa-clock-o\"></i> \r\n \r\n </div>\r\n <div class=\"clr\"></div>\r\n <article class=\"show_article\">\r\n "
+      ]
     },
     {
-      "$type": "group",
-      "core": "group",
-      "name": "mongoTree",
-      "Commands": [
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db.article_view",
+      "faces": [
         {
-          "$type": "dbsource",
-          "core": "dbsource",
-          "name": "test",
-          "source": "findObjects",
-          "extra-attribute": {
-            "parentid": "0"
-          },
-          "Members": [
-            {
-              "name": "objects",
-              "extra-attribute": {
-                "type": "list",
-                "run": "atClient"
-              }
-            }
-          ]
-        },
-        {
-          "$type": "rawtext",
-          "core": "rawtext",
-          "content": "<h1>-----------------------------group with a  mongodb dbsource and a tree --------------------------------<h1>"
-        },
-        {
-          "$type": "tree",
-          "core": "tree",
-          "data-member-name": "test.objects",
-          "null-value": "00",
-          "principal-key": "id",
-          "foreign-key": "parentid",
-          "layout-content": "<ul class=\"menu\">@child</ul>",
-          "faces": [
-            {
-              "level": "1",
-              "content": "<li><a>@name</a><ul>@child</ul></li>"
-            },
-            {
-              "level": "3",
-              "content": "<li><a>@name</a><ul>@child</ul></li>"
-            },
-            {
-              "level": "2",
-              "content": "<li><a>@name</a><ul></ul></li>"
-            }
-          ]
+          "filter": "typeid not in ('150','161','160','162','159')",
+          "content": "\r\n <article>\r\n <div class=\"article_sub_title\" itemprop=\"@vocabulary\" >\r\n @text\r\n </div>\r\n <div class=\"article_text\" itemprop=\"@vocabulary\" >\r\n @largetext\r\n </div>\r\n </article>\r\n "
         }
       ]
     },
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "<h1>-----------------------------a large rawtext for end--------------------------------<h1>"
+      "content": "\r\n \r\n \r\n </article>\r\n </div>\r\n </div>\r\n\r\n \r\n </div>\r\n </div>\r\n \r\n \r\n \r\n \r\n \r\n \r\n "
     },
+    { "$type": "call", "core": "call", "FileName": "footer_desktop.html" },
+    { "$type": "call", "core": "call", "FileName": "script_desktop.html" },
     {
       "$type": "rawtext",
       "core": "rawtext",
-      "content": "<header>\n        <h1>خودروها</h1>\n        <p>به صفحه‌ای مخصوص خودروها خوش آمدید.</p>\n    </header>\n\n    <section>\n        <h2>معرفی خودروها</h2>\n        <p>\n            اینجا معلومات مختصری در مورد مختلف خودروها قابل مشاهده است. از خودروهای شهری گرفته تا خودروهای ورزشی و لوکس.\n        </p>\n\n        <article>\n            <h3>خودرو شهری</h3>\n            <p>\n                خودروهای شهری مناسب برای مسافرت درون شهری هستند. این خودروها معمولاً مصرف سوخت کمی دارند و راحتی در رانندگی در شرایط ترافیکی را فراهم می‌کنند.\n            </p>\n        </article>\n\n        <article>\n            <h3>خودروهای ورزشی</h3>\n            <p>\n                اگر به دنبال تجربه‌ی رانندگی هیجان‌انگیز هستید، خودروهای ورزشی با قابلیت‌ها و طراحی خاص مناسب شما هستند. این خودروها عمدتاً برای سرعت و عملکرد بالا طراحی شده‌اند.\n            </p>\n        </article>\n\n        <!-- ادامه معرفی خودروها -->\n    </section>\n\n    <footer>\n        <p>صفحه اختصاصی خودروها به وسیله‌ی توسعه‌دهنده Node.js و Ubuntu، با استفاده از TypeScript، Docker، SQL، MongoDB، و Redis ایجاد شده است.</p>\n    </footer>"
+      "content": "\r\n <script src=\"js/slick.js\" ></script>\r\n <script>\r\n \r\n $(\".filter_title .filters_item_link\").click(function(x){\r\n x.preventDefault()\r\n $ (this).closest(\"li\").find(\".filter_list\").slideToggle()\r\n })\r\n \r\n \r\n </script>\r\n \r\n </body>\r\n</html>"
     }
   ]
 }
