@@ -14,7 +14,7 @@ export default class TestContext extends ContextBase {
    * @param {ServiceSettings} settings
    */
   constructor(settings) {
-    super(null, null);
+    super(null, Number(request?.cms?.dmnid));
     this._settings = settings;
   }
 
