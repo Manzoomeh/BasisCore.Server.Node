@@ -12,9 +12,10 @@ export default class TestContext extends ContextBase {
   _settings;
   /**
    * @param {ServiceSettings} settings
+   * @param {number} domainId
    */
-  constructor(settings) {
-    super(null, Number(request?.cms?.dmnid));
+  constructor(settings,domainId) {
+    super(null, domainId);
     this._settings = settings;
   }
 

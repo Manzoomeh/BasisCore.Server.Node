@@ -73,7 +73,6 @@ export default class SourceCommand extends CommandBase {
       dmnid: context.domainId,
       params: paramList,
     };
-    console.log(params)
     return await context.loadDataAsync(sourceName, connectionName, params);
   }
 
