@@ -17,7 +17,7 @@ export default class RequestContext extends ContextBase {
    * @param {IRoutingRequest} request
    */
   constructor(settings, request) {
-    super(null, Number(request.cms?.dmnid));
+    super(null, Number(request?.cms?.dmnid));
     this._settings = settings;
     for (let mainKey in request) {
       const mainValue = request[mainKey];

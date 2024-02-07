@@ -30,6 +30,7 @@
     "source": "node test/command/dbsource/index.js",
     "source-ex": "node test/command/dbsource/exprision-binding.js",
     "inlinesource": "node test/command/inlinesource/simple.js",
+    "inlinesourceSql": "node test/command/inlinesource/inlinesourceSqlCommand.js",
     "view": "node test/command/view/simple.js",
     "tree": "node test/command/tree/simple.js",
     "group": "node test/command/group/simple.js",
