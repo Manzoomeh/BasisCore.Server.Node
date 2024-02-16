@@ -17,7 +17,7 @@ export default class SqlMember extends InMemoryMember {
    */
   async _parseDataAsync(context) {
     try {
-      const db = new alasql.Database();
+      let db = new alasql.Database();
       const content = await this.rawContent.getValueAsync(context);
       const dataMemberNames = this.findDataMembersInContent(content);
       const getSourcePromises = dataMemberNames.map((dataMemberName) =>
