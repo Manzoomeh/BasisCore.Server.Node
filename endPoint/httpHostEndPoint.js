@@ -43,7 +43,8 @@ class HttpHostEndPoint extends HostEndPoint {
     headers,
     formFields,
     jsonHeaders,
-    socket
+    socket,
+    bodyFields
   ) {
     const rawUrl = urlStr.substring(1);
     const urlObject = url.parse(rawUrl, true);
@@ -58,7 +59,7 @@ class HttpHostEndPoint extends HostEndPoint {
     if (Object.keys(jsonHeaders).length > 0) {
       headers["json"] = ObjectUtil.convertObjectToNestedStructure(jsonHeaders);
     } else {
-      headers["json"] = {};
+      headers["json"] = bodyFields;
     }
     const now = dayjs();
     const request = new Request();
@@ -82,6 +83,7 @@ class HttpHostEndPoint extends HostEndPoint {
       }
     }
     request["Form"] = formFields;
+    request["form"] = bodyFields;
     return request;
   }
 }
