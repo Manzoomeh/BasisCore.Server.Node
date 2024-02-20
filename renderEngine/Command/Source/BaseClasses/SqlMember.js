@@ -27,9 +27,8 @@ export default class SqlMember extends InMemoryMember {
       const insertPromises = sources.map(async (source, index) => {
         const dataArray = source.data;
         const dataMemberName = dataMemberNames[index];
-        const createTableSql = `CREATE TABLE [${dataMemberName}] (${Object.keys(
-          dataArray[0]
-        )
+        
+        const createTableSql = `CREATE TABLE [${dataMemberName}] (${source.columns
           .map((key) => `${key} STRING`)
           .join(", ")})`;
         await this.executeQueryAsync(db, createTableSql);
