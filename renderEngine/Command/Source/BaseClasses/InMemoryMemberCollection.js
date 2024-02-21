@@ -1,5 +1,6 @@
 import Member from "./Member.js";
 import MemberCollection from "./MemberCollection.js";
+import SqlMember from "./SqlMember.js";
 import TableMember from "./TableMember.js";
 
 export class InMemoryMemberCollection extends MemberCollection {
@@ -21,6 +22,10 @@ export class InMemoryMemberCollection extends MemberCollection {
     switch (type) {
       case "table": {
         retVal = new TableMember(memberIl);
+        break;
+      }
+      case "sql": {
+        retVal = new SqlMember(memberIl);
         break;
       }
       default: {
