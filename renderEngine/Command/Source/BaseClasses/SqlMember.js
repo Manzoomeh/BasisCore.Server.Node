@@ -3,6 +3,7 @@ import JsonSource from "../../../Source/JsonSource.js";
 import IContext from "../../../Context/IContext.js";
 import alasql from "alasql";
 import ContextBase from "../../../Context/ContextBase.js";
+import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
 export default class SqlMember extends InMemoryMember {
   /**
    * @param {object} memberIL
@@ -27,7 +28,7 @@ export default class SqlMember extends InMemoryMember {
       const insertPromises = sources.map(async (source, index) => {
         const dataArray = source.data;
         const dataMemberName = dataMemberNames[index];
-        
+
         const createTableSql = `CREATE TABLE [${dataMemberName}] (${source.columns
           .map((key) => `${key} STRING`)
           .join(", ")})`;
@@ -47,7 +48,7 @@ export default class SqlMember extends InMemoryMember {
       db = null;
       return new JsonSource(queryResult, this.name);
     } catch (err) {
-      console.log(err);
+      return new BasisCoreException("Error in run sql member: " + err);
     }
   }
 

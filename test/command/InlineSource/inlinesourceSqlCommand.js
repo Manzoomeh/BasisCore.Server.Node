@@ -2,9 +2,9 @@ import alasql from "alasql";
 import ServiceSettings from "../../../models/ServiceSettings.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 import GroupCommand from "../../../renderEngine/Command/Collection/GroupCommand.js";
-import RequestContext from "../../../renderEngine/Context/RequestContext.js";
+import TestContext from "../../../renderEngine/Context/TestContext.js";
 var setting = new ServiceSettings({});
-const context = new RequestContext(setting);
+const context = new TestContext(setting);
 context.cancellation = new CancellationToken();
 
 const il = {
