@@ -6,6 +6,7 @@ import RunTypes from "../Enums/RunTypes.js";
 import VoidResult from "../Models/VoidResult.js";
 import TokenUtil from "../Token/TokenUtil.js";
 import CommandElement from "./CommandElement.js";
+import StringResult from "../Models/StringResult.js";
 
 export default class CommandBase {
   /**@type {IToken} */
@@ -69,6 +70,9 @@ export default class CommandBase {
         }
         case RunTypes.AtClient:
         case RunTypes.None: {
+          retVal = new StringResult(
+            (await this.createHtmlElementAsync(context)).getHtml()
+          );
           break;
         }
         default: {
