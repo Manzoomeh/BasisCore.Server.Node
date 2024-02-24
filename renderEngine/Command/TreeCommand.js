@@ -95,8 +95,8 @@ export default class TreeCommand extends RenderableCommand {
       );
       for (const row of rootRecord) {
         rootRenderParam.data = row;
-        let temp = renderLevel(rootRenderParam, 1)
-        retVal += temp ? temp : "" ;
+        let temp = renderLevel(rootRenderParam, 1);
+        retVal += temp ?? "";
       }
       /**
        * @param {RenderParam} parentRenderParam
@@ -175,5 +175,24 @@ export default class TreeCommand extends RenderableCommand {
       }
     }
     return retVal;
+  }
+
+  /**
+   * @param {IContext} context
+   * @returns {Promise<CommandElement>}
+   */
+  async createHtmlElementAsync(context) {
+    const tag = await super.createHtmlElementAsync(context);
+    await Promise.all([
+      retVal.addAttributeIfExistAsync("idcol", this.principalKey, context),
+      retVal.addAttributeIfExistAsync("parentidcol", this.foreignKey, context),
+      retVal.addAttributeIfExistAsync("nullvalue", this.nullValue, context),
+      retVal.addAttributeIfExistAsync(
+        "relationnamecol",
+        this.relationColumnName,
+        context
+      ),
+    ]);
+    return tag;
   }
 }

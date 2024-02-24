@@ -1,3 +1,4 @@
+import Util from "../../Util.js";
 import IContext from "../Context/IContext.js";
 import IToken from "../Token/IToken.js";
 import ValueToken from "../Token/ValueToken.js";
@@ -69,11 +70,14 @@ export default class CommandElement extends ElementBase {
     return this;
   }
 
+  /**
+   * @returns {string}
+   */
   getHtml() {
     let retVal = `<${this.name} `.concat(
       ...Object.entries(this.attributes).map(
         (pair) =>
-          `${pair[0]}=\'${pair[1] ? pair[1].replaceAll("'", '"') : ""}\' `
+          `${pair[0]}=\'${Util.toString(pair[1]).replaceAll("'", '"')}\' `
       ),
       ">"
     );
