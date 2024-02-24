@@ -20,10 +20,6 @@ export default class Member {
   /**@type {IToken} */
   joinType;
   /**@type {IToken} */
-  leftDataMemberName;
-  /**@type {IToken} */
-  rightDataMemberName;
-  /**@type {IToken} */
   postSql;
   /**@type {NodeJS.Dict<IToken>} */
   extraAttributes;
@@ -42,11 +38,6 @@ export default class Member {
     this.leftTableColumn = TokenUtil.getFiled(commandIL, "left-data-member");
     this.rightTableColumn = TokenUtil.getFiled(commandIL, "right-data-member");
     this.joinType = TokenUtil.getFiled(commandIL, "jointype");
-    this.leftDataMemberName = TokenUtil.getFiled(commandIL, "left-data-member");
-    this.rightDataMemberName = TokenUtil.getFiled(
-      commandIL,
-      "right-data-member"
-    );
     this.extraAttributes = null;
     /**@type {NodeJS.Dict?} */
     const items = commandIL["extra-attribute"];

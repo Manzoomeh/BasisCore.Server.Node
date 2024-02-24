@@ -1,3 +1,4 @@
+import JoinMember from "./JoinMember.js";
 import Member from "./Member.js";
 import MemberCollection from "./MemberCollection.js";
 import SqlMember from "./SqlMember.js";
@@ -19,6 +20,7 @@ export class InMemoryMemberCollection extends MemberCollection {
     const type = memberIl["type"]?.toLowerCase() ?? "table";
     /** @type {Member} */
     let retVal = null;
+    console.log(type);
     switch (type) {
       case "table": {
         retVal = new TableMember(memberIl);
@@ -26,6 +28,10 @@ export class InMemoryMemberCollection extends MemberCollection {
       }
       case "sql": {
         retVal = new SqlMember(memberIl);
+        break;
+      }
+      case "join": {
+        retVal = new JoinMember(memberIl);
         break;
       }
       default: {

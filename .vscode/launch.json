@@ -9,7 +9,7 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/test/command/inlinesource/inlinesourceSqlCommand.js"
+      "program": "${workspaceFolder}/test/command/inlinesource/inlinesourceJoinCommand.js"
     }
   ]
 }

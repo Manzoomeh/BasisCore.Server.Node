@@ -2,6 +2,7 @@ import InMemoryMember from "./InMemoryMember.js";
 import JsonSource from "../../../Source/JsonSource.js";
 import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
 import IContext from "../../../Context/IContext.js";
+import IToken from "../../../Token/IToken.js";
 export default class JoinMember extends InMemoryMember {
   /**
    * @param {object} memberIL
@@ -14,70 +15,70 @@ export default class JoinMember extends InMemoryMember {
    * @returns {Promise<IDataSource>}
    */
   async _parseDataAsync(context) {
-    try {
-      const leftTable = await context.waitToGetSourceAsync(
-        this.leftDataMemberName
-      );
-      const rightTable = await context.waitToGetSourceAsync(
-        this.rightDataMemberName
-      );
-      if (
-        leftTable &&
-        rightTable &&
-        this.leftTableColumn &&
-        this.rightTableColumn &&
-        this.joinType
-      ) {
-        /** */
-        let resultArray;
-        switch (this.joinType) {
-          case "InnerJoin":
-            resultArray = this.innerJoin(
-              leftTable.data,
-              rightTable.data,
-              this.leftTableColumn,
-              this.rightTableColumn,
-              this.leftDataMemberName,
-              this.rightDataMemberName
-            );
-            break;
-          case "LeftJoin":
-            resultArray = this.leftJoin(
-              leftTable.data,
-              rightTable.data,
-              this.leftTableColumn,
-              this.rightTableColumn,
-              this.leftDataMemberName,
-              this.rightDataMemberName
-            );
-            break;
-          case "RightJoin":
-            resultArray = this.rightJoin(
-              leftTable.data,
-              rightTable.data,
-              this.leftTableColumn,
-              this.rightTableColumn,
-              this.leftDataMemberName,
-              this.rightDataMemberName
-            );
-            break;
-          default:
-            return new BasisCoreException(
-              `Invalid Join Type : ${this.joinType} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
-            );
-        }
-        return new JsonSource(resultArray, this.name);
-      } else {
-        return new BasisCoreException(
-          `fields not provided for joining ${this.leftDataMemberName} and ${this.rightDataMemberName}`
-        );
+    // try {
+    const [leftDataMemberName, leftTableColumn] =
+      await this.splitDataMemberNameAndColumnName(this.leftTableColumn);
+    const [rightDataMemberName, rightTableColumn] =
+      await this.splitDataMemberNameAndColumnName(this.rightTableColumn);
+    const leftTable = await context.waitToGetSourceAsync(leftDataMemberName);
+    const rightTable = await context.waitToGetSourceAsync(rightDataMemberName);
+    if (
+      leftTable &&
+      rightTable &&
+      this.leftTableColumn &&
+      this.rightTableColumn &&
+      this.joinType
+    ) {
+      /** */
+      let resultArray;
+      switch (await this.joinType.getValueAsync()) {
+        case "InnerJoin":
+          resultArray = this.innerJoin(
+            leftTable.data,
+            rightTable.data,
+            leftTableColumn,
+            rightTableColumn,
+            leftDataMemberName,
+            rightDataMemberName
+          );
+          break;
+        case "LeftJoin":
+          resultArray = this.leftJoin(
+            leftTable.data,
+            rightTable.data,
+            leftTableColumn,
+            rightTableColumn,
+            leftDataMemberName,
+            rightDataMemberName
+          );
+          break;
+        case "RightJoin":
+          resultArray = this.rightJoin(
+            leftTable.data,
+            rightTable.data,
+            leftTableColumn,
+            rightTableColumn,
+            leftDataMemberName,
+            rightDataMemberName
+          );
+          break;
+        default:
+          return new BasisCoreException(
+            `Invalid Join Type : ${this.joinType} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
+          );
       }
-    } catch (error) {
+      return new JsonSource(resultArray, this.name);
+    } else {
       return new BasisCoreException(
-        `error in join ${this.leftDataMemberName} and ${this.rightDataMemberName} :`,
-        error
+        `fields not provided for joining ${this.leftDataMemberName} and ${this.rightDataMemberName}`
       );
     }
+    // } catch (error) {
+    //   return new BasisCoreException(
+    //     `error in join ${await this.leftTableColumn.getValueAsync()} and ${await this.rightTableColumn.getValueAsync()} :`,
+    //     error
+    //   );
+    // }
   }
   /**
    * @param {Array} leftArray
@@ -172,5 +173,21 @@ export default class JoinMember extends InMemoryMember {
       }
     }
     return newObj;
+  }
+  /**
+   *
+   * @param {IToken} fullColumnName
+   * @returns {Promise<[string,string]>}
+   */
+  async splitDataMemberNameAndColumnName(fullColumnName) {
+    const string = await fullColumnName.getValueAsync();
+    const array = string.split(".");
+    if (array.length < 2) {
+      throw new BasisCoreException("invalid column name :" + string);
+    } else {
+      const columnName = array.pop();
+      const dataMemberName = array.join(".");
+      return [dataMemberName, columnName];
+    }
   }
 }
