@@ -22,7 +22,7 @@ const host = {
       Type: "http",
       Settings: {
         "Connections.edge.RoutingData": {
-          endpoint: "192.168.96.172:2002",
+          endpoint: "127.0.0.1:2002",
         },
       },
     },
