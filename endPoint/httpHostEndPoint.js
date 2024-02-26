@@ -4,6 +4,11 @@ import url from "url";
 import HostEndPoint from "./hostEndPoint.js";
 import Request from "../models/request.js";
 import ObjectUtil from "../modules/objectUtil.js";
+import busboy from "busboy";
+import { IncomingMessage, ServerResponse } from "http";
+import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
+import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
+
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /**
@@ -35,6 +40,7 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {http.IncomingHttpHeaders} requestHeaders
    * @param {NodeJS.Dict<string>} formFields
    * @param {Socket} socket
+   * @param {NodeJS.Dict} bodyFields
    * @returns {Promise<Request>}
    */
   async _createCmsObjectAsync(
@@ -43,7 +49,8 @@ class HttpHostEndPoint extends HostEndPoint {
     headers,
     formFields,
     jsonHeaders,
-    socket
+    socket,
+    bodyFields
   ) {
     const rawUrl = urlStr.substring(1);
     const urlObject = url.parse(rawUrl, true);
@@ -58,7 +65,7 @@ class HttpHostEndPoint extends HostEndPoint {
     if (Object.keys(jsonHeaders).length > 0) {
       headers["json"] = ObjectUtil.convertObjectToNestedStructure(jsonHeaders);
     } else {
-      headers["json"] = {};
+      headers["json"] = bodyFields;
     }
     const now = dayjs();
     const request = new Request();
@@ -83,6 +90,65 @@ class HttpHostEndPoint extends HostEndPoint {
     }
     request["Form"] = formFields;
     return request;
+  }
+  /**
+   *
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
+   */
+  async _handleContentTypes(req, res, next) {
+    /**@type {BinaryContent[]} */
+    req.fileContents = [];
+    /**@type {NodeJS.Dict<string>} */
+    req.formFields = {};
+    /**@type {NodeJS.Dict<string>} */
+    req.jsonHeaders = {};
+    let body = "";
+    req.on("data", (chunk) => {
+      body += chunk;
+    });
+    req.on("end", async () => {
+      if (body.length == 0) {
+        next();
+      } else {
+        if (req.headers["content-type"] === "application/json") {
+          try {
+            req.json = JSON.parse(body);
+            next();
+          } catch (error) {
+            throw new BasisCoreException("invalid JSON on body");
+          }
+        } else if (
+          req.headers["content-type"].startsWith("multipart/form-data")
+        ) {
+          const bb = busboy({ headers: req.headers });
+          bb.on("file", (name, file, info) => {
+            const ContentParts = [];
+            file.on("data", (x) => ContentParts.push(x));
+            file.on("end", async () => {
+              const content = new BinaryContent();
+              content.url = `${req.headers["host"]}${req.url}`;
+              content.mime = info.mimeType.toLowerCase();
+              content.name = info.filename;
+              content.payload = Buffer.concat(ContentParts);
+              req.fileContents.push(content);
+            });
+          });
+          bb.on("field", (name, val, info) => {
+            req.formFields[name] = val;
+            if (name.startsWith("_")) {
+              req.jsonHeaders[name] = val;
+            }
+          });
+          bb.on("close", () => {
+            next(); 
+          });
+        } else {
+          res.statusCode = 415;
+          return res.end("Unsupported Media Type");
+        }
+      }
+    });
   }
 }
 
