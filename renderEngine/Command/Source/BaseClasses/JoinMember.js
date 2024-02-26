@@ -3,6 +3,7 @@ import JsonSource from "../../../Source/JsonSource.js";
 import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
 import IContext from "../../../Context/IContext.js";
 import IToken from "../../../Token/IToken.js";
+import alasql from "alasql";
 export default class JoinMember extends InMemoryMember {
   /**
    * @param {object} memberIL
@@ -15,99 +16,119 @@ export default class JoinMember extends InMemoryMember {
    * @returns {Promise<IDataSource>}
    */
   async _parseDataAsync(context) {
-    // try {
-    const [leftDataMemberName, leftTableColumn] =
-      await this.splitDataMemberNameAndColumnName(this.leftTableColumn);
-    const [rightDataMemberName, rightTableColumn] =
-      await this.splitDataMemberNameAndColumnName(this.rightTableColumn);
-    const leftTable = await context.waitToGetSourceAsync(leftDataMemberName);
-    const rightTable = await context.waitToGetSourceAsync(rightDataMemberName);
-    if (
-      leftTable &&
-      rightTable &&
-      this.leftTableColumn &&
-      this.rightTableColumn &&
-      this.joinType
-    ) {
-      /** */
-      let resultArray;
-      switch (await this.joinType.getValueAsync()) {
-        case "InnerJoin":
-          resultArray = this.innerJoin(
-            leftTable.data,
-            rightTable.data,
-            leftTableColumn,
-            rightTableColumn,
-            leftDataMemberName,
-            rightDataMemberName
-          );
-          break;
-        case "LeftJoin":
-          resultArray = this.leftJoin(
-            leftTable.data,
-            rightTable.data,
-            leftTableColumn,
-            rightTableColumn,
-            leftDataMemberName,
-            rightDataMemberName
-          );
-          break;
-        case "RightJoin":
-          resultArray = this.rightJoin(
-            leftTable.data,
-            rightTable.data,
-            leftTableColumn,
-            rightTableColumn,
-            leftDataMemberName,
-            rightDataMemberName
-          );
-          break;
-        default:
-          return new BasisCoreException(
-            `Invalid Join Type : ${this.joinType} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
-          );
+    try {
+      const [leftDataMemberName, leftTableColumn] =
+        await this.splitDataMemberNameAndColumnName(this.leftTableColumn);
+      const [rightDataMemberName, rightTableColumn] =
+        await this.splitDataMemberNameAndColumnName(this.rightTableColumn);
+      const leftTable = await context.waitToGetSourceAsync(leftDataMemberName);
+      const rightTable = await context.waitToGetSourceAsync(
+        rightDataMemberName
+      );
+      if (
+        leftTable &&
+        rightTable &&
+        this.leftTableColumn &&
+        this.rightTableColumn &&
+        this.joinType
+      ) {
+        /** */
+        let resultArray;
+        let db = new alasql.Database();
+        switch (await this.joinType.getValueAsync()) {
+          case "InnerJoin":
+            resultArray = await this.innerJoin(
+              this.deleteRowNumberFromArrayAndModifyFieldName(
+                leftTable.data,
+                leftDataMemberName
+              ),
+              this.deleteRowNumberFromArrayAndModifyFieldName(
+                rightTable.data,
+                rightDataMemberName
+              ),
+              leftTableColumn,
+              rightTableColumn,
+              leftDataMemberName,
+              rightDataMemberName,
+              db
+            );
+            break;
+          case "LeftJoin":
+            resultArray = await this.leftJoin(
+              this.deleteRowNumberFromArrayAndModifyFieldName(
+                leftTable.data,
+                leftDataMemberName
+              ),
+              this.deleteRowNumberFromArrayAndModifyFieldName(
+                rightTable.data,
+                rightDataMemberName
+              ),
+              leftTableColumn,
+              rightTableColumn,
+              leftDataMemberName,
+              rightDataMemberName,
+              db
+            );
+            break;
+          case "RightJoin":
+            resultArray = await this.rightJoin(
+              this.deleteRowNumberFromArrayAndModifyFieldName(
+                leftTable.data,
+                leftDataMemberName
+              ),
+              this.deleteRowNumberFromArrayAndModifyFieldName(
+                rightTable.data,
+                rightDataMemberName
+              ),
+              leftTableColumn,
+              rightTableColumn,
+              leftDataMemberName,
+              rightDataMemberName,
+              db
+            );
+            break;
+          default:
+            return new BasisCoreException(
+              `Invalid Join Type : ${this.joinType} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
+            );
+        }
+        db = null;
+        return new JsonSource(resultArray, this.name);
+      } else {
+        return new BasisCoreException(
+          `fields not provided for joining ${this.leftDataMemberName} and ${this.rightDataMemberName}`
+        );
       }
-      return new JsonSource(resultArray, this.name);
-    } else {
+    } catch (error) {
       return new BasisCoreException(
-        `fields not provided for joining ${this.leftDataMemberName} and ${this.rightDataMemberName}`
+        `error in join ${await this.leftTableColumn.getValueAsync()} and ${await this.rightTableColumn.getValueAsync()} :`,
+        error
       );
     }
-    // } catch (error) {
-    //   return new BasisCoreException(
-    //     `error in join ${await this.leftTableColumn.getValueAsync()} and ${await this.rightTableColumn.getValueAsync()} :`,
-    //     error
-    //   );
-    // }
   }
   /**
    * @param {Array} leftArray
    * @param {Array} rightArray
    * @param {string} fieldInLeftTable
    * @param {string} fieldInRightTable
+   * @param {alasql.Database} db
    * @returns Array
    */
-  leftJoin(
+  async leftJoin(
     leftArray,
     rightArray,
     fieldInLeftTable,
     fieldInRightTable,
     leftDataMemberName,
-    rightDataMemberName
+    rightDataMemberName,
+    db
   ) {
-    return leftArray.map((item1) => {
-      const matchingItems = rightArray.filter(
-        (item2) => item1[fieldInLeftTable] === item2[fieldInRightTable]
-      );
-      //remove rowNumber in each array
-      return {
-        ...this.addPrefixToObjectProperties(item1, leftDataMemberName),
-        ...this.addPrefixToObjectProperties(
-          matchingItems[0],
-          rightDataMemberName
-        ),
-      };
-    });
+    const joinResult = await this.executeQueryAsync(
+      db,
+      `SELECT * FROM ? AS [${leftDataMemberName}] LEFT JOIN ? AS [${rightDataMemberName}] ON [${leftDataMemberName}].${fieldInLeftTable} = [${rightDataMemberName}].${fieldInRightTable}`,
+      [leftArray, rightArray]
+    );
+    return joinResult;
   }
   /**
    *
@@ -115,65 +136,52 @@ export default class JoinMember extends InMemoryMember {
    * @param {Array} rightArray
    * @param {string} fieldInLeftTable
    * @param {string} fieldInRightTable
+   * @param {alasql.Database} db
    * @returns Array
    */
-  rightJoin(
+  async rightJoin(
     leftArray,
     rightArray,
     fieldInLeftTable,
     fieldInRightTable,
     leftDataMemberName,
-    rightDataMemberName
+    rightDataMemberName,
+    db
   ) {
-    return rightArray.map((item2) => {
-      const matchingItem = leftArray.find(
-        (item1) => item1[fieldInLeftTable] === item2[fieldInRightTable]
-      );
-      return {
-        ...this.addPrefixToObjectProperties(item2, rightDataMemberName),
-        ...this.addPrefixToObjectProperties(matchingItem, leftDataMemberName),
-      };
-    });
+    const joinResult = await this.executeQueryAsync(
+      db,
+      `SELECT * FROM ? AS [${leftDataMemberName}] RIGHT JOIN ? AS [${rightDataMemberName}] ON [${leftDataMemberName}].${fieldInLeftTable} = [${rightDataMemberName}].${fieldInRightTable}`[
+        (leftArray, rightArray)
+      ]
+    );
+    return joinResult;
   }
   /**
    * @param {Array} leftArray
    * @param {Array} rightArray
    * @param {string} fieldInLeftTable
    * @param {string} fieldInRightTable
+   * @param {alasql.Database} db
    * @returns Array
    */
-  innerJoin(
+  async innerJoin(
     leftArray,
     rightArray,
     fieldInLeftTable,
     fieldInRightTable,
     leftDataMemberName,
-    rightDataMemberName
+    rightDataMemberName,
+    db
   ) {
-    return leftArray.flatMap((item1) => {
-      const matchingItems = rightArray.filter(
-        (item2) => item1[fieldInLeftTable] === item2[fieldInRightTable]
-      );
-      return matchingItems.map((item2) => ({
-        ...this.addPrefixToObjectProperties(item2, rightDataMemberName),
-        ...this.addPrefixToObjectProperties(item1, leftDataMemberName),
-      }));
-    });
+    const joinResult = await this.executeQueryAsync(
+      db,
+      `SELECT * FROM ? AS [${leftDataMemberName}] INNER JOIN ? AS [${rightDataMemberName}] ON [${leftDataMemberName}].${fieldInLeftTable} = [${rightDataMemberName}].${fieldInRightTable}`,
+      [leftArray, rightArray]
+    );
+    console.log(joinResult);
+    return joinResult;
   }
-  /**
-   * @param {object} obj
-   * @param {string} prefix
-   * @returns
-   */
-  addPrefixToObjectProperties(obj, prefix) {
-    const newObj = {};
-    for (const key in obj) {
-      if (obj.hasOwnProperty(key)) {
-        newObj[`${prefix}.${key}`] = obj[key];
-      }
-    }
-    return newObj;
-  }
+
   /**
    *
    * @param {IToken} fullColumnName
@@ -189,5 +197,18 @@ export default class JoinMember extends InMemoryMember {
       const dataMemberName = array.join(".");
       return [dataMemberName, columnName];
     }
+  }
+  deleteRowNumberFromArrayAndModifyFieldName(array, dataMemberName) {
+    return array.map((obj) => {
+      let newObj = {};
+      for (let key in obj) {
+        if (key == "RowNumber") {
+          continue;
+        } else {
+          newObj[`${dataMemberName}.${key}`] = obj[key];
+        }
+      }
+      return newObj;
+    });
   }
 }
