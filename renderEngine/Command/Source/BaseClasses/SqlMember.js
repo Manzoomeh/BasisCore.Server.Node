@@ -73,21 +73,4 @@ export default class SqlMember extends InMemoryMember {
     }
     return dataMemberNames;
   }
-  /**
-   *
-   * @param {alasql.Database} db
-   * @param {string} sql
-   * @returns {Promise<NodeJS.Dict|undefined>}
-   */
-  executeQueryAsync(db, sql) {
-    return new Promise((resolve, reject) => {
-      db.exec(sql, [], (result, err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
-    });
-  }
 }
