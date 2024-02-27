@@ -77,14 +77,8 @@ export default class JoinMember extends InMemoryMember {
             break;
           case "RightJoin":
             resultArray = await this.rightJoin(
-              this.deleteRowNumberFromArrayAndModifyFieldName(
-                leftTable.data,
-                leftDataMemberName
-              ),
-              this.deleteRowNumberFromArrayAndModifyFieldName(
-                rightTable.data,
-                rightDataMemberName
-              ),
+              leftArray,
+              rightArray,
               leftTableColumn,
               rightTableColumn,
               leftDataMemberName,
