@@ -9,6 +9,7 @@ export default class TableMember extends InMemoryMember {
   constructor(memberIL) {
     super(memberIL);
   }
+  
   /**
    * @param {IContext} context
    * @returns {Promise<IDataSource>}

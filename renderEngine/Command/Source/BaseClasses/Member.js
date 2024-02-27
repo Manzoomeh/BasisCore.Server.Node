@@ -14,12 +14,6 @@ export default class Member {
   /**@type {IToken} */
   sort;
   /**@type {IToken} */
-  leftTableColumn;
-  /**@type {IToken} */
-  rightTableColumn;
-  /**@type {IToken} */
-  joinType;
-  /**@type {IToken} */
   postSql;
   /**@type {NodeJS.Dict<IToken>} */
   extraAttributes;
@@ -35,9 +29,6 @@ export default class Member {
     this.sort = TokenUtil.getFiled(commandIL, "sort");
     this.postSql = TokenUtil.getFiled(commandIL, "postsql");
     this.rawContent = TokenUtil.getFiled(commandIL, "content");
-    this.leftTableColumn = TokenUtil.getFiled(commandIL, "left-data-member");
-    this.rightTableColumn = TokenUtil.getFiled(commandIL, "right-data-member");
-    this.joinType = TokenUtil.getFiled(commandIL, "jointype");
     this.extraAttributes = null;
     /**@type {NodeJS.Dict?} */
     const items = commandIL["extra-attribute"];

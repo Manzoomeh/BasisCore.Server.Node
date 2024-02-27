@@ -29,7 +29,6 @@ export default class SourceUtil {
    */
   static addRowNumber(source) {
     let index = 1;
-    console.log(source)
     if (Array.isArray(source.data)) {
       source.data.forEach((row) => {
         row["RowNumber"] = index++;

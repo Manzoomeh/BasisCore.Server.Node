@@ -8,8 +8,17 @@ export default class JoinMember extends InMemoryMember {
   /**
    * @param {object} memberIL
    */
+  /**@type {IToken} */
+  leftTableColumn;
+  /**@type {IToken} */
+  rightTableColumn;
+  /**@type {IToken} */
+  joinType;
   constructor(memberIL) {
     super(memberIL);
+    this.leftTableColumn = TokenUtil.getFiled(commandIL, "left-data-member");
+    this.rightTableColumn = TokenUtil.getFiled(commandIL, "right-data-member");
+    this.joinType = TokenUtil.getFiled(commandIL, "jointype");
   }
   /**
    * @param {IContext} context
@@ -21,10 +30,10 @@ export default class JoinMember extends InMemoryMember {
         await this.splitDataMemberNameAndColumnName(this.leftTableColumn);
       const [rightDataMemberName, rightTableColumn] =
         await this.splitDataMemberNameAndColumnName(this.rightTableColumn);
-      const leftTable = await context.waitToGetSourceAsync(leftDataMemberName);
-      const rightTable = await context.waitToGetSourceAsync(
-        rightDataMemberName
-      );
+      const [leftTable, rightTable] = await Promise.all([
+        context.waitToGetSourceAsync(leftDataMemberName),
+        context.waitToGetSourceAsync(rightDataMemberName),
+      ]);
       if (
         leftTable &&
         rightTable &&
@@ -34,7 +43,7 @@ export default class JoinMember extends InMemoryMember {
       ) {
         /** */
         let resultArray;
-        let db = new alasql.Database();
+        const db = new alasql.Database();
         switch (await this.joinType.getValueAsync()) {
           case "InnerJoin":
             resultArray = await this.innerJoin(
@@ -86,7 +95,6 @@ export default class JoinMember extends InMemoryMember {
               rightDataMemberName,
               db
             );
-            break;
           default:
             return new BasisCoreException(
               `Invalid Join Type : ${this.joinType} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
@@ -178,7 +186,6 @@ export default class JoinMember extends InMemoryMember {
       `SELECT * FROM ? AS [${leftDataMemberName}] INNER JOIN ? AS [${rightDataMemberName}] ON [${leftDataMemberName}].${fieldInLeftTable} = [${rightDataMemberName}].${fieldInRightTable}`,
       [leftArray, rightArray]
     );
-    console.log(joinResult);
     return joinResult;
   }
 

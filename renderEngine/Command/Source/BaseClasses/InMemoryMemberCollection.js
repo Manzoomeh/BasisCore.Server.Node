@@ -20,7 +20,6 @@ export class InMemoryMemberCollection extends MemberCollection {
     const type = memberIl["type"]?.toLowerCase() ?? "table";
     /** @type {Member} */
     let retVal = null;
-    console.log(type);
     switch (type) {
       case "table": {
         retVal = new TableMember(memberIl);
