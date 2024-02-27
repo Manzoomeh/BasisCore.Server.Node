@@ -90,7 +90,6 @@ export default class JoinMember extends InMemoryMember {
               `Invalid Join Type : ${this.joinType} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
             );
         }
-        db = null;
         return new JsonSource(resultArray, this.name);
       } else {
         return new BasisCoreException(
