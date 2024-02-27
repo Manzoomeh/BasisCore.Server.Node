@@ -141,8 +141,9 @@ class HttpHostEndPoint extends HostEndPoint {
             }
           });
           bb.on("close", () => {
-            next(); 
+            next();
           });
+          req.pipe(bb);
         } else {
           res.statusCode = 415;
           return res.end("Unsupported Media Type");
