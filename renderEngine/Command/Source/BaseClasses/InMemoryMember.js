@@ -42,4 +42,22 @@ export default class InMemoryMember extends Member {
     const retVal = await super.createHtmlElementAsync(context);
     return retVal.addAttributeIfExistAsync("format", this.format, context);
   }
+  /**
+   *
+   * @param {alasql.Database} db
+   * @param {string} sql
+   * @param {Array[]?} data
+   * @returns {Promise<NodeJS.Dict|undefined>}
+   */
+  executeQueryAsync(db, sql, data) {
+    return new Promise((resolve, reject) => {
+      db.exec(sql, data, (result, err) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(result);
+        }
+      });
+    });
+  }
 }
