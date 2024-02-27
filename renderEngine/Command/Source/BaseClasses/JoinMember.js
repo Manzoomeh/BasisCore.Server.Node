@@ -44,17 +44,19 @@ export default class JoinMember extends InMemoryMember {
         /** */
         let resultArray;
         const db = new alasql.Database();
+        const leftArray = this.deleteRowNumberFromArrayAndModifyFieldName(
+          leftTable.data,
+          leftDataMemberName
+        );
+        const rightArray = this.deleteRowNumberFromArrayAndModifyFieldName(
+          rightTable.data,
+          rightDataMemberName
+        );
         switch (await this.joinType.getValueAsync()) {
           case "InnerJoin":
             resultArray = await this.innerJoin(
-              this.deleteRowNumberFromArrayAndModifyFieldName(
-                leftTable.data,
-                leftDataMemberName
-              ),
-              this.deleteRowNumberFromArrayAndModifyFieldName(
-                rightTable.data,
-                rightDataMemberName
-              ),
+              leftArray,
+              rightArray,
               leftTableColumn,
               rightTableColumn,
               leftDataMemberName,
@@ -64,14 +66,8 @@ export default class JoinMember extends InMemoryMember {
             break;
           case "LeftJoin":
             resultArray = await this.leftJoin(
-              this.deleteRowNumberFromArrayAndModifyFieldName(
-                leftTable.data,
-                leftDataMemberName
-              ),
-              this.deleteRowNumberFromArrayAndModifyFieldName(
-                rightTable.data,
-                rightDataMemberName
-              ),
+              leftArray,
+              rightArray,
               leftTableColumn,
               rightTableColumn,
               leftDataMemberName,
