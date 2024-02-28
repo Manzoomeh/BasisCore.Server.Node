@@ -72,6 +72,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         const formFields = {};
         const method = headers[":method"];
         const url = headers[":path"];
+        let bodyStr = "";
         const createCmsAndCreateResponseAsync = async () => {
           cms = await this._createCmsObjectAsync(
             url,
@@ -79,7 +80,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             headers,
             formFields,
             jsonHeaders,
-            stream.session.socket
+            stream.session.socket,
+            bodyStr.length > 0 ? JSON.parse(bodyStr) : {}
           );
           const result = await this.#service.processAsync(cms, fileContents);
           const [code, headerList, body] = await result.getResultAsync();
@@ -87,6 +89,11 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           stream.respond(headerList);
           stream.end(body);
         };
+        stream.on("data", (chunk) => {
+          if (headers["content-type"] === "application/json") {
+            bodyStr += chunk;
+          }
+        });
         stream.on("error", (ex) => {
           if (ex.code != "ERR_STREAM_WRITE_AFTER_END") {
             console.error("HTTP/2 server stream error", ex);
