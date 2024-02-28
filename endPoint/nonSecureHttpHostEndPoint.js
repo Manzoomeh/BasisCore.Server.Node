@@ -27,12 +27,13 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
         let cms = null;
         this._handleContentTypes(req, res, async () => {
           const createCmsAndCreateResponseAsync = async () => {
+            console.log(req.json);
             cms = await this._createCmsObjectAsync(
               req.url,
               req.method,
               req.headers,
               req.formFields,
-              req.jsonHeaders,
+              req.jsonHeaders ? req.jsonHeaders : {},
               req.socket,
               req.json
             );
