@@ -40,10 +40,13 @@ export default class GroupCommand extends CommandBase {
         ? sourceCommands.push(x)
         : otherCommands.push(x)
     );
-    await Promise.all(sourceCommands.map((x) => x.executeAsync(newContext)));
-    const results = await Promise.all(
+
+    const sourceResults = await Promise.all(
+      sourceCommands.map((x) => x.executeAsync(newContext))
+    );
+    const otherResult = await Promise.all(
       otherCommands.map((x) => x.executeAsync(newContext))
     );
-    return new GroupResult(results);
+    return new GroupResult(sourceResults.concat(otherResult));
   }
 }

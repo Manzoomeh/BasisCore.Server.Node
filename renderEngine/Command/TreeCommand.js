@@ -184,10 +184,10 @@ export default class TreeCommand extends RenderableCommand {
   async createHtmlElementAsync(context) {
     const tag = await super.createHtmlElementAsync(context);
     await Promise.all([
-      retVal.addAttributeIfExistAsync("idcol", this.principalKey, context),
-      retVal.addAttributeIfExistAsync("parentidcol", this.foreignKey, context),
-      retVal.addAttributeIfExistAsync("nullvalue", this.nullValue, context),
-      retVal.addAttributeIfExistAsync(
+      tag.addAttributeIfExistAsync("idcol", this.principalKey, context),
+      tag.addAttributeIfExistAsync("parentidcol", this.foreignKey, context),
+      tag.addAttributeIfExistAsync("nullvalue", this.nullValue, context),
+      tag.addAttributeIfExistAsync(
         "relationnamecol",
         this.relationColumnName,
         context

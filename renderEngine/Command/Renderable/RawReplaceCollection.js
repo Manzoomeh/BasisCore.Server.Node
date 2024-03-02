@@ -38,7 +38,7 @@ export default class RawReplaceCollection {
    * @returns {boolean}
    */
   get IsNotNull() {
-    return this.items.length > 0;
+    return (this.items?.length ?? 0) > 0;
   }
 
   /**

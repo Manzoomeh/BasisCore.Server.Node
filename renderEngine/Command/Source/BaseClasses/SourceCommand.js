@@ -1,4 +1,3 @@
-import BasisCoreException from "../../../../models/Exceptions/BasisCoreException.js";
 import IContext from "../../../Context/IContext.js";
 import VoidResult from "../../../Models/VoidResult.js";
 import DataSourceCollection from "../../../Source/DataSourceCollection.js";
@@ -10,6 +9,7 @@ import MemberCollection from "./MemberCollection.js";
 import ParamItemCollection from "./ParamItemCollection.js";
 
 export default class SourceCommand extends CommandBase {
+  /** @type {ParamItemCollection}   */
   params;
   connectionName;
   /**@type {MemberCollection} */
@@ -50,7 +50,7 @@ export default class SourceCommand extends CommandBase {
       }
       let index = 0;
       for (const item of this.members.items) {
-        var source = dataSet.items[index++];
+        const source = dataSet.items[index++];
         await item.addDataSourceAsync(source, name, context);
       }
     }
@@ -94,33 +94,27 @@ export default class SourceCommand extends CommandBase {
    * @returns {Promise<CommandElement>}
    */
   async createHtmlElementAsync(context) {
-    const tag = await super.createHtmlElementAsync(context);
-    await Promise.all([
-      tag.addAttributeIfExistAsync(
-        "procedurename",
-        this.procedureName,
-        context
-      ),
-      tag.addAttributeIfExistAsync("source", this.connectionName, context),
-    ]);
-    if ((this.params?.length ?? 0) > 0) {
-      const paramsTag = new CommandElement("params");
-      for (const pair of this.params.items) {
-        const addTag = new CommandElement("add");
-        await Promise.all([
-          addTag.addAttributeIfExistAsync("name", pair.name, context),
-          addTag.addAttributeIfExistAsync("value", pair.value, context),
-        ]);
-        paramsTag.addChild(addTag);
+    try {
+      const tag = await super.createHtmlElementAsync(context);
+      await Promise.all([
+        tag.addAttributeIfExistAsync(
+          "procedurename",
+          this.procedureName,
+          context
+        ),
+        tag.addAttributeIfExistAsync("source", this.connectionName, context),
+      ]);
+      if (this.params.IsNotNull) {
+        await this.params.addHtmlElementAsync(tag, context);
       }
-      tag.addChild(paramsTag);
-    }
-    if (this.members) {
-      for (const member of this.members.items) {
-        tag.childs.push(await member.createHtmlElementAsync(context));
+      if (this.members.IsNotNull) {
+        await this.members.addHtmlElementAsync(tag, context);
       }
+      console.log("tag", tag);
+      return tag;
+    } catch (e) {
+      console.error(e);
     }
-    return tag;
   }
 
   /**

@@ -130,6 +130,9 @@ describe("the group command", () => {
                   Member: "tbl2",
                   Column: "comment2",
                 },
+                {
+                  Value: "none2",
+                },
               ],
             },
             "app",
@@ -141,7 +144,7 @@ describe("the group command", () => {
     const result = await group.executeAsync(context);
     expect(result._results).toEqual();
   });
-  test("client commands case 3", async () => {
+  test("Run at client - InlineSource command", async () => {
     var setting = new ServiceSettings({});
     const context = new TestContext(setting);
     context.cancellation = new CancellationToken();
@@ -215,8 +218,8 @@ describe("the group command", () => {
     const result = await group.executeAsync(context);
     expect(result).toEqual([]);
   });
-  test("client commands with server commands result case 1", async () => {
-    var setting = new ServiceSettings({});
+  test("Run at client - command collection 1", async () => {
+    const setting = new ServiceSettings({});
     const context = new TestContext(setting);
     context.cancellation = new CancellationToken();
     groupIl.Commands.push(
@@ -288,8 +291,8 @@ describe("the group command", () => {
     const result = await group.executeAsync(context);
     expect(result._results).toEqual([]);
   });
-  test("client commands with server commands result case 2", async () => {
-    var setting = new ServiceSettings({});
+  test("Run at client - command collection case 2", async () => {
+    const setting = new ServiceSettings({});
     const context = new TestContext(setting);
     context.cancellation = new CancellationToken();
     groupIl.Commands(

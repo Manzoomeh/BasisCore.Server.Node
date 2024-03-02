@@ -19,4 +19,24 @@ export default class MemberCollection {
   _createMember(ilObject) {
     return new Member(ilObject);
   }
+
+  /**
+   * @returns {boolean}
+   */
+  get IsNotNull() {
+    return this.items.length > 0;
+  }
+
+  /**
+   * @param {CommandElement} ownerTag
+   * @param {IContext} context
+   * @returns {Promise<void>}
+   */
+  async addHtmlElementAsync(ownerTag, context) {
+    await Promise.all(
+      this.items.map(async (item) => {
+        ownerTag.addChild(await item.createHtmlElementAsync(context));
+      })
+    );
+  }
 }
