@@ -84,7 +84,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             formFields,
             jsonHeaders,
             stream.session.socket,
-            bodyStr.length > 0 ? JSON.parse(bodyStr) : {}
+            requestData
           );
           const result = await this.#service.processAsync(cms, fileContents);
           const [code, headerList, body] = await result.getResultAsync();
