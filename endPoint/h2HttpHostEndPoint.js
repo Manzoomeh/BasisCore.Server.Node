@@ -62,6 +62,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     return http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
+        let bodyFields = {};
         /** @type {Request} */
         let cms = null;
         /**@type {BinaryContent[]} */
@@ -73,13 +74,28 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         const method = headers[":method"];
         const url = headers[":path"];
         const createCmsAndCreateResponseAsync = async () => {
+          let date = new Date();
+          console.log(
+            "HTTP2" +
+              " => " +
+              date.getHours() +
+              ":" +
+              date.getMinutes() +
+              ":" +
+              date.getSeconds() +
+              ") " +
+              method +
+              "::" +
+              url
+          );
           cms = await this._createCmsObjectAsync(
             url,
             method,
             headers,
             formFields,
             jsonHeaders,
-            stream.session.socket
+            stream.session.socket,
+            bodyFields
           );
           const result = await this.#service.processAsync(cms, fileContents);
           const [code, headerList, body] = await result.getResultAsync();
@@ -94,7 +110,10 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           stream.destroy(ex);
         });
         try {
-          if (method === "POST") {
+          if (
+            method === "POST" &&
+            headers["content-type"] == "multipart/form-data"
+          ) {
             /**@type {Array<BinaryContent>}*/
             const bb = busboy({ headers: headers });
             bb.on("file", (name, file, info) => {
@@ -117,6 +136,16 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             });
             bb.on("close", createCmsAndCreateResponseAsync);
             stream.pipe(bb);
+          } else if (method === "POST") {
+            let raw_body = "";
+            stream.on("data", (chunk) => {
+              raw_body += chunk.toString();
+            });
+
+            stream.on("end", () => {
+              bodyFields = JSON.stringify(raw_body);
+              console.log("body" + bodyFields);
+            });
           } else {
             createCmsAndCreateResponseAsync();
           }
