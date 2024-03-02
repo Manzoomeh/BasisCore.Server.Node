@@ -4,8 +4,8 @@ import { StatusCodes } from "http-status-codes";
 import SecureHttpHostEndPoint from "./secureHttpHostEndPoint.js";
 import HostService from "../services/hostService.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
-
 import http from "http";
+
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {HostService} */
   #service;
@@ -41,7 +41,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     requestHeaders,
     formFields,
     fileContents,
-    socket
+    socket,
+    body
   ) {
     const cms = await super._createCmsObjectAsync(
       urlStr,
@@ -49,7 +50,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
       requestHeaders,
       formFields,
       fileContents,
-      socket
+      socket,
+      body
     );
     cms.request["host"] = requestHeaders[":authority"];
     cms.request[
@@ -73,6 +75,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         const method = headers[":method"];
         const url = headers[":path"];
         let bodyStr = "";
+        let requestData;
         const createCmsAndCreateResponseAsync = async () => {
           cms = await this._createCmsObjectAsync(
             url,
@@ -94,6 +97,12 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             bodyStr += chunk;
           }
         });
+        stream.on("end", () => {
+          if (headers["content-type"] === "application/json") {
+            requestData = JSON.parse(bodyStr);
+            createCmsAndCreateResponseAsync();
+          }
+        });
         stream.on("error", (ex) => {
           if (ex.code != "ERR_STREAM_WRITE_AFTER_END") {
             console.error("HTTP/2 server stream error", ex);
@@ -101,7 +110,10 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           stream.destroy(ex);
         });
         try {
-          if (method === "POST") {
+          if (
+            method === "POST" &&
+            headers["content-type"]?.startsWith("multipart/form-data")
+          ) {
             /**@type {Array<BinaryContent>}*/
             const bb = busboy({ headers: headers });
             bb.on("file", (name, file, info) => {
@@ -125,7 +137,16 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             bb.on("close", createCmsAndCreateResponseAsync);
             stream.pipe(bb);
           } else {
-            createCmsAndCreateResponseAsync();
+            if (headers["content-type"] === "application/json") {
+            } else {
+              stream.respond({
+                ":status": 415,
+                "content-type": "text/plain",
+                "Access-Control-Allow-Origin": "*",
+                "Access-Control-Allow-Headers": "Content-Type, Authorization",
+              });
+              stream.end("Unsupported Media Type");
+            }
           }
         } catch (ex) {
           if (ex.code != "ERR_HTTP2_INVALID_STREAM") {

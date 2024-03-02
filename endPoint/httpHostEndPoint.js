@@ -62,8 +62,9 @@ class HttpHostEndPoint extends HostEndPoint {
     headers["hostip"] = socket.localAddress;
     headers["hostport"] = socket.localPort.toString();
     headers["clientip"] = socket.remoteAddress;
+    
     if (Object.keys(jsonHeaders).length > 0) {
-      headers["json"] = ObjectUtil.convertObjectToNestedStructure(jsonHeaders);
+      headers["json"] = {header:ObjectUtil.convertObjectToNestedStructure(jsonHeaders)};
     } else {
       headers["json"] = bodyFields;
     }
@@ -98,60 +99,67 @@ class HttpHostEndPoint extends HostEndPoint {
    */
   async _handleContentTypes(req, res, next) {
     let body = "";
-    console.log(req.headers["content-type"]);
-    if (req.headers["content-type"]?.startsWith("multipart/form-data")) {
-      const bb = busboy({ headers: req.headers });
-      /**@type {BinaryContent[]} */
-      let fileContents = [];
-      /**@type {NodeJS.Dict<string>} */
-      let formFields = {};
-      /**@type {NodeJS.Dict<string>} */
-      let jsonHeaders = {};
-      bb.on("file", (name, file, info) => {
-        const ContentParts = [];
-        file.on("data", (x) => ContentParts.push(x));
-        file.on("end", async () => {
-          const content = new BinaryContent();
-          content.url = `${req.headers["host"]}${req.url}`;
-          content.mime = info.mimeType.toLowerCase();
-          content.name = info.filename;
-          content.payload = Buffer.concat(ContentParts);
-          fileContents.push(content);
+    if (req.headers["content-length"]) {
+      if (req.headers["content-type"]?.startsWith("multipart/form-data")) {
+        const bb = busboy({ headers: req.headers });
+        /**@type {BinaryContent[]} */
+        let fileContents = [];
+        /**@type {NodeJS.Dict<string>} */
+        let formFields = {};
+        /**@type {NodeJS.Dict<string>} */
+        let jsonHeaders = {};
+        bb.on("file", (name, file, info) => {
+          const ContentParts = [];
+          file.on("data", (x) => ContentParts.push(x));
+          file.on("end", async () => {
+            const content = new BinaryContent();
+            content.url = `${req.headers["host"]}${req.url}`;
+            content.mime = info.mimeType.toLowerCase();
+            content.name = info.filename;
+            content.payload = Buffer.concat(ContentParts);
+            fileContents.push(content);
+          });
         });
-      });
-      bb.on("field", (name, val, info) => {
-        console.log(formFields[name]);
-        formFields[name] = val;
-        if (name.startsWith("_")) {
-          jsonHeaders[name] = val;
-        }
-      });
-      bb.on("close", () => {
-        req.formFields = formFields;
-        req.fileContents = fileContents;
-        req.jsonHeaders = jsonHeaders;
-        next();
-      });
-      req.pipe(bb);
-    } else if (req.headers["content-type"] === "application/json") {
-      try {
-        req.on("data", (chunk) => {
-          body += chunk;
-        });
-        req.on("end", async () => {
-          if (body.length == 0) {
-            next();
-          } else {
-            req.json = JSON.parse(body);
-            next();
+        bb.on("field", (name, val, info) => {
+          formFields[name] = val;
+          if (name.startsWith("_")) {
+            jsonHeaders[name] = val;
           }
         });
-      } catch (error) {
-        throw new BasisCoreException("invalid JSON on body");
+        bb.on("close", () => {
+          req.formFields = formFields;
+          req.fileContents = fileContents;
+          req.jsonHeaders = jsonHeaders;
+          next();
+        });
+        req.pipe(bb);
+      } else if (req.headers["content-type"] === "application/json") {
+        try {
+          req.on("data", (chunk) => {
+            body += chunk;
+          });
+          req.on("end", async () => {
+            if (body.length == 0) {
+              next();
+            } else {
+              req.json = JSON.parse(body);
+              next();
+            }
+          });
+        } catch (error) {
+          throw new BasisCoreException("invalid JSON on body");
+        }
+      } else {
+        res.statusCode = 415;
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.setHeader(
+          "Access-Control-Allow-Headers",
+          "Content-Type, Authorization"
+        );
+        return res.end("Unsupported Media Type");
       }
     } else {
-      res.statusCode = 415;
-      return res.end("Unsupported Media Type");
+      next();
     }
   }
 }

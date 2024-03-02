@@ -35,11 +35,11 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
               req.method,
               req.headers,
               req.formFields,
-              req.jsonHeaders,
+              req.jsonHeaders ? req.jsonHeaders : {},
               req.socket,
               req.json
             );
-            const result = await this.#service.processAsync(cms, fileContents);
+            const result = await this.#service.processAsync(cms, req.fileContents);
             const [code, headers, body] = await result.getResultAsync();
             res.writeHead(code, headers);
             res.end(body);

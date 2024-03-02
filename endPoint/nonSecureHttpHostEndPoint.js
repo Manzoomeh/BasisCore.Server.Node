@@ -32,7 +32,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
               req.method,
               req.headers,
               req.formFields,
-              req.jsonHeaders,
+              req.jsonHeaders ? req.jsonHeaders  :{} ,
               req.socket,
               req.json
             );
