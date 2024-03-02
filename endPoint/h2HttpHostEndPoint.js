@@ -137,8 +137,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             bb.on("close", createCmsAndCreateResponseAsync);
             stream.pipe(bb);
           } else {
-            if (headers["content-type"] === "application/json") {
-            } else {
+            //to do : write condition for other content types
+            if (headers["content-type"] != "application/json") {
               stream.respond({
                 ":status": 415,
                 "content-type": "text/plain",
