@@ -92,7 +92,7 @@ class HttpHostEndPoint extends HostEndPoint {
         request["query"] = query;
       }
     }
-    request["Form"] = formFields;
+    request["form"] = formFields;
     return request;
   }
   /**
