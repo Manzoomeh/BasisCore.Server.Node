@@ -108,7 +108,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           stream.destroy(ex);
         });
         try {
-          if (req.headers["content-length"]) {
+          if (headers["content-length"]) {
             if (headers["content-type"]?.startsWith("multipart/form-data")) {
               /**@type {Array<BinaryContent>}*/
               const bb = busboy({ headers: headers });
