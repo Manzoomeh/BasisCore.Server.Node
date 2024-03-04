@@ -50,7 +50,7 @@ class HttpHostEndPoint extends HostEndPoint {
     formFields,
     jsonHeaders,
     socket,
-    bodyFields
+    bodyStr
   ) {
     const rawUrl = urlStr.substring(1);
     const urlObject = url.parse(rawUrl, true);
@@ -62,12 +62,15 @@ class HttpHostEndPoint extends HostEndPoint {
     headers["hostip"] = socket.localAddress;
     headers["hostport"] = socket.localPort.toString();
     headers["clientip"] = socket.remoteAddress;
-    
+    headers[":path"] = "/" + decodeURIComponent(rawUrl);
     if (Object.keys(jsonHeaders).length > 0) {
-      headers["json"] = {header:ObjectUtil.convertObjectToNestedStructure(jsonHeaders)};
+      headers["json"] = {
+        header: ObjectUtil.convertObjectToNestedStructure(jsonHeaders),
+      };
     } else {
-      headers["json"] = bodyFields;
+      headers["json"] = {};
     }
+    headers.body = bodyStr;
     const now = dayjs();
     const request = new Request();
     request.request = headers;
@@ -142,8 +145,7 @@ class HttpHostEndPoint extends HostEndPoint {
             if (body.length == 0) {
               next();
             } else {
-              req.json = JSON.parse(body);
-              next();
+              req.bodyStr = body;
             }
           });
         } catch (error) {

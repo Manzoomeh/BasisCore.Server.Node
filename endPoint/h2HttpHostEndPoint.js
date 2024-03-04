@@ -75,7 +75,6 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         const method = headers[":method"];
         const url = headers[":path"];
         let bodyStr = "";
-        let requestData;
         const createCmsAndCreateResponseAsync = async () => {
           cms = await this._createCmsObjectAsync(
             url,
@@ -84,7 +83,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             formFields,
             jsonHeaders,
             stream.session.socket,
-            requestData
+            bodyStr
           );
           const result = await this.#service.processAsync(cms, fileContents);
           const [code, headerList, body] = await result.getResultAsync();
@@ -99,7 +98,6 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         });
         stream.on("end", () => {
           if (headers["content-type"] === "application/json") {
-            requestData = JSON.parse(bodyStr);
             createCmsAndCreateResponseAsync();
           }
         });

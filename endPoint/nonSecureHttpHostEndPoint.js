@@ -34,7 +34,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
               req.formFields,
               req.jsonHeaders ? req.jsonHeaders  :{} ,
               req.socket,
-              req.json
+              req.bodyStr
             );
             const result = await this.#service.processAsync(
               cms,
