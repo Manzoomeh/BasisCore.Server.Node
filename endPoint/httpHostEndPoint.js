@@ -146,6 +146,7 @@ class HttpHostEndPoint extends HostEndPoint {
               next();
             } else {
               req.bodyStr = body;
+              next();
             }
           });
         } catch (error) {
