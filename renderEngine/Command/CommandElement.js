@@ -1,7 +1,6 @@
 import Util from "../../Util.js";
 import IContext from "../Context/IContext.js";
 import IToken from "../Token/IToken.js";
-import ValueToken from "../Token/ValueToken.js";
 import ElementBase from "./ElementBase.js";
 import RawHtmlElement from "./RawHtmlElement.js";
 
@@ -92,7 +91,6 @@ export default class CommandElement extends ElementBase {
         ),
         ">"
       );
-      console.log("rrr", retVal);
       retVal = retVal.concat(...this.childs.map((x) => x.getHtml()));
       retVal += `</${this.name}>`;
       return retVal;

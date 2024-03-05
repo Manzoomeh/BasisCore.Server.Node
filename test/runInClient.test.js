@@ -334,4 +334,19 @@ describe("the group command", () => {
     const result = await group.executeAsync(context);
     expect(result._results).toEqual([]);
   });
+  test("Run at client - Group command", async () => {
+    const setting = new ServiceSettings({});
+    const context = new TestContext(setting);
+    context.cancellation = new CancellationToken();
+    groupIl.Commands.push({
+      $type: "call",
+      core: "call",
+      FileName: "deep.inc",
+    });
+    groupIl.run = "atClient";
+    const group = new GroupCommand(groupIl);
+    const result = await group.executeAsync(context);
+    console.log(result);
+    expect(result._results).toEqual();
+  });
 });

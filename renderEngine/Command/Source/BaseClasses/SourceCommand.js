@@ -94,27 +94,22 @@ export default class SourceCommand extends CommandBase {
    * @returns {Promise<CommandElement>}
    */
   async createHtmlElementAsync(context) {
-    try {
-      const tag = await super.createHtmlElementAsync(context);
-      await Promise.all([
-        tag.addAttributeIfExistAsync(
-          "procedurename",
-          this.procedureName,
-          context
-        ),
-        tag.addAttributeIfExistAsync("source", this.connectionName, context),
-      ]);
-      if (this.params.IsNotNull) {
-        await this.params.addHtmlElementAsync(tag, context);
-      }
-      if (this.members.IsNotNull) {
-        await this.members.addHtmlElementAsync(tag, context);
-      }
-      console.log("tag", tag);
-      return tag;
-    } catch (e) {
-      console.error(e);
+    const tag = await super.createHtmlElementAsync(context);
+    await Promise.all([
+      tag.addAttributeIfExistAsync(
+        "procedurename",
+        this.procedureName,
+        context
+      ),
+      tag.addAttributeIfExistAsync("source", this.connectionName, context),
+    ]);
+    if (this.params.IsNotNull) {
+      await this.params.addHtmlElementAsync(tag, context);
     }
+    if (this.members.IsNotNull) {
+      await this.members.addHtmlElementAsync(tag, context);
+    }
+    return tag;
   }
 
   /**

@@ -21,10 +21,10 @@ export default class GroupCommand extends CommandBase {
    * @returns {Promise<ICommandResult>}
    */
   async _executeCommandAsync(context) {
-    var newContext = context.createContext("group");
+    const newContext = context.createContext("group");
     const commands = [];
-    for (let i = 0; i < this.commands.length; i++) {
-      const command = this.commands[i];
+    for (const element of this.commands) {
+      const command = element;
       if (command instanceof CallCommand) {
         commands.push(...(await command.callAsync(newContext)));
       } else {
@@ -32,9 +32,9 @@ export default class GroupCommand extends CommandBase {
       }
     }
     /** @type {Array<CommandBase>} */
-    var sourceCommands = [];
+    const sourceCommands = [];
     /** @type {Array<CommandBase>} */
-    var otherCommands = [];
+    const otherCommands = [];
     commands.forEach((x) =>
       x instanceof SourceCommand
         ? sourceCommands.push(x)
@@ -48,5 +48,20 @@ export default class GroupCommand extends CommandBase {
       otherCommands.map((x) => x.executeAsync(newContext))
     );
     return new GroupResult(sourceResults.concat(otherResult));
+  }
+
+  /**
+   * @param {IContext} context
+   * @returns {Promise<CommandElement>}
+   */
+  async createHtmlElementAsync(context) {
+    const tag = await super.createHtmlElementAsync(context);
+    const childTags = await Promise.all(
+      this.commands.map((x) => x.createHtmlElementAsync(context))
+    );
+    childTags.forEach((childTag) => {
+      tag.addChild(childTag);
+    });
+    return tag;
   }
 }
