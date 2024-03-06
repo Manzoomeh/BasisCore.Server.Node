@@ -40,7 +40,7 @@ export default class InMemoryMember extends Member {
    */
   async createHtmlElementAsync(context) {
     const retVal = await super.createHtmlElementAsync(context);
-    return retVal.addAttributeIfExistAsync("format", this.format, context);
+    return retVal.addAttributeIfExist("format", this.format);
   }
   /**
    *

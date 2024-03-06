@@ -31,9 +31,7 @@ export default class Edge extends Step {
           .on("close", function () {
             const data = Buffer.concat(buffer);
             try {
-              console.log("msg", data.length);
               const msg = EdgeMessage.createFromBuffer(data);
-
               resolve(JSON.parse(msg.payload));
             } catch (e) {
               reject(e);

@@ -4,6 +4,7 @@ import IDataSource from "../Source/IDataSource.js";
 import IToken from "../Token/IToken.js";
 import StringUtil from "../Token/StringUtil.js";
 import TokenUtil from "../Token/TokenUtil.js";
+import CommandElement from "./CommandElement.js";
 import RenderParam from "./RenderParam.js";
 import FaceCollection from "./Renderable/FaceCollection.js";
 import RawFaceCollection from "./Renderable/RawFaceCollection.js";
@@ -132,5 +133,40 @@ export default class RenderableCommand extends SourceBaseCommand {
       });
       return Promise.resolve(retVal);
     }
+  }
+
+  /**
+   * @param {IContext} context
+   * @returns {Promise<CommandElement>}
+   */
+  async createHtmlElementAsync(context) {
+    const tag = await super.createHtmlElementAsync(context);
+    if (this.layout.IsNotNull) {
+      const layout = new CommandElement("layout");
+      await layout.addRawContentIfExistAsync(this.layout, context);
+      tag.addChild(layout);
+    }
+    if (this.elseLayout.IsNotNull) {
+      const layout = new CommandElement("else-layout");
+      await layout.addRawContentIfExistAsync(this.elseLayout, context);
+      tag.addChild(layout);
+    }
+    if (this.rawFaces.IsNotNull) {
+      await this.rawFaces.addHtmlElementAsync(tag, context);
+    }
+    if (this.replaces.IsNotNull) {
+      await this.replaces.addHtmlElementAsync(tag, context);
+    }
+    if (this.dividerRowCount.IsNotNull) {
+      const layout = new CommandElement("divider");
+      await layout.addAttributeIfExistAsync(
+        "rowcount",
+        this.dividerRowCount,
+        context
+      );
+      await layout.addRawContentIfExistAsync(this.dividerTemplate, context);
+      tag.addChild(layout);
+    }
+    return tag;
   }
 }
