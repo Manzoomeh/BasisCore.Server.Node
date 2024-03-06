@@ -9,7 +9,8 @@
       "request": "launch",
       "name": "Launch Program",
       "skipFiles": ["<node_internals>/**"],
-      "program": "${workspaceFolder}/test/command/repeater/simple.js"
+      "program": "${workspaceFolder}/test/command/repeater/simple.js",
+      "runtimeExecutable": "C:/Users/Qamsari/AppData/Roaming/nvm/v21.6.2/node.exe"
     }
   ]
 }

@@ -19,4 +19,11 @@ export default class ArrayToken extends IToken {
     const values = await Promise.all(tasks);
     return values.join("");
   }
+
+  /**
+   * @returns {boolean}
+   */
+  get IsNotNull() {
+    return true;
+  }
 }

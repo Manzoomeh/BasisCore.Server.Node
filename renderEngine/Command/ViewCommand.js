@@ -90,4 +90,18 @@ export default class ViewCommand extends RenderableCommand {
     }
     return retVal;
   }
+
+  /**
+   * @param {IContext} context
+   * @returns {Promise<CommandElement>}
+   */
+  async createHtmlElementAsync(context) {
+    const tag = await super.createHtmlElementAsync(context);
+    await retVal.addAttributeIfExistAsync(
+      "groupcol",
+      this.groupColumn,
+      context
+    );
+    return tag;
+  }
 }
