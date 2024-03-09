@@ -33,7 +33,7 @@ export default class RepeaterCommand extends CollectionCommand {
       );
       const result = await this.executeCommandBlocks(newContext);
       results.push(...result);
-    
+    }
     return new GroupResult(results);
   }
 }
