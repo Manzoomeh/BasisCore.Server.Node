@@ -26,41 +26,35 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    /** @type {sql.ConnectionPool?} */
-    let pool = null;
-    try {
-      pool = await sql.connect(
-        this.settings.connectionString +
-          (this.settings.requestTimeout
-            ? `;requestTimeout=${this.settings.requestTimeout}`
-            : "")
-      );
-      const request = new sql.Request();
-      for (const key in parameters) {
-        if (Object.hasOwnProperty.call(parameters, key)) {
-          const value = parameters[key];
-          if (typeof value === "object" && !(value instanceof sql.Table)) {
-            const tvp = new sql.Table();
-            tvp.columns.add("name", sql.NVarChar(4000));
-            tvp.columns.add("value", sql.NVarChar());
-            for (const field in value) {
-              if (Object.hasOwnProperty.call(value, field)) {
-                const fieldValue = value[field];
-                tvp.rows.add(field, fieldValue);
-              }
+    const pool = await sql.connect(
+      this.settings.connectionString +
+        (this.settings.requestTimeout
+          ? `;requestTimeout=${this.settings.requestTimeout}`
+          : "")
+    );
+    const request = new sql.Request(pool);
+    for (const key in parameters) {
+      if (Object.hasOwnProperty.call(parameters, key)) {
+        const value = parameters[key];
+        if (typeof value === "object" && !(value instanceof sql.Table)) {
+          const tvp = new sql.Table();
+          tvp.columns.add("name", sql.NVarChar(4000));
+          tvp.columns.add("value", sql.NVarChar());
+          for (const field in value) {
+            if (Object.hasOwnProperty.call(value, field)) {
+              const fieldValue = value[field];
+              tvp.rows.add(field, fieldValue);
             }
-            request.input(key, tvp);
-          } else {
-            request.input(key, value);
           }
+          request.input(key, tvp);
+        } else {
+          request.input(key, value);
         }
       }
-      return new DataSourceCollection(
-        (await request.execute(this.settings.procedure)).recordsets
-      );
-    } finally {
-      await pool?.close();
     }
+    return new DataSourceCollection(
+      (await request.execute(this.settings.procedure)).recordsets
+    );
   }
 
   /**
@@ -118,32 +112,30 @@ export default class SqlConnectionInfo extends ConnectionInfo {
     domainId,
     cancellationToken
   ) {
-    /** @type {sql.ConnectionPool?} */
-    let pool = null;
-    try {
-      pool = await sql.connect(
-        this.settings.connectionString +
-          (this.settings.requestTimeout
-            ? `;requestTimeout=${this.settings.requestTimeout}`
-            : "")
+    const pool = await sql.connect(
+      this.settings.connectionString +
+        (this.settings.requestTimeout
+          ? `;requestTimeout=${this.settings.requestTimeout}`
+          : "")
+    );
+    const request = new sql.Request(pool);
+    request.input("fileNames", pageName);
+    request.input("dmnid", domainId);
+    request.input("sitesize", pageSize);
+    request.input("command", rawCommand);
+    /** @type {Array<ILoadPageResult>} */
+    const rows = (await request.execute(this.settings.procedure)).recordset;
+    if (rows.length != 1) {
+      throw new WebServerException(
+        `Call Command Expect 1 File '${pageName}' But Get ${rows.length} File(s) From '${this.settings.procedure}' Procedure`
       );
-      const request = new sql.Request();
-      request.input("fileNames", pageName);
-      request.input("dmnid", domainId);
-      request.input("sitesize", pageSize);
-      request.input("command", rawCommand);
-      /** @type {Array<ILoadPageResult>} */
-      const rows = (await request.execute(this.settings.procedure)).recordset;
-      if (rows.length != 1) {
-        throw new WebServerException(
-          `Call Command Expect 1 File '${pageName}' But Get ${rows.length} File(s) From '${this.settings.procedure}' Procedure`
-        );
-      }
-      return rows[0];
-    } finally {
-      await pool?.close();
     }
+    return rows[0];
   }
+
+  /**
+   * @returns {boolean}
+   */
   async testConnectionAsync() {
     try {
       await sql.connect(
