@@ -2,18 +2,14 @@ import CommandUtil from "../../../test/command/CommandUtil.js";
 import IContext from "../../Context/IContext.js";
 import GroupResult from "../../Models/GroupResult.js";
 import CommandBase from "../CommandBase.js";
-import SourceCommand from "../Source/BaseClasses/SourceCommand.js";
-import CallCommand from "./CallCommand.js";
+import CollectionCommand from "./CollectionCommand.js";
 
-export default class GroupCommand extends CommandBase {
-  /** @type {Array<CommandBase>} */
-  commands;
+export default class GroupCommand extends CollectionCommand {
   /**
    * @param {object} groupCommandIl
    */
   constructor(groupCommandIl) {
     super(groupCommandIl);
-    this.commands = groupCommandIl["Commands"].map(CommandUtil.createCommand);
   }
 
   /**
@@ -22,32 +18,8 @@ export default class GroupCommand extends CommandBase {
    */
   async _executeCommandAsync(context) {
     const newContext = context.createContext("group");
-    const commands = [];
-    for (const element of this.commands) {
-      const command = element;
-      if (command instanceof CallCommand) {
-        commands.push(...(await command.callAsync(newContext)));
-      } else {
-        commands.push(command);
-      }
-    }
-    /** @type {Array<CommandBase>} */
-    const sourceCommands = [];
-    /** @type {Array<CommandBase>} */
-    const otherCommands = [];
-    commands.forEach((x) =>
-      x instanceof SourceCommand
-        ? sourceCommands.push(x)
-        : otherCommands.push(x)
-    );
-
-    const sourceResults = await Promise.all(
-      sourceCommands.map((x) => x.executeAsync(newContext))
-    );
-    const otherResult = await Promise.all(
-      otherCommands.map((x) => x.executeAsync(newContext))
-    );
-    return new GroupResult(sourceResults.concat(otherResult));
+    const result = await this.executeCommandBlocks(newContext);
+    return new GroupResult(result);
   }
 
   /**

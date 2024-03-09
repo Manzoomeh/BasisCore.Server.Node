@@ -35,6 +35,7 @@
     "view": "node test/command/view/simple.js",
     "tree": "node test/command/tree/simple.js",
     "group": "node test/command/group/simple.js",
+    "repeater": "node test/command/repeater/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
     "con-edge": "node test/connection/edge/simple.js",
     "call": "node test/command/call/simple.js",
