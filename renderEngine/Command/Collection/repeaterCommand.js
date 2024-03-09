@@ -1,23 +1,22 @@
-import CommandUtil from "../../../test/command/CommandUtil.js";
 import IContext from "../../Context/IContext.js";
 import GroupResult from "../../Models/GroupResult.js";
-import SourceCommand from "../Source/BaseClasses/SourceCommand.js";
-import CallCommand from "./CallCommand.js";
-import SourceBaseCommand from "../SourceBaseCommand.js";
-import CommandBase from "../CommandBase.js";
 import JsonSource from "../../Source/JsonSource.js";
-import ICommandResult from "../../Models/ICommandResult.js";
-import LocalContext from "./../../Context/LocalContext.js";
-export default class RepeaterCommand extends SourceBaseCommand {
-  /** @type {Array<CommandBase>} */
-  commands;
+import TokenUtil from "../../Token/TokenUtil.js";
+import CollectionCommand from "./CollectionCommand.js";
+
+
+export default class RepeaterCommand extends CollectionCommand {
+  /**@type {IToken} */
+  sourceId;
+
   /**
-   * @param {object} groupCommandIl
+   * @param {object} repeaterCommandIl
    */
-  constructor(groupCommandIl) {
-    super(groupCommandIl);
-    this.commands = groupCommandIl["Commands"].map(CommandUtil.createCommand);
+  constructor(repeaterCommandIl) {
+    super(repeaterCommandIl);
+    this.sourceId = TokenUtil.getFiled(repeaterCommandIl, "data-member-name");
   }
+
   /**
    * @param {IContext} context
    * @returns {Promise<GroupResult>}
@@ -28,23 +27,13 @@ export default class RepeaterCommand extends SourceBaseCommand {
     );
     const results = [];
     for (const row of mainSource.data) {
-      /** @type {Array<CommandBase>} */
-      const sourceTasks = [];
-      /** @type {Array<CommandBase>} */
-      const otherTasks = [];
-      let newContext = new LocalContext(context);
+      let newContext = context.createContext("repeater");
       newContext.addSource(
         new JsonSource([row], `${await this.name.getValueAsync()}.current`)
       );
-      this.commands.forEach((x) =>
-        x instanceof SourceCommand
-          ? sourceTasks.push(x.executeAsync(newContext))
-          : otherTasks.push(x.executeAsync(newContext))
-      );
-      await Promise.all(sourceTasks);
-      const result = await Promise.all(otherTasks);
+      const result = await this.executeCommandBlocks(newContext);
       results.push(...result);
-    }
+    
     return new GroupResult(results);
   }
 }

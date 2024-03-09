@@ -67,7 +67,7 @@ const groupIl = {
 const group = new GroupCommand(groupIl);
 try {
   const result = await group.executeAsync(context);
-  console.log(result._results[0]);
+  console.log("%%%%%%%%:",result._results[1]);
 } catch (ex) {
   console.error(ex);
 }
