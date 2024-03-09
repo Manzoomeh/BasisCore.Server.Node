@@ -26,9 +26,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    /** @type {sql.ConnectionPool?} */
-    let pool = null;
-    pool = await sql.connect(
+    const pool = await sql.connect(
       this.settings.connectionString +
         (this.settings.requestTimeout
           ? `;requestTimeout=${this.settings.requestTimeout}`
@@ -114,9 +112,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
     domainId,
     cancellationToken
   ) {
-    /** @type {sql.ConnectionPool?} */
-    let pool = null;
-    pool = await sql.connect(
+    const pool = await sql.connect(
       this.settings.connectionString +
         (this.settings.requestTimeout
           ? `;requestTimeout=${this.settings.requestTimeout}`
