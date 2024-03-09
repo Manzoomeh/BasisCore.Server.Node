@@ -4,7 +4,6 @@ import JsonSource from "../../Source/JsonSource.js";
 import TokenUtil from "../../Token/TokenUtil.js";
 import CollectionCommand from "./CollectionCommand.js";
 
-
 export default class RepeaterCommand extends CollectionCommand {
   /**@type {IToken} */
   sourceId;
@@ -26,11 +25,10 @@ export default class RepeaterCommand extends CollectionCommand {
       await this.sourceId.getValueAsync()
     );
     const results = [];
+    const name = await this.name.getValueAsync();
     for (const row of mainSource.data) {
       let newContext = context.createContext("repeater");
-      newContext.addSource(
-        new JsonSource([row], `${await this.name.getValueAsync()}.current`)
-      );
+      newContext.addSource(new JsonSource([row], `${name}.current`));
       const result = await this.executeCommandBlocks(newContext);
       results.push(...result);
     }

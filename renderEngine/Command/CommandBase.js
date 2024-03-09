@@ -80,7 +80,6 @@ export default class CommandBase {
           break;
         }
       }
-      return retVal;
     } catch (ex) {
       console.error(ex);
       retVal = new ExceptionResult(ex, context);
