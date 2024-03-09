@@ -116,30 +116,30 @@ export default class SqlConnectionInfo extends ConnectionInfo {
   ) {
     /** @type {sql.ConnectionPool?} */
     let pool = null;
-    try {
-      pool = await sql.connect(
-        this.settings.connectionString +
-          (this.settings.requestTimeout
-            ? `;requestTimeout=${this.settings.requestTimeout}`
-            : "")
+    pool = await sql.connect(
+      this.settings.connectionString +
+        (this.settings.requestTimeout
+          ? `;requestTimeout=${this.settings.requestTimeout}`
+          : "")
+    );
+    const request = new sql.Request(pool);
+    request.input("fileNames", pageName);
+    request.input("dmnid", domainId);
+    request.input("sitesize", pageSize);
+    request.input("command", rawCommand);
+    /** @type {Array<ILoadPageResult>} */
+    const rows = (await request.execute(this.settings.procedure)).recordset;
+    if (rows.length != 1) {
+      throw new WebServerException(
+        `Call Command Expect 1 File '${pageName}' But Get ${rows.length} File(s) From '${this.settings.procedure}' Procedure`
       );
-      const request = new sql.Request();
-      request.input("fileNames", pageName);
-      request.input("dmnid", domainId);
-      request.input("sitesize", pageSize);
-      request.input("command", rawCommand);
-      /** @type {Array<ILoadPageResult>} */
-      const rows = (await request.execute(this.settings.procedure)).recordset;
-      if (rows.length != 1) {
-        throw new WebServerException(
-          `Call Command Expect 1 File '${pageName}' But Get ${rows.length} File(s) From '${this.settings.procedure}' Procedure`
-        );
-      }
-      return rows[0];
-    } finally {
-      await pool?.close();
     }
+    return rows[0];
   }
+
+  /**
+   * @returns {boolean}
+   */
   async testConnectionAsync() {
     try {
       await sql.connect(
