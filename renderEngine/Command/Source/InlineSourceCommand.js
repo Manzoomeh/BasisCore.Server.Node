@@ -31,4 +31,8 @@ export default class InlineSourceCommand extends SourceCommand {
     }
     return VoidResult.result;
   }
+  // async createHtmlElementAsync(context) {
+  //   const tag = await super.createHtmlElementAsync(context);
+  //   tag.
+  // }
 }

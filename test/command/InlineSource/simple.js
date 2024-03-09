@@ -1,16 +1,17 @@
 import ServiceSettings from "../../../models/ServiceSettings.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
-import RequestContext from "../../../renderEngine/Context/RequestContext.js";
+import TestContext from "../../../renderEngine/Context/TestContext.js";
 
 var setting = new ServiceSettings({});
-const context = new RequestContext(setting);
+const context = new TestContext(setting);
 context.cancellation = new CancellationToken();
 
 const il = {
   $type: "inlinesource",
   core: "inlinesource",
   name: "view",
+  run :"atClient",
   Members: [
     {
       name: "item",

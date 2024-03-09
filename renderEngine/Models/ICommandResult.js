@@ -1,5 +1,4 @@
 import CancellationToken from "../Cancellation/CancellationToken.js";
-import CommandBase from "../Command/CommandBase.js";
 
 export default class ICommandResult {
   /**
