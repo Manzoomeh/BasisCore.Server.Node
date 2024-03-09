@@ -32,7 +32,7 @@ export default class CallCommand extends CommandBase {
     if (!ifValue) {
       retVal = []
     } else if (runType.toLowerCase() == RunTypes.AtClient) {
-      retVal = []
+      retVal = [this]
     } else {
       /** @type {CommandBase[]} */
       const [pageName, pageSize, html] = await Promise.all([
