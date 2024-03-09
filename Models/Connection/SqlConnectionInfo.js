@@ -28,39 +28,35 @@ export default class SqlConnectionInfo extends ConnectionInfo {
   async loadDataAsync(parameters, cancellationToken) {
     /** @type {sql.ConnectionPool?} */
     let pool = null;
-    try {
-      pool = await sql.connect(
-        this.settings.connectionString +
-          (this.settings.requestTimeout
-            ? `;requestTimeout=${this.settings.requestTimeout}`
-            : "")
-      );
-      const request = new sql.Request();
-      for (const key in parameters) {
-        if (Object.hasOwnProperty.call(parameters, key)) {
-          const value = parameters[key];
-          if (typeof value === "object" && !(value instanceof sql.Table)) {
-            const tvp = new sql.Table();
-            tvp.columns.add("name", sql.NVarChar(4000));
-            tvp.columns.add("value", sql.NVarChar());
-            for (const field in value) {
-              if (Object.hasOwnProperty.call(value, field)) {
-                const fieldValue = value[field];
-                tvp.rows.add(field, fieldValue);
-              }
+    pool = await sql.connect(
+      this.settings.connectionString +
+        (this.settings.requestTimeout
+          ? `;requestTimeout=${this.settings.requestTimeout}`
+          : "")
+    );
+    const request = new sql.Request(pool);
+    for (const key in parameters) {
+      if (Object.hasOwnProperty.call(parameters, key)) {
+        const value = parameters[key];
+        if (typeof value === "object" && !(value instanceof sql.Table)) {
+          const tvp = new sql.Table();
+          tvp.columns.add("name", sql.NVarChar(4000));
+          tvp.columns.add("value", sql.NVarChar());
+          for (const field in value) {
+            if (Object.hasOwnProperty.call(value, field)) {
+              const fieldValue = value[field];
+              tvp.rows.add(field, fieldValue);
             }
-            request.input(key, tvp);
-          } else {
-            request.input(key, value);
           }
+          request.input(key, tvp);
+        } else {
+          request.input(key, value);
         }
       }
-      return new DataSourceCollection(
-        (await request.execute(this.settings.procedure)).recordsets
-      );
-    } finally {
-      await pool?.close();
     }
+    return new DataSourceCollection(
+      (await request.execute(this.settings.procedure)).recordsets
+    );
   }
 
   /**
