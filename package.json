@@ -55,7 +55,7 @@
     "il": "nodemon test\\final\\server.js",
     "createSqlCms": "node test\\final\\createSqlCms.js",
     "unknown": "node test\\command\\UnknownCommand\\simple.js",
-    "bug": "node test\\bug.js"
+    "bug": "node --trace-warnings --trace-deprecation test\\bug.js"
   },
   "type": "module",
   "dependencies": {
