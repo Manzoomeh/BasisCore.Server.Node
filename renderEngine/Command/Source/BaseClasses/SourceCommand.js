@@ -7,6 +7,7 @@ import CommandBase from "../../CommandBase.js";
 import CommandElement from "../../CommandElement.js";
 import MemberCollection from "./MemberCollection.js";
 import ParamItemCollection from "./ParamItemCollection.js";
+import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
 
 export default class SourceCommand extends CommandBase {
   /** @type {ParamItemCollection}   */

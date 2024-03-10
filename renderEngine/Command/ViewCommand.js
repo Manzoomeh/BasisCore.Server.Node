@@ -97,7 +97,7 @@ export default class ViewCommand extends RenderableCommand {
    */
   async createHtmlElementAsync(context) {
     const tag = await super.createHtmlElementAsync(context);
-    await retVal.addAttributeIfExistAsync(
+    await tag.addAttributeIfExistAsync(
       "groupcol",
       this.groupColumn,
       context
