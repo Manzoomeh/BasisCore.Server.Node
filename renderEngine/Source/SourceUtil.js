@@ -1,6 +1,7 @@
 import alasql from "alasql";
 import IDataSource from "./IDataSource.js";
 import IContext from "../Context/IContext.js";
+import StringUtil from "../Token/StringUtil.js";
 
 export default class SourceUtil {
   /**
@@ -10,8 +11,13 @@ export default class SourceUtil {
    */
   static applySql(source, sql) {
     source.data = alasql(
-      sql.replace(`[${source.id}]`, "?").replace(source.id, "?"),
-      [source.data]
+      StringUtil.replace(
+        StringUtil.replace(sql, `(\\[${source.id}\\])`, "?"),
+        `(${source.id}),"?"`
+      ),
+      [
+        source.data,
+      ]
     );
   }
 

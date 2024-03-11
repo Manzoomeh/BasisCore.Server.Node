@@ -17,7 +17,7 @@ export default class RequestContext extends ContextBase {
    * @param {IRoutingRequest} request
    */
   constructor(settings, request) {
-    super(null, Number(request.cms?.dmnid));
+    super(null, Number(request?.cms?.dmnid));
     this._settings = settings;
     for (let mainKey in request) {
       const mainValue = request[mainKey];
@@ -41,7 +41,7 @@ export default class RequestContext extends ContextBase {
    */
   async loadDataAsync(sourceName, connectionName, parameters) {
     try {
-      parameters.dmnid = this.domainId;
+      parameters.dmnid = 4235;
       /** @type {ConnectionInfo} */
       const connection = this._settings.getConnection(connectionName);
       /** @type {DataSourceCollection} */
@@ -75,7 +75,7 @@ export default class RequestContext extends ContextBase {
       pageName,
       rawCommand,
       pageSize,
-      this.domainId,
+      4235,
       this.cancellation
     );
     if (result.il_call == 1 || Util.isNullOrEmpty(result.page_il)) {
