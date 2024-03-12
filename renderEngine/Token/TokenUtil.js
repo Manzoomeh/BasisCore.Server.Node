@@ -50,7 +50,9 @@ export default class TokenUtil {
    */
   static getFiled(object, filedName) {
     const value = object && filedName in object ? object[filedName] : null;
-    return value ? TokenUtil.ToToken(value) : ValueToken.Null;
+    return Util.isNullOrUndefined(value)
+      ? ValueToken.Null
+      : TokenUtil.ToToken(value);
   }
 
   /**

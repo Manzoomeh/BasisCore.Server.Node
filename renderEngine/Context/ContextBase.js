@@ -9,7 +9,7 @@ export default class ContextBase extends IContext {
    * @param {SourceRepository?} repository,
    * @param {string} domainId
    */
-  constructor(repository,domainId) {
+  constructor(repository, domainId) {
     super(domainId);
     this.repository = new SourceRepository(repository);
   }

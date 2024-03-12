@@ -1,9 +1,7 @@
 import http from "http";
-import busboy from "busboy";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
-import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {HostService} */
@@ -32,9 +30,10 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
               req.method,
               req.headers,
               req.formFields,
-              req.jsonHeaders ? req.jsonHeaders  :{} ,
+              req.jsonHeaders ? req.jsonHeaders : {},
               req.socket,
-              req.bodyStr
+              req.bodyStr,
+              false
             );
             const result = await this.#service.processAsync(
               cms,

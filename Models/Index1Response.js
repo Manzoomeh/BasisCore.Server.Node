@@ -7,7 +7,6 @@ import RequestBaseResponse from "./requestBaseResponse.js";
 
 export default class Index1Response extends RequestBaseResponse {
   /**
-   *
    * @param {IRoutingRequest} request
    * @param {ServiceSettings} settings
    */
@@ -22,10 +21,7 @@ export default class Index1Response extends RequestBaseResponse {
     try {
       const commandIl = JSON.parse(this._request.cms.page_il);
       const command = CommandUtil.createCommand(commandIl);
-      const context = new RequestContext(
-        this._settings,
-        this._request
-      );
+      const context = new RequestContext(this._settings, this._request);
       context.cancellation = new CancellationToken();
       const result = await command.executeAsync(context);
       const renderResultList = [];
@@ -38,6 +34,10 @@ export default class Index1Response extends RequestBaseResponse {
             "Content-Encoding": "gzip",
           }),
           ...this._request.http,
+          ...(context._cookies &&
+            Object.fromEntries(
+              context._cookies.map((x) => x.toHttpHeaderField())
+            )),
         },
         renderResultList.join(""),
       ];

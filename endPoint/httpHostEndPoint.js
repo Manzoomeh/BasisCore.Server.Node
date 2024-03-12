@@ -41,6 +41,7 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {NodeJS.Dict<string>} formFields
    * @param {Socket} socket
    * @param {NodeJS.Dict} bodyFields
+   * @param {boolean} isSecure
    * @returns {Promise<Request>}
    */
   async _createCmsObjectAsync(
@@ -50,7 +51,8 @@ class HttpHostEndPoint extends HostEndPoint {
     formFields,
     jsonHeaders,
     socket,
-    bodyStr
+    bodyStr,
+    isSecure
   ) {
     const rawUrl = urlStr.substring(1);
     const urlObject = url.parse(rawUrl, true);
@@ -73,6 +75,7 @@ class HttpHostEndPoint extends HostEndPoint {
     headers.body = bodyStr;
     const now = dayjs();
     const request = new Request();
+    request.isSecure = isSecure;
     request.request = headers;
     request.cms = {
       date: now.format("MM/DD/YYYY"),

@@ -3,11 +3,12 @@ import ContextBase from "./ContextBase.js";
 export default class LocalContext extends ContextBase {
   /** @type {ContextBase} */
   _owner;
+
   /**
    * @param {ContextBase} owner
    */
   constructor(owner) {
-    super(owner.repository,owner.domainId);
+    super(owner.repository, owner.domainId);
     this._owner = owner;
     this.cancellation = owner.cancellation;
   }
@@ -17,7 +18,9 @@ export default class LocalContext extends ContextBase {
    * @returns {IContext}
    */
   createContext(title) {
-    return new LocalContext(this);
+    const retVal = new LocalContext(this);
+    retVal.isSecure = this.isSecure;
+    return retVal;
   }
 
   /**
@@ -55,5 +58,15 @@ export default class LocalContext extends ContextBase {
    * @returns {Promise<boolean>} */
   checkConnectionAsync(connectionName) {
     return this._owner.checkConnectionAsync(connectionName);
+  }
+
+  /**
+   * @param {string} name
+   * @param {string} value
+   * @param {string} maxAge
+   * @param {string} path
+   */
+  addCookie(name, value, maxAge, path) {
+    this._owner.addCookie(name, value, maxAge, path);
   }
 }

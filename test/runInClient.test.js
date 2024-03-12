@@ -9,7 +9,7 @@ let groupIl = {
   name: "ROOT_GROUP",
   Commands: [],
 };
-describe("the group command", () => {
+describe("Test run at client", () => {
   beforeAll(() => {
     groupIl = {
       $type: "group",
@@ -18,7 +18,7 @@ describe("the group command", () => {
       Commands: [],
     };
   });
-  test("Run at client - Print command", async () => {
+  test("Print command", async () => {
     const setting = new ServiceSettings({});
     const context = new TestContext(setting);
     context.cancellation = new CancellationToken();
@@ -50,7 +50,7 @@ describe("the group command", () => {
     const result = await group.executeAsync(context);
     expect(result._results[0]).toEqual();
   });
-  test("Run at client - DbSource command", async () => {
+  test("DbSource command", async () => {
     var setting = new ServiceSettings({});
     const context = new TestContext(setting);
     context.cancellation = new CancellationToken();
@@ -144,7 +144,7 @@ describe("the group command", () => {
     const result = await group.executeAsync(context);
     expect(result._results).toEqual();
   });
-  test("Run at client - InlineSource command", async () => {
+  test("InlineSource command", async () => {
     var setting = new ServiceSettings({});
     const context = new TestContext(setting);
     context.cancellation = new CancellationToken();
@@ -218,7 +218,7 @@ describe("the group command", () => {
     const result = await group.executeAsync(context);
     expect(result).toEqual([]);
   });
-  test("Run at client - command collection 1", async () => {
+  test("command collection 1", async () => {
     const setting = new ServiceSettings({});
     const context = new TestContext(setting);
     context.cancellation = new CancellationToken();
@@ -291,7 +291,7 @@ describe("the group command", () => {
     const result = await group.executeAsync(context);
     expect(result._results).toEqual([]);
   });
-  test("Run at client - command collection case 2", async () => {
+  test("command collection case 2", async () => {
     const setting = new ServiceSettings({});
     const context = new TestContext(setting);
     context.cancellation = new CancellationToken();
@@ -334,7 +334,7 @@ describe("the group command", () => {
     const result = await group.executeAsync(context);
     expect(result._results).toEqual([]);
   });
-  test("Run at client - Group command", async () => {
+  test("Group command", async () => {
     const setting = new ServiceSettings({});
     const context = new TestContext(setting);
     context.cancellation = new CancellationToken();

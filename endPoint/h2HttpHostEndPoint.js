@@ -33,6 +33,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
    * @param {NodeJS.Dict<string>[]} formFields
    * @param {BinaryContent[]} fileContents
    * @param {Socket} socket
+   * @param {boolean} isSecure
    * @returns {Promise<RequestCms>}
    */
   async _createCmsObjectAsync(
@@ -42,7 +43,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     formFields,
     fileContents,
     socket,
-    body
+    body,
+    isSecure
   ) {
     const cms = await super._createCmsObjectAsync(
       urlStr,
@@ -51,7 +53,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
       formFields,
       fileContents,
       socket,
-      body
+      body,
+      isSecure
     );
     cms.request["host"] = requestHeaders[":authority"];
     cms.request[
@@ -83,7 +86,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             formFields,
             jsonHeaders,
             stream.session.socket,
-            bodyStr
+            bodyStr,
+            true
           );
           const result = await this.#service.processAsync(cms, fileContents);
           const [code, headerList, body] = await result.getResultAsync();
