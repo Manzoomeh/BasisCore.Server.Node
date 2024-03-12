@@ -71,7 +71,7 @@ export default class ApiCommand extends CommandBase {
     context.addSource(new JsonSource([data], sourceName));
   }
   async createHtmlElementAsync(context) {
-    const tag = await super.createHtmlElementAsync();
+    const tag = await super.createHtmlElementAsync(context);
     await Promise.all([
       tag.addAttributeIfExistAsync("method", this.method, context),
       tag.addAttributeIfExistAsync("url", this.url, context),
