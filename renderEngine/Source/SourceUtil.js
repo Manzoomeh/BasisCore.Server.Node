@@ -10,7 +10,10 @@ export default class SourceUtil {
    */
   static applySql(source, sql) {
     source.data = alasql(
-      sql.replace(`[${source.id}]`, "?").replace(source.id, "?"),
+      StringUtil.replace(
+        StringUtil.replace(sql, `(\\[${source.id}\\])`, "?"),
+        `(${source.id}),"?"`
+      ),
       [source.data]
     );
   }
