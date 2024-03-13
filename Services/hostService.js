@@ -75,19 +75,19 @@ export default class HostService {
     let retVal = null;
     switch (request.webserver.index) {
       case "1": {
-        retVal = new Index1Response(request,this.settings);
+        retVal = new Index1Response(request, this.settings);
         break;
       }
       case "2": {
-        retVal = new Index2Response(request,this.settings);
+        retVal = new Index2Response(request, this.settings);
         break;
       }
       case "4": {
-        retVal = new Index2Response(request,this.settings);
+        retVal = new Index2Response(request, this.settings);
         break;
       }
       case "5": {
-        retVal = new Index5Response(request,this.settings);
+        retVal = new Index5Response(request, this.settings);
         break;
       }
       default: {

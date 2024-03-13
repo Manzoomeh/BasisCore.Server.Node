@@ -11,6 +11,8 @@ import ListCommand from "../../renderEngine/Command/ListCommand.js";
 import CallCommand from "../../renderEngine/Command/Collection/CallCommand.js";
 import UnknownCommand from "../../renderEngine/Command/UnknownCommand.js";
 import RepeaterCommand from "../../renderEngine/Command/Collection/RepeaterCommand.js";
+import CookieCommand from "../../renderEngine/Command/CookieCommand.js";
+
 export default class CommandUtil {
   /**
    * @param {Object} commandIl
@@ -63,6 +65,10 @@ export default class CommandUtil {
       }
       case "repeater": {
         retVal = new RepeaterCommand(commandIl);
+        break;
+      }
+      case "cookie": {
+        retVal = new CookieCommand(commandIl);
         break;
       }
       default: {

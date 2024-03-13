@@ -1,10 +1,9 @@
 import HostService from "./hostService.js";
-import ServiceSettings from "../models/ServiceSettings.js";
 import WebServerException from "../models/Exceptions/WebServerException.js";
 import Request from "../models/request.js";
+import Response from "../models/response.js";
 
 export class HttpHostService extends HostService {
-
   /**
    * @param {string} name
    * @param {HostServiceOptions} options
@@ -30,6 +29,7 @@ export class HttpHostService extends HostService {
         request,
         null
       );
+      data.isSecure = request.isSecure;
       return this._createResponse(data);
     } catch (er) {
       console.error(er);

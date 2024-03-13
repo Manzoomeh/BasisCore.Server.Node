@@ -75,10 +75,10 @@ export default class SqlConnectionInfo extends ConnectionInfo {
         if (name === "query") {
           const query = group[name];
           for (const key in query) {
-            params.rows.add(name, key, query[key].toString());
+            params.rows.add(name, key, query[key]?.toString());
           }
         } else {
-          params.rows.add(type, name, group[name].toString());
+          params.rows.add(type, name, group[name]?.toString());
         }
       }
     }

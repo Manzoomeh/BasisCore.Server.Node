@@ -7,4 +7,6 @@ export default class IRoutingRequest {
   request;
   /** @type {IWebServer} */
   webserver;
+  /** @type {boolean} */
+  isSecure;
 }

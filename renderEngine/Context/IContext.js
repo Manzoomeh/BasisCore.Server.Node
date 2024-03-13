@@ -9,8 +9,8 @@ export default class IContext {
   domainId;
   /**@type {CancellationToken} */
   cancellation;
-  constructor(domainId){
-    this.domainId = domainId
+  constructor(domainId) {
+    this.domainId = domainId;
   }
   /**
    * @param {string} sourceId
@@ -75,5 +75,15 @@ export default class IContext {
    */
   loadPageAsync(pageName, rawCommand, pageSize, callDepth) {
     throw new Error("Method 'loadPageAsync' not implemented.");
+  }
+
+  /**
+   * @param {string} name
+   * @param {string} value
+   * @param {string} maxAge
+   * @param {string} path
+   */
+  addCookie(name, value, maxAge, path) {
+    throw new Error("Method 'addCookie' not implemented.");
   }
 }
