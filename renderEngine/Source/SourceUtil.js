@@ -1,6 +1,7 @@
 import alasql from "alasql";
 import IDataSource from "./IDataSource.js";
 import IContext from "../Context/IContext.js";
+import StringUtil from "../Token/StringUtil.js";
 
 export default class SourceUtil {
   /**
