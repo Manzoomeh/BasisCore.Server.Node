@@ -26,7 +26,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
           ? `;requestTimeout=${this.settings.requestTimeout}`
           : "")
     );
-    connectionPool.connect(console.error);
+    this.connectionPool.connect(console.error);
   }
 
   /**
@@ -35,7 +35,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    const request = this.connectionPool.Request();
+    const request = this.connectionPool.request();
     for (const key in parameters) {
       if (Object.hasOwnProperty.call(parameters, key)) {
         const value = parameters[key];
@@ -114,7 +114,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
     domainId,
     cancellationToken
   ) {
-    const request = this.connectionPool.Request();
+    const request = this.connectionPool.request();
     request.input("fileNames", pageName);
     request.input("dmnid", domainId);
     request.input("sitesize", pageSize);
