@@ -10,6 +10,8 @@ import IRoutingRequest from "../IRoutingRequest.js";
 export default class SqlConnectionInfo extends ConnectionInfo {
   /** @type {SqlSettingData} */
   settings;
+  /** @type {sql.ConnectionPool} */
+  connectionPool;
 
   /**
    * @param {string} name
@@ -18,6 +20,13 @@ export default class SqlConnectionInfo extends ConnectionInfo {
   constructor(name, settings) {
     super(name);
     this.settings = settings;
+    this.connectionPool = new sql.ConnectionPool(
+      this.settings.connectionString +
+        (this.settings.requestTimeout
+          ? `;requestTimeout=${this.settings.requestTimeout}`
+          : "")
+    );
+    this.connectionPool.connect(console.error);
   }
 
   /**
@@ -26,13 +35,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    const pool = await sql.connect(
-      this.settings.connectionString +
-        (this.settings.requestTimeout
-          ? `;requestTimeout=${this.settings.requestTimeout}`
-          : "")
-    );
-    const request = new sql.Request(pool);
+    const request = this.connectionPool.request();
     for (const key in parameters) {
       if (Object.hasOwnProperty.call(parameters, key)) {
         const value = parameters[key];
@@ -64,7 +67,6 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    */
   async getRoutingDataAsync(request, cancellationToken) {
     const params = new sql.Table();
-
     params.columns.add("ParamType", sql.VarChar(50));
     params.columns.add("ParamName", sql.VarChar(100));
     params.columns.add("ParamValue", sql.VarChar);
@@ -112,13 +114,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
     domainId,
     cancellationToken
   ) {
-    const pool = await sql.connect(
-      this.settings.connectionString +
-        (this.settings.requestTimeout
-          ? `;requestTimeout=${this.settings.requestTimeout}`
-          : "")
-    );
-    const request = new sql.Request(pool);
+    const request = this.connectionPool.request();
     request.input("fileNames", pageName);
     request.input("dmnid", domainId);
     request.input("sitesize", pageSize);
@@ -140,8 +136,8 @@ export default class SqlConnectionInfo extends ConnectionInfo {
     try {
       await sql.connect(
         this.settings.connectionString +
-          (this.settings.requestTimeout
-            ? `;requestTimeout=${this.settings.requestTimeout}`
+          (this.settings.testTimeOut
+            ? `;requestTimeout=${this.settings.testTimeOut}`
             : "")
       );
       return true;
