@@ -33,10 +33,8 @@ export default class MemberCollection {
    * @returns {Promise<void>}
    */
   async addHtmlElementAsync(ownerTag, context) {
-    await Promise.all(
-      this.items.map(async (item) => {
-        ownerTag.addChild(await item.createHtmlElementAsync(context));
-      })
-    );
+    for (const item of this.items) {
+      ownerTag.addChild(await item.createHtmlElementAsync(context));
+    }
   }
 }
