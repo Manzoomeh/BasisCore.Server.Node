@@ -12,6 +12,7 @@ import CallCommand from "../../renderEngine/Command/Collection/CallCommand.js";
 import UnknownCommand from "../../renderEngine/Command/UnknownCommand.js";
 import RepeaterCommand from "../../renderEngine/Command/Collection/RepeaterCommand.js";
 import CookieCommand from "../../renderEngine/Command/CookieCommand.js";
+import ClientComponent from "../../renderEngine/Command/ClientComponent.js";
 
 export default class CommandUtil {
   /**
@@ -69,6 +70,10 @@ export default class CommandUtil {
       }
       case "cookie": {
         retVal = new CookieCommand(commandIl);
+        break;
+      }
+      case "clientcomponent": {
+        retVal = new ClientComponent(commandIl);
         break;
       }
       default: {
