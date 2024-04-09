@@ -9,9 +9,15 @@ import CommandUtil from "../../test/command/CommandUtil.js";
 import LocalContext from "./LocalContext.js";
 import IRoutingRequest from "../../models/IRoutingRequest.js";
 import JsonSource from "../Source/JsonSource.js";
+import CookieItem from "../Models/CookieItem.js";
+import IContext from "./IContext.js";
+
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
   _settings;
+  /** @type {Array<CookieItem>} */
+  _cookies;
+
   /**
    * @param {ServiceSettings} settings
    * @param {IRoutingRequest} request
@@ -19,6 +25,7 @@ export default class RequestContext extends ContextBase {
   constructor(settings, request) {
     super(null, Number(request.cms?.dmnid));
     this._settings = settings;
+    this.isSecure = request.isSecure;
     for (let mainKey in request) {
       const mainValue = request[mainKey];
       this.addSource(new JsonSource([mainValue], `cms.${mainKey}`));
@@ -44,7 +51,9 @@ export default class RequestContext extends ContextBase {
    * @returns {IContext}
    */
   createContext(title) {
-    return new LocalContext(this);
+    const retVal = new LocalContext(this);
+    retVal.isSecure = this.isSecure;
+    return retVal;
   }
 
   /**
@@ -106,5 +115,20 @@ export default class RequestContext extends ContextBase {
     /** @type {ConnectionInfo} */
     const connection = this._settings.getConnection(connectionName);
     return connection.testConnectionAsync();
+  }
+
+  /**
+   * @param {string} name
+   * @param {string} value
+   * @param {string} maxAge
+   * @param {string} path
+   */
+  addCookie(name, value, maxAge, path) {
+    if (!this._cookies) {
+      this._cookies = [];
+    }
+    this._cookies.push(
+      new CookieItem(name, value, maxAge, path, this.isSecure)
+    );
   }
 }
