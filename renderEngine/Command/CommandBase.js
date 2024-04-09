@@ -107,7 +107,7 @@ export default class CommandBase {
     try {
       const value = await this.if.getValueAsync(context);
       if (value) {
-        retVal = eval(value);
+        retVal = eval(value.replace(/<>/g, "!="));
       } else {
         retVal = true;
       }
