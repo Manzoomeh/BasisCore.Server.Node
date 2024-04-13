@@ -44,7 +44,7 @@ export default class CookieCommand extends CommandBase {
   async createHtmlElementAsync(context) {
     const tag = await super.createHtmlElementAsync(context);
     await Promise.all([
-      tag.addAttributeIfExistAsync("method", this.value, context),
+      tag.addAttributeIfExistAsync("value", this.value, context),
       tag.addAttributeIfExistAsync("max-age", this.maxAge, context),
       tag.addAttributeIfExistAsync("path", this.path, context),
     ]);
