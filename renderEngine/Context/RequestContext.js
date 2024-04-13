@@ -31,8 +31,7 @@ export default class RequestContext extends ContextBase {
       this.addSource(new JsonSource([mainValue], `cms.${mainKey}`));
     }
     let cookieObj =
-      typeof request.webserver.cookie === "object" &&
-      request.webserver.cookie !== null
+      typeof request.webserver.cookie === "object"
         ? request.webserver.cookie
         : {};
 
