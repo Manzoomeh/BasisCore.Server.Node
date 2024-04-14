@@ -139,7 +139,7 @@ class HttpHostEndPoint extends HostEndPoint {
           next();
         });
         req.pipe(bb);
-      } else if (req.headers["content-type"] === "application/json") {
+      } else {
         try {
           req.on("data", (chunk) => {
             body += chunk;
@@ -155,14 +155,6 @@ class HttpHostEndPoint extends HostEndPoint {
         } catch (error) {
           throw new BasisCoreException("invalid JSON on body");
         }
-      } else {
-        res.statusCode = 415;
-        res.setHeader("Access-Control-Allow-Origin", "*");
-        res.setHeader(
-          "Access-Control-Allow-Headers",
-          "Content-Type, Authorization"
-        );
-        return res.end("Unsupported Media Type");
       }
     } else {
       next();
