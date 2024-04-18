@@ -136,18 +136,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
               });
               bb.on("close", createCmsAndCreateResponseAsync);
               stream.pipe(bb);
-            } else {
-              //to do : write condition for other content types
-              if (headers["content-type"] != "application/json") {
-                stream.respond({
-                  ":status": 415,
-                  "content-type": "text/plain",
-                  "Access-Control-Allow-Origin": "*",
-                  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-                });
-                stream.end("Unsupported Media Type");
-              }
-            }
+            } 
           } else {
             await createCmsAndCreateResponseAsync();
           }

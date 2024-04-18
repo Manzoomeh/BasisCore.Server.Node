@@ -30,6 +30,19 @@ export default class RequestContext extends ContextBase {
       const mainValue = request[mainKey];
       this.addSource(new JsonSource([mainValue], `cms.${mainKey}`));
     }
+    let cookieObj =
+      typeof request.webserver.cookie === "object"
+        ? request.webserver.cookie
+        : {};
+
+    if (request.request.cookie) {
+      request.request.cookie.split(";").forEach((element) => {
+        const [key, value] = element.split("=");
+        cookieObj[key] = value;
+      });
+    }
+
+    this.addSource(new JsonSource([cookieObj], "cms.cookie"));
   }
 
   /**

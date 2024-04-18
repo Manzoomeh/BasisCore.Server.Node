@@ -107,7 +107,16 @@ export default class CommandBase {
     try {
       const value = await this.if.getValueAsync(context);
       if (value) {
-        retVal = eval(value);
+        let regex = /(?<!=[<>=!])=(?!=)|<>/g;
+        retVal = eval(
+          value.replace(regex, (match) => {
+            if (match === "=") {
+              return "==";
+            } else if (match === "<>") {
+              return "!=";
+            }
+          })
+        );
       } else {
         retVal = true;
       }
