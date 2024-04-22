@@ -1,22 +1,25 @@
+import alasql from "alasql";
 import ServiceSettings from "../../../models/ServiceSettings.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
-import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
+import GroupCommand from "../../../renderEngine/Command/Collection/GroupCommand.js";
 import TestContext from "../../../renderEngine/Context/TestContext.js";
-
 var setting = new ServiceSettings({});
 const context = new TestContext(setting);
 context.cancellation = new CancellationToken();
 
 const il = {
-  $type: "inlinesource",
-  core: "inlinesource",
-  name: "view",
-  run :"atClient",
-  Members: [
+  $type: "group",
+  core: "group",
+  Commands: [
     {
-      name: "item",
-      preview: "true",
-      content: `<row valueID="12688722" mid="20" groupid="249" prpid="8070" usedforid="1255248" typeid="150" multi="0" ord="699" vocabulary="نام_تور_برنامه_ریزی_شده" question="نام تور برنامه ریزی شده" answer="تور استانبول" /> 
+      $type: "inlinesource",
+      core: "inlinesource",
+      name: "view",
+      Members: [
+        {
+          name: "item",
+          preview: "true",
+          content: `<row valueID="12688722" mid="20" groupid="249" prpid="8070" usedforid="1255248" typeid="150" multi="0" ord="699" vocabulary="نام_تور_برنامه_ریزی_شده" question="نام تور برنامه ریزی شده" answer="تور استانبول" /> 
         <row valueID="12688725" mid="20" groupid="249" prpid="8074" usedforid="1255248" typeid="140" multi="0" ord="779" vocabulary="روزهای_رفت" question="روزهای رفت" answer="دوشنبه" />
         <row valueID="12688726" mid="20" groupid="249" prpid="8074" usedforid="1255248" typeid="140" multi="0" ord="779" vocabulary="روزهای_رفت" question="" answer="سه شنبه" />
         <row valueID="12688727" mid="20" groupid="249" prpid="8074" usedforid="1255248" typeid="140" multi="0" ord="779" vocabulary="روزهای_رفت" question="" answer="چهارشنبه" />
@@ -50,11 +53,11 @@ const il = {
         <row valueID="1878635" mid="20" groupid="986" prpid="10000502" usedforid="1255248" typeid="199" multi="0" ord="0" vocabulary="کشور_مقصد" question="کشور مقصد" answer="ترکیه" /> 
         <row valueID="1878636" mid="20" groupid="1123" prpid="10000503" usedforid="1255248" typeid="199" multi="0" ord="0" vocabulary="شهر_مقصد" question="شهر مقصد" answer="استانبول" />
         <row valueID="1878671" mid="20" groupid="987" prpid="10000504" usedforid="1255248" typeid="199" multi="0" ord="0" vocabulary="خط_هوایی" question="خط هوایی" answer="Atlasglobal Airlines" />`,
-    },
-    {
-      name: "menu",
-      preview: "true",
-      content: `<row name="Home" id="01" parentid="00" />
+        },
+        {
+          name: "menu",
+          preview: "true",
+          content: `<row name="Home" id="01" parentid="00" />
       <row name="Irantour" id="02" parentid="00" />
       <row name="HotelReservation" id="03" parentid="00" />
       <row name="Gallery" id="04" parentid="00" />
@@ -86,8 +89,49 @@ const il = {
       <row name="OurTours" id="30" parentid="04" />
       <row name="VideoClips" id="31" parentid="04" />
       <row name="ContactUs" id="32" parentid="05" />`,
+        },
+      ],
+    },
+    {
+      $type: "inlinesource",
+      core: "inlinesource",
+      name: "join",
+      Members: [
+        {
+          type: "sql",
+          content:
+            "SELECT *  FROM [view.item] WHERE valueID = '12688740' and groupid='249'",
+          name: "sss",
+        },
+      ],
+    },
+    {
+      $type: "Print",
+      "data-member-name": "join.sss",
+      "layout-content":
+        "<table width='500' border='1' id='@id'><tbody><tr> @child</tr></tbody></table>",
+      "else-layout-content": "محصولی موجود نیست",
+      "divider-content": "</tr><tr> ",
+      "divider-rowcount": 2,
+      "incomplete-content": "<td style='color:red'>red</td>",
+      faces: [
+        {
+          name: "face1",
+          replace: true,
+          function: true,
+          content:
+            "<td style='color:green' id='usedforid'><p> @valueID @mid @groupid @prpid @usedforid @typeid @multi @ord<br></td>",
+        },
+      ],
+      replaces: [
+        {
+          tagname: "i",
+          content: "<span style='color:red'>@val1</span>",
+        },
+      ],
     },
   ],
 };
-const print = new InlineSourceCommand(il);
-console.log(await print.executeAsync(context));
+const group = new GroupCommand(il);
+const groupResult = await group.executeAsync(context);
+console.log(groupResult);

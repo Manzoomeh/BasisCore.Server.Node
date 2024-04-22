@@ -88,4 +88,11 @@ export default class ObjectToken extends IToken {
     }
     return retVal;
   }
+
+  /**
+   * @returns {boolean}
+   */
+  get IsNotNull() {
+    return true;
+  }
 }

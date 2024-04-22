@@ -42,4 +42,14 @@ export default class SourceBaseCommand extends CommandBase {
       )
     );
   }
+
+  /**
+   * @param {IContext} context
+   * @returns {Promise<CommandElement>}
+   */
+  async createHtmlElementAsync(context) {
+    const tag = await super.createHtmlElementAsync(context);
+    tag.addAttributeIfExistAsync("datamembername", this.sourceId, context);
+    return tag;
+  }
 }

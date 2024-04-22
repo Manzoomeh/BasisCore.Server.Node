@@ -4,6 +4,11 @@ import url from "url";
 import HostEndPoint from "./hostEndPoint.js";
 import Request from "../models/request.js";
 import ObjectUtil from "../modules/objectUtil.js";
+import busboy from "busboy";
+import { IncomingMessage, ServerResponse } from "http";
+import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
+import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
+
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /**
@@ -35,6 +40,8 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {http.IncomingHttpHeaders} requestHeaders
    * @param {NodeJS.Dict<string>} formFields
    * @param {Socket} socket
+   * @param {NodeJS.Dict} bodyFields
+   * @param {boolean} isSecure
    * @returns {Promise<Request>}
    */
   async _createCmsObjectAsync(
@@ -43,7 +50,9 @@ class HttpHostEndPoint extends HostEndPoint {
     headers,
     formFields,
     jsonHeaders,
-    socket
+    socket,
+    bodyStr,
+    isSecure
   ) {
     const rawUrl = urlStr.substring(1);
     const urlObject = url.parse(rawUrl, true);
@@ -55,13 +64,18 @@ class HttpHostEndPoint extends HostEndPoint {
     headers["hostip"] = socket.localAddress;
     headers["hostport"] = socket.localPort.toString();
     headers["clientip"] = socket.remoteAddress;
+    headers[":path"] = "/" + decodeURIComponent(rawUrl);
     if (Object.keys(jsonHeaders).length > 0) {
-      headers["json"] = ObjectUtil.convertObjectToNestedStructure(jsonHeaders);
+      headers["json"] = {
+        header: ObjectUtil.convertObjectToNestedStructure(jsonHeaders),
+      };
     } else {
       headers["json"] = {};
     }
+    headers.body = bodyStr;
     const now = dayjs();
     const request = new Request();
+    request.isSecure = isSecure;
     request.request = headers;
     request.cms = {
       date: now.format("MM/DD/YYYY"),
@@ -81,8 +95,70 @@ class HttpHostEndPoint extends HostEndPoint {
         request["query"] = query;
       }
     }
-    request["Form"] = formFields;
+    request["form"] = formFields;
     return request;
+  }
+  /**
+   *
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
+   */
+  async _handleContentTypes(req, res, next) {
+    let body = "";
+    if (req.headers["content-length"]) {
+      if (req.headers["content-type"]?.startsWith("multipart/form-data")) {
+        const bb = busboy({ headers: req.headers });
+        /**@type {BinaryContent[]} */
+        let fileContents = [];
+        /**@type {NodeJS.Dict<string>} */
+        let formFields = {};
+        /**@type {NodeJS.Dict<string>} */
+        let jsonHeaders = {};
+        bb.on("file", (name, file, info) => {
+          const ContentParts = [];
+          file.on("data", (x) => ContentParts.push(x));
+          file.on("end", async () => {
+            const content = new BinaryContent();
+            content.url = `${req.headers["host"]}${req.url}`;
+            content.mime = info.mimeType.toLowerCase();
+            content.name = info.filename;
+            content.payload = Buffer.concat(ContentParts);
+            fileContents.push(content);
+          });
+        });
+        bb.on("field", (name, val, info) => {
+          formFields[name] = val;
+          if (name.startsWith("_")) {
+            jsonHeaders[name] = val;
+          }
+        });
+        bb.on("close", () => {
+          req.formFields = formFields;
+          req.fileContents = fileContents;
+          req.jsonHeaders = jsonHeaders;
+          next();
+        });
+        req.pipe(bb);
+      } else {
+        try {
+          req.on("data", (chunk) => {
+            body += chunk;
+          });
+          req.on("end", async () => {
+            if (body.length == 0) {
+              next();
+            } else {
+              req.bodyStr = body;
+              next();
+            }
+          });
+        } catch (error) {
+          throw new BasisCoreException("invalid JSON on body");
+        }
+      }
+    } else {
+      next();
+    }
   }
 }
 

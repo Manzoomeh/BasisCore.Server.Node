@@ -6,7 +6,9 @@ export default class Request {
   /** @type {NodeJS.Dict<string|string[]>} */
   query;
   /** @type {NodeJS.Dict<string|string[]>} */
-  Form;
+  form;
+  /** @type {boolean} */
+  isSecure;
   /**
    * @returns {string}
    */

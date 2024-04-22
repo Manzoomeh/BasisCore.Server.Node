@@ -7,24 +7,19 @@ import Util from "../../Util.js";
 import CommandBase from "../Command/CommandBase.js";
 import CommandUtil from "../../test/command/CommandUtil.js";
 import LocalContext from "./LocalContext.js";
+
 export default class TestContext extends ContextBase {
   /** @type {ServiceSettings} */
   _settings;
+
   /**
    * @param {ServiceSettings} settings
    * @param {number} domainId
    */
-  constructor(settings,domainId) {
+  constructor(settings, domainId) {
     super(null, domainId);
     this._settings = settings;
-  }
-
-  /**
-   * @param {string} title
-   * @returns {IContext}
-   */
-  createContext(title) {
-    return new LocalContext(this);
+    this.isSecure = false;
   }
 
   /**
@@ -86,4 +81,22 @@ export default class TestContext extends ContextBase {
     const connection = this._settings.getConnection(connectionName);
     return connection.testConnectionAsync();
   }
+
+  /**
+   * @param {string} title
+   * @returns {IContext}
+   */
+  createContext(title) {
+    const retVal = new LocalContext(this);
+    retVal.isSecure = this.isSecure;
+    return retVal;
+  }
+
+  /**
+   * @param {string} name
+   * @param {string} value
+   * @param {string} maxAge
+   * @param {string} path
+   */
+  addCookie(name, value, maxAge, path) {}
 }

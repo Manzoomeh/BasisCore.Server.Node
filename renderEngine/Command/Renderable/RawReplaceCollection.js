@@ -1,4 +1,5 @@
 import IContext from "../../Context/IContext.js";
+import CommandElement from "../CommandElement.js";
 import RawReplace from "./RawReplace.js";
 import ReplaceCollection from "./ReplaceCollection.js";
 
@@ -31,5 +32,25 @@ export default class RawReplaceCollection {
       retVal = new ReplaceCollection(Object.fromEntries(result));
     }
     return retVal;
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  get IsNotNull() {
+    return (this.items?.length ?? 0) > 0;
+  }
+
+  /**
+   * @param {CommandElement} ownerTag
+   * @param {IContext} context
+   * @returns {Promise<void>}
+   */
+  async addHtmlElementAsync(ownerTag, context) {
+    await Promise.all(
+      this.items.map(async (replace) => {
+        ownerTag.addChild(await replace.createHtmlElementAsync(context));
+      })
+    );
   }
 }

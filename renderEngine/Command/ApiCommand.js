@@ -70,4 +70,15 @@ export default class ApiCommand extends CommandBase {
     const sourceName = this.name.value;
     context.addSource(new JsonSource([data], sourceName));
   }
+  async createHtmlElementAsync(context) {
+    const tag = await super.createHtmlElementAsync(context);
+    await Promise.all([
+      tag.addAttributeIfExistAsync("method", this.method, context),
+      tag.addAttributeIfExistAsync("url", this.url, context),
+      tag.addAttributeIfExistAsync("body", this.body, context),
+      tag.addAttributeIfExistAsync("contentType", this.contentType, context),
+      tag.addAttributeIfExistAsync("noCache", this.noCache, context),
+    ]);
+    return tag;
+  }
 }

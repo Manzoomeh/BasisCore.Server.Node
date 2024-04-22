@@ -30,9 +30,12 @@
     "source": "node test/command/dbsource/index.js",
     "source-ex": "node test/command/dbsource/exprision-binding.js",
     "inlinesource": "node test/command/inlinesource/simple.js",
+    "inlinesourceSql": "node test/command/inlinesource/inlinesourceSqlCommand.js",
+    "inlinesourceJoin": "node test/command/inlinesource/inlinesourceJoinCommand.js",
     "view": "node test/command/view/simple.js",
     "tree": "node test/command/tree/simple.js",
     "group": "node test/command/group/simple.js",
+    "repeater": "node test/command/repeater/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
     "con-edge": "node test/connection/edge/simple.js",
     "call": "node test/command/call/simple.js",
@@ -51,7 +54,9 @@
     "con-mysql": "node test/connection/mysql/simple.js",
     "il": "nodemon test\\final\\server.js",
     "createSqlCms": "node test\\final\\createSqlCms.js",
-    "index4": "node test\\index4\\simple.js"
+    "index4": "node test\\index4\\simple.js",
+    "unknown": "node test\\command\\UnknownCommand\\simple.js",
+    "bug": "node --trace-warnings --trace-deprecation test\\bug.js"
   },
   "type": "module",
   "dependencies": {

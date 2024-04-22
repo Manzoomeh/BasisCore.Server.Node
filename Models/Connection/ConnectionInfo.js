@@ -1,6 +1,6 @@
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
-import IDataSource from "../../renderEngine/Source/IDataSource.js";
+import IRoutingRequest from "../IRoutingRequest.js";
 import Request from "../request.js";
 import ILoadPageResult from "./ILoadPageResult.js";
 

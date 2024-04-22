@@ -19,4 +19,11 @@ export default class ValueToken extends IToken {
   getValueAsync(context) {
     return Promise.resolve(this.value);
   }
+
+  /**
+   * @returns {boolean}
+   */
+  get IsNotNull() {
+    return this !== ValueToken.Null;
+  }
 }

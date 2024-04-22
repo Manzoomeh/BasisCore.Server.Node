@@ -1,9 +1,7 @@
 import http from "http";
-import busboy from "busboy";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
-import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {HostService} */
@@ -25,52 +23,28 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
       try {
         /** @type {Request} */
         let cms = null;
-        /**@type {BinaryContent[]} */
-        const fileContents = [];
-        /**@type {NodeJS.Dict<string>} */
-        const formFields = {};
-        /**@type {NodeJS.Dict<string>} */
-        const jsonHeaders = {};
-        const createCmsAndCreateResponseAsync = async () => {
-          cms = await this._createCmsObjectAsync(
-            req.url,
-            req.method,
-            req.headers,
-            formFields,
-            jsonHeaders,
-            req.socket
-          );
-          const result = await this.#service.processAsync(cms, fileContents);
-          const [code, headers, body] = await result.getResultAsync();
-          res.writeHead(code, headers);
-          res.end(body);
-        };
-        if (req.method === "POST") {
-          /**@type {Array<BinaryContent>}*/
-          const bb = busboy({ headers: req.headers });
-          bb.on("file", (name, file, info) => {
-            const ContentParts = [];
-            file.on("data", (x) => ContentParts.push(x));
-            file.on("end", async () => {
-              const content = new BinaryContent();
-              content.url = `${req.headers["host"]}${req.url}`;
-              content.mime = info.mimeType.toLowerCase();
-              content.name = info.filename;
-              content.payload = Buffer.concat(ContentParts);
-              fileContents.push(content);
-            });
-          });
-          bb.on("field", (name, val, info) => {
-            formFields[name] = val;
-            if (name.startsWith("_")) {
-              jsonHeaders[name] = val;
-            }
-          });
-          bb.on("close", createCmsAndCreateResponseAsync);
-          req.pipe(bb);
-        } else {
-          createCmsAndCreateResponseAsync();
-        }
+        this._handleContentTypes(req, res, async () => {
+          const createCmsAndCreateResponseAsync = async () => {
+            cms = await this._createCmsObjectAsync(
+              req.url,
+              req.method,
+              req.headers,
+              req.formFields,
+              req.jsonHeaders ? req.jsonHeaders : {},
+              req.socket,
+              req.bodyStr,
+              false
+            );
+            const result = await this.#service.processAsync(
+              cms,
+              req.fileContents
+            );
+            const [code, headers, body] = await result.getResultAsync();
+            res.writeHead(code, headers);
+            res.end(body);
+          };
+          await createCmsAndCreateResponseAsync();
+        });
       } catch (ex) {
         console.error(ex);
         res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR);

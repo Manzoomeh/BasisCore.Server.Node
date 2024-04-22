@@ -29,10 +29,11 @@ export default class CallCommand extends CommandBase {
     const runType = await this._getRunTypeValueAsync(context);
     const ifValue = await this._getIfValueAsync(context);
     let retVal;
-    if (!ifValue) {
-      retVal = []
-    } else if (runType.toLowerCase() == RunTypes.AtClient) {
-      retVal = []
+
+    if (runType.toLowerCase() == RunTypes.AtClient) {
+      retVal = [this];
+    } else if (!ifValue) {
+      retVal = [];
     } else {
       /** @type {CommandBase[]} */
       const [pageName, pageSize, html] = await Promise.all([
