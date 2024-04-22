@@ -54,6 +54,7 @@
     "con-mysql": "node test/connection/mysql/simple.js",
     "il": "nodemon test\\final\\server.js",
     "createSqlCms": "node test\\final\\createSqlCms.js",
+    "index4": "node test\\index4\\simple.js",
     "unknown": "node test\\command\\UnknownCommand\\simple.js",
     "bug": "node --trace-warnings --trace-deprecation test\\bug.js"
   },

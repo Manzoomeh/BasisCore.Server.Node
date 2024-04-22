@@ -8,6 +8,7 @@ import StreamerEngine from "../fileStreamer/StreamerEngine.js";
 import { HostServiceOptions } from "../models/model.js";
 import IRoutingRequest from "../models/IRoutingRequest.js";
 import ServiceSettings from "../models/ServiceSettings.js";
+import Index4Response from "../models/Index4Response.js";
 
 export default class HostService {
   /**@type {string} */
@@ -83,7 +84,8 @@ export default class HostService {
         break;
       }
       case "4": {
-        retVal = new Index2Response(request, this.settings);
+        retVal = new Index4Response(request, this.settings);
+
         break;
       }
       case "5": {
