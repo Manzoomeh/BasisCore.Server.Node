@@ -50,7 +50,8 @@
     "dbsourceMysql": "node test/command/dbsource/mysql.js",
     "con-mysql": "node test/connection/mysql/simple.js",
     "il": "nodemon test\\final\\server.js",
-    "createSqlCms": "node test\\final\\createSqlCms.js"
+    "createSqlCms": "node test\\final\\createSqlCms.js",
+    "index4": "node test\\index4\\simple.js"
   },
   "type": "module",
   "dependencies": {
