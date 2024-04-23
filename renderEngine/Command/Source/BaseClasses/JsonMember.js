@@ -78,7 +78,6 @@ class JsonMember extends InMemoryMember {
         }
       }
     }
-    console.log(retVal);
     return retVal;
   }
   /**
