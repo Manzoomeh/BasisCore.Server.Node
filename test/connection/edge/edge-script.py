@@ -1,15 +1,16 @@
 from bclib import edge
 
 options = {
-    "endpoint": "127.0.0.1:1025",
+    "endpoint": "127.0.0.1:8080",
     "router":  "web"
 }
 
 app = edge.from_options(options)
-
+import asyncio 
 #index 5
 @app.web_action()
 async def process_web_remain_request(context: edge.WebContext):
+    await asyncio.sleep(10)
     return "<h1>hi from edge</h1>"
 
 #index 1

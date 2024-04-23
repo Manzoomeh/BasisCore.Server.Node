@@ -32,6 +32,7 @@
     "inlinesource": "node test/command/inlinesource/simple.js",
     "inlinesourceSql": "node test/command/inlinesource/inlinesourceSqlCommand.js",
     "inlinesourceJoin": "node test/command/inlinesource/inlinesourceJoinCommand.js",
+    "inlinesourceJson": "node test/command/inlinesource/inlinesourceJsonCommand.js",
     "view": "node test/command/view/simple.js",
     "tree": "node test/command/tree/simple.js",
     "group": "node test/command/group/simple.js",

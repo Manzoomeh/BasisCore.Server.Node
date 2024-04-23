@@ -3,6 +3,7 @@ import Member from "./Member.js";
 import MemberCollection from "./MemberCollection.js";
 import SqlMember from "./SqlMember.js";
 import TableMember from "./TableMember.js";
+import JsonMember from "./JsonMember.js";
 
 export class InMemoryMemberCollection extends MemberCollection {
   /**
@@ -31,6 +32,10 @@ export class InMemoryMemberCollection extends MemberCollection {
       }
       case "join": {
         retVal = new JoinMember(memberIl);
+        break;
+      }
+      case "json": {
+        retVal = new JsonMember(memberIl);
         break;
       }
       default: {
