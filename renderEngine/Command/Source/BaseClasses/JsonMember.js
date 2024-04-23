@@ -51,7 +51,7 @@ class JsonMember extends InMemoryMember {
         const result = this.processElementOrProperty(
           index,
           element,
-          parentId + 1,
+          parentId == null ? 0 : parentId + 1,
           rowNumber,
           address,
           "element"
@@ -64,10 +64,11 @@ class JsonMember extends InMemoryMember {
     } else if (obj) {
       for (let propertyKey of Object.keys(obj)) {
         let propertyValue = obj[propertyKey];
+        console.log(parentId);
         const result = this.processElementOrProperty(
           propertyKey,
           propertyValue,
-          parentId + 1,
+          parentId == null ? 0 : parentId + 1,
           rowNumber,
           address,
           "property"
@@ -78,6 +79,7 @@ class JsonMember extends InMemoryMember {
         }
       }
     }
+    console.log(retVal);
     return retVal;
   }
   /**
@@ -142,11 +144,11 @@ class JsonMember extends InMemoryMember {
           const result = this.convertObjectToJsonMemberOutPut(
             value,
             rowNumber - 1,
-            rowNumber+1,
+            rowNumber + 1,
             path
           );
           retVal.push(...result);
-        } else if (value) {
+        } else {
           retVal.push({
             RowNumber: rowNumber,
             Id: rowNumber,
@@ -159,7 +161,7 @@ class JsonMember extends InMemoryMember {
           const result = this.convertObjectToJsonMemberOutPut(
             value,
             rowNumber - 1,
-            rowNumber+1,
+            rowNumber + 1,
             path
           );
           retVal.push(...result);
