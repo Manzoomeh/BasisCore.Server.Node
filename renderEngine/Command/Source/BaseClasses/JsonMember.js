@@ -2,7 +2,6 @@ import InMemoryMember from "./InMemoryMember.js";
 import JsonSource from "../../../Source/JsonSource.js";
 /**
  * @typedef {Object} JsonMemberOutPut
- * @property {number} RowNumber
  * @property {number} Id
  * @property {number|null} ParentId
  * @property {string|null} Field
@@ -34,16 +33,11 @@ class JsonMember extends InMemoryMember {
    *
    * @param {object} obj
    * @param {number|null} parentId
-   * @param {number} rowNumber
+   * @param {number} id
    * @param {string} address
    * @returns {JsonMemberOutPut[]}
    */
-  convertObjectToJsonMemberOutPut(
-    obj,
-    parentId = null,
-    rowNumber = 1,
-    address = ""
-  ) {
+  convertObjectToJsonMemberOutPut(obj, parentId = 0, id = 1, address = "") {
     /** @type {JsonMemberOutPut[]} */
     const retVal = [];
     if (Array.isArray(obj)) {
@@ -51,14 +45,14 @@ class JsonMember extends InMemoryMember {
         const result = this.processElementOrProperty(
           index,
           element,
-          parentId == null ? 0 : parentId + 1,
-          rowNumber,
+          parentId == 0 ? 0 : parentId + 1,
+          id,
           address,
-          "element"
+          true
         );
         retVal.push(...result);
         if (result.length > 0) {
-          rowNumber = result[result.length - 1].RowNumber + 1;
+          id = result[result.length - 1].Id + 1;
         }
       });
     } else if (obj) {
@@ -69,13 +63,13 @@ class JsonMember extends InMemoryMember {
           propertyKey,
           propertyValue,
           parentId == null ? 0 : parentId + 1,
-          rowNumber,
+          id,
           address,
-          "property"
+          false
         );
         retVal.push(...result);
         if (result.length > 0) {
-          rowNumber = result[result.length - 1].RowNumber + 1;
+          id = result[result.length - 1].Id + 1;
         }
       }
     }
@@ -87,87 +81,50 @@ class JsonMember extends InMemoryMember {
    * @param {string|null} key
    * @param {*} value
    * @param {number} parentId
-   * @param {number} rowNumber
+   * @param {number} id
    * @param {string} address
+   * @param {boolean}
    * @returns {JsonMemberOutPut[]}
    */
-  processElementOrProperty(key, value, parentId, rowNumber, address, attrType) {
+  processElementOrProperty(key, value, parentId, id, address, isArrayElement) {
     /**
      * @type {JsonMemberOutPut[]}
      */
     let retVal = [];
-    let type = typeof value;
+    let jsType = typeof value;
     let path =
-      attrType == "property" ? address + "." + key : address + `[${key}]`;
-    switch (type) {
-      case "string":
-      case "number":
-      case "boolean":
-        retVal.push({
-          RowNumber: rowNumber,
-          Id: rowNumber,
-          ParentId: parentId,
-          Field: key,
-          Value: value,
-          Path: path,
-          Type:
-            type == "string"
-              ? "Scalar.String"
-              : type == "boolean"
-              ? "Scalar.Boolean"
-              : type == "number"
-              ? "Scalar.Numeric"
-              : "",
-        });
-        break;
-      case "object":
-        if (!value) {
-          retVal.push({
-            RowNumber: rowNumber,
-            Id: rowNumber,
-            ParentId: parentId,
-            Field: key,
-            Value: value,
-            Path: path,
-            Type: "Scalar.Null",
-          });
-        } else if (Array.isArray(value)) {
-          retVal.push({
-            RowNumber: rowNumber,
-            Id: rowNumber,
-            ParentId: parentId,
-            Field: null,
-            Value: JSON.stringify(value),
-            Path: path,
-            Type: "Array",
-          });
-          const result = this.convertObjectToJsonMemberOutPut(
-            value,
-            rowNumber - 1,
-            rowNumber + 1,
-            path
-          );
-          retVal.push(...result);
-        } else {
-          retVal.push({
-            RowNumber: rowNumber,
-            Id: rowNumber,
-            ParentId: parentId,
-            Field: key,
-            Value: JSON.stringify(value),
-            Path: path,
-            Type: "Object",
-          });
-          const result = this.convertObjectToJsonMemberOutPut(
-            value,
-            rowNumber - 1,
-            rowNumber + 1,
-            path
-          );
-          retVal.push(...result);
-        }
-
-        break;
+      isArrayElement == true ? address + `[${key}]` : address + "." + key;
+    let type;
+    let resultKey = isArrayElement ? null : key;
+    let isHaveChild = jsType && jsType == "object";
+    if (jsType == "object") {
+      type = !value ? "Scalar.Null" : Array.isArray(value) ? "Array" : "Object";
+    } else {
+      type =
+        jsType == "string"
+          ? "Scalar.String"
+          : jsType == "boolean"
+          ? "Scalar.Boolean"
+          : jsType == "number"
+          ? "Scalar.Numeric"
+          : "";
+    }
+    retVal.push({
+      Id: id,
+      ParentId: parentId == 0 ? null : parentId,
+      Field: resultKey,
+      Value: value,
+      Path: path,
+      Type: type,
+    });
+    if (isHaveChild) {
+      const result = this.convertObjectToJsonMemberOutPut(
+        value,
+        id - 1,
+        id + 1,
+        path
+      );
+      retVal.push(...result);
     }
     return retVal;
   }
