@@ -6,7 +6,6 @@ import Request from "../request.js";
 import IEdgeSettingData from "./IEdgeSettingData.js";
 import EdgeMessage from "../../edge/edgeMessage.js";
 import WebServerException from "../Exceptions/WebServerException.js";
-import { receiveMessageOnPort } from "worker_threads";
 /**
  * @typedef {Object} LoadDataRequest
  * @property {string} dmnid --domainID
@@ -97,24 +96,6 @@ export default class EdgeConnectionInfo extends ConnectionInfo {
         resolve(true);
       });
     });
-  }
-  /**
-   *
-   * @param {string} jsonString
-   * @returns {DataSourceCollection}
-   */
-  convertJSONToDataSet(content) {
-    if (content?.sources && Array.isArray(content?.sources)) {
-      let retVal = [];
-      content.sources.forEach((source) => {
-        retVal.push(source.data);
-      });
-      return new DataSourceCollection(retVal);
-    } else {
-      throw new WebServerException(
-        "Error from Edge Connection ;the sources are not available."
-      );
-    }
   }
   /**
    *

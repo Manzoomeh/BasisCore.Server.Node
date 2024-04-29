@@ -51,4 +51,22 @@ export default class ConnectionInfo {
   loadPageAsync(pageName, rawCommand, pageSize, domainId, cancellationToken) {
     throw new Error("ConnectionInfo.loadPageAsync() method not implemented.");
   }
+  /**
+   *
+   * @param {string} jsonString
+   * @returns {DataSourceCollection}
+   */
+  convertJSONToDataSet(content) {
+    if (content?.sources && Array.isArray(content?.sources)) {
+      let retVal = [];
+      content.sources.forEach((source) => {
+        retVal.push(source.data);
+      });
+      return new DataSourceCollection(retVal);
+    } else {
+      throw new WebServerException(
+        "Error from Edge Connection ;the sources are not available."
+      );
+    }
+  }
 }
