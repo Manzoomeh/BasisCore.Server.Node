@@ -94,7 +94,6 @@ class JsonMember extends InMemoryMember {
       isArrayElement == true ? address + `[${key}]` : address + "." + key;
     let type;
     let resultKey = isArrayElement ? null : key;
-    let isHaveChild = jsType && jsType == "object";
     if (jsType == "object") {
       type = !value ? "Scalar.Null" : Array.isArray(value) ? "Array" : "Object";
     } else {
@@ -115,7 +114,7 @@ class JsonMember extends InMemoryMember {
       Path: path,
       Type: type,
     });
-    if (isHaveChild) {
+    if (value && jsType == "object") {
       const result = this.convertObjectToJsonMemberOutPut(
         value,
         id - 1,
