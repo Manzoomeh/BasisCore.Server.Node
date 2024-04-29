@@ -58,7 +58,6 @@ class JsonMember extends InMemoryMember {
     } else if (obj) {
       for (let propertyKey of Object.keys(obj)) {
         let propertyValue = obj[propertyKey];
-        console.log(parentId);
         const result = this.processElementOrProperty(
           propertyKey,
           propertyValue,
@@ -73,7 +72,6 @@ class JsonMember extends InMemoryMember {
         }
       }
     }
-    console.log(retVal);
     return retVal;
   }
   /**
