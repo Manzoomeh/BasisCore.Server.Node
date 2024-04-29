@@ -1,0 +1,11 @@
+{
+  "queryString": {},
+  "logs": [
+    {
+      "name": "testPic.js",
+      "mime": "image/jpeg",
+      "process-type": "undefined",
+      "status": "InvalidProcessTypeError"
+    }
+  ]
+}

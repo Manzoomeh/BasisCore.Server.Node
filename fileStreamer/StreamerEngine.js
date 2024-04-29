@@ -1,5 +1,4 @@
 import fs from "fs";
-import got from "got";
 import querystring from "querystring";
 import BinaryContent from "./Models/BinaryContent.js";
 import IPermission from "./Models/IPermission.js";
@@ -20,6 +19,7 @@ import Resize from "./Steps/Resize/Resize.js";
 import Save from "./Steps/Save/Save.js";
 import Selector from "./Steps/Selector/Selector.js";
 import Edge from "./Steps/Edge/Edge.js";
+import WebP from "./Steps/WebP/WebP.js";
 
 export default class StreamerEngine {
   /** @type {IStreamerEngineOptions} */
@@ -29,7 +29,7 @@ export default class StreamerEngine {
   /**@type {IStreamerActions} */
   _defaultConfig = null;
 
-  /** @param {StreamerEngineOptions} options */
+  /** @param {IStreamerEngineOptions} options */
   constructor(options) {
     this._options = options;
     this._steps = {
@@ -39,6 +39,7 @@ export default class StreamerEngine {
       rename: new Rename(),
       resize: new Resize(),
       edge: new Edge(),
+      webP: new WebP(),
     };
   }
 
@@ -48,6 +49,9 @@ export default class StreamerEngine {
    */
   _isValidUrl(path) {
     try {
+      if(!path.startsWith("http://")&&!path.startsWith("https://")){
+        return false
+      }
       return Boolean(new URL(path));
     } catch {
       return false;
@@ -62,7 +66,8 @@ export default class StreamerEngine {
     return await new Promise(async (resolve, reject) => {
       if (this._isValidUrl(url)) {
         try {
-          resolve(await got.get(url).text());
+          const response = await fetch(url);
+          resolve(await response.text());
         } catch (error) {
           reject(error);
         }
@@ -145,7 +150,15 @@ export default class StreamerEngine {
           const options = {
             json: report,
           };
-          resolve(await got.post(url, options).json());
+          resolve(
+            await fetch(url, {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify(options),
+            })
+          );
         } catch (error) {
           reject(error);
         }
@@ -266,8 +279,8 @@ export default class StreamerEngine {
     let totalSize = 0;
     for (const content of contents) {
       content.AddLog("name", content.name);
-      content.AddLog("size", content.payload.length);
-      totalSize += content.payload.length;
+      content.AddLog("size", content.payload.byteLength);
+      totalSize += content.payload.byteLength;
     }
     const total = permissionList[""];
     if (total) {
