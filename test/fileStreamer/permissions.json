@@ -1,9 +1,0 @@
-{
-  "Permissions": [
-    {
-      "Mimes": ["video/mp4", "image/png", "image/jpeg"],
-      "MinSize": 1,
-      "MaxSize": 40000
-    }
-  ]
-}

@@ -38,7 +38,6 @@ export default class SourceUtil {
         row["RowNumber"] = index++;
       });
     } else {
-      console.log(source)
       source.data["RowNumber"] = index;
       source.data = [source.data];
     }

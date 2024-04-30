@@ -1,2 +1,4 @@
 https://depth-first.com/articles/2021/10/20/types-without-typescript/
 class :https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Classes
+must have the imageMagick library : https://imagemagick.org/script/download.php (recommended : ImageMagick-7.1.1-31-Q16-HDRI-x64)
+ the imagemagick path should ber added to enviorment variables to use fileStreamer and index 4

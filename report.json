@@ -2,10 +2,24 @@
   "queryString": {},
   "logs": [
     {
-      "name": "testPic.js",
-      "mime": "image/jpeg",
-      "process-type": "undefined",
-      "status": "InvalidProcessTypeError"
+      "name": "testPic.jpg",
+      "size": 38144,
+      "mime": "image/jpg",
+      "resize-to": "{\"Width\":100,\"Height\":200,\"IgnoreAspectRatio\":true}",
+      "convert-to": "webp",
+      "rename-to": "testPic-resize.webp",
+      "save": "F:\\AliBazregar\\BasisCore.Server.Node\\test\\fileStreamer\\output\\testPic-resize.webp",
+      "status": "Successful"
+    },
+    {
+      "name": "testPic2.png",
+      "size": 226933,
+      "mime": "image/png",
+      "resize-to": "{\"Width\":100,\"Height\":200,\"IgnoreAspectRatio\":true}",
+      "convert-to": "webp",
+      "gzip-level": 1,
+      "save": "F:\\AliBazregar\\BasisCore.Server.Node\\test\\fileStreamer\\output\\testPic2.webp",
+      "status": "Successful"
     }
   ]
 }

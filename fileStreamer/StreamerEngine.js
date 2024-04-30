@@ -19,7 +19,7 @@ import Resize from "./Steps/Resize/Resize.js";
 import Save from "./Steps/Save/Save.js";
 import Selector from "./Steps/Selector/Selector.js";
 import Edge from "./Steps/Edge/Edge.js";
-import WebP from "./Steps/WebP/WebP.js";
+import Convert from "./Steps/Convert/Convert.js";
 
 export default class StreamerEngine {
   /** @type {IStreamerEngineOptions} */
@@ -39,7 +39,7 @@ export default class StreamerEngine {
       rename: new Rename(),
       resize: new Resize(),
       edge: new Edge(),
-      webP: new WebP(),
+      convert: new Convert(),
     };
   }
 
@@ -203,7 +203,6 @@ export default class StreamerEngine {
         }
         return previousValue;
       }, {});
-
       for (const key in groupByNameContent) {
         /**@type {BinaryContent[]} */
         const relatedContent = groupByNameContent[key];
@@ -366,7 +365,7 @@ export default class StreamerEngine {
         if (step) {
           return new SimpleProcess(stepName, stepOptions.options, step);
         } else {
-          return new InvalidProcessType(action.Type);
+          return new InvalidProcessType(stepOptions.Type);
         }
       } else {
         return new NotExistProcess(stepName);
