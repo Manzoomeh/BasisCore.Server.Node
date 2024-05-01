@@ -58,6 +58,8 @@
     "index4": "node test\\index4\\simple.js",
     "unknown": "node test\\command\\UnknownCommand\\simple.js",
     "fileStreamer": "node test\\fileStreamer\\index.js",
+    "fileStreamerApi": "node test\\fileStreamer\\api.js",
+    "fileStreamerWithApi": "node test\\fileStreamer\\WithApi.js",
     "bug": "node --trace-warnings --trace-deprecation test\\bug.js"
   },
   "type": "module",
