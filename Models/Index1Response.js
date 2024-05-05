@@ -18,7 +18,7 @@ export default class Index1Response extends RequestBaseResponse {
    * @param {Object.<string, any>} externalCommands
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
-  async getResultAsync(externalCommands) {
+  async getResultAsync() {
     try {
       const commandIl = JSON.parse(this._request.cms.page_il);
       const command = CommandUtil.createCommand(commandIl, externalCommands);

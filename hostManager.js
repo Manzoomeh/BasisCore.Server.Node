@@ -19,7 +19,6 @@ import {
 } from "./services/hostServices.js";
 import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
 import { HttpHostService } from "./services/HttpHostService.js";
-import LoadCommand from "./renderEngine/LoadCommand.js";
 
 export default class HostManager {
   /**@type {HostEndPoint[]} */
@@ -92,9 +91,7 @@ export default class HostManager {
    * @returns {HostEndPoint}
    */
   #createHttpEndPoint(name, options, service) {
-    let externalCommands = LoadCommand.processSync(
-      service.settings._options.Settings.LibPath
-    );
+
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
       if (address.Certificate) {
@@ -169,17 +166,16 @@ export default class HostManager {
               port,
               service,
               options,
-              externalCommands
             )
           );
         } else {
           this.hosts.push(
-            new H2HttpHostEndPoint(ip, port, service, options, externalCommands)
+            new H2HttpHostEndPoint(ip, port, service, options)
           );
         }
       } else {
         this.hosts.push(
-          new NonSecureHttpHostEndPoint(ip, port, service, externalCommands)
+          new NonSecureHttpHostEndPoint(ip, port, service)
         );
       }
     });

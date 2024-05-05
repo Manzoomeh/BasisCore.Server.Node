@@ -13,8 +13,8 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {number} port
    * @param {HostService} service
    */
-  constructor(ip, port, service, externalCommands) {
-    super(ip, port, externalCommands);
+  constructor(ip, port, service) {
+    super(ip, port);
     this.#service = service;
   }
 
@@ -40,7 +40,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
               req.fileContents
             );
             const [code, headers, body] = await result.getResultAsync(
-              this._externalCommands
+              
             );
             res.writeHead(code, headers);
             res.end(body);

@@ -15,10 +15,9 @@ class HttpHostEndPoint extends HostEndPoint {
    *
    * @param {string} ip
    * @param {number} port
-   * @param {Object.<string, any>} externalCommands
    */
-  constructor(ip, port,externalCommands) {
-    super(ip, port,externalCommands);
+  constructor(ip, port,) {
+    super(ip, port,);
   }
 
   /** @returns {Server}*/
