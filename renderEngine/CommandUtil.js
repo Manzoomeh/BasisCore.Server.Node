@@ -1,25 +1,25 @@
-import ApiCommand from "../../renderEngine/Command/ApiCommand.js";
-import GroupCommand from "../../renderEngine/Command/Collection/GroupCommand.js";
-import CommandBase from "../../renderEngine/Command/CommandBase.js";
-import PrintCommand from "../../renderEngine/Command/PrintCommand.js";
-import RawText from "../../renderEngine/Command/RawText.js";
-import DbSource from "../../renderEngine/Command/Source/DbSource.js";
-import InlineSourceCommand from "../../renderEngine/Command/Source/InlineSourceCommand.js";
-import TreeCommand from "../../renderEngine/Command/TreeCommand.js";
-import ViewCommand from "../../renderEngine/Command/ViewCommand.js";
-import ListCommand from "../../renderEngine/Command/ListCommand.js";
-import CallCommand from "../../renderEngine/Command/Collection/CallCommand.js";
-import UnknownCommand from "../../renderEngine/Command/UnknownCommand.js";
-import RepeaterCommand from "../../renderEngine/Command/Collection/RepeaterCommand.js";
-import CookieCommand from "../../renderEngine/Command/CookieCommand.js";
-import ClientComponent from "../../renderEngine/Command/ClientComponent.js";
-
+import ApiCommand from "./Command/ApiCommand.js";
+import GroupCommand from "./Command/Collection/GroupCommand.js";
+import CommandBase from "./Command/CommandBase.js";
+import PrintCommand from "./Command/PrintCommand.js";
+import RawText from "./Command/RawText.js";
+import DbSource from "./Command/Source/DbSource.js";
+import InlineSourceCommand from "./Command/Source/InlineSourceCommand.js";
+import TreeCommand from "./Command/TreeCommand.js";
+import ViewCommand from "./Command/ViewCommand.js";
+import ListCommand from "./Command/ListCommand.js";
+import CallCommand from "./Command/Collection/CallCommand.js";
+import UnknownCommand from "./Command/UnknownCommand.js";
+import CookieCommand from "./Command/CookieCommand.js";
+import ClientComponent from "./Command/ClientComponent.js";
+import RepeaterCommand from "./Command/Collection/RepeaterCommand.js";
 export default class CommandUtil {
   /**
    * @param {Object} commandIl
+   * @param {Object.<string, any>} externalCommands
    * @returns {CommandBase}
    */
-  static createCommand(commandIl) {
+  static createCommand(commandIl, externalCommands) {
     //TODO:must be better with dic of ctor
     /** @type {CommandBase?} */
     let retVal = null;
@@ -33,7 +33,7 @@ export default class CommandUtil {
         break;
       }
       case "group": {
-        retVal = new GroupCommand(commandIl);
+        retVal = new GroupCommand(commandIl, externalCommands);
         break;
       }
       case "dbsource": {
@@ -65,7 +65,7 @@ export default class CommandUtil {
         break;
       }
       case "repeater": {
-        retVal = new RepeaterCommand(commandIl);
+        retVal = new RepeaterCommand(commandIl, externalCommands);
         break;
       }
       case "cookie": {
@@ -77,8 +77,13 @@ export default class CommandUtil {
         break;
       }
       default: {
-        retVal = new UnknownCommand(commandIl);
-        break;
+        const CommandClass =
+          externalCommands[commandIl.$type.toLowerCase()]?.default;
+        if (CommandClass) {
+        } else {
+          retVal = new UnknownCommand(commandIl);
+          break;
+        }
       }
     }
     return retVal;

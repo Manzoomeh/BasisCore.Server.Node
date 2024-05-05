@@ -1,19 +1,20 @@
 import CommandBase from "./../CommandBase.js";
 import SourceCommand from "../Source/BaseClasses/SourceCommand.js";
 import CallCommand from "./CallCommand.js";
-import CommandUtil from "../../../test/command/CommandUtil.js";
+import CommandUtil from "./../../CommandUtil.js";
 
 export default class CollectionCommand extends CommandBase {
   /** @type {Array<CommandBase>} */
   commands;
   /**
    * @param {object} groupCommandIl
+   * @param {Object.<string, any>} externalCommands
    */
-  constructor(collectionCommandIl) {
-    super(collectionCommandIl);
-    this.commands = collectionCommandIl["Commands"].map(
-      CommandUtil.createCommand
-    );
+  constructor(collectionCommandIl, externalCommands) {
+    super(collectionCommandIl,externalCommands);
+    this.commands = collectionCommandIl["Commands"].map((command) => {
+      CommandUtil.createCommand(command, externalCommands);
+    });
   }
 
   /**

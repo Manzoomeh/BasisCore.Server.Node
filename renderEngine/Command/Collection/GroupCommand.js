@@ -1,12 +1,11 @@
-import CommandUtil from "../../../test/command/CommandUtil.js";
 import IContext from "../../Context/IContext.js";
 import GroupResult from "../../Models/GroupResult.js";
-import CommandBase from "../CommandBase.js";
 import CollectionCommand from "./CollectionCommand.js";
 
 export default class GroupCommand extends CollectionCommand {
   /**
    * @param {object} groupCommandIl
+   * @param {Object.<string, any>} externalCommands
    */
   constructor(groupCommandIl) {
     super(groupCommandIl);

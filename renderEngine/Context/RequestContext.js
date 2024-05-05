@@ -5,7 +5,7 @@ import DataSourceCollection from "../Source/DataSourceCollection.js";
 import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
 import Util from "../../Util.js";
 import CommandBase from "../Command/CommandBase.js";
-import CommandUtil from "../../test/command/CommandUtil.js";
+import CommandUtil from "../CommandUtil.js";
 import LocalContext from "./LocalContext.js";
 import IRoutingRequest from "../../models/IRoutingRequest.js";
 import JsonSource from "../Source/JsonSource.js";
@@ -17,12 +17,14 @@ export default class RequestContext extends ContextBase {
   _settings;
   /** @type {Array<CookieItem>} */
   _cookies;
-
+  /**@type {Object.<string, any>}*/
+  _externalCommands;
   /**
    * @param {ServiceSettings} settings
    * @param {IRoutingRequest} request
+   * @param {Object.<string, any>} externalCommands 
    */
-  constructor(settings, request) {
+  constructor(settings, request, externalCommands) {
     super(null, Number(request.cms?.dmnid));
     this._settings = settings;
     this.isSecure = request.isSecure;
@@ -104,7 +106,7 @@ export default class RequestContext extends ContextBase {
       //TODO: IL must implement
     }
     /** @type {CommandBase} */
-    return CommandUtil.createCommand(JSON.parse(result.page_il));
+    return CommandUtil.createCommand(JSON.parse(result.page_il),this._externalCommands);
   }
 
   /**

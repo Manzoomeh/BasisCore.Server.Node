@@ -20,8 +20,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
    * @param {import("tls").SecureContextOptions} options
    */
 
-  constructor(ip, port, service, options) {
-    super(ip, port);
+  constructor(ip, port, service, options,externalCommands) {
+    super(ip, port, externalCommands);
     this.#options = options;
     this.#service = service;
   }
@@ -90,7 +90,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             true
           );
           const result = await this.#service.processAsync(cms, fileContents);
-          const [code, headerList, body] = await result.getResultAsync();
+          const [code, headerList, body] = await result.getResultAsync(this._externalCommands);
           headerList[":status"] = code;
           stream.respond(headerList);
           stream.end(body);

@@ -15,8 +15,8 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {HostService} service
    * @param {import("tls").SecureContextOptions} options
    */
-  constructor(ip, port, service, options) {
-    super(ip, port);
+  constructor(ip, port, service, options, externalCommands) {
+    super(ip, port, externalCommands);
     this.#options = options;
     this.#service = service;
   }
@@ -40,9 +40,9 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
             );
             const result = await this.#service.processAsync(
               cms,
-              req.fileContents
+              req.fileContents,
             );
-            const [code, headers, body] = await result.getResultAsync();
+            const [code, headers, body] = await result.getResultAsync(this._externalCommands);
             res.writeHead(code, headers);
             res.end(body);
           };

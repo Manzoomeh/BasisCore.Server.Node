@@ -5,21 +5,24 @@ import DataSourceCollection from "../Source/DataSourceCollection.js";
 import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
 import Util from "../../Util.js";
 import CommandBase from "../Command/CommandBase.js";
-import CommandUtil from "../../test/command/CommandUtil.js";
+import CommandUtil from "../../renderEngine/CommandUtil.js";
 import LocalContext from "./LocalContext.js";
 
 export default class TestContext extends ContextBase {
   /** @type {ServiceSettings} */
   _settings;
-
+  /**@type {Object.<string, any>}*/
+  _externalCommands;
   /**
    * @param {ServiceSettings} settings
    * @param {number} domainId
+   * @param {Object.<string, any>} externalCommands
    */
-  constructor(settings, domainId) {
+  constructor(settings, domainId, externalCommands) {
     super(null, domainId);
     this._settings = settings;
     this.isSecure = false;
+    this._externalCommands = externalCommands;
   }
 
   /**
@@ -70,7 +73,10 @@ export default class TestContext extends ContextBase {
       //TODO: IL must implement
     }
     /** @type {CommandBase} */
-    return CommandUtil.createCommand(JSON.parse(result.page_il));
+    return CommandUtil.createCommand(
+      JSON.parse(result.page_il),
+      this._externalCommands
+    );
   }
 
   /**

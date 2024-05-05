@@ -19,6 +19,7 @@ import {
 } from "./services/hostServices.js";
 import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
 import { HttpHostService } from "./services/HttpHostService.js";
+import LoadCommand from "./renderEngine/LoadCommand.js";
 
 export default class HostManager {
   /**@type {HostEndPoint[]} */
@@ -91,6 +92,9 @@ export default class HostManager {
    * @returns {HostEndPoint}
    */
   #createHttpEndPoint(name, options, service) {
+    let externalCommands = LoadCommand.processSync(
+      service.settings._options.Settings.LibPath
+    );
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
       if (address.Certificate) {
@@ -122,16 +126,16 @@ export default class HostManager {
             sniOptions.Hosts.forEach((host) => {
               /**@type {tls.SecureContextOptions}*/
               const options = {};
-              if (sslOptions.FilePath) {
+              if (sniOptions.FilePath) {
                 options.cert = fs.readFileSync(host.FilePath);
               }
-              if (sslOptions.KeyPath) {
+              if (sniOptions.KeyPath) {
                 options.key = fs.readFileSync(host.KeyPath);
               }
-              if (sslOptions.PfxPath) {
+              if (sniOptions.PfxPath) {
                 options.pfx = fs.readFileSync(host.PfxPath);
               }
-              if (sslOptions.PfxPassword) {
+              if (sniOptions.PfxPassword) {
                 options.passphrase = fs.readFileSync(host.PfxPassword);
               }
               host.HostNames.forEach((hostName) => {
@@ -160,13 +164,23 @@ export default class HostManager {
         }
         if (!address.Certificate.Http2) {
           this.hosts.push(
-            new SecureHttpHostEndPoint(ip, port, service, options)
+            new SecureHttpHostEndPoint(
+              ip,
+              port,
+              service,
+              options,
+              externalCommands
+            )
           );
         } else {
-          this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options));
+          this.hosts.push(
+            new H2HttpHostEndPoint(ip, port, service, options, externalCommands)
+          );
         }
       } else {
-        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service));
+        this.hosts.push(
+          new NonSecureHttpHostEndPoint(ip, port, service, externalCommands)
+        );
       }
     });
   }
