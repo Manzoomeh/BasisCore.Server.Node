@@ -326,7 +326,7 @@ export const il = {
     {
       $type: "group",
       core: "group",
-      name: "mongoTree",
+      name: "monree",
       Commands: [
         {
           $type: "dbsource",

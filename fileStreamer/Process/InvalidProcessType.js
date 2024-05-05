@@ -18,7 +18,7 @@ export default class InvalidProcessType extends IProcess {
    */
   async processAsync(contents) {
     for (const content of contents) {
-      content.AddLog("process-type", _name);
+      content.AddLog("process-type", this._type);
       content.status = Status.InvalidProcessTypeError;
     }
     return Promise.resolve(contents);
