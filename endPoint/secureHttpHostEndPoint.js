@@ -40,7 +40,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
             );
             const result = await this.#service.processAsync(
               cms,
-              req.fileContents,
+              req.fileContents
             );
             const [code, headers, body] = await result.getResultAsync();
             res.writeHead(code, headers);

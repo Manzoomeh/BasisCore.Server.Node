@@ -39,9 +39,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
               cms,
               req.fileContents
             );
-            const [code, headers, body] = await result.getResultAsync(
-              
-            );
+            const [code, headers, body] = await result.getResultAsync();
             res.writeHead(code, headers);
             res.end(body);
           };

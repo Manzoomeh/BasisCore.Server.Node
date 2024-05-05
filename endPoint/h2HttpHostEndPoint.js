@@ -90,7 +90,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             true
           );
           const result = await this.#service.processAsync(cms, fileContents);
-          const [code, headerList, body] = await result.getResultAsync(this._);
+          const [code, headerList, body] = await result.getResultAsync();
           headerList[":status"] = code;
           stream.respond(headerList);
           stream.end(body);

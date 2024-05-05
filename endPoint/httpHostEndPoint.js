@@ -16,8 +16,8 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {string} ip
    * @param {number} port
    */
-  constructor(ip, port,) {
-    super(ip, port,);
+  constructor(ip, port) {
+    super(ip, port);
   }
 
   /** @returns {Server}*/

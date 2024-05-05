@@ -91,7 +91,6 @@ export default class HostManager {
    * @returns {HostEndPoint}
    */
   #createHttpEndPoint(name, options, service) {
-
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
       if (address.Certificate) {
@@ -161,22 +160,13 @@ export default class HostManager {
         }
         if (!address.Certificate.Http2) {
           this.hosts.push(
-            new SecureHttpHostEndPoint(
-              ip,
-              port,
-              service,
-              options,
-            )
+            new SecureHttpHostEndPoint(ip, port, service, options)
           );
         } else {
-          this.hosts.push(
-            new H2HttpHostEndPoint(ip, port, service, options)
-          );
+          this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options));
         }
       } else {
-        this.hosts.push(
-          new NonSecureHttpHostEndPoint(ip, port, service)
-        );
+        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service));
       }
     });
   }
