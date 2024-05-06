@@ -21,7 +21,7 @@ const host = {
       Type: "http",
       Settings: {
         "Connections.edge.RoutingData": {
-          endpoint: "127.0.0.1:1025",
+          endpoint: "127.0.0.1:8080",
         },
       },
     },

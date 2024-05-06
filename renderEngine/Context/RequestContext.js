@@ -5,29 +5,29 @@ import DataSourceCollection from "../Source/DataSourceCollection.js";
 import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
 import Util from "../../Util.js";
 import CommandBase from "../Command/CommandBase.js";
-import CommandUtil from "../CommandUtil.js";
 import LocalContext from "./LocalContext.js";
 import IRoutingRequest from "../../models/IRoutingRequest.js";
 import JsonSource from "../Source/JsonSource.js";
 import CookieItem from "../Models/CookieItem.js";
 import IContext from "./IContext.js";
+import UnknownCommand from "../Command/UnknownCommand.js";
 
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
   _settings;
   /** @type {Array<CookieItem>} */
   _cookies;
-  /**@type {Object.<string, any>}*/
-  _externalCommands;
   /**
    * @param {ServiceSettings} settings
    * @param {IRoutingRequest} request
-   * @param {Object.<string, any>} externalCommands 
+   * @param {Object.<string, any>} commands
    */
-  constructor(settings, request, externalCommands) {
+  constructor(settings, request, commands) {
     super(null, Number(request.cms?.dmnid));
     this._settings = settings;
     this.isSecure = request.isSecure;
+    this._commands = commands;
+
     for (let mainKey in request) {
       const mainValue = request[mainKey];
       this.addSource(new JsonSource([mainValue], `cms.${mainKey}`));
@@ -106,7 +106,7 @@ export default class RequestContext extends ContextBase {
       //TODO: IL must implement
     }
     /** @type {CommandBase} */
-    return CommandUtil.createCommand(JSON.parse(result.page_il),this._externalCommands);
+    return this.createCommand(JSON.parse(result.page_il));
   }
 
   /**
@@ -131,5 +131,20 @@ export default class RequestContext extends ContextBase {
     this._cookies.push(
       new CookieItem(name, value, maxAge, path, this.isSecure)
     );
+  }
+  /**
+   * @param {Object} commandIl
+   * @returns {CommandBase}
+   */
+  createCommand(commandIl) {
+    /** @type {CommandBase?} */
+    let retVal = null;
+    const CommandClass = this._commands[commandIl.$type.toLowerCase()]?.default;
+    if (CommandClass) {
+      return new CommandClass(commandIl);
+    } else {
+      retVal = new UnknownCommand(commandIl);
+    }
+    return retVal;
   }
 }

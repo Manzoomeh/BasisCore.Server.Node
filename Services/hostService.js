@@ -10,7 +10,7 @@ import IRoutingRequest from "../models/IRoutingRequest.js";
 import ServiceSettings from "../models/ServiceSettings.js";
 import Index4Response from "../models/Index4Response.js";
 import LoadCommand from "../renderEngine/LoadCommand.js";
-
+import CommandUtil from "../renderEngine/CommandUtil.js";
 export default class HostService {
   /**@type {string} */
   name;
@@ -21,7 +21,7 @@ export default class HostService {
   /** @type {ServiceSettings} */
   settings;
   /**@type {Object<string,any>} */
-  _externalCommands;
+  _commands;
   /**
    * @param {string} name
    *@param {HostServiceOptions} options
@@ -33,9 +33,11 @@ export default class HostService {
       this._engine = new StreamerEngine(this._options.Streamer);
     }
     this.settings = new ServiceSettings(options);
-    this._externalCommands = LoadCommand.processSync(
-      this._options.Settings.LibPath
-    );
+    this._commands = 
+    {
+      ...CommandUtil.addDefaultCommands(),
+      ...LoadCommand.processSync(this._options.Settings.LibPath),
+    };
   }
 
   /**
@@ -81,7 +83,8 @@ export default class HostService {
     let retVal = null;
     switch (request.webserver.index) {
       case "1": {
-        retVal = new Index1Response(request, this.settings,this._externalCommands);
+        console.log(this._commands)
+        retVal = new Index1Response(request, this.settings, this._commands);
         break;
       }
       case "2": {

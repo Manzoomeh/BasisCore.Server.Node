@@ -9,83 +9,31 @@ import TreeCommand from "./Command/TreeCommand.js";
 import ViewCommand from "./Command/ViewCommand.js";
 import ListCommand from "./Command/ListCommand.js";
 import CallCommand from "./Command/Collection/CallCommand.js";
-import UnknownCommand from "./Command/UnknownCommand.js";
 import CookieCommand from "./Command/CookieCommand.js";
 import ClientComponent from "./Command/ClientComponent.js";
 import RepeaterCommand from "./Command/Collection/RepeaterCommand.js";
 export default class CommandUtil {
   /**
-   * @param {Object} commandIl
-   * @param {Object.<string, any>} externalCommands
-   * @returns {CommandBase}
+   * @returns {Object.<string, any>}
    */
-  static createCommand(commandIl, externalCommands) {
+  static addDefaultCommands() {
     //TODO:must be better with dic of ctor
     /** @type {CommandBase?} */
-    let retVal = null;
-    switch (commandIl.$type.toLowerCase()) {
-      case "rawtext": {
-        retVal = new RawText(commandIl);
-        break;
-      }
-      case "print": {
-        retVal = new PrintCommand(commandIl);
-        break;
-      }
-      case "group": {
-        retVal = new GroupCommand(commandIl, externalCommands);
-        break;
-      }
-      case "dbsource": {
-        retVal = new DbSource(commandIl);
-        break;
-      }
-      case "inlinesource": {
-        retVal = new InlineSourceCommand(commandIl);
-        break;
-      }
-      case "tree": {
-        retVal = new TreeCommand(commandIl);
-        break;
-      }
-      case "view": {
-        retVal = new ViewCommand(commandIl);
-        break;
-      }
-      case "list": {
-        retVal = new ListCommand(commandIl);
-        break;
-      }
-      case "call": {
-        retVal = new CallCommand(commandIl);
-        break;
-      }
-      case "api": {
-        retVal = new ApiCommand(commandIl);
-        break;
-      }
-      case "repeater": {
-        retVal = new RepeaterCommand(commandIl, externalCommands);
-        break;
-      }
-      case "cookie": {
-        retVal = new CookieCommand(commandIl);
-        break;
-      }
-      case "clientcomponent": {
-        retVal = new ClientComponent(commandIl);
-        break;
-      }
-      default: {
-        const CommandClass =
-          externalCommands[commandIl.$type.toLowerCase()]?.default;
-        if (CommandClass) {
-        } else {
-          retVal = new UnknownCommand(commandIl);
-          break;
-        }
-      }
-    }
+    let retVal = {
+      api: { default: ApiCommand },
+      group: { default: GroupCommand },
+      print: { default: PrintCommand },
+      rawText: { default: RawText },
+      dbsource: { default: DbSource },
+      inlinesource: { default: InlineSourceCommand },
+      view: { default: ViewCommand },
+      tree: { default: TreeCommand },
+      list: { default: ListCommand },
+      call: { default: CallCommand },
+      cookie: { default: CookieCommand },
+      clientcomponent: { default: ClientComponent },
+      repeater: { default: RepeaterCommand },
+    };
     return retVal;
   }
 }

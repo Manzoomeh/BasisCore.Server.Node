@@ -5,24 +5,24 @@ import DataSourceCollection from "../Source/DataSourceCollection.js";
 import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
 import Util from "../../Util.js";
 import CommandBase from "../Command/CommandBase.js";
-import CommandUtil from "../../renderEngine/CommandUtil.js";
 import LocalContext from "./LocalContext.js";
+import UnknownCommand from "../Command/UnknownCommand.js";
 
 export default class TestContext extends ContextBase {
   /** @type {ServiceSettings} */
   _settings;
   /**@type {Object.<string, any>}*/
-  _externalCommands;
+  _commands;
   /**
    * @param {ServiceSettings} settings
    * @param {number} domainId
-   * @param {Object.<string, any>} externalCommands
+   * @param {Object.<string, any>} commands
    */
-  constructor(settings, domainId, externalCommands) {
+  constructor(settings, domainId, commands) {
     super(null, domainId);
     this._settings = settings;
     this.isSecure = false;
-    this._externalCommands = externalCommands;
+    this._commands = commands;
   }
 
   /**
@@ -73,9 +73,9 @@ export default class TestContext extends ContextBase {
       //TODO: IL must implement
     }
     /** @type {CommandBase} */
-    return CommandUtil.createCommand(
+    return this.createCommand(
       JSON.parse(result.page_il),
-      this._externalCommands
+      this._commands
     );
   }
 
@@ -105,4 +105,20 @@ export default class TestContext extends ContextBase {
    * @param {string} path
    */
   addCookie(name, value, maxAge, path) {}
+
+  /**
+   * @param {Object} commandIl
+   * @returns {CommandBase}
+   */
+  createCommand(commandIl) {
+    /** @type {CommandBase?} */
+    let retVal = null;
+    const CommandClass = this._commands[commandIl.$type.toLowerCase()]?.default;
+    if (CommandClass) {
+      return new CommandClass(commandIl);
+    } else {
+      retVal = new UnknownCommand(commandIl);
+    }
+    return retVal;
+  }
 }

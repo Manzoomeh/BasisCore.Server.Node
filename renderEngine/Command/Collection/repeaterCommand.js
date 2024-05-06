@@ -10,10 +10,9 @@ export default class RepeaterCommand extends CollectionCommand {
 
   /**
    * @param {object} repeaterCommandIl
-   * @param {Object.<string, any>} externalCommands
    */
-  constructor(repeaterCommandIl,externalCommands) {
-    super(repeaterCommandIl,externalCommands);
+  constructor(repeaterCommandIl) {
+    super(repeaterCommandIl);
     this.sourceId = TokenUtil.getFiled(repeaterCommandIl, "data-member-name");
   }
 
