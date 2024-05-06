@@ -83,7 +83,6 @@ export default class HostService {
     let retVal = null;
     switch (request.webserver.index) {
       case "1": {
-        console.log(this._commands)
         retVal = new Index1Response(request, this.settings, this._commands);
         break;
       }
