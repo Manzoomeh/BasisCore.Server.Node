@@ -6,23 +6,32 @@ import ServiceSettings from "./ServiceSettings.js";
 import RequestBaseResponse from "./requestBaseResponse.js";
 
 export default class Index1Response extends RequestBaseResponse {
+  /**@type {Object.<string, any>}*/
+  _externalCommands;
   /**
    * @param {IRoutingRequest} request
    * @param {ServiceSettings} settings
+   * @param {Object.<string, any>} externalCommands
    */
-  constructor(request, settings) {
+  constructor(request, settings, externalCommands) {
     super(request, settings);
   }
 
   /**
-   * @param {Object.<string, any>} externalCommands
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
   async getResultAsync() {
     try {
       const commandIl = JSON.parse(this._request.cms.page_il);
-      const command = CommandUtil.createCommand(commandIl, externalCommands);
-      const context = new RequestContext(this._settings, this._request,externalCommands);
+      const command = CommandUtil.createCommand(
+        commandIl,
+        this._externalCommands
+      );
+      const context = new RequestContext(
+        this._settings,
+        this._request,
+        this._externalCommands
+      );
       context.cancellation = new CancellationToken();
       const result = await command.executeAsync(context);
       const renderResultList = [];
