@@ -13,6 +13,7 @@ import UnknownCommand from "../../renderEngine/Command/UnknownCommand.js";
 import RepeaterCommand from "../../renderEngine/Command/Collection/RepeaterCommand.js";
 import CookieCommand from "../../renderEngine/Command/CookieCommand.js";
 import ClientComponent from "../../renderEngine/Command/ClientComponent.js";
+import WsCommand from "../../renderEngine/Command/Source/ws.js";
 
 export default class CommandUtil {
   /**
@@ -75,6 +76,10 @@ export default class CommandUtil {
       case "clientcomponent": {
         retVal = new ClientComponent(commandIl);
         break;
+      }
+      case "external.ws.ws":{
+        retVal = new WsCommand(commandIl)
+        break
       }
       default: {
         retVal = new UnknownCommand(commandIl);
