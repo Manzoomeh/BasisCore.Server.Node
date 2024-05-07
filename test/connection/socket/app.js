@@ -9,15 +9,8 @@ const server = net.createServer((socket) => {
     const strData = message.toString();
     const data = JSON.parse(strData);
     console.log("Received: ", data);
-    const result = {
-      Replace: true,
-      sources: [
-        {
-          data: { Time: 1, Percent: 1234 },
-        },
-      ],
-    };
-    socket.write(JSON.stringify(result));
+    const result ="Hi from socket";
+    socket.write(result);
     socket.destroy();
   });
 

@@ -3,7 +3,7 @@ import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection
 import IRoutingRequest from "../IRoutingRequest.js";
 import Request from "../request.js";
 import ILoadPageResult from "./ILoadPageResult.js";
-import WebServerException from "../Exceptions/WebServerException.js";
+
 export default class ConnectionInfo {
   /** @type {string} */
   name;
@@ -51,22 +51,5 @@ export default class ConnectionInfo {
   loadPageAsync(pageName, rawCommand, pageSize, domainId, cancellationToken) {
     throw new Error("ConnectionInfo.loadPageAsync() method not implemented.");
   }
-  /**
-   *
-   * @param {string} jsonString
-   * @returns {DataSourceCollection}
-   */
-  convertJSONToDataSet(content) {
-    if (content?.sources && Array.isArray(content?.sources)) {
-      let retVal = [];
-      content.sources.forEach((source) => {
-        retVal.push(source.data);
-      });
-      return new DataSourceCollection(retVal);
-    } else {
-      throw new WebServerException(
-        "Error from " + this.name + " Connection ;the sources are not available."
-      );
-    }
-  }
+
 }

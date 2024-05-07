@@ -2,7 +2,6 @@ import net from "net";
 import ConnectionInfo from "./ConnectionInfo.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import SocketSettingData from "./SocketSettingData.js";
-import WebServerException from "../Exceptions/WebServerException.js";
 
 /**
  * @typedef {Object} LoadDataRequest
@@ -30,27 +29,6 @@ export default class SocketConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    const retVal = await this.sendAsync(parameters);
-    return this.convertJSONToDataSet(retVal);
-  }
-  /**
-   * @param {Request} request
-   * @param {CancellationToken} cancellationToken
-   * @returns {Promise<IRoutingRequest>}
-   */
-  async getRoutingDataAsync(request, cancellationToken) {
-    const result = await this.loadDataAsync(request);
-    if (result.cms.webserver) {
-      result.webserver = result.cms.webserver;
-      delete result.cms.webserver;
-    }
-    if (result.cms.http) {
-      result.http = result.cms.http;
-      delete result.cms.http;
-    }
-    return result;
-  }
-  async sendAsync(parameters) {
     const byteMessage = parameters.hasOwnProperty("byteMessage")
       ? parameters["byteMessage"]
       : null;
@@ -70,9 +48,7 @@ export default class SocketConnectionInfo extends ConnectionInfo {
         reject(err);
       });
     });
-
     const networkStream = mySocket;
-
     if (byteMessage) {
       await new Promise((resolve, reject) => {
         networkStream.write(byteMessage, (err) => {
@@ -84,18 +60,36 @@ export default class SocketConnectionInfo extends ConnectionInfo {
         });
       });
     }
-    let data = await new Promise((resolve, reject) => {
-      networkStream.on("data", (data) => {
-        const bufferString = data.toString("utf8");
-        const jsonObject = JSON.parse(bufferString);
-        resolve(jsonObject);
-      });
+    let result = await new Promise((resolve, reject) => {
+      /** @type {Buffer[]}*/
+      const buffer = [];
+      networkStream.on("data", (data) => buffer.push(data));
       networkStream.on("error", (err) => {
         reject(err);
       });
+      networkStream.on("end", () => {
+        const data = Buffer.concat(buffer);
+        const retVal = data.toString()
+        resolve( new DataSourceCollection([[{ result: retVal }]]));
+      });
     });
-    networkStream.end();
-
-    return data;
+    return result;
+  }
+  /**
+   * @param {Request} request
+   * @param {CancellationToken} cancellationToken
+   * @returns {Promise<IRoutingRequest>}
+   */
+  async getRoutingDataAsync(request, cancellationToken) {
+    const result = await this.loadDataAsync(request);
+    if (result.cms.webserver) {
+      result.webserver = result.cms.webserver;
+      delete result.cms.webserver;
+    }
+    if (result.cms.http) {
+      result.http = result.cms.http;
+      delete result.cms.http;
+    }
+    return result;
   }
 }
