@@ -92,7 +92,6 @@ export default class HostService {
       }
       case "4": {
         retVal = new Index4Response(request, this.settings);
-
         break;
       }
       case "5": {
