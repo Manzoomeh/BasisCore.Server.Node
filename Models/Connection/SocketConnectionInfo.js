@@ -12,14 +12,16 @@ import WebServerException from "../Exceptions/WebServerException.js";
  */
 export default class SocketConnectionInfo extends ConnectionInfo {
   /**@type {string} */
-  endPoint;
+  host;
+  /**@type {string} */
+  port;
   /**
    * @param {string} name
    * @param {SocketSettingData} settings
    */
   constructor(name, settings) {
     super(name);
-    this.endPoint = settings.endPoint;
+    [this.host, this.port] = settings.endPoint.split(":");
   }
 
   /**
@@ -27,7 +29,7 @@ export default class SocketConnectionInfo extends ConnectionInfo {
    * @param {CancellationToken} cancellationToken
    * @returns {Promise<DataSourceCollection>}
    */
-  async LoadDataAsync(cancellationToken, parameters) {
+  async loadDataAsync(parameters,cancellationToken) {
     const retVal = await this.sendAsync(parameters);
     return this.convertJSONToDataSet(retVal);
   }
@@ -53,32 +55,47 @@ export default class SocketConnectionInfo extends ConnectionInfo {
       ? parameters["byteMessage"]
       : null;
     const mySocket = new net.Socket();
+
     await new Promise((resolve, reject) => {
-      mySocket.connect(this.EndPoint, () => {
-        resolve();
-      });
+      mySocket.connect(
+        {
+          host: this.host,
+          port: this.port,
+        },
+        () => {
+          resolve();
+        }
+      );
       mySocket.on("error", (err) => {
         reject(err);
       });
     });
+
     const networkStream = mySocket;
-    await new Promise((resolve, reject) => {
-      networkStream.write(byteMessage, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
+
+    if (byteMessage) {
+      await new Promise((resolve, reject) => {
+        networkStream.write(byteMessage, (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+    }
+    let data = await new Promise((resolve, reject) => {
+      networkStream.on("data", (data) => {
+        const bufferString = data.toString("utf8");
+        const jsonObject = JSON.parse(bufferString);
+        resolve(jsonObject);
+      });
+      networkStream.on("error", (err) => {
+        reject(err);
       });
     });
-    return await new Promise((resolve, reject) => {
-      networkStream.read((err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
+    networkStream.end();
+
+    return data;
   }
 }

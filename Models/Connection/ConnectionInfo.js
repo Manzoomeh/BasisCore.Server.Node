@@ -3,7 +3,7 @@ import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection
 import IRoutingRequest from "../IRoutingRequest.js";
 import Request from "../request.js";
 import ILoadPageResult from "./ILoadPageResult.js";
-
+import WebServerException from "../Exceptions/WebServerException.js";
 export default class ConnectionInfo {
   /** @type {string} */
   name;
@@ -65,7 +65,7 @@ export default class ConnectionInfo {
       return new DataSourceCollection(retVal);
     } else {
       throw new WebServerException(
-        "Error from Edge Connection ;the sources are not available."
+        "Error from " + this.name + " Connection ;the sources are not available."
       );
     }
   }

@@ -58,7 +58,10 @@
     "index4": "node test\\index4\\simple.js",
     "unknown": "node test\\command\\UnknownCommand\\simple.js",
     "fileStreamer": "node test\\fileStreamer\\index.js",
-    "bug": "node --trace-warnings --trace-deprecation test\\bug.js"
+    "bug": "node --trace-warnings --trace-deprecation test\\bug.js",
+    "socket-server": "node test\\connection\\socket\\app.js",
+    "socket": "node test\\connection\\socket\\connection.js",
+    "ws": "node test\\command\\external.ws.ws\\simple.js"
   },
   "type": "module",
   "dependencies": {
