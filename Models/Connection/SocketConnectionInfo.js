@@ -29,7 +29,7 @@ export default class SocketConnectionInfo extends ConnectionInfo {
    * @param {CancellationToken} cancellationToken
    * @returns {Promise<DataSourceCollection>}
    */
-  async loadDataAsync(parameters,cancellationToken) {
+  async loadDataAsync(parameters, cancellationToken) {
     const retVal = await this.sendAsync(parameters);
     return this.convertJSONToDataSet(retVal);
   }
