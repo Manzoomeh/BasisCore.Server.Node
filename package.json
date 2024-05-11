@@ -61,7 +61,8 @@
     "bug": "node --trace-warnings --trace-deprecation test\\bug.js",
     "socket-server": "node test\\connection\\socket\\app.js",
     "socket": "node test\\connection\\socket\\connection.js",
-    "ws": "node test\\command\\external.ws.ws\\simple.js"
+    "ws": "node test\\command\\external.ws.ws\\simple.js",
+    "inlinesourcexml": "node test/command/inlinesource/inlinesourcexmlCommand.js",
   },
   "type": "module",
   "dependencies": {
