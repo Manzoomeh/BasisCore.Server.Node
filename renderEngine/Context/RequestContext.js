@@ -11,19 +11,19 @@ import IRoutingRequest from "../../models/IRoutingRequest.js";
 import JsonSource from "../Source/JsonSource.js";
 import CookieItem from "../Models/CookieItem.js";
 import IContext from "./IContext.js";
+import IDebugContext from "./IDebugContext.js";
 
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
   _settings;
   /** @type {Array<CookieItem>} */
   _cookies;
-
   /**
    * @param {ServiceSettings} settings
    * @param {IRoutingRequest} request
    */
-  constructor(settings, request) {
-    super(null, Number(request.cms?.dmnid));
+  constructor(settings, request,debugContext) {
+    super(null, Number(request.cms?.dmnid),debugContext);
     this._settings = settings;
     this.isSecure = request.isSecure;
     for (let mainKey in request) {
@@ -41,7 +41,6 @@ export default class RequestContext extends ContextBase {
         cookieObj[key] = value;
       });
     }
-
     this.addSource(new JsonSource([cookieObj], "cms.cookie"));
   }
 
@@ -67,7 +66,12 @@ export default class RequestContext extends ContextBase {
       /** @type {ConnectionInfo} */
       const connection = this._settings.getConnection(connectionName);
       /** @type {DataSourceCollection} */
-      return await connection.loadDataAsync(parameters, this.cancellation);
+      const result = await connection.loadDataAsync(
+        parameters,
+        this.cancellation
+      );
+      this.debugContext.addDebugInformation(sourceName, result);
+      return result;
     } catch (ex) {
       throw new BasisCoreException(
         `Error in load data for '${sourceName}' source from '${connectionName}' connection.`,

@@ -1,6 +1,8 @@
 import CancellationToken from "../Cancellation/CancellationToken.js";
 import CommandBase from "../Command/CommandBase.js";
+import StringResult from "../Models/StringResult.js";
 import IDataSource from "../Source/IDataSource.js";
+import IDebugContext from "./IDebugContext.js";
 
 export default class IContext {
   /**@type {boolean} */
@@ -9,6 +11,9 @@ export default class IContext {
   domainId;
   /**@type {CancellationToken} */
   cancellation;
+  /** @type {IDebugContext} */
+  debugContext;
+
   constructor(domainId) {
     this.domainId = domainId;
   }

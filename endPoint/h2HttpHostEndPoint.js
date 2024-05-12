@@ -5,7 +5,7 @@ import SecureHttpHostEndPoint from "./secureHttpHostEndPoint.js";
 import HostService from "../services/hostService.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import http from "http";
-
+import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {HostService} */
   #service;
@@ -76,11 +76,18 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         /**@type {NodeJS.Dict<string>} */
         const formFields = {};
         const method = headers[":method"];
-        const url = headers[":path"];
+        const reqUrl = headers[":path"];
         let bodyStr = "";
         const createCmsAndCreateResponseAsync = async () => {
+          const { queryObj } = url.parse(reqUrl, true);
+          let routingDataStep =
+            queryObj.debug == "true" ||
+            queryObj.debug == "1" ||
+            queryObj.debug == "2"
+              ? new LightgDebugStep(null, "Get Routing Data")
+              : null;
           cms = await this._createCmsObjectAsync(
-            url,
+            reqUrl,
             method,
             headers,
             formFields,
@@ -90,7 +97,10 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             true
           );
           const result = await this.#service.processAsync(cms, fileContents);
-          const [code, headerList, body] = await result.getResultAsync();
+          routingDataStep.complete();
+          const [code, headerList, body] = await result.getResultAsync(
+            routingDataStep
+          );
           headerList[":status"] = code;
           stream.respond(headerList);
           stream.end(body);
@@ -121,7 +131,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
                 file.on("data", (x) => ContentParts.push(x));
                 file.on("end", async () => {
                   const content = new BinaryContent();
-                  content.url = `${headers["host"]}${url}`;
+                  content.url = `${headers["host"]}${reqUrl}`;
                   content.mime = info.mimeType.toLowerCase();
                   content.name = info.filename;
                   content.payload = Buffer.concat(ContentParts);
@@ -136,7 +146,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
               });
               bb.on("close", createCmsAndCreateResponseAsync);
               stream.pipe(bb);
-            } 
+            }
           } else {
             await createCmsAndCreateResponseAsync();
           }

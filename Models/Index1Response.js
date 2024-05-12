@@ -4,6 +4,10 @@ import CommandUtil from "../test/command/CommandUtil.js";
 import IRoutingRequest from "./IRoutingRequest.js";
 import ServiceSettings from "./ServiceSettings.js";
 import RequestBaseResponse from "./requestBaseResponse.js";
+import RequestDebugContext from "./../renderEngine/Context/RequestDebugContext.js";
+import RequestDebugMaxContext from "../renderEngine/Context/requestDebugMaxContext.js";
+import DebugContext from "../renderEngine/Context/DebugContext.js";
+import VoidContext from "../renderEngine/Context/VoidContext.js";
 
 export default class Index1Response extends RequestBaseResponse {
   /**
@@ -17,15 +21,75 @@ export default class Index1Response extends RequestBaseResponse {
   /**
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
-  async getResultAsync() {
+  async getResultAsync(routingDataStep) {
     try {
-      const commandIl = JSON.parse(this._request.cms.page_il);
-      const command = CommandUtil.createCommand(commandIl);
-      const context = new RequestContext(this._settings, this._request);
+      /**@type {DebugContext} */
+      const requestDebugContext =
+        this._request.query?.debug == "true" ||
+        this._request.query?.debug == "1"
+          ? new RequestDebugContext(
+              "logs for request",
+              this._request.request["request-id"],
+              routingDataStep,
+              this._request
+            )
+          : this._request.query?.debug == "2"
+          ? new RequestDebugMaxContext(
+              "logs for request",
+              this._request.request["request-id"],
+              routingDataStep,
+              this._settings,
+              this._request
+            )
+          : new VoidContext("nothing");
+      //getIl
+      const getIlStep = requestDebugContext.newStep("Get IL");
+      let commandIl;
+      let command;
+      try {
+        if (!this._request.cms.page_il) {
+          //Update IL step
+        }
+        if (this._request.cms.il_call) {
+          //Update IL step
+        }
+
+        const deserializeJsonStep = requestDebugContext.newStep(
+          "De-serialize Command(s)"
+        );
+        try {
+          commandIl = JSON.parse(this._request.cms.page_il);
+          deserializeJsonStep.complete();
+        } catch (error) {
+          console.log(error);
+          deserializeJsonStep.failed();
+        }
+        command = CommandUtil.createCommand(commandIl);
+        getIlStep.complete();
+      } catch (error) {
+        console.log(error);
+        getIlStep.failed();
+      }
+      requestDebugContext.addDebugInformation("");
+      const context = new RequestContext(
+        this._settings,
+        this._request,
+        requestDebugContext
+      );
       context.cancellation = new CancellationToken();
       const result = await command.executeAsync(context);
       const renderResultList = [];
       await result.writeAsync(renderResultList, context.cancellation);
+      await context.debugContext.writeAsync(
+        renderResultList,
+        context.cancellation
+      );
+      if (context.debugContext.tableCollection) {
+       const tablesPromises = context.debugContext.tableCollection.map(async (table) => {
+          table.writeAsync(renderResultList,context.cancellation);
+        });
+        await Promise.all(tablesPromises)
+      }
       return [
         parseInt(this._request.webserver.headercode.split(" ")[0]),
         {

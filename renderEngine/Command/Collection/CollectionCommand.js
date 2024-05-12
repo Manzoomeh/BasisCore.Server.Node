@@ -2,6 +2,7 @@ import CommandBase from "./../CommandBase.js";
 import SourceCommand from "../Source/BaseClasses/SourceCommand.js";
 import CallCommand from "./CallCommand.js";
 import CommandUtil from "../../../test/command/CommandUtil.js";
+import IContext from "../../Context/IContext.js";
 
 export default class CollectionCommand extends CommandBase {
   /** @type {Array<CommandBase>} */
@@ -25,7 +26,15 @@ export default class CollectionCommand extends CommandBase {
     for (const element of this.commands) {
       const command = element;
       if (command instanceof CallCommand) {
-        commands.push(...(await command.callAsync(newContext)));
+        const callStep = newContext.debugContext.newStep(
+          "Execute call command(s)"
+        );
+        try {
+          commands.push(...(await command.callAsync(newContext)));
+        } catch (error) {
+          callStep.complete();
+        }
+        callStep.failed();
       } else {
         commands.push(command);
       }
@@ -39,13 +48,31 @@ export default class CollectionCommand extends CommandBase {
         ? sourceCommands.push(x)
         : otherCommands.push(x)
     );
+    const executeSourceCommandsStep = newContext.debugContext.newStep(
+      `Execute ${sourceCommands.length + 1} source command(s)`
+    );
 
-    const sourceResults = await Promise.all(
-      sourceCommands.map((x) => x.executeAsync(newContext))
+    let sourceResults;
+    try {
+      sourceResults = await Promise.all(
+        sourceCommands.map((x) => x.executeAsync(newContext))
+      );
+      executeSourceCommandsStep.complete();
+    } catch (error) {
+      executeSourceCommandsStep.failed();
+    }
+    const executeRenderableCommandsStep = newContext.debugContext.newStep(
+      `Execute ${otherCommands.length + 1} renderable command(s)`
     );
-    const otherResult = await Promise.all(
-      otherCommands.map((x) => x.executeAsync(newContext))
-    );
+    let otherResult;
+    try {
+      otherResult = await Promise.all(
+        otherCommands.map((x) => x.executeAsync(newContext))
+      );
+      executeRenderableCommandsStep.complete();
+    } catch (error) {
+      executeRenderableCommandsStep.failed();
+    }
     return sourceResults.concat(otherResult);
   }
 }

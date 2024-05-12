@@ -2,6 +2,8 @@ import https from "https";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
+import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
+import url from "url"
 
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {HostService} */
@@ -28,6 +30,13 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
         let cms = null;
         this._handleContentTypes(req, res, () => {
           const createCmsAndCreateResponseAsync = async () => {
+            const queryObj = url.parse(req.url, true).query;
+            let routingDataStep =
+              queryObj.debug == "true" ||
+              queryObj.debug == "1" ||
+              queryObj.debug == "2"
+                ? new LightgDebugStep(null,"Get Routing Data")
+                : null;
             cms = await this._createCmsObjectAsync(
               req.url,
               req.method,
@@ -42,7 +51,10 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
               cms,
               req.fileContents
             );
-            const [code, headers, body] = await result.getResultAsync();
+            routingDataStep.complete();
+            const [code, headers, body] = await result.getResultAsync(
+              routingDataStep
+            );
             res.writeHead(code, headers);
             res.end(body);
           };
