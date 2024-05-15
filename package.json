@@ -58,8 +58,9 @@
     "index4": "node test\\index4\\simple.js",
     "unknown": "node test\\command\\UnknownCommand\\simple.js",
     "fileStreamer": "node test\\fileStreamer\\index.js",
-    "bug": "node --trace-warnings --trace-deprecation test\\bug.js",
-    "manager" : "node --trace-warnings manager\\index.js"
+    "manager": "node --trace-warnings manager\\index.js",
+    "inlinesourcexml": "node test/command/inlinesource/inlinesourcexmlCommand.js",
+    "bug": "node --trace-warnings --trace-deprecation test\\bug.js"
   },
   "type": "module",
   "dependencies": {
