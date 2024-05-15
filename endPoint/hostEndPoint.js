@@ -12,4 +12,5 @@ export default class HostEndPoint {
   listen() {
     throw new Error("Not Implemented...");
   }
+  kill() {}
 }

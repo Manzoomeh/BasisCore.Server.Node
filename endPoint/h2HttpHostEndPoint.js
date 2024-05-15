@@ -64,7 +64,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   }
 
   _createServer() {
-    return http2
+    this._server = http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
         /** @type {Request} */
@@ -136,7 +136,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
               });
               bb.on("close", createCmsAndCreateResponseAsync);
               stream.pipe(bb);
-            } 
+            }
           } else {
             await createCmsAndCreateResponseAsync();
           }
@@ -183,5 +183,6 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           }
         });
       });
+    return this._server;
   }
 }

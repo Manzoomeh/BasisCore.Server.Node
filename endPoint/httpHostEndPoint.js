@@ -11,6 +11,8 @@ import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
+  /**@type {Server} */
+  _server;
   /**
    *
    * @param {string} ip
@@ -159,6 +161,12 @@ class HttpHostEndPoint extends HostEndPoint {
     } else {
       next();
     }
+  }
+  /**@returns void */
+  kill() {
+    this._server.close(() => {
+      console.log(`http server with ${this._ip}:${this._port} downed`);
+    });
   }
 }
 

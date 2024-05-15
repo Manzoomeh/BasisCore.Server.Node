@@ -1,4 +1,4 @@
-import http from "http";
+import http, { Server } from "http";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
@@ -6,7 +6,6 @@ import { HostService } from "../services/hostServices.js";
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {HostService} */
   #service;
-
   /**
    *
    * @param {string} ip
@@ -19,7 +18,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   }
 
   _createServer() {
-    return http.createServer(async (req, res) => {
+    this._server = http.createServer(async (req, res) => {
       try {
         /** @type {Request} */
         let cms = null;
@@ -51,5 +50,6 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
         res.end(ex.toString());
       }
     });
+    return this._server;
   }
 }
