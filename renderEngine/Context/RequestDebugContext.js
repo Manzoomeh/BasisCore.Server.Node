@@ -14,9 +14,10 @@ export default class RequestDebugContext extends DebugContext {
    * @param {string} requestId
    * @param {LightgDebugStep} lightgDebugStep
    * @param {NodeJS.Dict<string>} routingData
+   * @param {NodeJS.Dict<string>} cms
    */
-  constructor(title, requestId, lightgDebugStep, routingData) {
-    super(title, lightgDebugStep, routingData);
+  constructor(title, requestId, lightgDebugStep, routingData, cms) {
+    super(title, lightgDebugStep, routingData, cms);
     this._requestId = requestId;
     if (lightgDebugStep) {
       this.steps.push(lightgDebugStep);
@@ -62,6 +63,12 @@ export default class RequestDebugContext extends DebugContext {
     await RequestDebugContext.DEBUG_CSS.writeAsync(stream, cancellationToken);
     await this.writeLogAsync(stream, cancellationToken);
     await super.writeAsync(stream, cancellationToken);
+    if (this.tableCollection) {
+      const tablesPromises = this.tableCollection.map(async (table) => {
+        return table._result.writeAsync(stream, cancellationToken);
+      });
+      await Promise.all(tablesPromises);
+    }
   }
 
   async writeLogAsync(stream, cancellationToken) {

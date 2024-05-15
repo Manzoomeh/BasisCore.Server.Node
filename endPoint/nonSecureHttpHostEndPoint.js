@@ -1,9 +1,10 @@
 import http from "http";
-import url from "url"
+import url from "url";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
+import StringResult from "../renderEngine/Models/StringResult.js";
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {HostService} */
   #service;
@@ -31,7 +32,13 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
               queryObj.debug == "true" ||
               queryObj.debug == "1" ||
               queryObj.debug == "2"
-                ? new LightgDebugStep(null,"Get Routing Data")
+                ? new LightgDebugStep(null, "Get Routing Data")
+                : null;
+            let rawRequest =
+              queryObj.debug == "true" ||
+              queryObj.debug == "1" ||
+              queryObj.debug == "2"
+                ? this.joinHeaders(req.rawHeaders)
                 : null;
             let cms = await this._createCmsObjectAsync(
               req.url,
@@ -49,7 +56,13 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
             );
             routingDataStep?.complete();
             const [code, headers, body] = await result.getResultAsync(
-              routingDataStep
+              routingDataStep,
+              rawRequest,
+              queryObj.debug == "true" ||
+                queryObj.debug == "1" ||
+                queryObj.debug == "2"
+                ? cms.dict
+                : undefined
             );
             res.writeHead(code, headers);
             res.end(body);

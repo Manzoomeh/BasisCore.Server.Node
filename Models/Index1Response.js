@@ -8,6 +8,7 @@ import RequestDebugContext from "./../renderEngine/Context/RequestDebugContext.j
 import RequestDebugMaxContext from "../renderEngine/Context/requestDebugMaxContext.js";
 import DebugContext from "../renderEngine/Context/DebugContext.js";
 import VoidContext from "../renderEngine/Context/VoidContext.js";
+import StringResult from "../renderEngine/Models/StringResult.js";
 
 export default class Index1Response extends RequestBaseResponse {
   /**
@@ -17,11 +18,14 @@ export default class Index1Response extends RequestBaseResponse {
   constructor(request, settings) {
     super(request, settings);
   }
-
+  /**
+   * @param {*} routingDataStep
+   * @param {StringResult} rawRequest
+   */
   /**
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
-  async getResultAsync(routingDataStep) {
+  async getResultAsync(routingDataStep, rawRequest, cms) {
     try {
       /**@type {DebugContext} */
       const requestDebugContext =
@@ -31,7 +35,8 @@ export default class Index1Response extends RequestBaseResponse {
               "logs for request",
               this._request.request["request-id"],
               routingDataStep,
-              this._request
+              this._request,
+              cms
             )
           : this._request.query?.debug == "2"
           ? new RequestDebugMaxContext(
@@ -39,7 +44,8 @@ export default class Index1Response extends RequestBaseResponse {
               this._request.request["request-id"],
               routingDataStep,
               this._settings,
-              this._request
+              this._request,
+              cms
             )
           : new VoidContext("nothing");
       //getIl
@@ -70,7 +76,6 @@ export default class Index1Response extends RequestBaseResponse {
         console.log(error);
         getIlStep.failed();
       }
-      requestDebugContext.addDebugInformation("");
       const context = new RequestContext(
         this._settings,
         this._request,
@@ -84,12 +89,7 @@ export default class Index1Response extends RequestBaseResponse {
         renderResultList,
         context.cancellation
       );
-      if (context.debugContext.tableCollection) {
-       const tablesPromises = context.debugContext.tableCollection.map(async (table) => {
-          table.writeAsync(renderResultList,context.cancellation);
-        });
-        await Promise.all(tablesPromises)
-      }
+      await rawRequest?.writeAsync(renderResultList, context.cancellation);
       return [
         parseInt(this._request.webserver.headercode.split(" ")[0]),
         {

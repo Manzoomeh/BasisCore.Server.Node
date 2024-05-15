@@ -17,7 +17,7 @@ export default class LogContext {
   static DEBUG_CSS = new StringResult(`
 <style>
 .cms-data-member{ direction:ltr; text-align:left; margin-top:20px;}
-.cms-data-member thead tr th
+.cms-data-member tr th
 {
     min-width:100px;
     background-color: #eee;
@@ -47,9 +47,8 @@ export default class LogContext {
 }
 </style>
 `);
-  //to do : ask about logger type
+
   /**
-   *
    * @param {string} title
    */
   constructor(title) {
@@ -61,8 +60,8 @@ export default class LogContext {
     return this;
   }
 
-  addDebugInformation(debugInfo) {
-    this.infoCollection.push(debugInfo);
+  addDebugInformation(title,debugInfo) {
+    this.infoCollection.push(title,debugInfo);
   }
   /**
    *
@@ -109,6 +108,6 @@ export default class LogContext {
       second: "2-digit",
       timeZone: "UTC",
     });
-     return formatter.format(date);
+    return formatter.format(date);
   }
 }

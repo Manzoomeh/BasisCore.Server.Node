@@ -70,7 +70,7 @@ export default class RequestContext extends ContextBase {
         parameters,
         this.cancellation
       );
-      this.debugContext.addDebugInformation(sourceName, result);
+      this.debugContext.addDebugInformation(sourceName, result.items);
       return result;
     } catch (ex) {
       throw new BasisCoreException(

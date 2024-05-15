@@ -3,7 +3,8 @@ import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
-import url from "url"
+import url from "url";
+import { raw } from "mysql2";
 
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {HostService} */
@@ -35,7 +36,13 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
               queryObj.debug == "true" ||
               queryObj.debug == "1" ||
               queryObj.debug == "2"
-                ? new LightgDebugStep(null,"Get Routing Data")
+                ? new LightgDebugStep(null, "Get Routing Data")
+                : null;
+            let rawRequest =
+              queryObj.debug == "true" ||
+              queryObj.debug == "1" ||
+              queryObj.debug == "2"
+                ? this.joinHeaders(req.rawHeaders)
                 : null;
             cms = await this._createCmsObjectAsync(
               req.url,
@@ -53,7 +60,13 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
             );
             routingDataStep.complete();
             const [code, headers, body] = await result.getResultAsync(
-              routingDataStep
+              routingDataStep,
+              rawRequest,
+              queryObj.debug == "true" ||
+                queryObj.debug == "1" ||
+                queryObj.debug == "2"
+                ? cms.dict
+                : undefined
             );
             res.writeHead(code, headers);
             res.end(body);

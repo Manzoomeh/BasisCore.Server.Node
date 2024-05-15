@@ -9,13 +9,13 @@ import StringResult from "../Models/StringResult.js";
  * @property {string} ParamValue
  */
 
- /**
+/**
  * Represents a log entry.
  * @typedef {Object} Log
- * @property {string} dateTime 
- * @property {Debug} type 
- * @property {string} message 
- * @property {string} extraData 
+ * @property {string} dateTime
+ * @property {Debug} type
+ * @property {string} message
+ * @property {string} extraData
  */
 export default class DebugContext extends LogContext {
   /**@type {LogContext} */
@@ -28,7 +28,14 @@ export default class DebugContext extends LogContext {
   childCollection;
   /** @type {StringResult[]} */
   tableCollection;
-  constructor(title, owner, routingData) {
+  /**
+   *
+   * @param {string} title
+   * @param {LogContext} owner
+   * @param {NodeJS.Dict<string>} routingData
+   * @param {NodeJS.Dict<string>} cms
+   */
+  constructor(title, owner, routingData, cms) {
     super(title, owner);
     this.owner = owner;
     this.logs = [];
@@ -38,8 +45,14 @@ export default class DebugContext extends LogContext {
     this.stopWatch = new Stopwatch();
     this.tableCollection = [];
     this.addDebugInformation(
-      "HTTP Request Information",this._convertHttpRequestSettingToArray(routingData)
+      "HTTP Request Information",
+      this._convertHttpRequestSettingToArray(cms)
     );
+    this.addDebugInformation(
+      "Routing Data",
+      this._convertHttpRequestSettingToArray(routingData)
+    );
+    this.stopWatch.start();
   }
 
   newContext(title) {
@@ -96,7 +109,7 @@ export default class DebugContext extends LogContext {
       ? [info]
       : [{ content: info }];
     return this.tableCollection.push(
-      new StringResult(this.#arrayToHtmlTableWithTitle(information,title))
+      new StringResult(this.#arrayToHtmlTableWithTitle(information, title))
     );
   }
   /**
@@ -128,7 +141,7 @@ export default class DebugContext extends LogContext {
         return `<tr>${cells}</tr>`;
       })
       .join("");
-    const htmlTable = `<table>${headerRow}${columnHeadersRow}${bodyRows}</table>`;
+    const htmlTable = `<table class='cms-data-member'>${headerRow}${columnHeadersRow}${bodyRows}</table>`;
     return new StringResult(htmlTable);
   }
   /**
@@ -140,16 +153,22 @@ export default class DebugContext extends LogContext {
     let resultArray = [];
     for (let ParamType of Object.keys(request)) {
       const innerObject = request[ParamType];
-      for (let ParamKey of Object.keys(innerObject)) {
-        let ParamValue = innerObject[ParamKey];
-        resultArray.push({
-          ParamType,
-          ParamKey,
-          ParamValue,
-        });
+      if (
+        innerObject &&
+        typeof innerObject == "object" &&
+        Object.keys(innerObject).length> 1
+      ) {
+        for (let ParamKey of Object.keys(innerObject)) {
+          let ParamValue = innerObject[ParamKey];
+          resultArray.push({
+            ParamType,
+            ParamKey,
+            ParamValue,
+          });
+        }
       }
     }
-    return resultArray
+    return resultArray;
   }
   get tables() {
     return this.tableCollection;

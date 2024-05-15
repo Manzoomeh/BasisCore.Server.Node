@@ -8,6 +8,7 @@ import busboy from "busboy";
 import { IncomingMessage, ServerResponse } from "http";
 import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
+import StringResult from "../renderEngine/Models/StringResult.js";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
@@ -159,6 +160,37 @@ class HttpHostEndPoint extends HostEndPoint {
     } else {
       next();
     }
+  }
+  addStringTable(title, content) {
+    const html = `
+          <table class='cms-data-member'>
+              <thead>
+                  <tr>
+                      <th>${title}</th>                   
+                  </tr>
+                  <tr>
+                      <th>Value</th>                   
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td>${content}</td>
+                  </tr>
+              </tbody>
+          </table>
+      `;
+    return new StringResult(html);
+  }
+  joinHeaders(array) {
+    const joinedheaders = array
+      .reduce((acc, curr, index, arr) => {
+        if (index % 2 === 0) {
+          acc.push(arr.slice(index, index + 2).join(" : "));
+        }
+        return acc;
+      }, [])
+      .join("<br>");
+    return this.addStringTable("Raw Request",joinedheaders)  
   }
 }
 

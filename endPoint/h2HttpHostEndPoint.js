@@ -6,6 +6,7 @@ import HostService from "../services/hostService.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import http from "http";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
+import url from "url";
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {HostService} */
   #service;
@@ -80,6 +81,12 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
         let bodyStr = "";
         const createCmsAndCreateResponseAsync = async () => {
           const { queryObj } = url.parse(reqUrl, true);
+          let rawRequest =
+            queryObj.debug == "true" ||
+            queryObj.debug == "1" ||
+            queryObj.debug == "2"
+              ? this.addStringTable("Raw Request", JSON.stringify(headers))
+              : null;
           let routingDataStep =
             queryObj.debug == "true" ||
             queryObj.debug == "1" ||
@@ -99,7 +106,13 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           const result = await this.#service.processAsync(cms, fileContents);
           routingDataStep.complete();
           const [code, headerList, body] = await result.getResultAsync(
-            routingDataStep
+            routingDataStep,
+            rawRequest,
+            queryObj.debug == "true" ||
+              queryObj.debug == "1" ||
+              queryObj.debug == "2"
+              ? cms.dict
+              : undefined
           );
           headerList[":status"] = code;
           stream.respond(headerList);
