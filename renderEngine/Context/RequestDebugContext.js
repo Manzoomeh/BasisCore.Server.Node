@@ -65,7 +65,9 @@ export default class RequestDebugContext extends DebugContext {
     await super.writeAsync(stream, cancellationToken);
     if (this.tableCollection) {
       const tablesPromises = this.tableCollection.map(async (table) => {
-        return table._result.writeAsync(stream, cancellationToken);
+        if (typeof table._result?.writeAsync == "function") {
+          return table._result?.writeAsync(stream, cancellationToken);
+        }
       });
       await Promise.all(tablesPromises);
     }

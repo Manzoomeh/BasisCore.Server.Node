@@ -22,8 +22,8 @@ export default class RequestContext extends ContextBase {
    * @param {ServiceSettings} settings
    * @param {IRoutingRequest} request
    */
-  constructor(settings, request,debugContext) {
-    super(null, Number(request.cms?.dmnid),debugContext);
+  constructor(settings, request, debugContext) {
+    super(null, Number(request.cms?.dmnid), debugContext);
     this._settings = settings;
     this.isSecure = request.isSecure;
     for (let mainKey in request) {
@@ -70,7 +70,12 @@ export default class RequestContext extends ContextBase {
         parameters,
         this.cancellation
       );
-      this.debugContext.addDebugInformation(sourceName, result.items);
+      result.items.forEach((item) => {
+        this.debugContext.addDebugInformation(
+          sourceName + "." + item.id,
+          item.data
+        );
+      });
       return result;
     } catch (ex) {
       throw new BasisCoreException(

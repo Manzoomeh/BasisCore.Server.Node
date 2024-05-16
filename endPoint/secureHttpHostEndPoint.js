@@ -58,7 +58,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
               cms,
               req.fileContents
             );
-            routingDataStep.complete();
+            routingDataStep?.complete();
             const [code, headers, body] = await result.getResultAsync(
               routingDataStep,
               rawRequest,
