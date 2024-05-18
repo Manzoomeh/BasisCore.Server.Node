@@ -2,7 +2,6 @@ import LogContext from "./LogContext.js";
 import Stopwatch from "../Models/StopWatch.js";
 import { CancellationToken, Collection } from "mongodb";
 import StringResult from "../Models/StringResult.js";
-import {Encoder} from "node-html-encoder"
 /**
  * @typedef {Object} Setting
  * @property {string} ParamType
@@ -45,8 +44,6 @@ export default class DebugContext extends LogContext {
     this.childCollection = [];
     this.stopWatch = new Stopwatch();
     this.tableCollection = [];
-    const encoder = new Encoder("entity")
-    cms.cms?.content =encoder.htmlEncode(cms.cms?.content) 
     this.addDebugInformation(
       "HTTP Request Information",
       this._convertHttpRequestSettingToArray(cms)

@@ -9,6 +9,8 @@ import RequestDebugMaxContext from "../renderEngine/Context/requestDebugMaxConte
 import DebugContext from "../renderEngine/Context/DebugContext.js";
 import VoidContext from "../renderEngine/Context/VoidContext.js";
 import StringResult from "../renderEngine/Models/StringResult.js";
+import {Encoder} from "node-html-encoder"
+
 export default class Index1Response extends RequestBaseResponse {
   /**
    * @param {IRoutingRequest} request
@@ -26,6 +28,10 @@ export default class Index1Response extends RequestBaseResponse {
    */
   async getResultAsync(routingDataStep, rawRequest, cms) {
     try {
+      const encoder = new Encoder("entity")
+      if(this._request.cms.content){
+        this._request.cms.content =encoder.htmlEncode(this._request.cms.content) 
+      }
       /**@type {DebugContext} */
       const requestDebugContext =
         this._request.query?.debug == "true" ||
