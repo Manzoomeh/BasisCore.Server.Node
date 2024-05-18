@@ -58,10 +58,12 @@ export default class RequestContext extends ContextBase {
    * @param {string} sourceName
    * @param {string} connectionName
    * @param {NodeJS.Dict<object|string|number>} parameters
+   * @param {string[]} memberNames
    * @returns {Promise<DataSourceCollection>}
    */
-  async loadDataAsync(sourceName, connectionName, parameters) {
+  async loadDataAsync(sourceName, connectionName, parameters, memberNames) {
     try {
+      console.log(memberNames)
       parameters.dmnid = this.domainId;
       /** @type {ConnectionInfo} */
       const connection = this._settings.getConnection(connectionName);
@@ -70,10 +72,9 @@ export default class RequestContext extends ContextBase {
         parameters,
         this.cancellation
       );
-      result.items.forEach((item) => {
+      result.items.forEach((item, index) => {
         this.debugContext.addDebugInformation(
-          sourceName + "." + item.id,
-          item.data
+          sourceName + "." + memberNames[index],
         );
       });
       return result;

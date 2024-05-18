@@ -1,0 +1,22 @@
+{
+  "Lazy": true,
+  "EndPoints": {
+    "Main01": {
+      "Type": "http",
+      "Addresses": [
+        { "EndPoint": "0.0.0.0:443" },
+        { "EndPoint": "0.0.0.0:80" }
+      ],
+      "Active": true,
+      "Routing": "mainService"
+    }
+  },
+  "Services": {
+    "mainService": {
+      "Type": "http",
+      "Settings": {
+        "Connections.edge.RoutingData": { "endpoint": "127.0.0.1:2002" }
+      }
+    }
+  }
+}

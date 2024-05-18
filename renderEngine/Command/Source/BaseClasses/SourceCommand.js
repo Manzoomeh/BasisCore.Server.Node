@@ -74,7 +74,10 @@ export default class SourceCommand extends CommandBase {
       dmnid: context.domainId,
       params: paramList,
     };
-    return await context.loadDataAsync(sourceName, connectionName, params);
+    const memberNames = this.members.items.map((item)=>{
+      return item.name
+    })
+    return await context.loadDataAsync(sourceName, connectionName, params,memberNames);
   }
 
   /**

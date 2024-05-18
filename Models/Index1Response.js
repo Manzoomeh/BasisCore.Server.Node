@@ -9,7 +9,6 @@ import RequestDebugMaxContext from "../renderEngine/Context/requestDebugMaxConte
 import DebugContext from "../renderEngine/Context/DebugContext.js";
 import VoidContext from "../renderEngine/Context/VoidContext.js";
 import StringResult from "../renderEngine/Models/StringResult.js";
-
 export default class Index1Response extends RequestBaseResponse {
   /**
    * @param {IRoutingRequest} request
