@@ -48,7 +48,6 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                 req.method
               );
               res.writeHead(code, headers);
-              console.log(body)
               res.end(body);
             };
             await createCmsAndCreateResponseAsync();
