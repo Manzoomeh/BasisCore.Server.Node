@@ -4,9 +4,6 @@ import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
-  /** @type {HostService} */
-  #service;
-
   /** @type {import("tls").SecureContextOptions} */
   #options;
   /**
@@ -18,7 +15,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
   constructor(ip, port, service, options) {
     super(ip, port);
     this.#options = options;
-    this.#service = service;
+    this._service = service;
   }
 
   _createServer() {
@@ -26,33 +23,41 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
       .createServer(this.#options, async (req, res) => {
         /** @type {Request} */
         let cms = null;
-        this._handleContentTypes(req, res, () => {
-          const createCmsAndCreateResponseAsync = async () => {
-            cms = await this._createCmsObjectAsync(
-              req.url,
-              req.method,
-              req.headers,
-              req.formFields,
-              req.jsonHeaders ? req.jsonHeaders : {},
-              req.socket,
-              req.bodyStr,
-              true
-            );
-            const result = await this.#service.processAsync(
-              cms,
-              req.fileContents
-            );
-            const [code, headers, body] = await result.getResultAsync();
-            res.writeHead(code, headers);
-            res.end(body);
-          };
-          try {
-            createCmsAndCreateResponseAsync();
-          } catch (ex) {
-            console.error(ex);
-            res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR);
-            res.end(ex.toString());
-          }
+        this._checkCacheAsync(req, res, async () => {
+          this._handleContentTypes(req, res, () => {
+            const createCmsAndCreateResponseAsync = async () => {
+              cms = await this._createCmsObjectAsync(
+                req.url,
+                req.method,
+                req.headers,
+                req.formFields,
+                req.jsonHeaders ? req.jsonHeaders : {},
+                req.socket,
+                req.bodyStr,
+                true
+              );
+              const result = await this._service.processAsync(
+                cms,
+                req.fileContents
+              );
+              const [code, headers, body] = await result.getResultAsync();
+              await this.addCacheContentAsync(
+                `${req.headers.host}${req.url}`,
+                body,
+                headers,
+                req.method
+              );
+              res.writeHead(code, headers);
+              res.end(body);
+            };
+            try {
+              createCmsAndCreateResponseAsync();
+            } catch (ex) {
+              console.error(ex);
+              res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR);
+              res.end(ex.toString());
+            }
+          });
         });
       })
       .on("error", (er) => console.error(er))

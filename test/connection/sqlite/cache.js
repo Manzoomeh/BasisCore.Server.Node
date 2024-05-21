@@ -19,14 +19,19 @@ const host = {
   Services: {
     mainService: {
       Type: "http",
+      CacheSettings: {
+        requestMethods: "GET",
+        responseHeaders: ["content-type"],
+        isEnabled: true,
+      },
       Settings: {
         "Connections.edge.RoutingData": {
-          endpoint: "127.0.0.1:1025",
+          endpoint: "127.0.0.1:8000",
         },
-        "Connections.sqlite.cacheConnection" :{
-          dbPath : "./../../../test.db",
-          table : "cache_results"
-        }
+        "Connections.sqlite.cacheConnection": {
+          dbPath: "test.db",
+          tableName: "cache_results",
+        },
       },
     },
   },

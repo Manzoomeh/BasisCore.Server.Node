@@ -3,4 +3,6 @@ export default class SqlSettingData {
   dbPath;
   /** @type {string} */
   query;
+  /** @type {string} */
+  tableName
 }

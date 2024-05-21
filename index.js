@@ -1,5 +1,6 @@
 import HostManager from "./hostManager.js";
 import { HostManagerOptions } from "./models/model.js";
+import CacheSettings from "./models/options/CacheSettings.js";
 
 /** @type {HostManagerOptions} */
 const host = {

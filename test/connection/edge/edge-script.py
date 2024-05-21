@@ -1,18 +1,24 @@
 from bclib import edge
 
 options = {
-    "endpoint": "127.0.0.1:8080",
-    "router":  "web"
+    "endpoint": "127.0.0.1:8000",
+    "router":  "restful"
 }
 
 app = edge.from_options(options)
 import asyncio 
 #index 5
-@app.web_action()
+@app.restful_action()
 async def process_web_remain_request(context: edge.WebContext):
-    await asyncio.sleep(10)
-    return "<h1>hi from edge</h1>"
+    context.mime = edge.HttpMimeTypes.JPEG
+    context.response_type = edge.ResponseTypes.STATIC_FILE
+    cms = context.cms.cms
+    if "webserver" not in cms:
+        cms["webserver"] = dict()
 
+    cms["webserver"]["filepath"] = "C:\\Users\\Ali\\Desktop\\fingerfoofProduct1.jpg"
+    print(context.cms)
+    return context.cms
 #index 1
 # @app.web_action()
 # async def process_web_remain_request(context: edge.WebContext):

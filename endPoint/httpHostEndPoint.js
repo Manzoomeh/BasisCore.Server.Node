@@ -8,9 +8,14 @@ import busboy from "busboy";
 import { IncomingMessage, ServerResponse } from "http";
 import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
+import HostService from "../services/hostService.js";
+import mime from "mime";
+import fs from "fs/promises";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
+  /** @type {HostService} */
+  _service;
   /**
    *
    * @param {string} ip
@@ -160,6 +165,69 @@ class HttpHostEndPoint extends HostEndPoint {
       next();
     }
   }
+  /**
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
+   */
+  async _checkCacheAsync(req, res, next) {
+    if (
+      this._service._options.CacheSettings?.isEnabled &&
+      this._service._options.CacheSettings.requestMethods.includes(req.method)
+    ) {
+      let connection = this._service.settings.cacheConnection;
+      const fullUrl = `${req.headers.host}${req.url}`;
+      const cacheResults = await connection.loadContentAsync(fullUrl);
+      if (cacheResults) {
+        res.writeHead(200, {
+          ...cacheResults.properties,
+        });
+        res.write(cacheResults.content ?? "");
+        res.end();
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
+  }
+  /**
+   *
+   * @param {string} key
+   * @param {string} content
+   * @param {NodeJS.Dict<string>} headers
+   * @returns {Promise<void>}
+   */
+  async addCacheContentAsync(key, content, headers, method) {
+    if (
+      this._service._options.CacheSettings?.isEnabled &&
+      this._service._options.CacheSettings.requestMethods.includes(method)
+    ) {
+      const savedHeaders = this.findProperties(
+        headers,
+        this._service._options.CacheSettings.responseHeaders
+      );
+      await this._service.settings.cacheConnection.addCacheContentAsync(
+        key,
+        content,
+        savedHeaders
+      );
+    }
+    return;
+  }
+  /**
+   *
+   * @param {NodeJS.Dict} headers
+   * @param {string[]} keys
+   * @returns
+   */
+  findProperties(headers, keys) {
+    const properties = {};
+    keys.forEach((key) => {
+      if (headers.hasOwnProperty(key)) {
+        properties[key] = headers[key];
+      }
+    });
+    return properties;
+  }
 }
-
 export default HttpHostEndPoint;

@@ -4,6 +4,8 @@ import SqliteSettingData from "./SqliteSettingData.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import Request from "../request.js";
+import CacheResult from "./../options/CacheResult.js";
+
 export default class SqliteConnectionInfo extends ConnectionInfo {
   /** @type {SqliteSettingData} */
   settings;
@@ -36,9 +38,9 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
           }
         });
       });
-      const retVal = new DataSourceCollection(
-       [ Array.isArray(rows) ? rows : [rows]]
-      );
+      const retVal = new DataSourceCollection([
+        Array.isArray(rows) ? rows : [rows],
+      ]);
 
       return retVal;
     } finally {
@@ -47,7 +49,6 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
       }
     }
   }
-
   /**
    * @param {Request} request
    * @param {CancellationToken} cancellationToken
@@ -58,5 +59,81 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
   }
   async testConnectionAsync() {
     throw new Error("test connection is not supported in sqlite");
+  }
+
+  /**
+   *
+   * @param {string} key
+   * @param {CancellationToken} cancellationToken
+   * @returns {Promise<CacheResult|null>}
+   */
+  async loadContentAsync(key, cancellationToken) {
+    /**@type {sqlite3.Database} */
+    let database;
+    try {
+      database = new sqlite3.Database(this.settings.dbPath);
+      const result = await this.#executeSqliteQuery(
+        database,
+        `SELECT * FROM ${this.settings.tableName}  WHERE key = ?`,
+        [key]
+      );
+      return result[0];
+    } finally {
+      if (database) {
+        database.close();
+      }
+    }
+  }
+
+  /**
+   * @param {string} key
+   * @param {string} content
+   * @param {NodeJS.Dict<string>} properties
+   * @returns {Promise<void>}
+   */
+  async addCacheContentAsync(key, content, properties) {
+    let database = new sqlite3.Database(this.settings.dbPath);
+    try {
+      const savedContent = await this.loadContentAsync(key);
+      if (savedContent) {
+        await this.#executeSqliteQuery(
+          database,
+          `DELETE FROM ${this.settings.tableName} WHERE key = ?`,
+          [key]
+        );
+      }
+      const query = `INSERT INTO ${this.settings.tableName} (key, content, properties) VALUES (?, ?, ?)`;
+      const result = this.#executeSqliteQuery(database, query, [
+        key,
+        content,
+        JSON.stringify(properties),
+      ]);
+      return result
+      console.log(result)
+    } catch (err) {
+      throw new Error("error in add cache  : " + err);
+    } finally {
+      if (database) {
+        database.close();
+      }
+    }
+  }
+  /**
+   *
+   * @param {sqlite3.Database} db
+   * @param {string} query
+   * @param {any[]} params
+   * @returns {Promise<any[]>}
+   */
+  #executeSqliteQuery(db, query, params = []) {
+    return new Promise((resolve, reject) => {
+      db.all(query, params, (err, rows) => {
+        if (err) {
+          reject(err);
+        } else {
+          resolve(rows);
+        }
+      });
+    });
   }
 }
