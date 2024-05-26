@@ -29,6 +29,12 @@
       "Settings": {
         "Connections.edge.RoutingData": { "endpoint": "127.0.0.1:2040" }
       }
+    },
+    "welcomeService": {
+      "Type": "http",
+      "Settings": {
+        "Connections.edge.RoutingData": { "endpoint": "127.0.0.1:2002" }
+      }
     }
   }
 }

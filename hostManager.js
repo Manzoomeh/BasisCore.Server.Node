@@ -19,6 +19,8 @@ import {
 } from "./services/hostServices.js";
 import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
 import { HttpHostService } from "./services/HttpHostService.js";
+import http from "http";
+import EndPointController from "./endPointController.js";
 
 export default class HostManager {
   /**@type {HostEndPoint[]} */
@@ -264,11 +266,10 @@ export default class HostManager {
       endPoints.forEach((endPoint) => {
         if (host._ip === endPoint._ip && host._port === endPoint._port) {
           this.hosts.pop(host);
-          host.kill()
+          host.kill();
         }
       });
     });
-
   }
   /**
    * @param {object} jsonObj
@@ -277,5 +278,49 @@ export default class HostManager {
   static fromJson(jsonObj) {
     const options = new HostManagerOptions();
     return new HostManager(Object.assign(options, jsonObj));
+  }
+  startManagementServer(configPath, address) {
+    const server = http.createServer((req, res) => {
+      const triggerAddress = "/manager";
+      if (req.url === triggerAddress) {
+        let body = "";
+        const urlObj = url.parse(req.url);
+        const endPointController = new EndPointController(configPath);
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
+        req.on("end", () => {
+          req.body = body.length > 0 ? JSON.parse(body) : undefined;
+          req.query = urlObj.query;
+          const { url, method } = req;
+          if (url == "/endpointmanager" && method === "POST") {
+            return endPointController.addEndPoint(req, res);
+          }
+          if (url == "/endpointmanager" && method === "GET") {
+            return endPointController.seeConfigs(req, res);
+          }
+          if (url == "/endpointmanager" && method === "DELETE") {
+            return endPointController.deleteEndPoint(req, res);
+          }
+          if (url == "/servicemanager" && method === "POST") {
+            return endPointController.addService(req, res);
+          }
+          if (url == "/servicemanager" && method === "DELETE") {
+            return endPointController.deleteService(req, res);
+          }
+          if(url=="/endpointmanager" && method === "PUT"){
+            return endPointController.editEndPoint(req, res);
+          }
+          res.writeHead(404, { "Content-Type": "text/plain" });
+          res.end("Not Found");
+        });
+      } else {
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Not Found\n");
+      }
+    });
+    server.listen(address, () => {
+      console.log(`management Server running at ${address}/`);
+    });
   }
 }
