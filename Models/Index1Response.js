@@ -4,6 +4,7 @@ import CommandUtil from "../test/command/CommandUtil.js";
 import IRoutingRequest from "./IRoutingRequest.js";
 import ServiceSettings from "./ServiceSettings.js";
 import RequestBaseResponse from "./requestBaseResponse.js";
+import winston from "winston";
 
 export default class Index1Response extends RequestBaseResponse {
   /**
@@ -15,17 +16,18 @@ export default class Index1Response extends RequestBaseResponse {
   }
 
   /**
+   * @param {winston.Logger} logger
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
-  async getResultAsync() {
+  async getResultAsync(logger) {
     try {
       const commandIl = JSON.parse(this._request.cms.page_il);
       const command = CommandUtil.createCommand(commandIl);
       const context = new RequestContext(this._settings, this._request);
       context.cancellation = new CancellationToken();
-      const result = await command.executeAsync(context);
+      const result = await command.executeAsync(context,logger);
       const renderResultList = [];
-      await result.writeAsync(renderResultList, context.cancellation);
+      await result.writeAsync(renderResultList, context.cancellation,logger);
       return [
         parseInt(this._request.webserver.headercode.split(" ")[0]),
         {
@@ -42,6 +44,10 @@ export default class Index1Response extends RequestBaseResponse {
         renderResultList.join(""),
       ];
     } catch (ex) {
+      logger.log({
+        message: ex.message,
+        level: "error",
+      })
       console.error(ex);
     }
   }

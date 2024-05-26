@@ -2,6 +2,7 @@ import net from "net";
 import HostService from "./hostService.js";
 import EdgeMessage from "../edge/edgeMessage.js";
 import Request from "../models/request.js";
+import { log } from "console";
 
 export default class EdgeProxyHostService extends HostService {
   /**@type {string} */
@@ -25,7 +26,7 @@ export default class EdgeProxyHostService extends HostService {
    * @param {BinaryContent[]} fileContents
    * @returns {Promise<Response>}
    */
-  async processAsync(request, fileContents) {
+  async processAsync(request, fileContents,logger) {
     await this._processUploadAsync(fileContents, request);
     /** @type {Promise<Request>} */
     const task = new Promise((resolve, reject) => {
@@ -38,10 +39,18 @@ export default class EdgeProxyHostService extends HostService {
             const msg = EdgeMessage.createFromBuffer(data);
             resolve(JSON.parse(msg.payload));
           } catch (e) {
+            logger.log({
+              level: 'error',
+              message: e.message
+            })
             reject(e);
           }
         })
         .on("error", (e) => {
+          logger.log({
+            level: 'error',
+            message: e.message
+          })
           console.error(e);
           reject(e);
         })

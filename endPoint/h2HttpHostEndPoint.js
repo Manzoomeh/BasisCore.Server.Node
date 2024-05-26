@@ -5,6 +5,8 @@ import SecureHttpHostEndPoint from "./secureHttpHostEndPoint.js";
 import HostService from "../services/hostService.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import http from "http";
+import Logger from "../Log/Logger.js";
+import winston from "winston"
 
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {HostService} */
@@ -89,8 +91,22 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             bodyStr,
             true
           );
-          const result = await this.#service.processAsync(cms, fileContents);
-          const [code, headerList, body] = await result.getResultAsync();
+          let parameters = {
+            url: cms.request["full-url"],
+            rawUrl: headers.url,
+            domain: cms.request.host,
+            pageName: cms.request.url,
+            pageid: cms.cms.pageid,
+            requestId: cms.cms["request-id"],
+            errorType : "error"
+          };
+          /** @type {winston.Logger} */
+          let logger = Logger.createContext(
+            parameters,
+            this.#service.settings._options.LogSettings
+          );
+          const result = await this.#service.processAsync(cms, fileContents,logger);
+          const [code, headerList, body] = await result.getResultAsync(logger);
           headerList[":status"] = code;
           stream.respond(headerList);
           stream.end(body);

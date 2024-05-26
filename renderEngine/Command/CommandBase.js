@@ -7,6 +7,7 @@ import VoidResult from "../Models/VoidResult.js";
 import TokenUtil from "../Token/TokenUtil.js";
 import CommandElement from "./CommandElement.js";
 import StringResult from "../Models/StringResult.js";
+import winston from "winston"
 
 export default class CommandBase {
   /**@type {IToken} */
@@ -50,9 +51,10 @@ export default class CommandBase {
 
   /**
    * @param {IContext} context
+   * @param {winston.Logger} logger
    * @returns {Promise<ICommandResult>}
    */
-  async executeAsync(context) {
+  async executeAsync(context,logger) {
     /** @type {ICommandResult?} */
     let retVal = null;
     try {
@@ -62,7 +64,7 @@ export default class CommandBase {
           const ifValue = await this._getIfValueAsync(context);
           if (ifValue) {
             //TODO: create scope
-            retVal = await this._executeCommandAsync(context);
+            retVal = await this._executeCommandAsync(context,logger);
           } else {
             retVal = VoidResult.result;
           }
@@ -82,8 +84,11 @@ export default class CommandBase {
       }
     } catch (ex) {
       console.error(ex);
+      logger.log({
+        message: ex.message,
+        level : "error",
+      })
       retVal = new ExceptionResult(ex, context);
-      //TODO: log error
     }
     return retVal;
   }
@@ -126,9 +131,10 @@ export default class CommandBase {
 
   /**
    * @param {IContext} context
+   * 
    * @returns {Promise<ICommandResult>}
    */
-  async _executeCommandAsync(context) {
+  async _executeCommandAsync(context,logger) {
     return Promise.resolve(
       new ExceptionResult(
         new Error("executeCommandAsync not implemented"),

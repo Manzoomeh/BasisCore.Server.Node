@@ -6,6 +6,7 @@ import path from "path";
 import Pako from "pako";
 import Util from "../Util.js";
 import WebServerException from "./Exceptions/WebServerException.js";
+import winston from "winston";
 
 export default class Index4Response extends RequestBaseResponse {
   /**
@@ -15,9 +16,10 @@ export default class Index4Response extends RequestBaseResponse {
     super(request, setting);
   }
   /**
+   *  @param {winston.Logger} logger
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
-  async getResultAsync() {
+  async getResultAsync(logger) {
     /** @type {boolean} */
     const gzip = this._request.webserver.gzip.toLowerCase() === "true";
     /** @type {string} */

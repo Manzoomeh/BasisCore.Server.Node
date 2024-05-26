@@ -11,9 +11,10 @@ export default class Index2Response extends RequestBaseResponse {
     super(request,setting);
   }
   /**
+   *  @param {winston.Logger} logger
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
-  async getResultAsync() {
+  async getResultAsync(logger) {
     var path = this._request.webserver.filepath;
     if (fs.existsSync(path)) {
       const content = await fs.promises.readFile(path);

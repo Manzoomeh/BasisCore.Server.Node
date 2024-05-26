@@ -3,6 +3,7 @@ import Request from "../models/request.js";
 import Response from "../models/response.js";
 import RouterOptions from "./RouterOptions.js";
 import { ServiceSelectorPredicateOptions } from "../models/model.js";
+import Logger from "../Log/Logger.js";
 
 export default class RouterHostService extends HostService {
   /** @type {RouterOptions[]} */
@@ -30,12 +31,16 @@ export default class RouterHostService extends HostService {
    * @param {BinaryContent[]} fileContents
    * @returns {Promise<Response>}
    */
-  async processAsync(request, fileContents) {
+  async processAsync(request, fileContents, logger) {
     for (const route of this.#routes) {
       if (route.isMatch(request)) {
         return await route.service.processAsync(request, fileContents);
       }
     }
+    logger.log({
+      level: "error",
+      message: "Not suitable service found!",
+    });
     throw new Error("Not suitable service found!");
   }
 }
