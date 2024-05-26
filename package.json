@@ -65,6 +65,7 @@
   "type": "module",
   "dependencies": {
     "alasql": "^4.1.9",
+    "amqplib": "^0.10.4",
     "busboy": "^1.6.0",
     "dayjs": "^1.11.6",
     "fast-xml-parser": "^4.3.2",
@@ -78,7 +79,9 @@
     "mysql2": "^3.6.5",
     "pako": "^2.1.0",
     "promised-sqlite3": "^2.1.0",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "winston": "^3.13.0",
+    "winston-transport": "^4.7.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",

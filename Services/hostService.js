@@ -9,6 +9,7 @@ import { HostServiceOptions } from "../models/model.js";
 import IRoutingRequest from "../models/IRoutingRequest.js";
 import ServiceSettings from "../models/ServiceSettings.js";
 import Index4Response from "../models/Index4Response.js";
+import { Logger } from "winston";
 
 export default class HostService {
   /**@type {string} */
@@ -69,9 +70,10 @@ export default class HostService {
 
   /**
    * @param {IRoutingRequest} request
+   * @param {Logger} logger 
    * @returns {Response}
    */
-  _createResponse(request) {
+  _createResponse(request, logger) {
     /**@type {Response} */
     let retVal = null;
     switch (request.webserver.index) {
@@ -93,6 +95,10 @@ export default class HostService {
         break;
       }
       default: {
+        logger.log({
+          level : "error",
+          message : `index type '${request.cms.webserver.index}' not supported in this version of web server.`,   
+        })
         throw new Error(
           `index type '${request.cms.webserver.index}' not supported in this version of web server.`
         );
