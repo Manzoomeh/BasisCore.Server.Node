@@ -1,44 +1,55 @@
 import TransportStream from "winston-transport";
 import amqp from "amqplib";
-import RabbitMQTransportSettings from "./RabbitmqTransportSettings";
+import RabbitMQTransportSettings from "./RabbitmqTransportSettings.js";
 
 export default class RabbitMQTransport extends TransportStream {
   /** @param {RabbitMQTransportSettings} */
   constructor(opts) {
     super(opts);
-    this.exchange = opts.exchange;
-    this.routingKey = opts.routingKey;
+    this.queue = opts.queue;
     this.url = opts.url;
     /** @type {amqp.Connection | null} */
     this.connection = null;
     /** @type {amqp.Channel | null}*/
     this.channel = null;
-    amqp
-      .connect(this.url)
-      .then((conn) => {
-        this.connection = conn;
-        return conn.createChannel();
-      })
-      .then((ch) => {
-        this.channel = ch;
-        return ch.assertExchange(this.exchange, "topic", { durable: false });
-      })
-      .catch((err) => {
-        this.emit("error", err);
-      });
+    this.logQueue = []; // Queue for storing log messages until channel is ready
+    this.connect();
+  }
+
+  async connect() {
+    try {
+      this.connection = await amqp.connect(this.url);
+      this.channel = await this.connection.createChannel();
+      await this.channel.assertQueue(this.queue, { durable: true });
+      this.processLogQueue(); // Process any logs that were queued while connecting
+    } catch (err) {
+      this.emit("error", err);
+    }
+  }
+
+  processLogQueue() {
+    while (this.logQueue.length > 0) {
+      const { info, callback } = this.logQueue.shift();
+      this.log(info, callback);
+    }
   }
 
   log(info, callback) {
     setImmediate(() => this.emit("logged", info));
 
     if (this.channel) {
-      this.channel.publish(
-        this.exchange,
-        this.routingKey,
-        Buffer.from(JSON.stringify(info))
-      );
+      this.channel.sendToQueue(this.queue, Buffer.from(JSON.stringify(info)), {
+        persistent: true,
+      });
+      callback();
+    } else {
+      this.logQueue.push({ info, callback });
     }
+  }
 
-    callback();
+  close() {
+    if (this.connection) {
+      this.connection.close();
+    }
   }
 }

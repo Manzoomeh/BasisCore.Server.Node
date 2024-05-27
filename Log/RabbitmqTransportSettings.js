@@ -1,8 +1,6 @@
 export default class RabbitMQTransportSettings {
   /** @type {string}*/
-  exchange;
-  /** @type {string}*/
-  routingKey;
+  queue;
   /** @type {string}*/
   url;
 }

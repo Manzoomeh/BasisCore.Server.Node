@@ -10,7 +10,7 @@ import asyncio
 #index 5
 @app.web_action()
 async def process_web_remain_request(context: edge.WebContext):
-    await asyncio.sleep(10)
+    # await asyncio.sleep(10)
     return "<h1>hi from edge</h1>"
 
 #index 1
