@@ -60,6 +60,7 @@
     "fileStreamer": "node test\\fileStreamer\\index.js",
     "fileStreamerApi": "node test\\fileStreamer\\api.js",
     "fileStreamerWithApi": "node test\\fileStreamer\\WithApi.js",
+    "inlinesourcexml": "node test/command/inlinesource/inlinesourcexmlCommand.js",
     "bug": "node --trace-warnings --trace-deprecation test\\bug.js"
   },
   "type": "module",
