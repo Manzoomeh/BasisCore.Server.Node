@@ -1,9 +1,10 @@
 import CommandBase from "./../CommandBase.js";
 import SourceCommand from "../Source/BaseClasses/SourceCommand.js";
 import CallCommand from "./CallCommand.js";
-import CommandUtil from "../../../test/command/CommandUtil.js";
 
 export default class CollectionCommand extends CommandBase {
+  /** @type {Array<object>} */
+  commandsObjects;
   /** @type {Array<CommandBase>} */
   commands;
   /**
@@ -11,9 +12,7 @@ export default class CollectionCommand extends CommandBase {
    */
   constructor(collectionCommandIl) {
     super(collectionCommandIl);
-    this.commands = collectionCommandIl["Commands"].map(
-      CommandUtil.createCommand
-    );
+    this.commandsObjects = collectionCommandIl["Commands"];
   }
 
   /**
@@ -21,6 +20,9 @@ export default class CollectionCommand extends CommandBase {
    * @returns {Promise<CommandBase[]>}
    */
   async executeCommandBlocks(newContext) {
+    this.commands = this.commandsObjects.map((command) => {
+      return newContext.createCommand(command);
+    });
     const commands = [];
     for (const element of this.commands) {
       const command = element;

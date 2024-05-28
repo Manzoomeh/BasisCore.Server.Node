@@ -69,4 +69,11 @@ export default class LocalContext extends ContextBase {
   addCookie(name, value, maxAge, path) {
     this._owner.addCookie(name, value, maxAge, path);
   }
+  /**
+   * @param {Object} commandIl
+   * @returns {CommandBase}
+   */
+  createCommand(commandIl) {
+    return this._owner.createCommand(commandIl);
+  }
 }

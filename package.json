@@ -19,7 +19,7 @@
     "s.alireza qamsari <ali.qamsari@gmail.com> (https://www.linkedin.com/in/qamsari/)"
   ],
   "scripts": {
-    "stage": "node index.js ",
+    "stage": "node index.js",
     "dev": "node --openssl-legacy-provider index.js",
     "context": "node test/context/index.js",
     "context-local": "node test/context/local-context.js",
@@ -58,6 +58,8 @@
     "index4": "node test\\index4\\simple.js",
     "unknown": "node test\\command\\UnknownCommand\\simple.js",
     "fileStreamer": "node test\\fileStreamer\\index.js",
+    "fileStreamerApi": "node test\\fileStreamer\\api.js",
+    "fileStreamerWithApi": "node test\\fileStreamer\\WithApi.js",
     "inlinesourcexml": "node test/command/inlinesource/inlinesourcexmlCommand.js",
     "bug": "node --trace-warnings --trace-deprecation test\\bug.js"
   },
