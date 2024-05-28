@@ -33,10 +33,10 @@ export default class HostManager {
     });
   }
 
-  listen() {
-    this.hosts.forEach((host) => {
+  async listenAsync() {
+    this.hosts.forEach(async(host) => {
       try {
-        host.listen();
+        await host.listenAsync();
       } catch (ex) {
         console.error(ex);
       }

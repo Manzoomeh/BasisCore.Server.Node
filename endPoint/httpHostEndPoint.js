@@ -8,16 +8,20 @@ import busboy from "busboy";
 import { IncomingMessage, ServerResponse } from "http";
 import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
+import HostService from "../services/hostService.js";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
+  /** @type {HostService} */
+  _service;
   /**
    *
    * @param {string} ip
    * @param {number} port
    */
-  constructor(ip, port) {
+  constructor(ip, port, service) {
     super(ip, port);
+    this._service = service;
   }
 
   /** @returns {Server}*/
@@ -25,13 +29,15 @@ class HttpHostEndPoint extends HostEndPoint {
     throw Error("_createServer not implemented in this type of end point!");
   }
 
-  listen() {
+  /**@returns {Promise<void>} */
+  async listenAsync() {
     const server = this._createServer();
+    await this.initializeAsync();
     server
       .on("error", (x) => console.error(x))
-      .listen(this._port, this._ip, () =>
-        console.log(`start listening over ${this._ip}:${this._port}`)
-      );
+      .listen(this._port, this._ip, () => {
+        console.log(`start listening over ${this._ip}:${this._port}`);
+      });
   }
 
   /**
@@ -159,6 +165,9 @@ class HttpHostEndPoint extends HostEndPoint {
     } else {
       next();
     }
+  }
+  async initializeAsync() {
+    return this._service.initializeAsync();
   }
 }
 

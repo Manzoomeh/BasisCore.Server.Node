@@ -40,7 +40,7 @@ class LoadCommand {
       return "/";
     });
   }
-  /**@returns {Commands} */
+  /**@returns {Promise<Commands>} */
   static async process(libPath) {
     let commands = {};
     if (libPath) {

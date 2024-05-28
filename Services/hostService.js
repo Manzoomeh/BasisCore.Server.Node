@@ -33,13 +33,7 @@ export default class HostService {
       this._engine = new StreamerEngine(this._options.Streamer);
     }
     this.settings = new ServiceSettings(options);
-    this._commands = 
-    {
-      ...CommandUtil.addDefaultCommands(),
-      ...LoadCommand.processSync(this._options.Settings.LibPath),
-    };
   }
-
   /**
    * @param {BinaryContent[]} contents
    * @param {Request} request
@@ -72,6 +66,12 @@ export default class HostService {
    */
   processAsync(request, fileContents) {
     throw new Error("Not implemented!");
+  }
+  async initializeAsync() {
+    this._commands = {
+      ...CommandUtil.addDefaultCommands(),
+      ...await LoadCommand.process(this._options.Settings.LibPath),
+    };
   }
 
   /**
