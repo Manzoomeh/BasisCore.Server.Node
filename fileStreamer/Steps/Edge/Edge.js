@@ -16,7 +16,6 @@ export default class Edge extends Step {
    */
   async processContentAsync(content, options) {
     try {
-      console.log(content.url);
       const parts = options.endpoint.split(":", 2);
       if (parts.length !== 2) {
         throw Error("Endpoint not config for edge step in file streamer");

@@ -1,14 +1,12 @@
-import CommandUtil from "../../../test/command/CommandUtil.js";
 import IContext from "../../Context/IContext.js";
 import GroupResult from "../../Models/GroupResult.js";
-import CommandBase from "../CommandBase.js";
 import CollectionCommand from "./CollectionCommand.js";
 
 export default class GroupCommand extends CollectionCommand {
   /**
    * @param {object} groupCommandIl
    */
-  constructor(groupCommandIl) {
+  constructor(groupCommandIl,) {
     super(groupCommandIl);
   }
 
@@ -18,6 +16,7 @@ export default class GroupCommand extends CollectionCommand {
    */
   async _executeCommandAsync(context) {
     const newContext = context.createContext("group");
+    console.log(newContext)
     const result = await this.executeCommandBlocks(newContext);
     return new GroupResult(result);
   }
@@ -27,6 +26,7 @@ export default class GroupCommand extends CollectionCommand {
    * @returns {Promise<CommandElement>}
    */
   async createHtmlElementAsync(context) {
+    this.commands = this.commandsObjects.map(context.createCommand);
     const tag = await super.createHtmlElementAsync(context);
     const childTags = await Promise.all(
       this.commands.map((x) => x.createHtmlElementAsync(context))

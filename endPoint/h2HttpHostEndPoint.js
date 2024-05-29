@@ -7,9 +7,6 @@ import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import http from "http";
 
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
-  /** @type {HostService} */
-  _service;
-
   /** @type {import("tls").SecureContextOptions} */
   #options;
 
@@ -21,9 +18,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
    */
 
   constructor(ip, port, service, options) {
-    super(ip, port);
+    super(ip, port, service);
     this.#options = options;
-    this._service = service;
   }
 
   /**

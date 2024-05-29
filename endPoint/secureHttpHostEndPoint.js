@@ -13,9 +13,8 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {import("tls").SecureContextOptions} options
    */
   constructor(ip, port, service, options) {
-    super(ip, port);
+    super(ip, port, service);
     this.#options = options;
-    this._service = service;
   }
 
   _createServer() {

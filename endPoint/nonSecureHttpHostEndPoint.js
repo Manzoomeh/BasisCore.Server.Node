@@ -14,8 +14,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {HostService} service
    */
   constructor(ip, port, service) {
-    super(ip, port);
-    this._service = service;
+    super(ip, port,service);
   }
 
   _createServer() {

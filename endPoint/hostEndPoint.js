@@ -8,8 +8,8 @@ export default class HostEndPoint {
     this._ip = ip;
     this._port = port;
   }
-
-  listen() {
+  /**@returns {Promise<void>} */
+  listenAsync() {
     throw new Error("Not Implemented...");
   }
 }

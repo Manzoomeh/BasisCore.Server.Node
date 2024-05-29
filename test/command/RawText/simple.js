@@ -1,21 +1,20 @@
 import ServiceSettings from "../../../models/ServiceSettings.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
-import RawText from "../../../renderEngine/Command/RawText.js";
-import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
-import TreeCommand from "../../../renderEngine/Command/TreeCommand.js";
-import RequestContext from "../../../renderEngine/Context/RequestContext.js";
-import JsonSource from "../../../renderEngine/Source/JsonSource.js";
+import GroupCommand from "../../../renderEngine/Command/Collection/GroupCommand.js";
+import TestContext from "../../../renderEngine/Context/TestContext.js";
 
-const settings = new ServiceSettings({});
-const context = new RequestContext(settings);
+const settings = new ServiceSettings({LibPath : "F:\\AliBazregar\\BasisCore.Server.Node\\renderEngine\\Command"});
+const context = new TestContext(settings);
 context.cancellation = new CancellationToken();
 
 const rawTextIl = {
-  $type: "rawtext",
-  content: "<h1>hi<h1>",
+  type: "group",
+  core: "group",
+  Commands: [{ $type: "rawtext", core: "group", content: "<h1>hi<h1>" }],
 };
 
-const rawText = new RawText(rawTextIl);
+const rawText = new GroupCommand(rawTextIl);
+console.log(rawText);
 try {
   const result = await rawText.executeAsync(context);
   console.log(result);
