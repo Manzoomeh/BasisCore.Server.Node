@@ -4,9 +4,6 @@ import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
-  /** @type {HostService} */
-  _service;
-
   /**
    *
    * @param {string} ip
@@ -14,8 +11,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {HostService} service
    */
   constructor(ip, port, service) {
-    super(ip, port,service);
-
+    super(ip, port, service);
   }
 
   _createServer() {

@@ -33,14 +33,11 @@ export default class HostManager {
     });
   }
 
-  async listenAsync() {
-    this.hosts.forEach(async(host) => {
-      try {
-        await host.listenAsync();
-      } catch (ex) {
-        console.error(ex);
-      }
-    });
+  listenAsync() {
+    const tasks = this.hosts.map((x) =>
+      x.listenAsync().catch((err) => console.error(err))
+    );
+    return Promise.all(tasks);
   }
 
   /**
