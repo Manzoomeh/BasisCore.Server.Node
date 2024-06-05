@@ -245,7 +245,7 @@ class HttpHostEndPoint extends HostEndPoint {
     });
     return properties;
   }
-  async initializeAsync() {
+  initializeAsync() {
     return this._service.initializeAsync();
   }
 }
