@@ -92,24 +92,23 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
    * @returns {Promise<void>}
    */
   async addCacheContentAsync(key, content, properties) {
-    let database = new sqlite3.Database(this.settings.dbPath);
+    const database = new sqlite3.Database(this.settings.dbPath);
     try {
-      const savedContent = await this.loadContentAsync(key);
-      if (savedContent) {
-        await this.#executeSqliteQuery(
-          database,
-          `DELETE FROM ${this.settings.tableName} WHERE key = ?`,
-          [key]
-        );
-      }
-      const query = `INSERT INTO ${this.settings.tableName} (key, content, properties) VALUES (?, ?, ?)`;
+      const query = `
+      BEGIN TRANSACTION;
+      WITH Selected AS (
+        SELECT * FROM ${this.settings.tableName} WHERE key = ?
+      )
+      DELETE FROM ${this.settings.tableName} WHERE key = ? AND EXISTS (SELECT 1 FROM Selected);
+      INSERT INTO ${this.settings.tableName} (key, content, properties) VALUES (?, ?, ?);
+      COMMIT TRANSACTION;
+    `;
       const result = this.#executeSqliteQuery(database, query, [
         key,
         content,
         JSON.stringify(properties),
       ]);
-      return result
-      console.log(result)
+      return result;
     } catch (err) {
       throw new Error("error in add cache  : " + err);
     } finally {
@@ -135,5 +134,9 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
         }
       });
     });
+  }
+  /** @returns {Promise<void>} */
+  async deleteAllCache() {
+    return this.#executeSqliteQuery(`DELETE FROM ${this.settings.tableName}`);
   }
 }

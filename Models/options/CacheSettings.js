@@ -5,4 +5,9 @@ export default class CacheSettings {
   requestMethods;
   /** @type {boolean} */
   isEnabled;
+  //for now is rabbit
+  /** @type {"Rabbit"} */
+  utilType
+  /**@type { NodeJS.Dict<string> } */
+  utilSetting
 }

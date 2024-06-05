@@ -83,4 +83,7 @@ export default class ConnectionInfo {
    * @returns {Promise<void>}
    */
   async addCacheContentAsync(key, content, properties) {}
+  
+  /** @returns {Promise<void>} */
+  async deleteAllCache() {}
 }

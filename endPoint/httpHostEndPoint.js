@@ -9,6 +9,8 @@ import { IncomingMessage, ServerResponse } from "http";
 import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import HostService from "../services/hostService.js";
+import RabbitMQCacheUtil from "./../Models/CacheCommands/RabbitMQCacheUtil.js";
+import BaseCacheUtil from "../Models/CacheCommands/BaseCacheUtil.js";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
@@ -31,6 +33,20 @@ class HttpHostEndPoint extends HostEndPoint {
 
   /**@returns {Promise<void>} */
   async listenAsync() {
+    /** @type {BaseCacheUtil} */
+    let cacheUtil;
+    switch (this._service._options?.CacheSettings.utilType) {
+      case "Rabbit": {
+        cacheUtil = new RabbitMQCacheUtil(
+          this._service.settings.cacheConnection,
+          this._service._options.CacheSettings.utilSetting
+        );
+      }
+    }
+    if (cacheUtil) {
+      await cacheUtil.connectAsync();
+      await cacheUtil.createDeleteChannel()
+    }
     const server = this._createServer();
     await this.initializeAsync();
     server
@@ -213,7 +229,6 @@ class HttpHostEndPoint extends HostEndPoint {
         savedHeaders
       );
     }
-    return;
   }
   /**
    *
@@ -229,7 +244,7 @@ class HttpHostEndPoint extends HostEndPoint {
       }
     });
     return properties;
-  }  
+  }
   async initializeAsync() {
     return this._service.initializeAsync();
   }

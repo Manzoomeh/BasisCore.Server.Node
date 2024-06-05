@@ -40,7 +40,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
                 req.fileContents
               );
               const [code, headers, body] = await result.getResultAsync();
-              await this.addCacheContentAsync(
+              this.addCacheContentAsync(
                 `${req.headers.host}${req.url}`,
                 body,
                 headers,

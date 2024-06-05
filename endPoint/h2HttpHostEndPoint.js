@@ -88,7 +88,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             );
             const result = await this._service.processAsync(cms, fileContents);
             const [code, headerList, body] = await result.getResultAsync();
-            await this.addCacheContentAsync(
+            this.addCacheContentAsync(
               `${headers.host}${headers[":path"]}`,
               body,
               headers,
