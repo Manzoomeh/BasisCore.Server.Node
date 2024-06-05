@@ -1,4 +1,5 @@
 import IStreamerEngineOptions from "./IStreamerEngineOptions.js";
+import CacheSettings from "./CacheSettings.js";
 
 export default class HostServiceOptions {
   /**@type {"Sql"|"Edge"|"File"} */
@@ -15,4 +16,6 @@ export default class HostServiceOptions {
   Streamer;
   /**@type {NodeJS.Dict<any>} */
   Settings;
+  /**@type {CacheSettings}*/
+  CacheSettings;
 }

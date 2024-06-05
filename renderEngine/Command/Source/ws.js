@@ -13,7 +13,7 @@ export default class WsCommand extends SourceCommand {
    * @param {IContext} context
    * @returns {Promise<ICommandResult>}
    */
-  async #loadDataAsync(sourceName, context) {
+  async _loadDataAsync(sourceName, context) {
     const [connectionName, command] = await Promise.all([
       this.connectionName.getValueAsync(context),
       this.toCustomFormatHtmlAsync(context),
