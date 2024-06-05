@@ -45,7 +45,7 @@ class HttpHostEndPoint extends HostEndPoint {
     }
     if (cacheUtil) {
       await cacheUtil.connectAsync();
-      await cacheUtil.createDeleteChannel()
+      await cacheUtil.createDeleteChannel();
     }
     const server = this._createServer();
     await this.initializeAsync();
