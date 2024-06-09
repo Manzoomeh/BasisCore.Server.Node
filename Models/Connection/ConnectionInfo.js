@@ -3,7 +3,7 @@ import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection
 import IRoutingRequest from "../IRoutingRequest.js";
 import Request from "../request.js";
 import ILoadPageResult from "./ILoadPageResult.js";
-
+import CacheResult from "../options/CacheResult.js";
 export default class ConnectionInfo {
   /** @type {string} */
   name;
@@ -51,5 +51,39 @@ export default class ConnectionInfo {
   loadPageAsync(pageName, rawCommand, pageSize, domainId, cancellationToken) {
     throw new Error("ConnectionInfo.loadPageAsync() method not implemented.");
   }
+  /**
+   *
+   * @param {string} jsonString
+   * @returns {DataSourceCollection}
+   */
+  convertJSONToDataSet(content) {
+    if (content?.sources && Array.isArray(content?.sources)) {
+      let retVal = [];
+      content.sources.forEach((source) => {
+        retVal.push(source.data);
+      });
+      return new DataSourceCollection(retVal);
+    } else {
+      throw new WebServerException(
+        "Error from Edge Connection ;the sources are not available."
+      );
+    }
+  }
+  /**
+   *
+   * @param {string} key
+   * @returns {Promise<CacheResult|null>}
+   */
+  async loadContentAsync(key) {}
 
+  /**
+   * @param {string} key
+   * @param {string} content
+   * @param {NodeJS.Dict<string>} properties
+   * @returns {Promise<void>}
+   */
+  async addCacheContentAsync(key, content, properties) {}
+  
+  /** @returns {Promise<void>} */
+  async deleteAllCache() {}
 }

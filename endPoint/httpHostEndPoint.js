@@ -10,19 +10,23 @@ import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import StringResult from "../renderEngine/Models/StringResult.js";
 import HostService from "../services/hostService.js";
+import RabbitMQCacheUtil from "./../Models/CacheCommands/RabbitMQCacheUtil.js";
+import BaseCacheUtil from "../Models/CacheCommands/BaseCacheUtil.js";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /** @type {HostService} */
   _service;
+  #options
   /**
    *
    * @param {string} ip
    * @param {number} port
    */
-  constructor(ip, port, service) {
+  constructor(ip, port, service,options) {
     super(ip, port);
     this._service = service;
+    this.#options = options
   }
 
   /** @returns {Server}*/
@@ -32,6 +36,20 @@ class HttpHostEndPoint extends HostEndPoint {
 
   /**@returns {Promise<void>} */
   async listenAsync() {
+    /** @type {BaseCacheUtil} */
+    let cacheUtil;
+    switch (this.#options?.CacheSettings.utilType) {
+      case "Rabbit": {
+        cacheUtil = new RabbitMQCacheUtil(
+          this._service.settings.cacheConnection,
+          this.#options.CacheSettings.utilSetting
+        );
+      }
+    }
+    if (cacheUtil) {
+      await cacheUtil.connectAsync();
+      await cacheUtil.createDeleteChannel();
+    }
     const server = this._createServer();
     await this.initializeAsync();
     server
@@ -197,9 +215,71 @@ class HttpHostEndPoint extends HostEndPoint {
       }, [])
       .join("<br>");
     }    
+  /**
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
+   */
+  async _checkCacheAsync(req, res, next) {
+    if (
+      this._service._options.CacheSettings?.isEnabled &&
+      this.#options.CacheSettings.requestMethods.includes(req.method)
+    ) {
+      let connection = this._service.settings.cacheConnection;
+      const fullUrl = `${req.headers.host}${req.url}`;
+      const cacheResults = await connection.loadContentAsync(fullUrl);
+      if (cacheResults) {
+        res.writeHead(200, {
+          ...cacheResults.properties,
+        });
+        res.write(cacheResults.content ?? "");
+        res.end();
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
+  }
+  /**
+   *
+   * @param {string} key
+   * @param {string} content
+   * @param {NodeJS.Dict<string>} headers
+   * @returns {Promise<void>}
+   */
+  async addCacheContentAsync(key, content, headers, method) {
+    if (
+      this.#options.CacheSettings?.isEnabled &&
+      this.#options.CacheSettings.requestMethods.includes(method)
+    ) {
+      const savedHeaders = this.findProperties(
+        headers,
+        this.#options.CacheSettings.responseHeaders
+      );
+      await this._service.settings.cacheConnection.addCacheContentAsync(
+        key,
+        content,
+        savedHeaders
+      );
+    }
+  }
+  /**
+   *
+   * @param {NodeJS.Dict} headers
+   * @param {string[]} keys
+   * @returns
+   */
+  findProperties(headers, keys) {
+    const properties = {};
+    keys.forEach((key) => {
+      if (headers.hasOwnProperty(key)) {
+        properties[key] = headers[key];
+      }
+    });
+    return properties;
+  }
   initializeAsync() {
     return this._service.initializeAsync();
   }
 }
-
 export default HttpHostEndPoint;

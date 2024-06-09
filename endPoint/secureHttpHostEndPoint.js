@@ -6,8 +6,6 @@ import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import url from "url";
 
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
-
-
   /** @type {import("tls").SecureContextOptions} */
   #options;
   /**
@@ -17,7 +15,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {import("tls").SecureContextOptions} options
    */
   constructor(ip, port, service, options) {
-    super(ip, port,service);
+    super(ip, port, service);
     this.#options = options;
   }
 
@@ -27,6 +25,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
         /** @type {Request} */
         let cms = null;
         this._handleContentTypes(req, res, () => {
+          this._checkCacheAsync(req, res, async () => {
           const createCmsAndCreateResponseAsync = async () => {
             const queryObj = url.parse(req.url, true).query;
             let routingDataStep =
@@ -65,6 +64,12 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
                 ? cms.dict
                 : undefined
             );
+            this.addCacheContentAsync(
+              `${req.headers.host}${req.url}`,
+              body,
+              headers,
+              req.method
+            );
             res.writeHead(code, headers);
             res.end(body);
           };
@@ -75,6 +80,8 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
             res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR);
             res.end(ex.toString());
           }
+
+          });
         });
       })
       .on("error", (er) => console.error(er))

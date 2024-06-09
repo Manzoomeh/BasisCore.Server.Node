@@ -15,6 +15,8 @@ export default class ServiceSettings {
   callConnection;
   /** @type {ConnectionInfo} */
   ilUpdateConnection;
+  /** @type {ConnectionInfo} */
+  cacheConnection;
   /**
    * @param {HostServiceOptions} options
    */
@@ -32,6 +34,9 @@ export default class ServiceSettings {
     }
     if ("ilupdate" in this._connections) {
       this.ilUpdateConnection = this._connections.ilupdate;
+    }
+    if ("cacheconnection" in this._connections) {
+      this.cacheConnection = this._connections.cacheconnection;
     }
   }
 

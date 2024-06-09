@@ -64,114 +64,127 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     return http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
-        /** @type {Request} */
-        let cms = null;
-        /**@type {BinaryContent[]} */
-        const fileContents = [];
-        /**@type {NodeJS.Dict<string>} */
-        const jsonHeaders = {};
-        /**@type {NodeJS.Dict<string>} */
-        const formFields = {};
-        const method = headers[":method"];
-        const reqUrl = headers[":path"];
-        let bodyStr = "";
-        const createCmsAndCreateResponseAsync = async () => {
-          const { queryObj } = url.parse(reqUrl, true);
-          let rawRequest =
-            queryObj.debug == "true" ||
-            queryObj.debug == "1" ||
-            queryObj.debug == "2"
-              ? this.addStringTable("Raw Request", JSON.stringify(headers))
-              : null;
-          let routingDataStep =
-            queryObj.debug == "true" ||
-            queryObj.debug == "1" ||
-            queryObj.debug == "2"
-              ? new LightgDebugStep(null, "Get Routing Data")
-              : null;
-          cms = await this._createCmsObjectAsync(
-            reqUrl,
-            method,
-            headers,
-            formFields,
-            jsonHeaders,
-            stream.session.socket,
-            bodyStr,
-            true
-          );
-          const result = await this._service.processAsync(cms, fileContents);
-          routingDataStep.complete();
-          const [code, headerList, body] = await result.getResultAsync(
-            routingDataStep,
-            rawRequest,
-            queryObj.debug == "true" ||
+        this._checkCacheAsync(stream, headers, async () => {
+          /** @type {Request} */
+          let cms = null;
+          /** @type {BinaryContent[]} */
+          const fileContents = [];
+          /** @type {NodeJS.Dict<string>} */
+          const jsonHeaders = {};
+          /** @type {NodeJS.Dict<string>} */
+          const formFields = {};
+          const method = headers[":method"];
+          const reqUrl = headers[":path"];
+          let bodyStr = "";
+
+          const createCmsAndCreateResponseAsync = async () => {
+            const { query: queryObj } = url.parse(reqUrl, true);
+            let rawRequest =
+              queryObj.debug == "true" ||
               queryObj.debug == "1" ||
               queryObj.debug == "2"
-              ? cms.dict
-              : undefined
-          );
-          headerList[":status"] = code;
-          stream.respond(headerList);
-          stream.end(body);
-        };
-        stream.on("data", (chunk) => {
-          if (headers["content-type"] === "application/json") {
-            bodyStr += chunk;
-          }
-        });
-        stream.on("end", () => {
-          if (headers["content-type"] === "application/json") {
-            createCmsAndCreateResponseAsync();
-          }
-        });
-        stream.on("error", (ex) => {
-          if (ex.code != "ERR_STREAM_WRITE_AFTER_END") {
-            console.error("HTTP/2 server stream error", ex);
-          }
-          stream.destroy(ex);
-        });
-        try {
-          if (headers["content-length"]) {
-            if (headers["content-type"]?.startsWith("multipart/form-data")) {
-              /**@type {Array<BinaryContent>}*/
-              const bb = busboy({ headers: headers });
-              bb.on("file", (name, file, info) => {
-                const ContentParts = [];
-                file.on("data", (x) => ContentParts.push(x));
-                file.on("end", async () => {
-                  const content = new BinaryContent();
-                  content.url = `${headers["host"]}${reqUrl}`;
-                  content.mime = info.mimeType.toLowerCase();
-                  content.name = info.filename;
-                  content.payload = Buffer.concat(ContentParts);
-                  fileContents.push(content);
+                ? this.addStringTable("Raw Request", JSON.stringify(headers))
+                : null;
+            let routingDataStep =
+              queryObj.debug == "true" ||
+              queryObj.debug == "1" ||
+              queryObj.debug == "2"
+                ? new LightgDebugStep(null, "Get Routing Data")
+                : null;
+            cms = await this._createCmsObjectAsync(
+              reqUrl,
+              method,
+              headers,
+              formFields,
+              jsonHeaders,
+              stream.session.socket,
+              bodyStr,
+              true
+            );
+            const result = await this._service.processAsync(cms, fileContents);
+            if (routingDataStep) routingDataStep.complete();
+            const [code, headerList, body] = await result.getResultAsync(
+              routingDataStep,
+              rawRequest,
+              queryObj.debug == "true" ||
+                queryObj.debug == "1" ||
+                queryObj.debug == "2"
+                ? cms.dict
+                : undefined
+            );
+            await this.addCacheContentAsync(
+              `${headers.host}${headers[":path"]}`,
+              body,
+              headers,
+              headers[":method"]
+            );
+            headerList[":status"] = code;
+            stream.respond(headerList);
+            stream.end(body);
+          };
+
+          stream.on("data", (chunk) => {
+            if (headers["content-type"] === "application/json") {
+              bodyStr += chunk;
+            }
+          });
+
+          stream.on("end", async () => {
+            if (headers["content-type"] === "application/json") {
+              await createCmsAndCreateResponseAsync();
+            }
+          });
+
+          stream.on("error", (ex) => {
+            if (ex.code != "ERR_STREAM_WRITE_AFTER_END") {
+              console.error("HTTP/2 server stream error", ex);
+            }
+            stream.destroy(ex);
+          });
+
+          try {
+            if (headers["content-length"]) {
+              if (headers["content-type"]?.startsWith("multipart/form-data")) {
+                /** @type {Array<BinaryContent>} */
+                const bb = busboy({ headers: headers });
+                bb.on("file", (name, file, info) => {
+                  const ContentParts = [];
+                  file.on("data", (x) => ContentParts.push(x));
+                  file.on("end", async () => {
+                    const content = new BinaryContent();
+                    content.url = `${headers["host"]}${reqUrl}`;
+                    content.mime = info.mimeType.toLowerCase();
+                    content.name = info.filename;
+                    content.payload = Buffer.concat(ContentParts);
+                    fileContents.push(content);
+                  });
                 });
-              });
-              bb.on("field", (name, val, info) => {
-                formFields[name] = val;
-                if (name.startsWith("_")) {
-                  jsonHeaders[name] = val;
-                }
-              });
-              bb.on("close", createCmsAndCreateResponseAsync);
-              stream.pipe(bb);
+                bb.on("field", (name, val, info) => {
+                  formFields[name] = val;
+                  if (name.startsWith("_")) {
+                    jsonHeaders[name] = val;
+                  }
+                });
+                bb.on("close", createCmsAndCreateResponseAsync);
+                stream.pipe(bb);
+              } else {
+                await createCmsAndCreateResponseAsync();
+              }
             }
-          } else {
-            await createCmsAndCreateResponseAsync();
-          }
-        } catch (ex) {
-          if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
-            console.error("HTTP/2 server error", ex);
-            try {
-              stream.respond({
-                ":status": StatusCodes.INTERNAL_SERVER_ERROR,
-              });
-            } catch (ex) {
+          } catch (ex) {
+            if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
               console.error("HTTP/2 server error", ex);
+              try {
+                stream.respond({
+                  ":status": StatusCodes.INTERNAL_SERVER_ERROR,
+                });
+              } catch (ex) {
+                console.error("HTTP/2 server error", ex);
+              }
+              stream.end(ex.toString());
             }
-            stream.end(ex.toString());
           }
-        }
+        });
       })
       .on("clientError", (ex) => {
         switch (ex.code) {
@@ -202,5 +215,34 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           }
         });
       });
+  }
+
+  async _checkCacheAsync(stream, headers, next) {
+    if (
+      this.#options.CacheSettings.requestMethods.includes(
+        headers[":method"]
+      ) &&
+      this._service.settings.cacheConnection
+    ) {
+      let connection = this._service.settings.cacheConnection;
+      const fullUrl = `${headers.host}${headers[":path"]}`;
+      const cacheOptions = await connection.loadContentAsync(fullUrl);
+      if (cacheOptions) {
+        try {
+          stream.respond({
+            ":status": 200,
+            "content-type": cacheOptions.contentType,
+            ...this.#options.CacheSettings.responseHeaders,
+          });
+          stream.end(cacheOptions.file);
+        } catch (err) {
+          next();
+        }
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
   }
 }

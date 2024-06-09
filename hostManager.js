@@ -163,7 +163,7 @@ export default class HostManager {
           this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options));
         }
       } else {
-        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service));
+        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service,options));
       }
     });
   }

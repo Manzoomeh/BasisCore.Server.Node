@@ -14,6 +14,11 @@ const host = {
       ],
       Active: true,
       Routing: "mainService",
+      CacheSettings: {
+        requestMethods: "GET",
+        responseHeaders: ["content-type"],
+        isEnabled: true,
+      },
     },
   },
   Services: {
@@ -21,16 +26,16 @@ const host = {
       Type: "http",
       Settings: {
         "Connections.edge.RoutingData": {
-          endpoint: "127.0.0.1:8080",
+          endpoint: "127.0.0.1:8000",
         },
-        "Connections.sqlite.cacheConnection" :{
-          dbPath : "./../../../test.db",
-          table : "cache_results"
-        }
+        "Connections.sqlite.cacheConnection": {
+          dbPath: "test.db",
+          tableName: "cache_results",
+        },
       },
     },
   },
 };
 
 const service = HostManager.fromJson(host);
-service.listen();
+service.listenAsync();

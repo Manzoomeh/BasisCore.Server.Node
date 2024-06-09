@@ -12,8 +12,8 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {number} port
    * @param {HostService} service
    */
-  constructor(ip, port, service) {
-    super(ip, port, service);
+  constructor(ip, port, service,options) {
+    super(ip, port,service,options);
   }
 
   _createServer() {
@@ -22,6 +22,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
         /** @type {Request} */
         let cms = null;
         this._handleContentTypes(req, res, async () => {
+          this._checkCacheAsync(req, res, async () => {
           const createCmsAndCreateResponseAsync = async () => {
             const queryObj = url.parse(req.url, true).query;
             let routingDataStep =
@@ -60,10 +61,17 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                 ? cms.dict
                 : undefined
             );
+            this.addCacheContentAsync(
+              `${req.headers.host}${req.url}`,
+              body,
+              headers,
+              req.method
+            );
             res.writeHead(code, headers);
             res.end(body);
           };
           await createCmsAndCreateResponseAsync();
+          });
         });
       } catch (ex) {
         console.error(ex);

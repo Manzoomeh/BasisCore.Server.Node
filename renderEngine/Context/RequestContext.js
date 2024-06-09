@@ -66,7 +66,6 @@ export default class RequestContext extends ContextBase {
    */
   async loadDataAsync(sourceName, connectionName, parameters, memberNames) {
     try {
-      console.log(memberNames)
       parameters.dmnid = this.domainId;
       /** @type {ConnectionInfo} */
       const connection = this._settings.getConnection(connectionName);
