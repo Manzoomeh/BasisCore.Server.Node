@@ -6,9 +6,6 @@ import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import StringResult from "../renderEngine/Models/StringResult.js";
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
-  /** @type {HostService} */
-  #service;
-
   /**
    *
    * @param {string} ip
@@ -16,8 +13,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {HostService} service
    */
   constructor(ip, port, service) {
-    super(ip, port);
-    this.#service = service;
+    super(ip, port, service);
   }
 
   _createServer() {
@@ -50,7 +46,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
               req.bodyStr,
               false
             );
-            const result = await this.#service.processAsync(
+            const result = await this._service.processAsync(
               cms,
               req.fileContents
             );

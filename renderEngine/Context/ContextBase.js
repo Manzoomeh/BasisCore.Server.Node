@@ -48,4 +48,10 @@ export default class ContextBase extends IContext {
    * @returns {Promise<DataSourceCollection>}
    */
   loadDataAsync(sourceName, connectionName, parameters) {}
+
+    /**
+   * @param {Object} commandIl
+   * @returns {CommandBase}
+   */
+    createCommand(commandIl) {}
 }

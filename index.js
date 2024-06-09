@@ -21,6 +21,7 @@ const host = {
     mainService: {
       Type: "http",
       Settings: {
+        LibPath : "F:\\AliBazregar\\BasisCore.Server.Node\\ExternalCommands",
         "Connections.edge.RoutingData": {
           endpoint: "127.0.0.1:2002",
         },

@@ -7,8 +7,7 @@ import url from "url";
 import { raw } from "mysql2";
 
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
-  /** @type {HostService} */
-  #service;
+
 
   /** @type {import("tls").SecureContextOptions} */
   #options;
@@ -19,9 +18,8 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {import("tls").SecureContextOptions} options
    */
   constructor(ip, port, service, options) {
-    super(ip, port);
+    super(ip, port,service);
     this.#options = options;
-    this.#service = service;
   }
 
   _createServer() {
@@ -54,7 +52,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
               req.bodyStr,
               true
             );
-            const result = await this.#service.processAsync(
+            const result = await this._service.processAsync(
               cms,
               req.fileContents
             );

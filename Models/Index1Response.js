@@ -1,6 +1,5 @@
 import CancellationToken from "../renderEngine/Cancellation/CancellationToken.js";
 import RequestContext from "../renderEngine/Context/RequestContext.js";
-import CommandUtil from "../test/command/CommandUtil.js";
 import IRoutingRequest from "./IRoutingRequest.js";
 import ServiceSettings from "./ServiceSettings.js";
 import RequestBaseResponse from "./requestBaseResponse.js";
@@ -12,12 +11,16 @@ import StringResult from "../renderEngine/Models/StringResult.js";
 import {Encoder} from "node-html-encoder"
 
 export default class Index1Response extends RequestBaseResponse {
+  /**@type {Object.<string, any>}*/
+  _commands;
   /**
    * @param {IRoutingRequest} request
    * @param {ServiceSettings} settings
+   * @param {Object.<string, any>} commands
    */
-  constructor(request, settings) {
+  constructor(request, settings, commands) {
     super(request, settings);
+    this._commands = commands;
   }
   /**
    * @param {*} routingDataStep
@@ -75,7 +78,7 @@ export default class Index1Response extends RequestBaseResponse {
           console.log(error);
           deserializeJsonStep.failed();
         }
-        command = CommandUtil.createCommand(commandIl);
+        const command = context.createCommand(commandIl);
         getIlStep.complete();
       } catch (error) {
         console.log(error);
@@ -84,6 +87,7 @@ export default class Index1Response extends RequestBaseResponse {
       const context = new RequestContext(
         this._settings,
         this._request,
+        this._commands,
         requestDebugContext
       );
       context.cancellation = new CancellationToken();

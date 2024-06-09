@@ -8,9 +8,6 @@ import http from "http";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import url from "url";
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
-  /** @type {HostService} */
-  #service;
-
   /** @type {import("tls").SecureContextOptions} */
   #options;
 
@@ -22,9 +19,8 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
    */
 
   constructor(ip, port, service, options) {
-    super(ip, port);
+    super(ip, port, service);
     this.#options = options;
-    this.#service = service;
   }
 
   /**
@@ -103,7 +99,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             bodyStr,
             true
           );
-          const result = await this.#service.processAsync(cms, fileContents);
+          const result = await this._service.processAsync(cms, fileContents);
           routingDataStep.complete();
           const [code, headerList, body] = await result.getResultAsync(
             routingDataStep,

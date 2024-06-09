@@ -33,14 +33,11 @@ export default class HostManager {
     });
   }
 
-  listen() {
-    this.hosts.forEach((host) => {
-      try {
-        host.listen();
-      } catch (ex) {
-        console.error(ex);
-      }
-    });
+  listenAsync() {
+    const tasks = this.hosts.map((x) =>
+      x.listenAsync().catch((err) => console.error(err))
+    );
+    return Promise.all(tasks);
   }
 
   /**
@@ -122,16 +119,16 @@ export default class HostManager {
             sniOptions.Hosts.forEach((host) => {
               /**@type {tls.SecureContextOptions}*/
               const options = {};
-              if (sslOptions.FilePath) {
+              if (sniOptions.FilePath) {
                 options.cert = fs.readFileSync(host.FilePath);
               }
-              if (sslOptions.KeyPath) {
+              if (sniOptions.KeyPath) {
                 options.key = fs.readFileSync(host.KeyPath);
               }
-              if (sslOptions.PfxPath) {
+              if (sniOptions.PfxPath) {
                 options.pfx = fs.readFileSync(host.PfxPath);
               }
-              if (sslOptions.PfxPassword) {
+              if (sniOptions.PfxPassword) {
                 options.passphrase = fs.readFileSync(host.PfxPassword);
               }
               host.HostNames.forEach((hostName) => {
