@@ -2,7 +2,6 @@ import https from "https";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
-
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
 
 

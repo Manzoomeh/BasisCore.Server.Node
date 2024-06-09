@@ -23,7 +23,7 @@ export default class CommandUtil {
       api: { default: ApiCommand },
       group: { default: GroupCommand },
       print: { default: PrintCommand },
-      rawText: { default: RawText },
+      rawtext: { default: RawText },
       dbsource: { default: DbSource },
       inlinesource: { default: InlineSourceCommand },
       view: { default: ViewCommand },
