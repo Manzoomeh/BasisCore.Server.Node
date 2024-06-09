@@ -17,7 +17,7 @@ let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /** @type {HostService} */
   _service;
-  #options
+  _options
   /**
    *
    * @param {string} ip
@@ -26,7 +26,7 @@ class HttpHostEndPoint extends HostEndPoint {
   constructor(ip, port, service,options) {
     super(ip, port);
     this._service = service;
-    this.#options = options
+    this._options = options
   }
 
   /** @returns {Server}*/
@@ -38,11 +38,11 @@ class HttpHostEndPoint extends HostEndPoint {
   async listenAsync() {
     /** @type {BaseCacheUtil} */
     let cacheUtil;
-    switch (this.#options?.CacheSettings.utilType) {
+    switch (this._options?.CacheSettings.utilType) {
       case "Rabbit": {
         cacheUtil = new RabbitMQCacheUtil(
           this._service.settings.cacheConnection,
-          this.#options.CacheSettings.utilSetting
+          this._options.CacheSettings.utilSetting
         );
       }
     }
@@ -221,8 +221,8 @@ class HttpHostEndPoint extends HostEndPoint {
    */
   async _checkCacheAsync(req, res, next) {
     if (
-      this._service._options.CacheSettings?.isEnabled &&
-      this.#options.CacheSettings.requestMethods.includes(req.method)
+      this._options.CacheSettings?.isEnabled &&
+      this._options.CacheSettings.requestMethods.includes(req.method)
     ) {
       let connection = this._service.settings.cacheConnection;
       const fullUrl = `${req.headers.host}${req.url}`;
@@ -249,12 +249,12 @@ class HttpHostEndPoint extends HostEndPoint {
    */
   async addCacheContentAsync(key, content, headers, method) {
     if (
-      this.#options.CacheSettings?.isEnabled &&
-      this.#options.CacheSettings.requestMethods.includes(method)
+      this._options.CacheSettings?.isEnabled &&
+      this._options.CacheSettings.requestMethods.includes(method)
     ) {
       const savedHeaders = this.findProperties(
         headers,
-        this.#options.CacheSettings.responseHeaders
+        this._options.CacheSettings.responseHeaders
       );
       await this._service.settings.cacheConnection.addCacheContentAsync(
         key,

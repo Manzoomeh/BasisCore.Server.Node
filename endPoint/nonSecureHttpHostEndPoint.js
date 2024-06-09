@@ -20,7 +20,6 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
     return http.createServer(async (req, res) => {
       try {
         /** @type {Request} */
-        let cms = null;
         this._handleContentTypes(req, res, async () => {
           this._checkCacheAsync(req, res, async () => {
           const createCmsAndCreateResponseAsync = async () => {

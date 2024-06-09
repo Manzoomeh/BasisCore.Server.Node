@@ -7,7 +7,7 @@ import url from "url";
 
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {import("tls").SecureContextOptions} */
-  #options;
+  _options;
   /**
    * @param {string} ip
    * @param {number} port
@@ -15,13 +15,12 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {import("tls").SecureContextOptions} options
    */
   constructor(ip, port, service, options) {
-    super(ip, port, service);
-    this.#options = options;
+    super(ip, port, service,options);
   }
 
   _createServer() {
     return https
-      .createServer(this.#options, async (req, res) => {
+      .createServer(this._options, async (req, res) => {
         /** @type {Request} */
         let cms = null;
         this._handleContentTypes(req, res, () => {

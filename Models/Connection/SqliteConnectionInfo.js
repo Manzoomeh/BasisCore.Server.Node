@@ -72,12 +72,9 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
     let database;
     try {
       database = new sqlite3.Database(this.settings.dbPath);
-      const result = await this.#executeSqliteQuery(
-        database,
-        `SELECT * FROM ${this.settings.tableName}  WHERE key = ?`,
-        [key]
-      );
-      if (result) return result[0];
+      const query = `SELECT * FROM ${this.settings.tableName}  WHERE key = ?`;
+      const result = await  this.#executeSqliteQuery(database, query, [key]);
+      return result[0]
     } finally {
       if (database) {
         database.close();
@@ -125,11 +122,11 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
    */
   #executeSqliteQuery(db, query, params = []) {
     return new Promise((resolve, reject) => {
-      db.run(query, params, function (err) {
+      db.all(query, params, (err, rows) => {
         if (err) {
           reject(err);
         } else {
-          resolve();
+          resolve(rows);
         }
       });
     });
