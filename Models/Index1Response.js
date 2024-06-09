@@ -1,4 +1,3 @@
-import { Console } from "console";
 import CancellationToken from "../renderEngine/Cancellation/CancellationToken.js";
 import RequestContext from "../renderEngine/Context/RequestContext.js";
 import IRoutingRequest from "./IRoutingRequest.js";
