@@ -43,7 +43,7 @@ export default class RabbitMQCacheUtil extends BaseCacheUtil {
    * @returns {Promise<void>}
    */
   createDeleteChannel(queueName) {
-    channel.assertQueue(queueName, {
+    this.channel.assertQueue(queueName, {
       durable: true,
     });
     this.channel.consume(queueName, async function (msg) {
