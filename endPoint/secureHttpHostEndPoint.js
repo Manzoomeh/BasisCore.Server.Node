@@ -4,7 +4,6 @@ import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import url from "url";
-import { raw } from "mysql2";
 
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
 

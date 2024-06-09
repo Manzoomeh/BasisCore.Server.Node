@@ -64,8 +64,8 @@ export default class CallCommand extends CommandBase {
         retVal = await command.callAsync(context);
       } else if (command instanceof GroupCommand) {
         retVal = [];
-        for (let i = 0; i < command.commands.length; i++) {
-          const item = command.commands[i];
+        for (let i = 0; i < command.commandsObjects?.length; i++) {
+          const item = context.createCommand(command.commandsObjects[i]);
           if (item instanceof CallCommand) {
             retVal.push(...(await item.callAsync(context)));
           } else {

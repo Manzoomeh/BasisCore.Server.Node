@@ -91,4 +91,9 @@ export default class IContext {
   addCookie(name, value, maxAge, path) {
     throw new Error("Method 'addCookie' not implemented.");
   }
+  /**
+   * @param {Object} commandIl
+   * @returns {CommandBase}
+   */
+  createCommand(commandIl) {}
 }
