@@ -10,23 +10,46 @@ import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import StringResult from "../renderEngine/Models/StringResult.js";
 import HostService from "../services/hostService.js";
-import RabbitMQCacheUtil from "./../Models/CacheCommands/RabbitMQCacheUtil.js";
-import BaseCacheUtil from "../Models/CacheCommands/BaseCacheUtil.js";
+import RabbitMQCacheManager from "./../Models/CacheCommands/RabbitMQCacheManager.js";
+import BasecacheManager from "../Models/CacheCommands/BasecacheManager.js";
+import CacheConnectionBase from "../models/CacheCommands/CacheConnection/CacheConnectionBase.js";
+import { HostEndPointOptions } from "../models/model.js";
+import SqliteCacheConnection from "../models/CacheCommands/CacheConnection/SqliteCacheConnection.js";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /** @type {HostService} */
   _service;
-  _options
+  /** @type {HostEndPointOptions} */
+  _options;
+  /** @type {CacheConnectionBase?} */
+  _cacheConnection;
   /**
    *
    * @param {string} ip
    * @param {number} port
+   *
+   * @param {HostEndPointOptions}options
    */
-  constructor(ip, port, service,options) {
+  constructor(ip, port, service, options) {
     super(ip, port);
     this._service = service;
-    this._options = options
+    this._options = options;
+    if (options.CacheSettings.connectionType) {
+      switch (options.CacheSettings.connectionType) {
+        case "sqlite": {
+          this._cacheConnection = new SqliteCacheConnection(
+            options.CacheSettings.connectionSetting
+          );
+          break;
+        }
+        default: {
+          throw new BasisCoreException(
+            `the connection type ${options.CacheSettings.connectionType} not implemented for caching!`
+          );
+        }
+      }
+    }
   }
 
   /** @returns {Server}*/
@@ -36,19 +59,18 @@ class HttpHostEndPoint extends HostEndPoint {
 
   /**@returns {Promise<void>} */
   async listenAsync() {
-    /** @type {BaseCacheUtil} */
-    let cacheUtil;
+    /** @type {BasecacheManager} */
+    let cacheManager;
     switch (this._options?.CacheSettings.utilType) {
       case "Rabbit": {
-        cacheUtil = new RabbitMQCacheUtil(
+        cacheManager = new RabbitMQCacheManager(
           this._service.settings.cacheConnection,
-          this._options.CacheSettings.utilSetting
+          this._options.CacheSettings.managerSetting
         );
       }
     }
-    if (cacheUtil) {
-      await cacheUtil.connectAsync();
-      await cacheUtil.createDeleteChannel();
+    if (cacheManager) {
+      await cacheManager.initializeAsync();
     }
     const server = this._createServer();
     await this.initializeAsync();
@@ -214,7 +236,7 @@ class HttpHostEndPoint extends HostEndPoint {
         return acc;
       }, [])
       .join("<br>");
-    }    
+  }
   /**
    * @param {IncomingMessage} req
    * @param {ServerResponse} res
@@ -222,11 +244,13 @@ class HttpHostEndPoint extends HostEndPoint {
   async _checkCacheAsync(req, res, next) {
     if (
       this._options.CacheSettings?.isEnabled &&
-      this._options.CacheSettings.requestMethods.includes(req.method)
+      this._options.CacheSettings.requestMethods.includes(req.method) &&
+      this._cacheConnection
     ) {
-      let connection = this._service.settings.cacheConnection;
       const fullUrl = `${req.headers.host}${req.url}`;
-      const cacheResults = await connection.loadContentAsync(fullUrl);
+      const cacheResults = await this._cacheConnection.loadContentAsync(
+        fullUrl
+      );
       if (cacheResults) {
         res.writeHead(200, {
           ...cacheResults.properties,
@@ -250,13 +274,14 @@ class HttpHostEndPoint extends HostEndPoint {
   async addCacheContentAsync(key, content, headers, method) {
     if (
       this._options.CacheSettings?.isEnabled &&
-      this._options.CacheSettings.requestMethods.includes(method)
+      this._options.CacheSettings.requestMethods.includes(method) &&
+      this._cacheConnection
     ) {
       const savedHeaders = this.findProperties(
         headers,
         this._options.CacheSettings.responseHeaders
       );
-      await this._service.settings.cacheConnection.addCacheContentAsync(
+      await this._cacheConnection.addCacheContentAsync(
         key,
         content,
         savedHeaders

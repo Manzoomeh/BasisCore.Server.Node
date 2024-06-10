@@ -18,6 +18,11 @@ const host = {
         requestMethods: "GET",
         responseHeaders: ["content-type"],
         isEnabled: true,
+        connectionType: "sqlite",
+        connectionSetting: {
+          dbPath: "test.db",
+          tableName: "cache_results",
+        },
       },
     },
   },
@@ -27,10 +32,6 @@ const host = {
       Settings: {
         "Connections.edge.RoutingData": {
           endpoint: "127.0.0.1:8000",
-        },
-        "Connections.sqlite.cacheConnection": {
-          dbPath: "test.db",
-          tableName: "cache_results",
         },
       },
     },

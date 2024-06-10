@@ -219,12 +219,10 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
 
   async _checkCacheAsync(stream, headers, next) {
     if (
-      this.#options.CacheSettings.requestMethods.includes(
-        headers[":method"]
-      ) &&
-      this._service.settings.cacheConnection
+      this._options.CacheSettings?.isEnabled &&
+      this._options.CacheSettings?.requestMethods.includes(headers[":method"]) &&
+      this._cacheConnection
     ) {
-      let connection = this._service.settings.cacheConnection;
       const fullUrl = `${headers.host}${headers[":path"]}`;
       const cacheOptions = await connection.loadContentAsync(fullUrl);
       if (cacheOptions) {

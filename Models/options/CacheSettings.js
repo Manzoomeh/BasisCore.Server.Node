@@ -1,3 +1,4 @@
+import SqliteCacheConnection from "./../CacheCommands/CacheConnection/SqliteCacheSetting.js"
 export default class CacheSettings {
   /**@type {string[]} */
   responseHeaders;
@@ -7,7 +8,11 @@ export default class CacheSettings {
   isEnabled;
   //for now is rabbit
   /** @type {"Rabbit"} */
-  utilType
+  managerType
   /**@type { NodeJS.Dict<string> } */
-  utilSetting
+  managerSetting
+  /** @type {"sqlite"} */
+  connectionType
+  /** @type {SqliteCacheConnection} */
+  connectionSetting
 }

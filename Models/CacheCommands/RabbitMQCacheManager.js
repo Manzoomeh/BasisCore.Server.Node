@@ -1,10 +1,10 @@
 import ConnectionInfo from "../Connection/ConnectionInfo.js";
-import BaseCacheUtil from "./BaseCacheUtil.js";
+import BaseCacheManager from "./BaseCacheManager.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const amqp = require("amqplib/callback_api");
 import RabbitMQSetting from "./RabbitMqSetting.js";
-export default class RabbitMQCacheUtil extends BaseCacheUtil {
+export default class RabbitMQCacheManager extends BaseCacheManager {
   /**@type {ConnectionInfo}*/
   connectionInfo;
   /**@type {RabbitMQSetting} */
@@ -22,8 +22,8 @@ export default class RabbitMQCacheUtil extends BaseCacheUtil {
   /**
    * @returns {Promise<void>}
    */
-  connectAsync() {
-    return new Promise((resolve, reject) => {
+  async initializeAsync(queueName) {
+    await new Promise((resolve, reject) => {
       amqp.connect(this.settings.address, function (error0, connection) {
         if (error0) {
           reject(error0);
@@ -37,6 +37,7 @@ export default class RabbitMQCacheUtil extends BaseCacheUtil {
         });
       });
     });
+    await this.createDeleteChannel(this.settings.queueName);
   }
   /**
    * @param {string} queueName
@@ -47,6 +48,7 @@ export default class RabbitMQCacheUtil extends BaseCacheUtil {
       durable: true,
     });
     this.channel.consume(queueName, async function (msg) {
+      console.log("cache deleted")
       await this.connection.deleteAllCache();
     });
   }
