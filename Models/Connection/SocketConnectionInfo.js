@@ -20,7 +20,7 @@ export default class SocketConnectionInfo extends ConnectionInfo {
    */
   constructor(name, settings) {
     super(name);
-    [this.host, this.port] = settings.endPoint.split(":");
+    [this.host, this.port] = settings.endpoint.split(":");
   }
 
   /**

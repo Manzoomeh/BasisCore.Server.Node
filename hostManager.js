@@ -88,6 +88,8 @@ export default class HostManager {
    * @returns {HostEndPoint}
    */
   #createHttpEndPoint(name, options, service) {
+    const cacheSettings = options.CacheSettings
+    console.log(cacheSettings)
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
       if (address.Certificate) {
@@ -157,13 +159,13 @@ export default class HostManager {
         }
         if (!address.Certificate.Http2) {
           this.hosts.push(
-            new SecureHttpHostEndPoint(ip, port, service, options)
+            new SecureHttpHostEndPoint(ip, port, service, options,cacheSettings)
           );
         } else {
-          this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options));
+          this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options,cacheSettings));
         }
       } else {
-        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service,options));
+        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service,cacheSettings));
       }
     });
   }

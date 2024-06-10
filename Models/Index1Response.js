@@ -1,4 +1,3 @@
-import { Console } from "console";
 import CancellationToken from "../renderEngine/Cancellation/CancellationToken.js";
 import RequestContext from "../renderEngine/Context/RequestContext.js";
 import IRoutingRequest from "./IRoutingRequest.js";
@@ -9,7 +8,7 @@ import RequestDebugMaxContext from "../renderEngine/Context/requestDebugMaxConte
 import DebugContext from "../renderEngine/Context/DebugContext.js";
 import VoidContext from "../renderEngine/Context/VoidContext.js";
 import StringResult from "../renderEngine/Models/StringResult.js";
-import {Encoder} from "node-html-encoder"
+import { Encoder } from "node-html-encoder";
 
 export default class Index1Response extends RequestBaseResponse {
   /**@type {Object.<string, any>}*/
@@ -32,9 +31,11 @@ export default class Index1Response extends RequestBaseResponse {
    */
   async getResultAsync(routingDataStep, rawRequest, cms) {
     try {
-      const encoder = new Encoder("entity")
-      if(this._request.cms.content){
-        this._request.cms.content =encoder.htmlEncode(this._request.cms.content) 
+      const encoder = new Encoder("entity");
+      if (this._request.cms.content) {
+        this._request.cms.content = encoder.htmlEncode(
+          this._request.cms.content
+        );
       }
       /**@type {DebugContext} */
       const requestDebugContext =
@@ -61,6 +62,7 @@ export default class Index1Response extends RequestBaseResponse {
       const getIlStep = requestDebugContext.newStep("Get IL");
       let commandIl;
       let command;
+      let context
       try {
         if (!this._request.cms.page_il) {
           //Update IL step
@@ -79,19 +81,19 @@ export default class Index1Response extends RequestBaseResponse {
           console.log(error);
           deserializeJsonStep.failed();
         }
-        const command = context.createCommand(commandIl);
+        context = new RequestContext(
+          this._settings,
+          this._request,
+          this._commands,
+          requestDebugContext
+        );
+        context.cancellation = new CancellationToken();
+        command = context.createCommand(commandIl);
         getIlStep.complete();
       } catch (error) {
         console.log(error);
         getIlStep.failed();
       }
-      const context = new RequestContext(
-        this._settings,
-        this._request,
-        this._commands,
-        requestDebugContext
-      );
-      context.cancellation = new CancellationToken();
       const result = await command.executeAsync(context);
       const renderResultList = [];
       await result.writeAsync(renderResultList, context.cancellation);

@@ -1,5 +1,8 @@
 import CommandBase from "./../CommandBase.js";
+import SourceCommand from "../Source/BaseClasses/SourceCommand.js";
 import CallCommand from "./CallCommand.js";
+import ICommandResult from "../../Models/ICommandResult.js";
+import IContext from "../../Context/IContext.js";
 
 export default class CollectionCommand extends CommandBase {
   /** @type {Array<object>} */
@@ -27,15 +30,7 @@ export default class CollectionCommand extends CommandBase {
     for (const element of this.commands) {
       const command = element;
       if (command instanceof CallCommand) {
-        const callStep = newContext.debugContext.newStep(
-          "Execute call command(s)"
-        );
-        try {
-          commands.push(...(await command.callAsync(newContext)));
-        } catch (error) {
-          callStep.complete();
-        }
-        callStep.failed();
+        commands.push(...(await command.callAsync(newContext)));
       } else {
         commands.push(command);
       }
@@ -47,13 +42,37 @@ export default class CollectionCommand extends CommandBase {
         .filter((x) => x.IsSourceCommand)
         .map((x) => x.executeAsync(newContext))
     );
+    await Promise.all(
+      collections
+        .filter((x) => !x.IsSourceCommand)
+        .map((x) => x.executeAsync(newContext))
+    );
+    return collections.map((x) => x.result);
+  }
+}
 
-    const sourceResults = await Promise.all(
-      sourceCommands.map((x) => x.executeAsync(newContext))
-    );
-    const otherResult = await Promise.all(
-      otherCommands.map((x) => x.executeAsync(newContext))
-    );
-    return sourceResults.concat(otherResult);
+class CollectionCommandItem {
+  /** @type {CommandBase} */
+  command;
+  /** @type {ICommandResult} */
+  result;
+  /** @returns {boolean} */
+  get IsSourceCommand() {
+    return this.command instanceof SourceCommand;
+  }
+
+  /**
+   * @param {CommandBase} command
+   */
+  constructor(command) {
+    this.command = command;
+  }
+
+  /**
+   * @param {IContext} context
+   * @returns {Promise<void>}
+   */
+  async executeAsync(context) {
+    this.result = await this.command.executeAsync(context);
   }
 }

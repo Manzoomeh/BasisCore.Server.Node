@@ -7,6 +7,9 @@ import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import http from "http";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import url from "url";
+import CacheSettings from "../models/options/CacheSettings.js";
+const { HTTP2_HEADER_PATH, HTTP2_HEADER_METHOD, HTTP2_HEADER_AUTHORITY } = http2.constants
+
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {import("tls").SecureContextOptions} */
   #options;
@@ -16,10 +19,11 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
    * @param {number} port
    * @param {HostService} service
    * @param {import("tls").SecureContextOptions} options
+   * @param {CacheSettings} cacheSettings 
    */
 
-  constructor(ip, port, service, options) {
-    super(ip, port, service);
+  constructor(ip, port, service, options,cacheSettings) {
+    super(ip, port, service,null,cacheSettings);
     this.#options = options;
   }
 
@@ -130,9 +134,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           });
 
           stream.on("end", async () => {
-            if (headers["content-type"] === "application/json") {
               await createCmsAndCreateResponseAsync();
-            }
           });
 
           stream.on("error", (ex) => {
@@ -219,23 +221,22 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
 
   async _checkCacheAsync(stream, headers, next) {
     if (
-      this._options.CacheSettings?.isEnabled &&
-      this._options.CacheSettings?.requestMethods.includes(headers[":method"]) &&
+      this._cacheOptions.isEnabled &&
+      this._cacheOptions.requestMethods.includes(headers[":method"]) &&
       this._cacheConnection
     ) {
-      const fullUrl = `${headers.host}${headers[":path"]}`;
-      const cacheOptions = await connection.loadContentAsync(fullUrl);
+      const fullUrl = `${headers[HTTP2_HEADER_AUTHORITY]}${headers[":path"]}`;
+      const cacheOptions = await this._cacheConnection.loadContentAsync(fullUrl);
       if (cacheOptions) {
-        try {
+        // try {
           stream.respond({
             ":status": 200,
-            "content-type": cacheOptions.contentType,
-            ...this.#options.CacheSettings.responseHeaders,
+            ...this._cacheOptions.responseHeaders,
           });
           stream.end(cacheOptions.file);
-        } catch (err) {
-          next();
-        }
+        // } catch (err) {
+        //   next();
+        // }
       } else {
         next();
       }

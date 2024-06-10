@@ -4,23 +4,26 @@ import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import url from "url";
+import CacheSettings from "../models/options/CacheSettings.js";
 
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
   /** @type {import("tls").SecureContextOptions} */
-  _options;
+  #options;
   /**
    * @param {string} ip
    * @param {number} port
    * @param {HostService} service
    * @param {import("tls").SecureContextOptions} options
+   * @param {CacheSettings} cacheSetting 
    */
-  constructor(ip, port, service, options) {
-    super(ip, port, service,options);
+  constructor(ip, port, service, options,cacheSetting) {
+    super(ip, port, service,cacheSetting);
+    this.#options = options
   }
 
   _createServer() {
     return https
-      .createServer(this._options, async (req, res) => {
+      .createServer(this.#options, async (req, res) => {
         /** @type {Request} */
         let cms = null;
         this._handleContentTypes(req, res, () => {

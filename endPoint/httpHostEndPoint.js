@@ -15,37 +15,38 @@ import BasecacheManager from "../Models/CacheCommands/BasecacheManager.js";
 import CacheConnectionBase from "../models/CacheCommands/CacheConnection/CacheConnectionBase.js";
 import { HostEndPointOptions } from "../models/model.js";
 import SqliteCacheConnection from "../models/CacheCommands/CacheConnection/SqliteCacheConnection.js";
+import CacheSettings from "../models/options/CacheSettings.js";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /** @type {HostService} */
   _service;
   /** @type {HostEndPointOptions} */
-  _options;
+  _cacheOptions;
   /** @type {CacheConnectionBase?} */
   _cacheConnection;
   /**
    *
    * @param {string} ip
    * @param {number} port
-   *
-   * @param {HostEndPointOptions}options
+   * @param {HostService}
+   * @param {CacheSettings}cacheOptions
    */
-  constructor(ip, port, service, options) {
+  constructor(ip, port, service,cacheOptions) {
     super(ip, port);
     this._service = service;
-    this._options = options;
-    if (options.CacheSettings.connectionType) {
-      switch (options.CacheSettings.connectionType) {
+    this._cacheOptions = cacheOptions;
+    if (cacheOptions.connectionType) {
+      switch (cacheOptions.connectionType) {
         case "sqlite": {
           this._cacheConnection = new SqliteCacheConnection(
-            options.CacheSettings.connectionSetting
+            cacheOptions.connectionSetting
           );
           break;
         }
         default: {
           throw new BasisCoreException(
-            `the connection type ${options.CacheSettings.connectionType} not implemented for caching!`
+            `the connection type ${cacheOptions.connectionType} not implemented for caching!`
           );
         }
       }
@@ -61,11 +62,11 @@ class HttpHostEndPoint extends HostEndPoint {
   async listenAsync() {
     /** @type {BasecacheManager} */
     let cacheManager;
-    switch (this._options?.CacheSettings.utilType) {
+    switch (this._cacheOptions?.managerType) {
       case "Rabbit": {
         cacheManager = new RabbitMQCacheManager(
-          this._service.settings.cacheConnection,
-          this._options.CacheSettings.managerSetting
+          this._cacheConnection,
+          this._cacheOptions.managerSetting
         );
       }
     }
@@ -243,8 +244,8 @@ class HttpHostEndPoint extends HostEndPoint {
    */
   async _checkCacheAsync(req, res, next) {
     if (
-      this._options.CacheSettings?.isEnabled &&
-      this._options.CacheSettings.requestMethods.includes(req.method) &&
+      this._cacheOptions.isEnabled &&
+      this._cacheOptions.requestMethods.includes(req.method) &&
       this._cacheConnection
     ) {
       const fullUrl = `${req.headers.host}${req.url}`;
@@ -273,13 +274,13 @@ class HttpHostEndPoint extends HostEndPoint {
    */
   async addCacheContentAsync(key, content, headers, method) {
     if (
-      this._options.CacheSettings?.isEnabled &&
-      this._options.CacheSettings.requestMethods.includes(method) &&
+      this._cacheOptions.isEnabled &&
+      this._cacheOptions.requestMethods.includes(method) &&
       this._cacheConnection
     ) {
       const savedHeaders = this.findProperties(
         headers,
-        this._options.CacheSettings.responseHeaders
+        this._cacheOptions.responseHeaders
       );
       await this._cacheConnection.addCacheContentAsync(
         key,
@@ -295,9 +296,10 @@ class HttpHostEndPoint extends HostEndPoint {
    * @returns
    */
   findProperties(headers, keys) {
+    console.log(headers)
     const properties = {};
     keys.forEach((key) => {
-      if (headers.hasOwnProperty(key)) {
+      if (Object.prototype.hasOwnProperty.call(headers, key)) {
         properties[key] = headers[key];
       }
     });
