@@ -42,7 +42,7 @@ export default class SourceCommand extends CommandBase {
   async _executeCommandAsync(context) {
     if (this.members?.items.length > 0) {
       const name = await this.name.getValueAsync(context);
-      const dataSet = await this.#loadDataAsync(name, context);
+      const dataSet = await this._loadDataAsync(name, context);
       context.cancellation.throwIfCancellationRequested();
       if (dataSet.items.length != this.members.items.length) {
         throw new BasisCoreException(
@@ -63,7 +63,7 @@ export default class SourceCommand extends CommandBase {
    * @param {IContext} context
    * @returns {Promise<DataSourceCollection>}
    */
-  async #loadDataAsync(sourceName, context) {
+  async _loadDataAsync(sourceName, context) {
     const [connectionName, command, paramList] = await Promise.all([
       this.connectionName.getValueAsync(context),
       this.toCustomFormatHtmlAsync(context),
@@ -74,7 +74,10 @@ export default class SourceCommand extends CommandBase {
       dmnid: context.domainId,
       params: paramList,
     };
-    return await context.loadDataAsync(sourceName, connectionName, params);
+    const memberNames = this.members.items.map((item)=>{
+      return item.name
+    })
+    return await context.loadDataAsync(sourceName, connectionName, params,memberNames);
   }
 
   /**

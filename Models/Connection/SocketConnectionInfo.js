@@ -2,7 +2,6 @@ import net from "net";
 import ConnectionInfo from "./ConnectionInfo.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import SocketSettingData from "./SocketSettingData.js";
-import WebServerException from "../Exceptions/WebServerException.js";
 
 /**
  * @typedef {Object} LoadDataRequest
@@ -12,14 +11,16 @@ import WebServerException from "../Exceptions/WebServerException.js";
  */
 export default class SocketConnectionInfo extends ConnectionInfo {
   /**@type {string} */
-  endPoint;
+  host;
+  /**@type {string} */
+  port;
   /**
    * @param {string} name
    * @param {SocketSettingData} settings
    */
   constructor(name, settings) {
     super(name);
-    this.endPoint = settings.endPoint;
+    [this.host, this.port] = settings.endpoint.split(":");
   }
 
   /**
@@ -27,9 +28,52 @@ export default class SocketConnectionInfo extends ConnectionInfo {
    * @param {CancellationToken} cancellationToken
    * @returns {Promise<DataSourceCollection>}
    */
-  async LoadDataAsync(cancellationToken, parameters) {
-    const retVal = await this.sendAsync(parameters);
-    return this.convertJSONToDataSet(retVal);
+  async loadDataAsync(parameters, cancellationToken) {
+    const byteMessage = parameters.hasOwnProperty("byteMessage")
+      ? parameters["byteMessage"]
+      : null;
+    const mySocket = new net.Socket();
+
+    await new Promise((resolve, reject) => {
+      mySocket.connect(
+        {
+          host: this.host,
+          port: this.port,
+        },
+        () => {
+          resolve();
+        }
+      );
+      mySocket.on("error", (err) => {
+        reject(err);
+      });
+    });
+    const networkStream = mySocket;
+    if (byteMessage) {
+      await new Promise((resolve, reject) => {
+        networkStream.write(byteMessage, (err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve();
+          }
+        });
+      });
+    }
+    let result = await new Promise((resolve, reject) => {
+      /** @type {Buffer[]}*/
+      const buffer = [];
+      networkStream.on("data", (data) => buffer.push(data));
+      networkStream.on("error", (err) => {
+        reject(err);
+      });
+      networkStream.on("end", () => {
+        const data = Buffer.concat(buffer);
+        const retVal = data.toString()
+        resolve( new DataSourceCollection([[{ result: retVal }]]));
+      });
+    });
+    return result;
   }
   /**
    * @param {Request} request
@@ -47,38 +91,5 @@ export default class SocketConnectionInfo extends ConnectionInfo {
       delete result.cms.http;
     }
     return result;
-  }
-  async sendAsync(parameters) {
-    const byteMessage = parameters.hasOwnProperty("byteMessage")
-      ? parameters["byteMessage"]
-      : null;
-    const mySocket = new net.Socket();
-    await new Promise((resolve, reject) => {
-      mySocket.connect(this.EndPoint, () => {
-        resolve();
-      });
-      mySocket.on("error", (err) => {
-        reject(err);
-      });
-    });
-    const networkStream = mySocket;
-    await new Promise((resolve, reject) => {
-      networkStream.write(byteMessage, (err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve();
-        }
-      });
-    });
-    return await new Promise((resolve, reject) => {
-      networkStream.read((err, data) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(data);
-        }
-      });
-    });
   }
 }

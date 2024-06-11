@@ -8,20 +8,49 @@ import busboy from "busboy";
 import { IncomingMessage, ServerResponse } from "http";
 import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
+import StringResult from "../renderEngine/Models/StringResult.js";
 import HostService from "../services/hostService.js";
+import RabbitMQCacheManager from "./../Models/CacheCommands/RabbitMQCacheManager.js";
+import BasecacheManager from "../Models/CacheCommands/BasecacheManager.js";
+import CacheConnectionBase from "../models/CacheCommands/CacheConnection/CacheConnectionBase.js";
+import { HostEndPointOptions } from "../models/model.js";
+import SqliteCacheConnection from "../models/CacheCommands/CacheConnection/SqliteCacheConnection.js";
+import CacheSettings from "../models/options/CacheSettings.js";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /** @type {HostService} */
   _service;
+  /** @type {HostEndPointOptions} */
+  _cacheOptions;
+  /** @type {CacheConnectionBase?} */
+  _cacheConnection;
   /**
    *
    * @param {string} ip
    * @param {number} port
+   * @param {HostService}
+   * @param {CacheSettings}cacheOptions
    */
-  constructor(ip, port, service) {
+  constructor(ip, port, service,cacheOptions) {
     super(ip, port);
     this._service = service;
+    this._cacheOptions = cacheOptions;
+    if (cacheOptions.connectionType) {
+      switch (cacheOptions.connectionType) {
+        case "sqlite": {
+          this._cacheConnection = new SqliteCacheConnection(
+            cacheOptions.connectionSetting
+          );
+          break;
+        }
+        default: {
+          throw new BasisCoreException(
+            `the connection type ${cacheOptions.connectionType} not implemented for caching!`
+          );
+        }
+      }
+    }
   }
 
   /** @returns {Server}*/
@@ -31,6 +60,19 @@ class HttpHostEndPoint extends HostEndPoint {
 
   /**@returns {Promise<void>} */
   async listenAsync() {
+    /** @type {BasecacheManager} */
+    let cacheManager;
+    switch (this._cacheOptions?.managerType) {
+      case "Rabbit": {
+        cacheManager = new RabbitMQCacheManager(
+          this._cacheConnection,
+          this._cacheOptions.managerSetting
+        );
+      }
+    }
+    if (cacheManager) {
+      await cacheManager.initializeAsync();
+    }
     const server = this._createServer();
     await this.initializeAsync();
     server
@@ -166,9 +208,104 @@ class HttpHostEndPoint extends HostEndPoint {
       next();
     }
   }
+  addStringTable(title, content) {
+    const html = `
+          <table class='cms-data-member'>
+              <thead>
+                  <tr>
+                      <th>${title}</th>                   
+                  </tr>
+                  <tr>
+                      <th>Value</th>                   
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td>${content}</td>
+                  </tr>
+              </tbody>
+          </table>
+      `;
+    return new StringResult(html);
+  }
+  joinHeaders(array) {
+    const joinedheaders = array
+      .reduce((acc, curr, index, arr) => {
+        if (index % 2 === 0) {
+          acc.push(arr.slice(index, index + 2).join(" : "));
+        }
+        return acc;
+      }, [])
+      .join("<br>");
+  }
+  /**
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
+   */
+  async _checkCacheAsync(req, res, next) {
+    if (
+      this._cacheOptions.isEnabled &&
+      this._cacheOptions.requestMethods.includes(req.method) &&
+      this._cacheConnection
+    ) {
+      const fullUrl = `${req.headers.host}${req.url}`;
+      const cacheResults = await this._cacheConnection.loadContentAsync(
+        fullUrl
+      );
+      if (cacheResults) {
+        res.writeHead(200, {
+          ...cacheResults.properties,
+        });
+        res.write(cacheResults.file ?? "");
+        res.end();
+      } else {
+        next();
+      }
+    } else {
+      next();
+    }
+  }
+  /**
+   *
+   * @param {string} key
+   * @param {string} content
+   * @param {NodeJS.Dict<string>} headers
+   * @returns {Promise<void>}
+   */
+  async addCacheContentAsync(key, content, headers, method) {
+    if (
+      this._cacheOptions.isEnabled &&
+      this._cacheOptions.requestMethods.includes(method) &&
+      this._cacheConnection
+    ) {
+      const savedHeaders = this.findProperties(
+        headers,
+        this._cacheOptions.responseHeaders
+      );
+      await this._cacheConnection.addCacheContentAsync(
+        key,
+        content,
+        savedHeaders
+      );
+    }
+  }
+  /**
+   *
+   * @param {NodeJS.Dict} headers
+   * @param {string[]} keys
+   * @returns
+   */
+  findProperties(headers, keys) {
+    const properties = {};
+    keys.forEach((key) => {
+      if (Object.prototype.hasOwnProperty.call(headers, key)) {
+        properties[key] = headers[key];
+      }
+    });
+    return properties;
+  }
   initializeAsync() {
     return this._service.initializeAsync();
   }
 }
-
 export default HttpHostEndPoint;

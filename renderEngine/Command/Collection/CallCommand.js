@@ -42,12 +42,23 @@ export default class CallCommand extends CommandBase {
         this.createHtmlElementAsync(context),
       ]);
       context.cancellation.throwIfCancellationRequested();
-      const command = await context.loadPageAsync(
-        pageName,
-        html.getHtml(),
-        pageSize,
-        this.callDepth + 1
+      context.newStep;
+      let command;
+      const loadPageStep = context.debugContext.newStep(
+        `Load ${pageName} From DB`
       );
+      try {
+        command = await context.loadPageAsync(
+          pageName,
+          html.getHtml(),
+          pageSize,
+          this.callDepth + 1
+        );
+        loadPageStep.complete();
+      } catch (error) {
+        loadPageStep.failed();
+      }
+
       if (command instanceof CallCommand) {
         command.callDepth = this.callDepth + 1;
         retVal = await command.callAsync(context);

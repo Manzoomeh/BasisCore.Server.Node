@@ -23,6 +23,10 @@ const host = {
         "Connections.edge.RoutingData": {
           endpoint: "127.0.0.1:8080",
         },
+        "Connections.sqlite.cacheConnection" :{
+          dbPath : "./../../../test.db",
+          table : "cache_results"
+        }
       },
     },
   },

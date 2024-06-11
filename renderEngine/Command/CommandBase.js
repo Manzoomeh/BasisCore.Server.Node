@@ -53,39 +53,45 @@ export default class CommandBase {
    * @returns {Promise<ICommandResult>}
    */
   async executeAsync(context) {
-    /** @type {ICommandResult?} */
-    let retVal = null;
+    const commandStep = context.debugContext.newStep(`Execute ${await this.core.getValueAsync()}`);
     try {
-      const runType = await this._getRunTypeValueAsync(context);
-      switch (runType.toLowerCase()) {
-        case RunTypes.AtServer: {
-          const ifValue = await this._getIfValueAsync(context);
-          if (ifValue) {
-            //TODO: create scope
-            retVal = await this._executeCommandAsync(context);
-          } else {
-            retVal = VoidResult.result;
+      /** @type {ICommandResult?} */
+      let retVal = null;
+      try {
+        const runType = await this._getRunTypeValueAsync(context);
+        switch (runType.toLowerCase()) {
+          case RunTypes.AtServer: {
+            const ifValue = await this._getIfValueAsync(context);
+            if (ifValue) {
+              //TODO: create scope
+              retVal = await this._executeCommandAsync(context);
+            } else {
+              retVal = VoidResult.result;
+            }
+            break;
           }
-          break;
+          case RunTypes.AtClient:
+          case RunTypes.None: {
+            retVal = new StringResult(
+              (await this.createHtmlElementAsync(context)).getHtml()
+            );
+            break;
+          }
+          default: {
+            retVal = VoidResult.result;
+            break;
+          }
         }
-        case RunTypes.AtClient:
-        case RunTypes.None: {
-          retVal = new StringResult(
-            (await this.createHtmlElementAsync(context)).getHtml()
-          );
-          break;
-        }
-        default: {
-          retVal = VoidResult.result;
-          break;
-        }
+      } catch (ex) {
+        console.error(ex);
+        retVal = new ExceptionResult(ex, context);
+        //TODO: log error
       }
-    } catch (ex) {
-      console.error(ex);
-      retVal = new ExceptionResult(ex, context);
-      //TODO: log error
+      commandStep.complete();
+      return retVal;
+    } catch (err) {
+      commandStep.failed();
     }
-    return retVal;
   }
 
   /**

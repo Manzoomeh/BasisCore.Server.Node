@@ -4,6 +4,7 @@ import SqliteSettingData from "./SqliteSettingData.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import Request from "../request.js";
+
 export default class SqliteConnectionInfo extends ConnectionInfo {
   /** @type {SqliteSettingData} */
   settings;
@@ -36,9 +37,9 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
           }
         });
       });
-      const retVal = new DataSourceCollection(
-       [ Array.isArray(rows) ? rows : [rows]]
-      );
+      const retVal = new DataSourceCollection([
+        Array.isArray(rows) ? rows : [rows],
+      ]);
 
       return retVal;
     } finally {
@@ -47,7 +48,6 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
       }
     }
   }
-
   /**
    * @param {Request} request
    * @param {CancellationToken} cancellationToken
@@ -59,4 +59,5 @@ export default class SqliteConnectionInfo extends ConnectionInfo {
   async testConnectionAsync() {
     throw new Error("test connection is not supported in sqlite");
   }
+
 }

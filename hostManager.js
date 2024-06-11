@@ -88,6 +88,7 @@ export default class HostManager {
    * @returns {HostEndPoint}
    */
   #createHttpEndPoint(name, options, service) {
+    const cacheSettings = options.CacheSettings
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
       if (address.Certificate) {
@@ -157,13 +158,13 @@ export default class HostManager {
         }
         if (!address.Certificate.Http2) {
           this.hosts.push(
-            new SecureHttpHostEndPoint(ip, port, service, options)
+            new SecureHttpHostEndPoint(ip, port, service, options,cacheSettings)
           );
         } else {
-          this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options));
+          this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options,cacheSettings));
         }
       } else {
-        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service));
+        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service,cacheSettings));
       }
     });
   }
@@ -220,6 +221,47 @@ export default class HostManager {
       );
     }
     return service;
+  }
+  /**
+   * @param {string} name
+   * @param {HostEndPointOptions} options
+   * @param {HostService} service
+   * @returns {HostEndPoint}
+   */
+  addHost(name, options, service) {
+    let serviceClass;
+    try {
+      switch (service.Type.toLowerCase()) {
+        case "http": {
+          serviceClass = new HttpHostService(name, service);
+          break;
+        }
+        case "file": {
+          serviceClass = this.#createFileDispatcher(name, service);
+          break;
+        }
+        default: {
+          console.error(
+            `${service.Type} not support in this version of web server`
+          );
+          break;
+        }
+      }
+    } catch (ex) {
+      console.error(ex);
+    }
+    this.#createHttpEndPoint(name, options, serviceClass, true);
+  }
+  stopHost(name, endPoints) {
+    this.hosts.forEach((host) => {
+      endPoints.forEach((endPoint) => {
+        if (host._ip === endPoint._ip && host._port === endPoint._port) {
+          this.hosts.pop(host);
+          host.kill()
+        }
+      });
+    });
+
   }
   /**
    * @param {object} jsonObj

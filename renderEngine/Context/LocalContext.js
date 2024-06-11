@@ -8,7 +8,7 @@ export default class LocalContext extends ContextBase {
    * @param {ContextBase} owner
    */
   constructor(owner) {
-    super(owner.repository, owner.domainId);
+    super(owner.repository, owner.domainId,owner.debugContext);
     this._owner = owner;
     this.cancellation = owner.cancellation;
   }
@@ -27,10 +27,11 @@ export default class LocalContext extends ContextBase {
    * @param {string} sourceName
    * @param {string} connectionName
    * @param {NodeJS.Dict<object|string|number>} parameters
+   * @param {string[]} memberNames
    * @returns {Promise<DataSourceCollection>}
    */
-  async loadDataAsync(sourceName, connectionName, parameters) {
-    return this._owner.loadDataAsync(sourceName, connectionName, parameters);
+  async loadDataAsync(sourceName, connectionName, parameters,memberNames) {
+    return this._owner.loadDataAsync(sourceName, connectionName, parameters,memberNames);
   }
 
   /**

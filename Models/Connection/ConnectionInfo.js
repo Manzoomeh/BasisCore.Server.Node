@@ -3,7 +3,7 @@ import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection
 import IRoutingRequest from "../IRoutingRequest.js";
 import Request from "../request.js";
 import ILoadPageResult from "./ILoadPageResult.js";
-
+import CacheResult from "../options/CacheResult.js";
 export default class ConnectionInfo {
   /** @type {string} */
   name;
@@ -69,4 +69,21 @@ export default class ConnectionInfo {
       );
     }
   }
+  /**
+   *
+   * @param {string} key
+   * @returns {Promise<CacheResult|null>}
+   */
+  async loadContentAsync(key) {}
+
+  /**
+   * @param {string} key
+   * @param {string} content
+   * @param {NodeJS.Dict<string>} properties
+   * @returns {Promise<void>}
+   */
+  async addCacheContentAsync(key, content, properties) {}
+  
+  /** @returns {Promise<void>} */
+  async deleteAllCache() {}
 }

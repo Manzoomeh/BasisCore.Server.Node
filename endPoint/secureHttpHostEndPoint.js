@@ -2,9 +2,11 @@ import https from "https";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
+import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
+import url from "url";
+import CacheSettings from "../models/options/CacheSettings.js";
+
 export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
-
-
   /** @type {import("tls").SecureContextOptions} */
   #options;
   /**
@@ -12,10 +14,11 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {number} port
    * @param {HostService} service
    * @param {import("tls").SecureContextOptions} options
+   * @param {CacheSettings} cacheSetting 
    */
-  constructor(ip, port, service, options) {
-    super(ip, port,service);
-    this.#options = options;
+  constructor(ip, port, service, options,cacheSetting) {
+    super(ip, port, service,cacheSetting);
+    this.#options = options
   }
 
   _createServer() {
@@ -24,7 +27,21 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
         /** @type {Request} */
         let cms = null;
         this._handleContentTypes(req, res, () => {
+          this._checkCacheAsync(req, res, async () => {
           const createCmsAndCreateResponseAsync = async () => {
+            const queryObj = url.parse(req.url, true).query;
+            let routingDataStep =
+              queryObj.debug == "true" ||
+              queryObj.debug == "1" ||
+              queryObj.debug == "2"
+                ? new LightgDebugStep(null, "Get Routing Data")
+                : null;
+            let rawRequest =
+              queryObj.debug == "true" ||
+              queryObj.debug == "1" ||
+              queryObj.debug == "2"
+                ? this.joinHeaders(req.rawHeaders)
+                : null;
             cms = await this._createCmsObjectAsync(
               req.url,
               req.method,
@@ -39,7 +56,22 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
               cms,
               req.fileContents
             );
-            const [code, headers, body] = await result.getResultAsync();
+            routingDataStep?.complete();
+            const [code, headers, body] = await result.getResultAsync(
+              routingDataStep,
+              rawRequest,
+              queryObj.debug == "true" ||
+                queryObj.debug == "1" ||
+                queryObj.debug == "2"
+                ? cms.dict
+                : undefined
+            );
+            this.addCacheContentAsync(
+              `${req.headers.host}${req.url}`,
+              body,
+              headers,
+              req.method
+            );
             res.writeHead(code, headers);
             res.end(body);
           };
@@ -50,6 +82,8 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
             res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR);
             res.end(ex.toString());
           }
+
+          });
         });
       })
       .on("error", (er) => console.error(er))

@@ -62,5 +62,6 @@ export default class SourceUtil {
     if (preview) {
     }
     context.addSource(source);
+    context.debugContext.addDebugInformation(source.id,source.data);
   }
 }
