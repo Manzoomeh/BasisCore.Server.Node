@@ -89,7 +89,6 @@ export default class HostManager {
    */
   #createHttpEndPoint(name, options, service) {
     const cacheSettings = options.CacheSettings
-    console.log(cacheSettings)
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
       if (address.Certificate) {

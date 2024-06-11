@@ -26,7 +26,7 @@ export default class DebugContext extends LogContext {
   completed;
   /**@type {LogContext[]} */
   childCollection;
-  /** @type {StringResult[]} */
+  /** @type {{information:NodeJS.Dict<string>,title : string}[]} */
   tableCollection;
   /**
    *
@@ -106,11 +106,9 @@ export default class DebugContext extends LogContext {
     const information = Array.isArray(info)
       ? info
       : typeof info == "object"
-      ? [info]
-      : [{ content: info }];
-    return this.tableCollection.push(
-      new StringResult(this.#arrayToHtmlTableWithTitle(information, title))
-    );
+      ? [info] :info ?
+       [{ content: info }] : null;
+    return this.tableCollection.push({ information, title });
   }
   /**
    * @returns {StringResult[]}
@@ -156,7 +154,7 @@ export default class DebugContext extends LogContext {
       if (
         innerObject &&
         typeof innerObject == "object" &&
-        Object.keys(innerObject).length> 1
+        Object.keys(innerObject).length > 1
       ) {
         for (let ParamKey of Object.keys(innerObject)) {
           let ParamValue = innerObject[ParamKey];
@@ -170,7 +168,13 @@ export default class DebugContext extends LogContext {
     }
     return resultArray;
   }
-  get tables() {
-    return this.tableCollection;
+  getTables() {
+    return this.tableCollection
+      .filter((object) => object.information != null)
+      .map((object) => {
+        let { information, title } = object;
+        return new StringResult(this.#arrayToHtmlTableWithTitle(information, title));
+      });
   }
+  
 }

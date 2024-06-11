@@ -256,7 +256,7 @@ class HttpHostEndPoint extends HostEndPoint {
         res.writeHead(200, {
           ...cacheResults.properties,
         });
-        res.write(cacheResults.content ?? "");
+        res.write(cacheResults.file ?? "");
         res.end();
       } else {
         next();
@@ -296,7 +296,6 @@ class HttpHostEndPoint extends HostEndPoint {
    * @returns
    */
   findProperties(headers, keys) {
-    console.log(headers)
     const properties = {};
     keys.forEach((key) => {
       if (Object.prototype.hasOwnProperty.call(headers, key)) {
