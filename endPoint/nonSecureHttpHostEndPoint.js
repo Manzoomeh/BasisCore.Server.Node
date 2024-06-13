@@ -2,8 +2,6 @@ import http, { Server } from "http";
 import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
-import Logger from "../Log/Logger.js";
-import winston from "winston";
 import Request from "../models/request.js";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
@@ -16,7 +14,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {HostService} service
    */
   constructor(ip, port, service) {
-    super(ip, port);
+    super(ip, port,service.settings._options.LogSettings);
     this.#service = service;
   }
 
@@ -46,17 +44,13 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
               requestId: cms.cms["request-id"],
               errorType : "error"
             };
-            /** @type {winston.Logger} */
-            let logger = Logger.createContext(
-              parameters,
-              this.#service.settings._options.LogSettings
-            );
+            this._logger.info(this._generateLogEntry(parameters))
             const result = await this.#service.processAsync(
               cms,
               req.fileContents,
-              logger
+              this._logger
             );
-            const [code, headers, body] = await result.getResultAsync(logger);
+            const [code, headers, body] = await result.getResultAsync(this._logger);
             res.writeHead(code, headers);
             res.end(body);
           };

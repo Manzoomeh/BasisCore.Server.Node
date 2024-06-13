@@ -84,7 +84,7 @@ export default class CommandBase {
       }
     } catch (ex) {
       console.error(ex);
-      logger.log({
+      context?.logger.log({
         message: ex.message,
         level : "error",
       })

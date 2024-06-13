@@ -11,21 +11,25 @@ import IRoutingRequest from "../../models/IRoutingRequest.js";
 import JsonSource from "../Source/JsonSource.js";
 import CookieItem from "../Models/CookieItem.js";
 import IContext from "./IContext.js";
+import { Logger } from "winston";
 
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
   _settings;
   /** @type {Array<CookieItem>} */
   _cookies;
-
+  /**@type {Logger} */
+  logger;
   /**
    * @param {ServiceSettings} settings
    * @param {IRoutingRequest} request
+   * @param {Logger} logger
    */
-  constructor(settings, request) {
+  constructor(settings, request, logger) {
     super(null, Number(request.cms?.dmnid));
     this._settings = settings;
     this.isSecure = request.isSecure;
+    this.logger = logger;
     for (let mainKey in request) {
       const mainValue = request[mainKey];
       this.addSource(new JsonSource([mainValue], `cms.${mainKey}`));

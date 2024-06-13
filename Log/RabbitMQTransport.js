@@ -1,7 +1,7 @@
 import TransportStream from "winston-transport";
 import amqp from "amqplib";
 import RabbitMQTransportSettings from "./RabbitmqTransportSettings.js";
-
+import { Logger, format } from "winston";
 export default class RabbitMQTransport extends TransportStream {
   /** @param {RabbitMQTransportSettings} */
   constructor(opts) {
@@ -12,7 +12,7 @@ export default class RabbitMQTransport extends TransportStream {
     this.connection = null;
     /** @type {amqp.Channel | null}*/
     this.channel = null;
-    this.logQueue = []; // Queue for storing log messages until channel is ready
+    this.logQueue = []; 
     this.connect();
   }
 
@@ -51,5 +51,20 @@ export default class RabbitMQTransport extends TransportStream {
     if (this.connection) {
       this.connection.close();
     }
+  }
+  /***
+   * @param {Logger}  logger
+   * @param {RabbitMQTransportSettings} rabbitSetting
+   * @param {Object} extraData
+   */
+  static addLogger(logger, rabbitSetting) {
+    logger.add({
+      transport: new RabbitMQTransport(rabbitSetting),
+      format: format.combine(
+        format.timestamp(),
+        format.json(),
+      ),
+    });
+    return logger;
   }
 }

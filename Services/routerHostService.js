@@ -3,7 +3,7 @@ import Request from "../models/request.js";
 import Response from "../models/response.js";
 import RouterOptions from "./RouterOptions.js";
 import { ServiceSelectorPredicateOptions } from "../models/model.js";
-import Logger from "../Log/Logger.js";
+import Logger from "../Log/LoggerUtil.js";
 
 export default class RouterHostService extends HostService {
   /** @type {RouterOptions[]} */

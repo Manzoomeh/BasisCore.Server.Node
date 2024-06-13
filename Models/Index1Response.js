@@ -23,9 +23,9 @@ export default class Index1Response extends RequestBaseResponse {
     try {
       const commandIl = JSON.parse(this._request.cms.page_il);
       const command = CommandUtil.createCommand(commandIl);
-      const context = new RequestContext(this._settings, this._request);
+      const context = new RequestContext(this._settings, this._request,logger);
       context.cancellation = new CancellationToken();
-      const result = await command.executeAsync(context,logger);
+      const result = await command.executeAsync(context);
       const renderResultList = [];
       await result.writeAsync(renderResultList, context.cancellation,logger);
       return [

@@ -8,18 +8,23 @@ import busboy from "busboy";
 import { IncomingMessage, ServerResponse } from "http";
 import BasisCoreException from "../models/Exceptions/BasisCoreException.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
+import { Logger } from "winston";
+import LoggerUtil from "../Log/LoggerUtil.js";
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /**@type {Server} */
   _server;
+  /** @type {Logger} */
+  _logger;
   /**
    *
    * @param {string} ip
    * @param {number} port
    */
-  constructor(ip, port) {
+  constructor(ip, port, rabbitSetting) {
     super(ip, port);
+    this._logger = LoggerUtil.createContext(rabbitSetting);
   }
 
   /** @returns {Server}*/
@@ -167,6 +172,73 @@ class HttpHostEndPoint extends HostEndPoint {
     this._server.close(() => {
       console.log(`http server with ${this._ip}:${this._port} downed`);
     });
+  }
+  _generateLogEntry(extraData) {
+    return {
+      schemaId: "8FCFD607-6A56-499B-98D5-E5A92502BBD5",
+      paramUrl:
+        "/E7E259BE-0434-40D9-8897-F45EF6940EF3/8FCFD607-6A56-499B-98D5-E5A92502BBD5/fa/log",
+      schemaName: "log",
+      schemaVersion: "1.0.0",
+      lid: 1,
+      baseVocab: "http://schema.site/FA/vo",
+      properties: [
+        {
+          propId: 6292,
+          multi: false,
+          added: [{ parts: [{ part: 1, values: [{ value: extraData.url }] }] }],
+        },
+        {
+          propId: 6293,
+          multi: false,
+          added: [
+            { parts: [{ part: 1, values: [{ value: extraData.rawUrl }] }] },
+          ],
+        },
+        {
+          propId: 6294,
+          multi: false,
+          added: [
+            { parts: [{ part: 1, values: [{ value: extraData.domain }] }] },
+          ],
+        },
+        {
+          propId: 6295,
+          multi: false,
+          added: [
+            { parts: [{ part: 1, values: [{ value: extraData.pageid }] }] },
+          ],
+        },
+        {
+          propId: 6297,
+          multi: false,
+          added: [
+            { parts: [{ part: 1, values: [{ value: extraData.requestId }] }] },
+          ],
+        },
+        {
+          propId: 6298,
+          multi: false,
+          added: [
+            { parts: [{ part: 1, values: [{ value: extraData.errorType }] }] },
+          ],
+        },
+        {
+          propId: 6299,
+          multi: false,
+          added: [
+            { parts: [{ part: 1, values: [{ value: extraData.message }] }] },
+          ],
+        },
+        {
+          propId: 6300,
+          multi: false,
+          added: [
+            { parts: [{ part: 1, values: [{ value: extraData.level }] }] },
+          ],
+        },
+      ],
+    };
   }
 }
 

@@ -17,7 +17,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
    * @param {import("tls").SecureContextOptions} options
    */
   constructor(ip, port, service, options) {
-    super(ip, port);
+    super(ip, port,service.settings._options.LogSettings);
     this.#options = options;
     this.#service = service;
   }
@@ -48,16 +48,12 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
               requestId: cms.cms["request-id"],
               errorType : "error"
             };
-            /** @type {winston.Logger} */
-            let logger = Logger.createContext(
-              parameters,
-              this.#service.settings._options.LogSettings
-            );
+            this._logger.info(this._generateLogEntry(parameters))
             const result = await this.#service.processAsync(
               cms,
-              req.fileContents , logger,
+              req.fileContents , this._logger,
             );
-            const [code, headers, body] = await result.getResultAsync(logger);
+            const [code, headers, body] = await result.getResultAsync(this._logger);
             res.writeHead(code, headers);
             res.end(body);
           };
