@@ -3,4 +3,8 @@ export default class SqliteCacheSetting {
     dbPath;
     /** @type {string} */
     tableName
+    /** @type {boolean} */
+    isFileBase
+    /** @type {string} */
+    filesPath
   }

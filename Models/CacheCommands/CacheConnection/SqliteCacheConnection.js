@@ -2,6 +2,9 @@ import SqliteCacheSetting from "./SqliteCacheSetting.js";
 import CacheConnectionBase from "./CacheConnectionBase.js";
 import CacheResult from "../../options/CacheResult.js";
 import sqlite3 from "sqlite3";
+import fs from "fs/promises";
+import path from "path";
+import crypto from "crypto";
 
 export default class SqliteCacheConnection extends CacheConnectionBase {
   /** @type {SqliteCacheSetting} */
@@ -11,7 +14,7 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
    * @param {SqliteCacheSetting} settings
    */
   constructor(settings) {
-    super()
+    super();
     this.settings = settings;
   }
   /**
@@ -27,7 +30,18 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
       database = new sqlite3.Database(this.settings.dbPath);
       const query = `SELECT * FROM ${this.settings.tableName}  WHERE key = ?`;
       const result = await this.#executeSqliteQuery(database, query, [key]);
-      return result[0];
+      let retVal;
+      try {
+        retVal =
+          result[0]?.content && this.settings.isFileBase
+            ? await fs.readFile(
+                path.join(this.settings.filesPath, result[0]?.content)
+              )
+            : result[0];
+      } catch (error) {
+        console.log("cache file was deleted for" + key);
+      }
+      return retVal;
     } finally {
       if (database) {
         database.close();
@@ -44,23 +58,45 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
   async addCacheContentAsync(key, content, properties) {
     let database = new sqlite3.Database(this.settings.dbPath);
     try {
-      const savedContent = await this.loadContentAsync(key);
+      const selectQuery = `SELECT * FROM ${this.settings.tableName}  WHERE key = ?`;
+      const [savedContent] = await this.#executeSqliteQuery(
+        database,
+        selectQuery,
+        [key]
+      );
       if (savedContent) {
         await this.#executeSqliteQuery(
           database,
           `DELETE FROM ${this.settings.tableName} WHERE key = ?`,
           [key]
         );
+        try {
+          this.settings.isFileBase
+            ? fs.unlink(
+                path.join(this.settings.filesPath, savedContent?.content)
+              )
+            : undefined;
+        } catch (err) {
+        }
       }
       const query = `INSERT INTO ${this.settings.tableName} (key, content, properties) VALUES (?, ?, ?)`;
+      let filename;
+      if (this.settings.isFileBase) {
+        filename =
+          crypto.createHash("sha256").update(key).digest("hex") + ".bin";
+        await fs.writeFile(
+          path.join(this.settings.filesPath, filename),
+          content
+        );
+      }
       const result = this.#executeSqliteQuery(database, query, [
         key,
-        content,
+        filename ? filename : content,
         JSON.stringify(properties),
       ]);
       return result;
-      // } catch (err) {
-      //   throw new Error("error in add cache  : " + err);
+    } catch (err) {
+      throw new Error("error in add cache  : " + err);
     } finally {
       if (database) {
         database.close();
