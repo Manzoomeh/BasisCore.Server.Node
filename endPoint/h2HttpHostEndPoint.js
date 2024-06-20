@@ -221,7 +221,9 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   }
 
   async _checkCacheAsync(stream, headers, next) {
+    const { query: queryObj } = url.parse(headers[":path"], true);
     if (
+      !queryObj.refresh && 
       this._cacheOptions.isEnabled &&
       this._cacheOptions.requestMethods.includes(headers[":method"]) &&
       this._cacheConnection

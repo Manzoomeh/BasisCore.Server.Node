@@ -243,7 +243,9 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {ServerResponse} res
    */
   async _checkCacheAsync(req, res, next) {
+    const urlObject = url.parse(req.url, true);
     if (
+      !urlObject?.query.refresh &&
       this._cacheOptions.isEnabled &&
       this._cacheOptions.requestMethods.includes(req.method) &&
       this._cacheConnection
