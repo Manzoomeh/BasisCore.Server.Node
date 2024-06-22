@@ -69,10 +69,6 @@ export default class LogContext {
    * @param {CancellationToken} cancellationToken
    */
   async writeAsync(stream, cancellationToken) {
-    if (this.debugMode !== "None" || this.infoCollection.length !== 0) {
-      await LogContext.DEBUG_CSS.writeAsync(stream, cancellationToken);
-    }
-
     for (const info of this.infoCollection) {
       await info.writeAsync(stream, cancellationToken);
     }
