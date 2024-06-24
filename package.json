@@ -20,6 +20,7 @@
   ],
   "scripts": {
     "stage": "node index.js",
+    "start": "node --openssl-legacy-provider management.js",
     "dev": "node --openssl-legacy-provider index.js",
     "context": "node test/context/index.js",
     "context-local": "node test/context/local-context.js",
@@ -39,6 +40,7 @@
     "repeater": "node test/command/repeater/simple.js",
     "con-sql": "node test/connection/sql/simple.js",
     "con-edge": "node test/connection/edge/simple.js",
+    "rabbit": "node test/connection/rabbit/simple.js",
     "call": "node test/command/call/simple.js",
     "call-group": "node test/command/call/in-group.js",
     "call-deep": "node test/command/call/deep.js",
@@ -61,6 +63,7 @@
     "socket-server": "node test\\connection\\socket\\app.js",
     "socket": "node test\\connection\\socket\\connection.js",
     "ws": "node test\\command\\external.ws.ws\\simple.js",
+    "manager": "node --trace-warnings manager\\index.js",
     "inlinesourcexml": "node test/command/inlinesource/inlinesourcexmlCommand.js",
     "fileStreamerApi": "node test\\fileStreamer\\api.js",
     "fileStreamerWithApi": "node test\\fileStreamer\\WithApi.js",
@@ -87,7 +90,9 @@
     "node-html-encoder": "^0.0.2",
     "pako": "^2.1.0",
     "promised-sqlite3": "^2.1.0",
-    "sqlite3": "^5.1.6"
+    "sqlite3": "^5.1.6",
+    "winston": "^3.13.0",
+    "winston-transport": "^4.7.0"
   },
   "devDependencies": {
     "jest": "^29.7.0",

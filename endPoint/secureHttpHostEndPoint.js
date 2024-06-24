@@ -22,7 +22,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
   }
 
   _createServer() {
-    return https
+    this._server =  https
       .createServer(this.#options, async (req, res) => {
         /** @type {Request} */
         let cms = null;
@@ -89,5 +89,6 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
       .on("error", (er) => console.error(er))
       .on("clientError", (er) => console.error(er))
       .on("tlsClientError", (er) => console.error(er));
+      return this._server
   }
 }

@@ -1,5 +1,7 @@
 import tls from "tls";
 import fs from "fs";
+import http from "http";
+import url from "url"
 import {
   NonSecureHttpHostEndPoint,
   SecureHttpHostEndPoint,
@@ -19,6 +21,7 @@ import {
 } from "./services/hostServices.js";
 import H2HttpHostEndPoint from "./endPoint/h2HttpHostEndPoint.js";
 import { HttpHostService } from "./services/HttpHostService.js";
+import EndPointController from "./EndpointController.js";
 
 export default class HostManager {
   /**@type {HostEndPoint[]} */
@@ -85,12 +88,14 @@ export default class HostManager {
    * @param {string} name
    * @param {HostEndPointOptions} options
    * @param {HostService} service
+   * @param {boolean} toBeListen
    * @returns {HostEndPoint}
    */
-  #createHttpEndPoint(name, options, service) {
-    const cacheSettings = options.CacheSettings
+  #createHttpEndPoint(name, options, service, toBeListen) {
+    const cacheSettings = options.CacheSettings;
     options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
+      let retVal;
       if (address.Certificate) {
         /**@type {tls.SecureContextOptions}*/
         const options = {};
@@ -157,14 +162,36 @@ export default class HostManager {
           }
         }
         if (!address.Certificate.Http2) {
-          this.hosts.push(
-            new SecureHttpHostEndPoint(ip, port, service, options,cacheSettings)
+          retVal = new SecureHttpHostEndPoint(
+            ip,
+            port,
+            service,
+            options,
+            cacheSettings
           );
         } else {
-          this.hosts.push(new H2HttpHostEndPoint(ip, port, service, options,cacheSettings));
+          retVal = new H2HttpHostEndPoint(
+            ip,
+            port,
+            service,
+            options,
+            cacheSettings
+          );
         }
       } else {
-        this.hosts.push(new NonSecureHttpHostEndPoint(ip, port, service,cacheSettings));
+        retVal = new NonSecureHttpHostEndPoint(
+          ip,
+          port,
+          service,
+          cacheSettings
+        );
+      }
+      if (toBeListen) {
+         retVal.listenAsync().then(()=>{
+          this.hosts.push(retVal);
+         })
+      }else{
+        this.hosts.push(retVal);
       }
     });
   }
@@ -257,11 +284,46 @@ export default class HostManager {
       endPoints.forEach((endPoint) => {
         if (host._ip === endPoint._ip && host._port === endPoint._port) {
           this.hosts.pop(host);
-          host.kill()
+          host?.kill();
         }
       });
     });
-
+  }
+  static async startManagementServer(configPath,welcomeService, address, port) {
+    const endPointController = new EndPointController(configPath,welcomeService);
+    await endPointController.listenAsync()
+    const server = http.createServer(async(req, res) => {
+        let body = "";
+        const urlObj = url.parse(req.url);
+        req.on("data", (chunk) => {
+          body += chunk.toString();
+        });
+        req.on("end", async() => {
+          req.body = body.length > 0 ? JSON.parse(body) : undefined;
+          req.query = urlObj.query;
+          const { url, method } = req;
+          if (url == "/endpointmanager/host" && method === "POST") {
+            return endPointController.addHost(req, res);
+          }
+          if (url == "/endpointmanager/host" && method === "PUT") {
+            return endPointController.editHost(req, res);
+          }
+          if (url == "/endpointmanager/host" && method === "DELETE") {
+            return endPointController.deleteHost(req, res);
+          }
+          if (url == "/endpointmanager/certificate" && method === "POST") {
+            return endPointController.addCertificate(req, res);
+          }
+          if (url == "/endpointmanager/certificate" && method === "DELETE") {
+            return endPointController.deleteCertificate(req, res);
+          }
+          res.writeHead(404, { "Content-Type": "text/html" });
+          return res.end(await fs.promises.readFile("./index.html"));
+        });
+    });
+    server.listen(port, address, () => {
+      console.log(`management Server running at ${address}:${port}`);
+    });
   }
   /**
    * @param {object} jsonObj
