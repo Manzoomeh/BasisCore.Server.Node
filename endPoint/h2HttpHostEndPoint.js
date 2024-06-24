@@ -8,8 +8,7 @@ import http from "http";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import url from "url";
 import CacheSettings from "../models/options/CacheSettings.js";
-const {  HTTP2_HEADER_AUTHORITY } =
-  http2.constants;
+const { HTTP2_HEADER_AUTHORITY } = http2.constants;
 
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {import("tls").SecureContextOptions} */
@@ -66,7 +65,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   }
 
   _createServer() {
-    return http2
+    this._server = http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
         this._checkCacheAsync(stream, headers, async () => {
@@ -218,10 +217,14 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           }
         });
       });
+    return this._server;
   }
 
   async _checkCacheAsync(stream, headers, next) {
+    const { query: queryObj } = url.parse(headers[":path"], true);
     if (
+      !queryObj.refresh &&
+      this._cacheOptions &&
       this._cacheOptions.isEnabled &&
       this._cacheOptions.requestMethods.includes(headers[":method"]) &&
       this._cacheConnection

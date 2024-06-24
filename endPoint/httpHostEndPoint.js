@@ -25,6 +25,8 @@ class HttpHostEndPoint extends HostEndPoint {
   _cacheOptions;
   /** @type {CacheConnectionBase?} */
   _cacheConnection;
+  /** @type {http.Server} */
+  _server
   /**
    *
    * @param {string} ip
@@ -36,7 +38,7 @@ class HttpHostEndPoint extends HostEndPoint {
     super(ip, port);
     this._service = service;
     this._cacheOptions = cacheOptions;
-    if (cacheOptions.connectionType) {
+    if (cacheOptions && cacheOptions.connectionType) {
       switch (cacheOptions.connectionType) {
         case "sqlite": {
           this._cacheConnection = new SqliteCacheConnection(
@@ -243,7 +245,10 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {ServerResponse} res
    */
   async _checkCacheAsync(req, res, next) {
+    const urlObject = url.parse(req.url, true);
     if (
+      !urlObject?.query.refresh &&
+      this._cacheOptions &&
       this._cacheOptions.isEnabled &&
       this._cacheOptions.requestMethods.includes(req.method) &&
       this._cacheConnection
@@ -274,6 +279,7 @@ class HttpHostEndPoint extends HostEndPoint {
    */
   async addCacheContentAsync(key, content, headers, method) {
     if (
+      this._cacheOptions &&
       this._cacheOptions.isEnabled &&
       this._cacheOptions.requestMethods.includes(method) &&
       this._cacheConnection
@@ -306,6 +312,10 @@ class HttpHostEndPoint extends HostEndPoint {
   }
   initializeAsync() {
     return this._service.initializeAsync();
+  }
+  kill(){
+     this._server.close()
+     console.log(`server ip ${this._ip} and port ${this._port} killed`)
   }
 }
 export default HttpHostEndPoint;

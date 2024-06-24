@@ -4,6 +4,8 @@ import CacheSettings from "./CacheSettings.js";
 export default class HostEndPointOptions {
   /**@type {"http" | "webSocket"} */
   Type;
+  /** @type {string} */
+  id;
   /**@type {PortListenerOptions[]} */
   Addresses;
   /**@type {number} */

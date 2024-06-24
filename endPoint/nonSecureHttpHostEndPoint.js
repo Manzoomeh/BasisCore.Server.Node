@@ -18,7 +18,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   }
 
   _createServer() {
-    return http.createServer(async (req, res) => {
+    this._server =  http.createServer(async (req, res) => {
       try {
         /** @type {Request} */
         this._handleContentTypes(req, res, async () => {
@@ -79,5 +79,6 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
         res.end(ex.toString());
       }
     });
+    return this._server
   }
 }
