@@ -20,6 +20,9 @@ BasisCore is a robust NodeJS webserver designed to parallel the functionality an
 
 ### Endpoint Management
 - Efficiently manage and route endpoints, ensuring scalable and organized handling of API requests.
+- 
+### File Streamer
+- A FileStreamer that can handle all of your needs; resize, change format, convert use it in rest or send to edge.
 
 ### Security and Protocol Handling
 - **Non-Secure and Secure Requests:** Handle both non-secure (HTTP) and secure (HTTPS) requests to ensure data integrity and security.
@@ -48,7 +51,7 @@ BasisCore is a robust NodeJS webserver designed to parallel the functionality an
     ```sh
     npm install
     ```
-
+**⚠️ Warning: You must have the ImageMagick library installed on your PC to use Index4 and File Streamer..**
 ### Configuration
 Configure your database connections and server settings in the `config.json` file or if you dont want to use management you can use index.js.
 
@@ -57,6 +60,8 @@ Configure your database connections and server settings in the `config.json` fil
 To start the server, run:
 ```sh
 npm start
-# or
+```
+ or
 ```sh
 npm run dev
+```
