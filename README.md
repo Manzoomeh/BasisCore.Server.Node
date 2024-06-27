@@ -57,7 +57,6 @@ Configure your database connections and server settings in the `config.json` fil
 To start the server, run:
 ```sh
 npm start
-``
-or
+# or
 ```sh
 npm run dev
