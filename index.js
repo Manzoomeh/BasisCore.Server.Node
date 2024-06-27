@@ -7,6 +7,7 @@ const host = {
   EndPoints: {
     Main01: {
       Type: "http",
+      id: "fingerfood",
       Addresses: [
         {
           EndPoint: "0.0.0.0:443",
@@ -15,6 +16,18 @@ const host = {
       ],
       Active: true,
       Routing: "mainService",
+      CacheSettings: {
+        requestMethods: "GET",
+        responseHeaders: ["content-type"],
+        isEnabled: true,
+        connectionType: "sqlite",
+        connectionSetting: {
+          dbPath: "test.db",
+          tableName: "cache_results",
+          isFileBase: true,
+          filesPath: "C:\\webservercache",
+        },
+      },
     },
   },
   Services: {
