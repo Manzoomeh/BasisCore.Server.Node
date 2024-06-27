@@ -7,6 +7,15 @@ This versatile web server empowers developers to seamlessly retrieve data from d
 - Additionally, our [academy](https://academy.basiscore.com/)  and [docs](https://docs.basiscore.com/index.html) page offers tutorials, guides, and best practices designed to enhance your proficiency in utilizing BasisCore Node effectively. Whether you're new to Basiscore or seeking newer techniques, our academy resources are tailored to support your learning journey.
 Together, these resources not only facilitate a thorough grasp of our web server's capabilities but also empower developers to leverage its features to build robust and efficient web applications.
 
+---
+If you encounter any bugs, issues, or have ideas for additional features, please feel free to:
+
+- **Report an Issue:** Add a new issue detailing the problem or suggestion.
+- **Submit a Pull Request:** If you have a fix or feature to add, submit a pull request.
+
+Your contributions are greatly appreciated!
+---
+
 ## Features
 
 ### Connectivity
@@ -77,7 +86,7 @@ After processing, FileStreamer securely saves the resulting files, ready for dep
     ```
 **⚠️ Warning: You must have the [ImageMagick](https://imagemagick.org/script/download.php) library installed on your PC to use Index4 and File Streamer..**
 ### Configuration
-Configure your database connections and server settings in the `config.json` file or if you dont want to use management you can use index.js.
+Configure your database connections and server settings in the `config.json` or `index.js` file or if you dont want to use management you can use index.js.
 
 ### Running the Server
 
