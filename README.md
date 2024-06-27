@@ -1,16 +1,23 @@
-# BasisCore NodeJS Webserver
+# BasisCore Node Webserver
 
-BasisCore is a robust NodeJS webserver designed to parallel the functionality and performance of its C# counterpart. It offers a comprehensive suite of features tailored to meet the needs of modern web applications.
+- For ten years, Manzomeh Negaran Company specialized in developing websites using C# as the primary web server technology. However, as the Node.js community grew and the language demonstrated its extensive capabilities, a strategic decision was made to adopt and develop a Node.js version of their web server.
+- BasisCore Node represents a robust implementation of a Node.js web server, carefully crafted to match and even exceed the functionality set by its C# predecessor. It boasts a comprehensive array of features specifically tailored to cater to the demands of modern web applications.
+This versatile web server empowers developers to seamlessly retrieve data from diverse sources and databases on the server side. It then facilitates the efficient rendering and display of this data using a set of intuitive basis commands, optimizing both development efficiency and application performance.
+
+- Additionally, our [academy](https://academy.basiscore.com/)  and [docs](https://docs.basiscore.com/index.html) page offers tutorials, guides, and best practices designed to enhance your proficiency in utilizing BasisCore Node effectively. Whether you're new to Basiscore or seeking newer techniques, our academy resources are tailored to support your learning journey.
+Together, these resources not only facilitate a thorough grasp of our web server's capabilities but also empower developers to leverage its features to build robust and efficient web applications.
 
 ## Features
 
-### Database Connectivity
+### Connectivity
+
+- This web server supports a diverse array of data sources, enabling robust integration into web pages. By leveraging these connections, developers can ensure the creation of well-built websites that are responsive and efficient in data handling.
+- From traditional SQL databases to modern NoSQL solutions like MongoDB, the web server accommodates various types of data storage. This versatility allows developers to choose the most suitable data source for their application's specific needs, whether it involves transactional integrity, flexible schema design, or high scalability.
 - **MongoDB:** Integrate with MongoDB for scalable, flexible NoSQL data storage.
 - **[Edge](https://github.com/Manzoomeh/BasisCore.Server.Edge):** Python base gateway for communicate with BasisCore webserver. The BasisEdge framework is an ideal tool for developers who prioritize ease of access and security in their network development projects. As the name suggests, BasisEdge sits at the edge of the network.
 - **MySQL:** Utilize MySQL for robust, relational database management.
 - **Sccket:** Use it to connect and show datas from socket connections.
 - **SQLite:** Employ SQLite for lightweight, file-based database operations.
-- **Redis:** Integrate with Redis for efficient, in-memory data caching and messaging.
 - **SQL:** Use Sql Connection for commands easily and with high performance.
 
 ### Advanced Command and Caching System
@@ -18,17 +25,34 @@ BasisCore is a robust NodeJS webserver designed to parallel the functionality an
 - **External Commands:** Want your own commands? no problems! you can implement your own commands and add it to external commands directory.
 - **Built-in Caching System:** Optimize performance and speed with a sophisticated caching mechanism that reduces database load and speeds up response times.
 
+### Compatible with basiccore client version 
+- basiscore node webserver works well with [BasisCore-Client](https://github.com/Manzoomeh/BasisCore.Client-v2) . BasisCore-Client is a versatile library designed specifically for client-side development across various types of web pages. It offers a rich set of commands that facilitate dynamic rendering and interactive functionalities directly within the user's browser environment.
+
+- These commands enable developers to seamlessly integrate complex data handling, and interactive elements into their web applications without relying solely on server-side processing. By leveraging BasisCore-Client, developers can enhance user experiences through responsive interfaces and efficient data management strategies.
+Whether you're building single-page applications, interactive dashboards, or complex forms, BasisCore-Client empowers you to create compelling web experiences with ease. Its documentation ensure that developers can quickly grasp its capabilities and implement sophisticated client-side functionalities effectively.
+
 ### Endpoint Management
-- Efficiently manage and route endpoints, ensuring scalable and organized handling of API requests.
+- This endpoint manager provides advanced capabilities for scheduling layer seven routings, offering precise control over various parameters crucial for network and application management. Administrators can seamlessly modify IP addresses, ports, routing rules, request methods, services, and SSL certificates as needed.
+
+- By scheduling these routings at the application layer (layer seven), This flexibility enables dynamic adjustments to accommodate changing traffic patterns, and support seamless failover strategies.
+Moreover, the ability to manage SSL certificates ensures compliance with security standards and enhances data protection during data transmission. This comprehensive endpoint management empowers IT teams to maintain optimal network operations and deliver reliable, secure services to users and clients.
+
+- Whether configuring routing for microservices architectures or ensuring robust security protocols, this endpoint manager facilitates precise control and flexibility essential for modern network infrastructures.
   
 ### File Streamer
-- A FileStreamer that can handle all of your needs; resize, change format, convert use it in rest or send to edge.
+-FileStreamer is your ultimate solution for handling diverse file processing tasks with ease. Whether you need to resize images, change formats, convert files for REST APIs, or distribute them to edge servers, FileStreamer offers a versatile platform to streamline your workflows.
+
+- At its core, FileStreamer operates by defining jobs through arrays of steps. These steps can encompass a wide range of operations tailored to your specific requirements—whether it's resizing images to  converting documents into different formats for compatibility, or preparing media files for use across edge servers.
+
+- Once a job is defined and executed, FileStreamer diligently processes each step, ensuring precise and efficient handling of your files. Whether you're dealing with high-resolution images, complex media files, or critical documents, FileStreamer's robust capabilities ensure that tasks are completed reliably and in accordance with your specifications.
+
+After processing, FileStreamer securely saves the resulting files, ready for deployment or further integration into your applications. This streamlined approach not only enhances operational efficiency but also empowers you to deliver optimized content and data across your network, meeting the demands of modern web applications and services effectively.
 
 ### Security and Protocol Handling
 - **Non-Secure and Secure Requests:** Handle both non-secure (HTTP) and secure (HTTPS) requests to ensure data integrity and security.
 - **HTTP/2 Support:** Benefit from the performance improvements and features offered by HTTP/2.
 ### Debug Mode 
-- if you want to check the work of database and check what is wrong with data sources you only need to add debug=true and by this the webserver shows you information on the end of web page with time of each command
+- Because the data is received from several sources, we have implemented a debug mode to simplify the debugging process on our pages. This mode is activated by adding a key called debug with a boolean value of true. When debug is set to true, the web server provides detailed information such as data sources, retrieval times for each source, and rendering times for each command. This helps us effectively monitor and optimize the performance of our application during development and testing phases.
 ## Getting Started
 
 ### Prerequisites
@@ -151,7 +175,7 @@ Contains conditions for selecting a specific service, including:
 
 Specifies settings for a service responsible for handling requests and converting them to output, including:
 
-- **Type**: Specifies the type of service, such as `File`, `Proxy`, `Python`, `Sql`, or `WebSocket`.
+- **Type**: Specifies the type of service, such as `File`, `Sql`
 - **ReadBodyTimeOut**: Specifies the maximum time allowed for reading the request body. Default is `15` seconds.
 - **ProcessTimeOut**: Specifies the maximum time allowed for processing the request. Default is `30` seconds.
 - **MaxBodySize**: Specifies the maximum size of the request body. Default is `1024` bytes.
