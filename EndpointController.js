@@ -5,18 +5,28 @@ import {
   HostManagerOptions,
   HostServiceOptions,
 } from "./models/model.js";
-
+import { ServiceSelectorPredicateItemOptions } from "./models/model.js";
+import DefaultManagerConfig from "./Models/DefaultConfig.js";
+import RouterHostService from "./services/routerHostService.js";
 class EndPointController {
   /** @type {HostManagerOptions} */
   config;
   /** @type {HostManager} */
   hostManager;
-
-  constructor(configPath, welcomeService) {
+  /** @type {DefaultManagerConfig}*/
+  defaultConfig;
+  /**
+   *
+   * @param {string} configPath
+   * @param {HostServiceOptions} welcomeService
+   * @param {DefaultManagerConfig} defaultConfig
+   */
+  constructor(configPath, welcomeService, defaultConfig) {
     this.configPath = configPath;
     this.config = JSON.parse(fs.readFileSync(this.configPath));
     this.config.Services.welcomeService = welcomeService;
     this.hostManager = HostManager.fromJson(this.config);
+    this.defaultConfig = defaultConfig;
   }
   listenAsync() {
     return this.hostManager.listenAsync();
@@ -207,25 +217,6 @@ class EndPointController {
   }
   /**
    *
-   * @param {string} serviceName
-   * @param {HostServiceOptions} service
-   */
-  async #deleteServices(serviceName) {
-    if (!this.config.Services[serviceName]) {
-      throw new Error("service with this name are not found !");
-    }
-    delete this.config.Services[serviceName];
-    for (let key in Object.keys(this.config.EndPoints)) {
-      if (this.config.EndPoints[key].Routing == "serviceName") {
-        const endPointConfig = this.config.EndPoints[key];
-        await this.#editHost(name, endPointConfig, "welcomeService");
-      }
-    }
-
-    await this.#saveConfig();
-  }
-  /**
-   *
    * @param {IncomingMessage} req
    * @param {ServerResponse} res
    * @returns
@@ -388,17 +379,141 @@ class EndPointController {
       JSON.stringify({ errorid: 1, message: "certificate deleted successfuly" })
     );
   }
-  async seeConfigs(req, res) {
-    res.writeHead(200, { "Content-Type": "application/json" });
-    res.end(JSON.stringify(this.config));
-  }
   async deleteService(req, res) {
-    await this.#deleteServices(req.body.serviceName, req.body.service);
-    res.writeHead(200, { "Content-Type": "text/plain" });
-    res.end("service " + req.body.name + " added successfuly");
+    try {
+      const serviceName = req.body.name;
+      if (!this.config.Services[serviceName]) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({
+            errorid: 1,
+            message: "the service by this name not found",
+          })
+        );
+      }
+      let isHaveEndpoint = false;
+      Object.keys(this.config.EndPoints).forEach((key) => {
+        if (this.config.EndPoints[key].Routing == serviceName) {
+          isHaveEndpoint = true;
+        }
+      });
+      if (isHaveEndpoint) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({ errorid: 1, message: "the service are in use" })
+        );
+      }
+      delete this.config.Services[serviceName];
+      await this.#saveConfig();
+      res.writeHead(200, { "Content-Type": "application/json" });
+      return res.end(
+        JSON.stringify({ errorid: 1, message: "service deleted successfuly" })
+      );
+    } catch (error) {
+      res.writeHead(500, { "Content-Type": "application/json" });
+      return res.end(
+        JSON.stringify({
+          errorid: 1,
+          message: "internal server error",
+        })
+      );
+    }
+  }
+  /**
+   * @param {string} hostId
+   */
+  async #restartHost(hostId) {
+    let host = this.#findHostById(hostId);
+    this.#deleteHost(hostId);
+    this.hostManager.addHost(
+      hostname,
+      host,
+      this.config.Services[host.Routing]
+    );
+  }
+  /**
+   * @param {string} hostId
+   */
+  async #restartHostWithSpeceficService(serviceName) {
+    Object.keys(this.config.EndPoints).forEach(async (key) => {
+      if (this.config.EndPoints[key].Routing == serviceName) {
+        const endpoint = JSON.stringify(this.config.EndPoints[key]);
+        await this.#deleteHost(this.config.EndPoints[key].id);
+        this.hostManager.addHost(
+          key,
+          JSON.parse(endpoint),
+          this.config.Services[serviceName]
+        );
+      }
+    });
+    return Promise.resolve();
   }
   async addService(req, res) {
+    if (
+      !this.validateBody(
+        {
+          type: "string",
+          name: "string",
+          settings: "object",
+        },
+        req,
+        res
+      )
+    ) {
+      return;
+    }
     try {
+      let {
+        name,
+        type,
+        defaultConfigUrl,
+        permissionUrl,
+        reportUrl,
+        settings,
+        readBodyTimeOut,
+        processTimeout,
+        maxBodySize,
+        maxMultiPartSize,
+      } = req.body;
+      if (this.config.Services[name]) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({
+            message: "invalid service name",
+            errorid: 1,
+          })
+        );
+      }
+      if (!type) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        res.end(
+          JSON.stringify({
+            message: "type is required",
+            errorid: 1,
+          })
+        );
+      }
+      /**@type {NodeJS.Dict<any>} */
+      let formatedSetting = {
+        ...settings,
+        LibPath: this.defaultConfig.LibPath,
+      };
+      /** @type {HostServiceOptions} */
+      let service = {
+        Type: type,
+        ReadBodyTimeOut: readBodyTimeOut,
+        ProcessTimeOut: processTimeout,
+        MaxBodySize: maxBodySize,
+        MaxMultiPartSize: maxMultiPartSize,
+        Streamer: {
+          DefaultConfigUrl: defaultConfigUrl,
+          PermissionUrl: permissionUrl,
+          ReportUrl: reportUrl,
+        },
+        Settings: formatedSetting,
+      };
+      this.config.Services[name] = service;
+      await this.#saveConfig();
       res.writeHead(200, { "Content-Type": "application/json" });
       res.end(
         JSON.stringify({
@@ -407,13 +522,66 @@ class EndPointController {
         })
       );
     } catch (error) {
+      console.log(error);
       res.writeHead(500, { "Content-Type": "application/json" });
       res.end(JSON.stringify({ message: "internal server error", errorid: 5 }));
     }
   }
+  async editService(req, res) {
+    if (
+      !this.validateBody(
+        {
+          name: "string",
+        },
+        req,
+        res
+      )
+    ) {
+      return;
+    }
+    try {
+      const data = this.config.Services[req.body.name];
+      if (!data) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({ message: "the service not found", errorid: 3 })
+        );
+      }
+      for (const key in req.body) {
+        if (
+          key != "name" &&
+          key != "settings" &&
+          req.body[key] !== null &&
+          req.body[key] !== undefined
+        ) {
+          data[key] = req.body[key];
+        }
+      }
+      const settings = req.body.settings;
+      if (settings && typeof settings == "object") {
+        Object.keys(settings).forEach((key) => {
+          data.Settings[key] = settings[key];
+        });
+      }
+      this.config.Services[req.body.name] = data;
+      await this.#saveConfig();
+      await this.#restartHostWithSpeceficService(req.body.name);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      res.end(
+        JSON.stringify({
+          message: "service " + req.body.name + " edited successfuly",
+          errorid: 1,
+        })
+      );
+    } catch (error) {
+      console.log(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "internal server error", errorid: 5 }));
+    }
+  }
+
   validateBody = (schema, req, res) => {
     const errors = [];
-
     for (const key in schema) {
       if (!req.body[key]) {
         errors.push(`Missing required field: ${key}`);
@@ -427,9 +595,143 @@ class EndPointController {
       res.end(JSON.stringify({ errors, errorid: 4 }));
       return false;
     }
-
     return true;
   };
+
+  /**
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
+   * @returns
+   */
+  async addRouting(req, res) {
+    if (
+      !this.validateBody(
+        {
+          hostId: "string",
+        },
+        req,
+        res
+      )
+    ) {
+      return;
+    }
+    try {
+      const { hostId, routing } = req.body;
+      if (!Array.isArray(routing) || routing.length < 1) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({
+            message: "routing must be array with minimum length of 1",
+            errorid: 5,
+          })
+        );
+      }
+      let host = this.#findHostById(hostId);
+      if (!host) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({ errorid: 3, message: "host not found" })
+        );
+      }
+      this.#deleteHost(hostId);
+      host.Routing = {
+        Async: true,
+        Items: [...routing, { id: 0, Service: "welcomeService" }],
+      };
+      let hostname = this.#setHostById(hostId, host);
+      await this.#saveConfig();
+      let service = new RouterHostService(
+        "name-router",
+        host.Routing,
+        this.hostManager.loadServices(this.config.Services)
+      );
+      this.hostManager.addHost(hostname, host, service);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      return res.end(
+        JSON.stringify({ errorid: 1, message: "routing added successfuly" })
+      );
+    } catch (error) {
+      console.log(error);
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "internal server error", errorid: 5 }));
+    }
+  }
+  /**
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
+   * @returns
+   */
+  async editRouting(req, res) {
+    try {
+      if (
+        !this.validateBody(
+          {
+            hostId: "string",
+          },
+          req,
+          res
+        )
+      ) {
+        return;
+      }
+      const { hostId } = req.body;
+      /** @type {ServiceSelectorPredicateItemOptions[]} */
+      const routing = req.body.routing;
+      if (!Array.isArray(routing) || routing.length < 1) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({
+            message: "routing must be array with minimum length of 1",
+            errorid: 5,
+          })
+        );
+      }
+      let host = this.#findHostById(hostId);
+      if (!host) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({ errorid: 3, message: "host not found" })
+        );
+      }
+      if (!Array.isArray(host?.Routing.Items)) {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(
+          JSON.stringify({ errorid: 3, message: "use add routing" })
+        );
+      }
+
+      routing.forEach((data) => {
+        const index = host.Routing.Items.findIndex((item) => {
+          item.id == data.id;
+        });
+        if (index != -1) {
+          host.Routing.Items[index] == data;
+        } else {
+          throw new Error("at least one id is incorrect ");
+        }
+      });
+      this.#deleteHost(hostId);
+      let hostname = this.#setHostById(hostId, host);
+      await this.#saveConfig();
+      let service = new RouterHostService(
+        "name-router",
+        host.Routing,
+        this.hostManager.loadServices(this.config.Services)
+      );
+      this.hostManager.addHost(hostname, host, service);
+      res.writeHead(200, { "Content-Type": "application/json" });
+      return res.end(
+        JSON.stringify({ errorid: 1, message: "routing edited successfuly" })
+      );
+    } catch (error) {
+      if (error.message == "at least one id is incorrect ") {
+        res.writeHead(400, { "Content-Type": "application/json" });
+        return res.end(JSON.stringify({ message: error.message, errorid: 3 }));
+      }
+      res.writeHead(500, { "Content-Type": "application/json" });
+      res.end(JSON.stringify({ message: "internal server error", errorid: 5 }));
+    }
+  }
 }
 
 export default EndPointController;

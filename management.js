@@ -13,5 +13,7 @@ HostManager.startManagementServer(
     },
   },
   "185.44.36.77",
-  2020
+  2020,{
+    LibPath : "C:\\Users\\bazrgar\\Desktop\\FINGERFOOD-MAIN\\BasisCore.Server.Node\\ExternalCommands"
+  }
 );

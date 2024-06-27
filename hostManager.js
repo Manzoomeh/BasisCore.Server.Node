@@ -1,7 +1,7 @@
 import tls from "tls";
 import fs from "fs";
 import http from "http";
-import url from "url"
+import url from "url";
 import {
   NonSecureHttpHostEndPoint,
   SecureHttpHostEndPoint,
@@ -48,7 +48,7 @@ export default class HostManager {
    */
   #loadEndpoints(options) {
     this.hosts = [];
-    const services = this.#loadServices(options.Services);
+    const services = this.loadServices(options.Services);
     for (const name in options.EndPoints) {
       if (Object.hasOwnProperty.call(options.EndPoints, name)) {
         const endPointsOptions = options.EndPoints[name];
@@ -187,10 +187,10 @@ export default class HostManager {
         );
       }
       if (toBeListen) {
-         retVal.listenAsync().then(()=>{
+        retVal.listenAsync().then(() => {
           this.hosts.push(retVal);
-         })
-      }else{
+        });
+      } else {
         this.hosts.push(retVal);
       }
     });
@@ -200,7 +200,7 @@ export default class HostManager {
    * @param {NodeJS.Dict<HostServiceOptions>} services
    * @returns {HostService[]}
    */
-  #loadServices(services) {
+  loadServices(services) {
     /**@type {HostService[]} */
     const retVal = new Array();
     for (const name in services) {
@@ -289,37 +289,62 @@ export default class HostManager {
       });
     });
   }
-  static async startManagementServer(configPath,welcomeService, address, port) {
-    const endPointController = new EndPointController(configPath,welcomeService);
-    await endPointController.listenAsync()
-    const server = http.createServer(async(req, res) => {
-        let body = "";
-        const urlObj = url.parse(req.url);
-        req.on("data", (chunk) => {
-          body += chunk.toString();
-        });
-        req.on("end", async() => {
-          req.body = body.length > 0 ? JSON.parse(body) : undefined;
-          req.query = urlObj.query;
-          const { url, method } = req;
-          if (url == "/endpointmanager/host" && method === "POST") {
-            return endPointController.addHost(req, res);
-          }
-          if (url == "/endpointmanager/host" && method === "PUT") {
-            return endPointController.editHost(req, res);
-          }
-          if (url == "/endpointmanager/host" && method === "DELETE") {
-            return endPointController.deleteHost(req, res);
-          }
-          if (url == "/endpointmanager/certificate" && method === "POST") {
-            return endPointController.addCertificate(req, res);
-          }
-          if (url == "/endpointmanager/certificate" && method === "DELETE") {
-            return endPointController.deleteCertificate(req, res);
-          }
-          res.writeHead(404, { "Content-Type": "text/html" });
-          return res.end(await fs.promises.readFile("./index.html"));
-        });
+  static async startManagementServer(
+    configPath,
+    welcomeService,
+    address,
+    port,
+    defaultConfig
+  ) {
+    const endPointController = new EndPointController(
+      configPath,
+      welcomeService,
+      defaultConfig
+    );
+    await endPointController.listenAsync();
+    const server = http.createServer(async (req, res) => {
+      let body = "";
+      const urlObj = url.parse(req.url);
+      req.on("data", (chunk) => {
+        body += chunk.toString();
+      });
+      req.on("end", async () => {
+        req.body = body.length > 0 ? JSON.parse(body) : undefined;
+        req.query = urlObj.query;
+        const { url, method } = req;
+        if (url == "/endpointmanager/host" && method === "POST") {
+          return endPointController.addHost(req, res);
+        }
+        if (url == "/endpointmanager/host" && method === "PATCH") {
+          return endPointController.editHost(req, res);
+        }
+        if (url == "/endpointmanager/host" && method === "DELETE") {
+          return endPointController.deleteHost(req, res);
+        }
+        if (url == "/endpointmanager/service" && method === "POST") {
+          return endPointController.addService(req, res);
+        }
+        if (url == "/endpointmanager/service" && method === "PATCH") {
+          return endPointController.editService(req, res);
+        }
+        if (url == "/endpointmanager/service" && method === "DELETE") {
+          return endPointController.deleteService(req, res);
+        }
+        if (url == "/endpointmanager/certificate" && method === "POST") {
+          return endPointController.addCertificate(req, res);
+        }
+        if (url == "/endpointmanager/certificate" && method === "DELETE") {
+          return endPointController.deleteCertificate(req, res);
+        }
+        if (url == "/endpointmanager/routing" && method === "POST") {
+          return endPointController.addRouting(req, res);
+        }
+        if (url == "/endpointmanager/routing" && method === "PUT") {
+          return endPointController.deleteCertificate(req, res);
+        }
+        res.writeHead(404, { "Content-Type": "text/html" });
+        return res.end(await fs.promises.readFile("./index.html"));
+      });
     });
     server.listen(port, address, () => {
       console.log(`management Server running at ${address}:${port}`);
