@@ -1,6 +1,5 @@
 import HostManager from "./hostManager.js";
 import { HostManagerOptions } from "./models/model.js";
-import CacheSettings from "./models/options/CacheSettings.js";
 
 /** @type {HostManagerOptions} */
 const host = {
@@ -8,29 +7,45 @@ const host = {
   EndPoints: {
     Main06: {
       Type: "http",
+      id: "fingerfood",
       Addresses: [
         {
+          id: "1",
           EndPoint: "185.44.36.186:443",
           Certificate: {
             Type: "ssl",
             PfxPath: "test-cert/basiscore.net.pfx",
             PfxPassword: "basiscore.net",
-            // Http2: true,
+            Http2: true,
           },
         },
         {
+          id: "2",
           EndPoint: "185.44.36.186:80",
         },
       ],
       Active: true,
       Routing: "mainService",
+      CacheSettings: {
+        requestMethods: "GET",
+        responseHeaders: ["content-type"],
+        isEnabled: true,
+        connectionType: "sqlite",
+        connectionSetting: {
+          dbPath: "test.db",
+          tableName: "cache_results",
+          isFileBase: true,
+          filesPath: "C:\\webservercache",
+        },
+      },
     },
   },
   Services: {
     mainService: {
       Type: "http",
       Settings: {
-        LibPath : "C:\\Users\\bazrgar\\Desktop\\finger\\BasisCore.Server.Node\\ExternalCommands",
+        LibPath:
+          "C:\\Users\\bazrgar\\Desktop\\finger\\BasisCore.Server.Node\\ExternalCommands",
         "Connections.edge.RoutingData": {
           endpoint: "192.168.96.76:2056",
         },
@@ -111,7 +126,7 @@ const host = {
         "Connections.edge.basiscore": {
           endpoint: "192.168.96.75:2071",
         },
-        "Connections.socket.cmsDbService" : {endpoint:"192.168.96.56:50007"},
+        "Connections.socket.cmsDbService": { endpoint: "192.168.96.56:50007" },
         "Connections.edge.exhibitor": { endpoint: "192.168.96.75:2071" },
         "Connections.edge.py_basiscore": { endpoint: "192.168.96.75:2071" },
         "Connections.edge.test_basiscore": { endpoint: "192.168.96.76:2077" },
@@ -121,7 +136,7 @@ const host = {
         "Default.MultiPart.ArchivePath": "//192.168.96.2/a",
         "Default.ViewCommand.GroupColumn": "prpid",
         "Default.PythonPath": "c:\\Python\\Python38-32\\python.exe",
-        "Connections.socket.mydbsource" : {endpoint:"127.0.0.1:9090"},
+        "Connections.socket.mydbsource": { endpoint: "127.0.0.1:9090" },
         "Default.ScriptEngine.PythonPath":
           "C:\\Services\\Server user.basiscore.com 217\\Service\\PythonScriptEngine.py",
       },

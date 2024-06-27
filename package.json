@@ -21,6 +21,7 @@
   "scripts": {
     "stage": "node index.js",
     "start": "node --openssl-legacy-provider management.js",
+    "build": "webpack --mode production",
     "dev": "node --openssl-legacy-provider index.js",
     "context": "node test/context/index.js",
     "context-local": "node test/context/local-context.js",
@@ -96,6 +97,9 @@
   },
   "devDependencies": {
     "jest": "^29.7.0",
-    "supertest": "^6.3.3"
+    "supertest": "^6.3.3",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0",
+    "uglifyjs-webpack-plugin": "^2.2.0"
   }
 }
