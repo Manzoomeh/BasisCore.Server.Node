@@ -50,11 +50,14 @@ BasisCore is a robust NodeJS webserver designed to parallel the functionality an
     ```
 
 ### Configuration
-Configure your database connections and server settings in the `config` directory.
+Configure your database connections and server settings in the `config.json` file or if you dont want to use management you can use index.js.
 
 ### Running the Server
 
 To start the server, run:
 ```sh
 npm start
-
+``
+or
+```sh
+npm run dev
