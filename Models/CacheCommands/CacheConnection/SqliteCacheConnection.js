@@ -58,27 +58,11 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
   async addCacheContentAsync(key, content, properties) {
     let database = new sqlite3.Database(this.settings.dbPath);
     try {
-      const selectQuery = `SELECT * FROM ${this.settings.tableName}  WHERE key = ?`;
-      const [savedContent] = await this.#executeSqliteQuery(
-        database,
-        selectQuery,
-        [key]
-      );
-      if (savedContent) {
         await this.#executeSqliteQuery(
           database,
           `DELETE FROM ${this.settings.tableName} WHERE key = ?`,
           [key]
         );
-        try {
-          this.settings.isFileBase
-            ? fs.unlink(
-                path.join(this.settings.filesPath, savedContent?.content)
-              )
-            : undefined;
-        } catch (err) {
-        }
-      }
       const query = `INSERT INTO ${this.settings.tableName} (key, content, properties) VALUES (?, ?, ?)`;
       let filename;
       if (this.settings.isFileBase) {
