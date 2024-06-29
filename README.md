@@ -14,6 +14,7 @@ If you encounter any bugs, issues, or have ideas for additional features, please
 - **Submit a Pull Request:** If you have a fix or feature to add, submit a pull request.
 
 Your contributions are greatly appreciated!
+
 ---
 
 ## Features
