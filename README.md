@@ -84,6 +84,79 @@ After processing, FileStreamer securely saves the resulting files, ready for dep
     ```sh
     npm install
     ```
+Or you can install it as a package on your project using this 
+```sh
+npm install basiscore.webserver
+```
+```javascript
+import HostManager from "basiscore.webserver";
+/** @type {HostManagerOptions} */
+const host = {
+    Lazy: true,
+    EndPoints: {
+      Main01: {
+        Type: "http",
+        id: "fingerfood",
+        Addresses: [
+          {
+            EndPoint: "0.0.0.0:443",
+          },
+          { EndPoint: "0.0.0.0:80" },
+        ],
+        Active: true,
+        Routing: "mainService",
+        CacheSettings: {
+          requestMethods: "GET",
+          responseHeaders: ["content-type"],
+          isEnabled: true,
+          connectionType: "sqlite",
+          connectionSetting: {
+            dbPath: "test.db",
+            tableName: "cache_results",
+            isFileBase: true,
+            filesPath: "C:\\webservercache",
+          },
+        },
+      },
+    },
+    Services: {
+      mainService: {
+        Type: "http",
+        Settings: {
+          LibPath : "F:\\AliBazregar\\BasisCore.Server.Node\\ExternalCommands",
+          "Connections.edge.RoutingData": {
+            endpoint: "127.0.0.1:2002",
+          },
+        },
+      },
+    },
+  };
+  
+  const service = HostManager.fromJson(host);
+  service.listenAsync();
+```
+or you can use this : 
+```javascript
+import HostManager from "basiscore.webserver";
+
+HostManager.startManagementServer(
+  "./config.json",
+  {
+   Type: "http",
+    Settings: {
+      LibPath:
+        "C:\\Users\\bazrgar\\Desktop\\finger\\BasisCore.Server.Node\\ExternalCommands",
+      "Connections.edge.RoutingData": {
+        endpoint: "185.44.36.77:1025",
+      },
+    },
+  },
+  "185.44.36.77",
+  2020,{
+    LibPath : "C:\\Users\\bazrgar\\Desktop\\FINGERFOOD-MAIN\\BasisCore.Server.Node\\ExternalCommands"
+  }
+);
+```
 **⚠️ Warning: You must have the [ImageMagick](https://imagemagick.org/script/download.php) library installed on your PC to use Index4 and File Streamer..**
 ### Configuration
 Configure your database connections and server settings in the `config.json` or `index.js` file or if you dont want to use management you can use index.js.
