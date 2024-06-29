@@ -13,7 +13,7 @@ export default class RouterHostService extends HostService {
    * @param {HostService[]} services
    */
   constructor(name, options, services) {
-    super(name);
+    super(name,options);
     this.#routes = [];
     options.Items.forEach((option) => {
       const service = services.find((x) => x.name == option.Service);
