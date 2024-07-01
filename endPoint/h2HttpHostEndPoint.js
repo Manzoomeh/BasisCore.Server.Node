@@ -25,6 +25,16 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   constructor(ip, port, service, options, cacheSettings) {
     super(ip, port, service, null, cacheSettings);
     this.#options = options;
+    this.#options.ciphers = [
+      "TLS_AES_256_GCM_SHA384",
+      "TLS_CHACHA20_POLY1305_SHA256",
+      "TLS_AES_128_GCM_SHA256",
+      "ECDHE-RSA-AES256-GCM-SHA384",
+      "ECDHE-RSA-AES128-GCM-SHA256",
+    ].join(":");
+    this.#options.honorCipherOrder = true;
+    this.#options.minVersion = "TLSv1.2";
+    this.#options.allowHTTP1 = true;
   }
 
   /**
@@ -78,7 +88,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           /** @type {NodeJS.Dict<string>} */
           const formFields = {};
           const method = headers[":method"];
-          const reqUrl = headers[":path"];
+          const reqUrl = headers[":path"].replace(/[\r\n]+[ \t]*/g, '');
           let bodyStr = "";
 
           const createCmsAndCreateResponseAsync = async () => {
@@ -107,7 +117,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             );
             const result = await this._service.processAsync(cms, fileContents);
             if (routingDataStep) routingDataStep.complete();
-            const [code, headerList, body] = await result.getResultAsync(
+            let [code, headerList, body] = await result.getResultAsync(
               routingDataStep,
               rawRequest,
               queryObj.debug == "true" ||
@@ -123,7 +133,14 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
               headers[":method"]
             );
             headerList[":status"] = code;
-            stream.respond(headerList);
+            stream.respond({
+              ...headerList,
+              "Strict-Transport-Security":
+                "max-age=15552000; includeSubDomains; preload",
+              "X-Content-Type-Options": "nosniff",
+              "X-Frame-Options": "DENY",
+              "X-XSS-Protection": "1; mode=block",
+            });
             stream.end(body);
           };
 
