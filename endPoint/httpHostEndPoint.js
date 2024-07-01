@@ -148,6 +148,22 @@ class HttpHostEndPoint extends HostEndPoint {
     request["form"] = formFields;
     return request;
   }
+    /**
+   *
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
+   */
+  _securityHeadersMiddleware(req, res, next) {
+    req.url = req.url.replace(/[\r\n]+[ \t]*/g, '')
+    res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains; preload');
+    res.setHeader('X-Content-Type-Options', 'nosniff');
+    res.setHeader('X-Frame-Options', 'DENY');
+    res.setHeader('X-XSS-Protection', '1; mode=block');
+  
+    if (typeof next === 'function') {
+      next();
+    }
+  }
   /**
    *
    * @param {IncomingMessage} req
@@ -295,6 +311,13 @@ class HttpHostEndPoint extends HostEndPoint {
       );
     }
   }
+  sanitizeInput(input) {
+    let inputStr = String(input);
+    inputStr = inputStr.replace(/[\r\n]/g, '');
+
+    return inputStr;
+}
+
   /**
    *
    * @param {NodeJS.Dict} headers
