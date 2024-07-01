@@ -88,7 +88,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           /** @type {NodeJS.Dict<string>} */
           const formFields = {};
           const method = headers[":method"];
-          // const reqUrl = headers[":path"]
+          const reqUrl = headers[":path"]
           let bodyStr = "";
 
           const createCmsAndCreateResponseAsync = async () => {
