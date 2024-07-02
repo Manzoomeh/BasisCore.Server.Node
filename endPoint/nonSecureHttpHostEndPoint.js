@@ -25,19 +25,17 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
             this._checkCacheAsync(req, res, async () => {
               const createCmsAndCreateResponseAsync = async () => {
                 const queryObj = url.parse(req.url, true).query;
-                let routingDataStep =
+                let debugCondition =
                   queryObj.debug == "true" ||
                   queryObj.debug == "1" ||
-                  queryObj.debug == "2"
-                    ? new LightgDebugStep(null, "Get Routing Data")
-                    : null;
-                let rawRequest =
-                  queryObj.debug == "true" ||
-                  queryObj.debug == "1" ||
-                  queryObj.debug == "2"
-                    ? this.joinHeaders(req.rawHeaders)
-                    : null;
-                  /** @type {Request} */  
+                  queryObj.debug == "2";
+                let routingDataStep = debugCondition
+                  ? new LightgDebugStep(null, "Get Routing Data")
+                  : null;
+                let rawRequest = debugCondition
+                  ? this.joinHeaders(req.rawHeaders)
+                  : null;
+                /** @type {Request} */
                 let cms = await this._createCmsObjectAsync(
                   req.url,
                   req.method,
@@ -56,11 +54,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                 const [code, headers, body] = await result.getResultAsync(
                   routingDataStep,
                   rawRequest,
-                  queryObj.debug == "true" ||
-                    queryObj.debug == "1" ||
-                    queryObj.debug == "2"
-                    ? cms.dict
-                    : undefined
+                  debugCondition ? cms.dict : undefined
                 );
                 this.addCacheContentAsync(
                   `${req.headers.host}${req.url}`,

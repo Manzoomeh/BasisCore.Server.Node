@@ -88,25 +88,23 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           /** @type {NodeJS.Dict<string>} */
           const formFields = {};
           const method = headers[":method"];
-          const reqUrl = headers[":path"]
+          const reqUrl = headers[":path"];
           let bodyStr = "";
 
           const createCmsAndCreateResponseAsync = async () => {
             const { query: queryObj } = url.parse(reqUrl, true);
-            let rawRequest =
+            let debugCondition =
               queryObj.debug == "true" ||
               queryObj.debug == "1" ||
-              queryObj.debug == "2"
-                ? this.addStringTable("Raw Request", JSON.stringify(headers))
-                : null;
-            let routingDataStep =
-              queryObj.debug == "true" ||
-              queryObj.debug == "1" ||
-              queryObj.debug == "2"
-                ? new LightgDebugStep(null, "Get Routing Data")
-                : null;
+              queryObj.debug == "2";
+            let rawRequest = debugCondition
+              ? this.addStringTable("Raw Request", JSON.stringify(headers))
+              : null;
+            let routingDataStep = debugCondition
+              ? new LightgDebugStep(null, "Get Routing Data")
+              : null;
             cms = await this._createCmsObjectAsync(
-              reqUrl,
+              reqUrl.replace(/[\n\r]|%0a|%0d/gi, " "),
               method,
               headers,
               formFields,
@@ -117,14 +115,10 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             );
             const result = await this._service.processAsync(cms, fileContents);
             if (routingDataStep) routingDataStep.complete();
-            let [code, headerList, body] = await result.getResultAsync(
+            const [code, headerList, body] = await result.getResultAsync(
               routingDataStep,
               rawRequest,
-              queryObj.debug == "true" ||
-                queryObj.debug == "1" ||
-                queryObj.debug == "2"
-                ? cms.dict
-                : undefined
+              debugCondition ? cms.dict : undefined
             );
             await this.addCacheContentAsync(
               `${headers.host}${headers[":path"]}`,

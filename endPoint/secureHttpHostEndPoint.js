@@ -27,7 +27,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
         "ECDHE-RSA-AES256-GCM-SHA384",
         "ECDHE-RSA-AES128-GCM-SHA256",
       ].join(":")),
-      this.#options.honorCipherOrder = true;
+        (this.#options.honorCipherOrder = true);
       this.#options.minVersion = "TLSv1.2";
     }
   }
@@ -42,18 +42,16 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
             this._checkCacheAsync(req, res, async () => {
               const createCmsAndCreateResponseAsync = async () => {
                 const queryObj = url.parse(req.url, true).query;
-                let routingDataStep =
+                let debugCondition =
                   queryObj.debug == "true" ||
                   queryObj.debug == "1" ||
-                  queryObj.debug == "2"
-                    ? new LightgDebugStep(null, "Get Routing Data")
-                    : null;
-                let rawRequest =
-                  queryObj.debug == "true" ||
-                  queryObj.debug == "1" ||
-                  queryObj.debug == "2"
-                    ? this.joinHeaders(req.rawHeaders)
-                    : null;
+                  queryObj.debug == "2";
+                let routingDataStep = debugCondition
+                  ? new LightgDebugStep(null, "Get Routing Data")
+                  : null;
+                let rawRequest = debugCondition
+                  ? this.joinHeaders(req.rawHeaders)
+                  : null;
                 cms = await this._createCmsObjectAsync(
                   req.url,
                   req.method,
@@ -72,11 +70,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
                 const [code, headers, body] = await result.getResultAsync(
                   routingDataStep,
                   rawRequest,
-                  queryObj.debug == "true" ||
-                    queryObj.debug == "1" ||
-                    queryObj.debug == "2"
-                    ? cms.dict
-                    : undefined
+                  debugCondition ? cms.dict : undefined
                 );
                 this.addCacheContentAsync(
                   `${req.headers.host}${req.url}`,

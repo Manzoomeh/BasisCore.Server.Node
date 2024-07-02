@@ -45,6 +45,7 @@ export default class SourceCommand extends CommandBase {
       const dataSet = await this._loadDataAsync(name, context);
       context.cancellation.throwIfCancellationRequested();
       if (dataSet.items.length != this.members.items.length) {
+        console.log(this)
         throw new BasisCoreException(
           `Command ${name} has ${this.members.items.length} member(s) but ${dataSet.items.length} result(s) returned from source!`
         );

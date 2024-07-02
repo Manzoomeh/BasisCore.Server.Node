@@ -154,7 +154,7 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {ServerResponse} res
    */
   _securityHeadersMiddleware(req, res, next) {
-    req.url = req.url.replace(/[\r\n]+[ \t]*/g, '')
+    req.url = req.url.replace(/[\n\r]|%0a|%0d/gi, ' ');
     res.setHeader('Strict-Transport-Security', 'max-age=15552000; includeSubDomains; preload');
     res.setHeader('X-Content-Type-Options', 'nosniff');
     res.setHeader('X-Frame-Options', 'DENY');
