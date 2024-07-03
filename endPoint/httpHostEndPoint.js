@@ -313,7 +313,7 @@ class HttpHostEndPoint extends HostEndPoint {
   }
   sanitizeInput(input) {
     let inputStr = String(input);
-    inputStr = inputStr.replace(/[\r\n]/g, '');
+    inputStr = inputStr.replace(/[\n\r]|%0a|%0d/gi, " ");
 
     return inputStr;
 }
