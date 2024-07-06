@@ -6,6 +6,7 @@ import RunTypes from "../Enums/RunTypes.js";
 import VoidResult from "../Models/VoidResult.js";
 import TokenUtil from "../Token/TokenUtil.js";
 import CommandElement from "./CommandElement.js";
+import StringResult from "../Models/StringResult.js";
 
 export default class CommandBase {
   /**@type {IToken} */
@@ -30,7 +31,7 @@ export default class CommandBase {
     this.core = TokenUtil.getFiled(commandIl, "core");
     this.name = TokenUtil.getFiled(commandIl, "name");
     this.if = TokenUtil.getFiled(commandIl, "if");
-    this.runType = TokenUtil.getFiled(commandIl, "runType");
+    this.runType = TokenUtil.getFiled(commandIl, "run");
     this.renderType = TokenUtil.getFiled(commandIl, "renderType");
     this.renderTo = TokenUtil.getFiled(commandIl, "renderTo");
     this.extraAttributes = null;
@@ -52,36 +53,45 @@ export default class CommandBase {
    * @returns {Promise<ICommandResult>}
    */
   async executeAsync(context) {
-    /** @type {ICommandResult?} */
-    let retVal = null;
+    const commandStep = context.debugContext.newStep(`Execute ${await this.core.getValueAsync()}`);
     try {
-      const runType = await this._getRunTypeValueAsync(context);
-      switch (runType) {
-        case RunTypes.AtServer: {
-          const ifValue = await this._getIfValueAsync(context);
-          if (ifValue) {
-            //TODO: create scope
-            retVal = await this._executeCommandAsync(context);
-          } else {
-            retVal = VoidResult.result;
+      /** @type {ICommandResult?} */
+      let retVal = null;
+      try {
+        const runType = await this._getRunTypeValueAsync(context);
+        switch (runType.toLowerCase()) {
+          case RunTypes.AtServer: {
+            const ifValue = await this._getIfValueAsync(context);
+            if (ifValue) {
+              //TODO: create scope
+              retVal = await this._executeCommandAsync(context);
+            } else {
+              retVal = VoidResult.result;
+            }
+            break;
           }
-          break;
+          case RunTypes.AtClient:
+          case RunTypes.None: {
+            retVal = new StringResult(
+              (await this.createHtmlElementAsync(context)).getHtml()
+            );
+            break;
+          }
+          default: {
+            retVal = VoidResult.result;
+            break;
+          }
         }
-        case RunTypes.AtClient:
-        case RunTypes.None: {
-          break;
-        }
-        default: {
-          retVal = VoidResult.result;
-          break;
-        }
+      } catch (ex) {
+        console.error(ex);
+        retVal = new ExceptionResult(ex, context);
+        //TODO: log error
       }
-    } catch (ex) {
-      console.error(ex);
-      retVal = new ExceptionResult(ex, context);
-      //TODO: log error
+      commandStep.complete();
+      return retVal;
+    } catch (err) {
+      commandStep.failed();
     }
-    return retVal;
   }
 
   /**
@@ -103,7 +113,16 @@ export default class CommandBase {
     try {
       const value = await this.if.getValueAsync(context);
       if (value) {
-        retVal = eval(value);
+        let regex = /(?<!=[<>=!])=(?!=)|<>/g;
+        retVal = eval(
+          value.replace(regex, (match) => {
+            if (match === "=") {
+              return "==";
+            } else if (match === "<>") {
+              return "!=";
+            }
+          })
+        );
       } else {
         retVal = true;
       }
@@ -129,28 +148,27 @@ export default class CommandBase {
    * @returns {Promise<CommandElement>}
    */
   async createHtmlElementAsync(context) {
-    const retVal = new CommandElement("basis");
+    const tag = new CommandElement("basis");
     await Promise.all([
-      retVal.addAttributeIfExistAsync("core", this.core, context),
-      retVal.addAttributeIfExistAsync("name", this.name, context),
-      retVal.addAttributeIfExistAsync("if", this.if, context),
-      retVal.addAttributeIfExistAsync("renderto", this.renderTo, context),
-      retVal.addAttributeIfExistAsync("rendertype", this.renderType, context),
+      tag.addAttributeIfExistAsync("core", this.core, context),
+      tag.addAttributeIfExistAsync("name", this.name, context),
+      tag.addAttributeIfExistAsync("if", this.if, context),
+      tag.addAttributeIfExistAsync("renderto", this.renderTo, context),
+      tag.addAttributeIfExistAsync("rendertype", this.renderType, context),
     ]);
     if (this.runType) {
       const runType = await this._getRunTypeValueAsync(context);
       if (runType != RunTypes.None) {
-        retVal.addAttributeIfExistAsync("run", runType);
+        tag.addAttributeIfExist("run", runType);
       }
     }
     if (this.extraAttributes) {
       await Promise.all(
         Object.entries(this.extraAttributes).map((pair) =>
-        retVal.addAttributeIfExistAsync(pair[0], pair[1], context)
+          tag.addAttributeIfExistAsync(pair[0], pair[1], context)
         )
       );
     }
-
-    return retVal;
+    return tag;
   }
 }

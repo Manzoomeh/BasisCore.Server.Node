@@ -1,5 +1,6 @@
 import IStreamerEngineOptions from "./IStreamerEngineOptions.js";
 
+
 export default class HostServiceOptions {
   /**@type {"Sql"|"Edge"|"File"} */
   Type;

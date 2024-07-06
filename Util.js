@@ -1,6 +1,6 @@
 export default class Util {
   /**
-   * @param {*} value
+   * @param {any} value
    * @returns {string}
    */
   static toString(value) {
@@ -25,5 +25,13 @@ export default class Util {
       (rv[x[key]] = rv[x[key]] || []).push(x);
       return rv;
     }, {});
+  }
+
+  /**
+   * @param {any} value
+   * @returns {boolean}
+   */
+  static isNullOrUndefined(value) {
+    return value === undefined || value === null;
   }
 }

@@ -1,4 +1,6 @@
 export default class ServiceSelectorPredicateItemOptions {
+  /** @type {string} */
+  id ;
   /**@type {string|string[]} */
   Methode;
   /**@type {string} */

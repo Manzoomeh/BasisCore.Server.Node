@@ -9,7 +9,7 @@ export default class TableMember extends InMemoryMember {
   constructor(memberIL) {
     super(memberIL);
   }
-
+  
   /**
    * @param {IContext} context
    * @returns {Promise<IDataSource>}
@@ -21,6 +21,9 @@ export default class TableMember extends InMemoryMember {
       attributeNamePrefix: "",
     });
     const json = parser.parse(content);
-    return new JsonSource(json.row, this.name);
+    return new JsonSource(
+      Array.isArray(json.row) ? json.row : [json.row],
+      this.name
+    );
   }
 }

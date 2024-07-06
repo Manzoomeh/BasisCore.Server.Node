@@ -10,6 +10,8 @@ import IRoutingRequest from "../IRoutingRequest.js";
 export default class SqlConnectionInfo extends ConnectionInfo {
   /** @type {SqlSettingData} */
   settings;
+  /** @type {sql.ConnectionPool} */
+  connectionPool;
 
   /**
    * @param {string} name
@@ -18,6 +20,13 @@ export default class SqlConnectionInfo extends ConnectionInfo {
   constructor(name, settings) {
     super(name);
     this.settings = settings;
+    this.connectionPool = new sql.ConnectionPool(
+      this.settings.connectionString +
+        (this.settings.requestTimeout
+          ? `;requestTimeout=${this.settings.requestTimeout}`
+          : "")
+    );
+    this.connectionPool.connect(console.error);
   }
 
   /**
@@ -26,41 +35,29 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    * @returns {Promise<DataSourceCollection>}
    */
   async loadDataAsync(parameters, cancellationToken) {
-    /** @type {sql.ConnectionPool?} */
-    let pool = null;
-    try {
-      pool = await sql.connect(
-        this.settings.connectionString +
-          (this.settings.requestTimeout
-            ? `;requestTimeout=${this.settings.requestTimeout}`
-            : "")
-      );
-      const request = new sql.Request();
-      for (const key in parameters) {
-        if (Object.hasOwnProperty.call(parameters, key)) {
-          const value = parameters[key];
-          if (typeof value === "object" && !(value instanceof sql.Table)) {
-            const tvp = new sql.Table();
-            tvp.columns.add("name", sql.NVarChar(4000));
-            tvp.columns.add("value", sql.NVarChar());
-            for (const field in value) {
-              if (Object.hasOwnProperty.call(value, field)) {
-                const fieldValue = value[field];
-                tvp.rows.add(field, fieldValue);
-              }
+    const request = this.connectionPool.request();
+    for (const key in parameters) {
+      if (Object.hasOwnProperty.call(parameters, key)) {
+        const value = parameters[key];
+        if (typeof value === "object" && !(value instanceof sql.Table)) {
+          const tvp = new sql.Table();
+          tvp.columns.add("name", sql.NVarChar(4000));
+          tvp.columns.add("value", sql.NVarChar());
+          for (const field in value) {
+            if (Object.hasOwnProperty.call(value, field)) {
+              const fieldValue = value[field];
+              tvp.rows.add(field, fieldValue);
             }
-            request.input(key, tvp);
-          } else {
-            request.input(key, value);
           }
+          request.input(key, tvp);
+        } else {
+          request.input(key, value);
         }
       }
-      return new DataSourceCollection(
-        (await request.execute(this.settings.procedure)).recordsets
-      );
-    } finally {
-      await pool?.close();
     }
+    return new DataSourceCollection(
+      (await request.execute(this.settings.procedure)).recordsets
+    );
   }
 
   /**
@@ -70,7 +67,6 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    */
   async getRoutingDataAsync(request, cancellationToken) {
     const params = new sql.Table();
-
     params.columns.add("ParamType", sql.VarChar(50));
     params.columns.add("ParamName", sql.VarChar(100));
     params.columns.add("ParamValue", sql.VarChar);
@@ -81,10 +77,10 @@ export default class SqlConnectionInfo extends ConnectionInfo {
         if (name === "query") {
           const query = group[name];
           for (const key in query) {
-            params.rows.add(name, key, query[key].toString());
+            params.rows.add(name, key, query[key]?.toString());
           }
         } else {
-          params.rows.add(type, name, group[name].toString());
+          params.rows.add(type, name, group[name]?.toString());
         }
       }
     }
@@ -118,38 +114,30 @@ export default class SqlConnectionInfo extends ConnectionInfo {
     domainId,
     cancellationToken
   ) {
-    /** @type {sql.ConnectionPool?} */
-    let pool = null;
-    try {
-      pool = await sql.connect(
-        this.settings.connectionString +
-          (this.settings.requestTimeout
-            ? `;requestTimeout=${this.settings.requestTimeout}`
-            : "")
+    const request = this.connectionPool.request();
+    request.input("fileNames", pageName);
+    request.input("dmnid", domainId);
+    request.input("sitesize", pageSize);
+    request.input("command", rawCommand);
+    /** @type {Array<ILoadPageResult>} */
+    const rows = (await request.execute(this.settings.procedure)).recordset;
+    if (rows.length != 1) {
+      throw new WebServerException(
+        `Call Command Expect 1 File '${pageName}' But Get ${rows.length} File(s) From '${this.settings.procedure}' Procedure`
       );
-      const request = new sql.Request();
-      request.input("fileNames", pageName);
-      request.input("dmnid", domainId);
-      request.input("sitesize", pageSize);
-      request.input("command", rawCommand);
-      /** @type {Array<ILoadPageResult>} */
-      const rows = (await request.execute(this.settings.procedure)).recordset;
-      if (rows.length != 1) {
-        throw new WebServerException(
-          `Call Command Expect 1 File '${pageName}' But Get ${rows.length} File(s) From '${this.settings.procedure}' Procedure`
-        );
-      }
-      return rows[0];
-    } finally {
-      await pool?.close();
     }
+    return rows[0];
   }
+
+  /**
+   * @returns {boolean}
+   */
   async testConnectionAsync() {
     try {
       await sql.connect(
         this.settings.connectionString +
-          (this.settings.requestTimeout
-            ? `;requestTimeout=${this.settings.requestTimeout}`
+          (this.settings.testTimeOut
+            ? `;requestTimeout=${this.settings.testTimeOut}`
             : "")
       );
       return true;

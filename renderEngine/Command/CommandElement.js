@@ -1,3 +1,4 @@
+import Util from "../../Util.js";
 import IContext from "../Context/IContext.js";
 import IToken from "../Token/IToken.js";
 import ElementBase from "./ElementBase.js";
@@ -38,7 +39,7 @@ export default class CommandElement extends ElementBase {
    * @returns {Promise<CommandElement>}
    */
   async addRawContentIfExistAsync(rawContent, context) {
-    if (rawContent) {
+    if (rawContent.IsNotNull) {
       this.addChildIfExist(await rawContent.getValueAsync(context));
     }
     return this;
@@ -55,28 +56,46 @@ export default class CommandElement extends ElementBase {
 
   /**
    * @param {string} name
-   * @param {IToken|string} value
-   * @param {IContext} context
-   * @returns {Promise<CommandElement>}
+   * @param {string} value
+   * @returns {CommandElement}
    */
-  async addAttributeIfExistAsync(name, value, context) {
-    const k =
-      value instanceof IToken ? await value.getValueAsync(context) : value;
-    if (k !== null) {
-      this.attributes[name] = k;
+  addAttributeIfExist(name, value) {
+    if (value != null) {
+      this.attributes[name] = value;
     }
     return this;
   }
 
+  /**
+   * @param {string} name
+   * @param {IToken} token
+   * @param {IContext} context
+   * @returns {Promise<CommandElement>}
+   */
+  async addAttributeIfExistAsync(name, token, context) {
+    if (token && token.IsNotNull) {
+      this.attributes[name] = await token.getValueAsync(context);
+    }
+    return this;
+  }
+
+  /**
+   * @returns {string}
+   */
   getHtml() {
-    let retVal = `<${this.name} `.concat(
-      ...Object.entries(this.attributes).map(
-        (pair) => `${pair[0]}=\'${pair[1] ? pair[1].replace("'", '"') : ""}\' `
-      ),
-      ">"
-    );
-    retVal = retVal.concat(...this.childs.map((x) => x.getHtml()));
-    retVal += `</${this.name}>`;
-    return retVal;
+    try {
+      let retVal = `<${this.name} `.concat(
+        ...Object.entries(this.attributes).map(
+          (pair) =>
+            `${pair[0]}=\'${Util.toString(pair[1]).replaceAll("'", '"')}\' `
+        ),
+        ">"
+      );
+      retVal = retVal.concat(...this.childs.map((x) => x.getHtml()));
+      retVal += `</${this.name}>`;
+      return retVal;
+    } catch (ex) {
+      console.error(ex);
+    }
   }
 }

@@ -1,4 +1,3 @@
-import BasisCoreException from "../../../../models/Exceptions/BasisCoreException.js";
 import IContext from "../../../Context/IContext.js";
 import VoidResult from "../../../Models/VoidResult.js";
 import DataSourceCollection from "../../../Source/DataSourceCollection.js";
@@ -8,8 +7,10 @@ import CommandBase from "../../CommandBase.js";
 import CommandElement from "../../CommandElement.js";
 import MemberCollection from "./MemberCollection.js";
 import ParamItemCollection from "./ParamItemCollection.js";
+import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
 
 export default class SourceCommand extends CommandBase {
+  /** @type {ParamItemCollection}   */
   params;
   connectionName;
   /**@type {MemberCollection} */
@@ -22,7 +23,7 @@ export default class SourceCommand extends CommandBase {
     super(sourceCommandIl);
     this.members = this.createMemberCollection(sourceCommandIl["Members"]);
     this.params = new ParamItemCollection(sourceCommandIl["Params"]);
-    this.connectionName = TokenUtil.getFiled(sourceCommandIl, "source");
+    this.connectionName = TokenUtil.getFiled(sourceCommandIl, "ConnectionName");
     this.procedureName = TokenUtil.getFiled(sourceCommandIl, "ProcedureName");
   }
 
@@ -41,7 +42,7 @@ export default class SourceCommand extends CommandBase {
   async _executeCommandAsync(context) {
     if (this.members?.items.length > 0) {
       const name = await this.name.getValueAsync(context);
-      const dataSet = await this.#loadDataAsync(name, context);
+      const dataSet = await this._loadDataAsync(name, context);
       context.cancellation.throwIfCancellationRequested();
       if (dataSet.items.length != this.members.items.length) {
         throw new BasisCoreException(
@@ -50,7 +51,7 @@ export default class SourceCommand extends CommandBase {
       }
       let index = 0;
       for (const item of this.members.items) {
-        var source = dataSet.items[index++];
+        const source = dataSet.items[index++];
         await item.addDataSourceAsync(source, name, context);
       }
     }
@@ -62,7 +63,7 @@ export default class SourceCommand extends CommandBase {
    * @param {IContext} context
    * @returns {Promise<DataSourceCollection>}
    */
-  async #loadDataAsync(sourceName, context) {
+  async _loadDataAsync(sourceName, context) {
     const [connectionName, command, paramList] = await Promise.all([
       this.connectionName.getValueAsync(context),
       this.toCustomFormatHtmlAsync(context),
@@ -73,7 +74,10 @@ export default class SourceCommand extends CommandBase {
       dmnid: context.domainId,
       params: paramList,
     };
-    return await context.loadDataAsync(sourceName, connectionName, params);
+    const memberNames = this.members.items.map((item)=>{
+      return item.name
+    })
+    return await context.loadDataAsync(sourceName, connectionName, params,memberNames);
   }
 
   /**
@@ -103,22 +107,11 @@ export default class SourceCommand extends CommandBase {
       ),
       tag.addAttributeIfExistAsync("source", this.connectionName, context),
     ]);
-    if ((this.params?.length ?? 0) > 0) {
-      const paramsTag = new CommandElement("params");
-      for (const pair of this.params.items) {
-        const addTag = new CommandElement("add");
-        await Promise.all([
-          addTag.addAttributeIfExistAsync("name", pair.name, context),
-          addTag.addAttributeIfExistAsync("value", pair.value, context),
-        ]);
-        paramsTag.addChild(addTag);
-      }
-      tag.addChild(paramsTag);
+    if (this.params.IsNotNull) {
+      await this.params.addHtmlElementAsync(tag, context);
     }
-    if (this.members) {
-      for (const member of this.members.items) {
-        tag.childs.push(await member.createHtmlElementAsync(context));
-      }
+    if (this.members.IsNotNull) {
+      await this.members.addHtmlElementAsync(tag, context);
     }
     return tag;
   }

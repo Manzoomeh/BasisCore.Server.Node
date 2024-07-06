@@ -1,6 +1,6 @@
 const RunTypes = {
-  AtServer: "AtServer",
-  AtClient: "AtClient",
+  AtServer: "atserver",
+  AtClient: "atclient",
   None: "None",
 };
 

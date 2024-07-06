@@ -16,7 +16,6 @@ export default class Edge extends Step {
    */
   async processContentAsync(content, options) {
     try {
-      console.log(content.url);
       const parts = options.endpoint.split(":", 2);
       if (parts.length !== 2) {
         throw Error("Endpoint not config for edge step in file streamer");
@@ -31,9 +30,7 @@ export default class Edge extends Step {
           .on("close", function () {
             const data = Buffer.concat(buffer);
             try {
-              console.log("msg", data.length);
               const msg = EdgeMessage.createFromBuffer(data);
-
               resolve(JSON.parse(msg.payload));
             } catch (e) {
               reject(e);

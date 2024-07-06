@@ -4,6 +4,8 @@ import ValueToken from "./ValueToken.js";
 import ArrayToken from "./ArrayToken.js";
 import ObjectToken from "./ObjectToken.js";
 import IContext from "../Context/IContext.js";
+import StringUtil from "./StringUtil.js";
+import Util from "../../Util.js";
 
 export default class TokenUtil {
   /**
@@ -33,6 +35,8 @@ export default class TokenUtil {
         );
       }
       retVal = new ObjectToken(elements);
+    } else if (Util.isNullOrUndefined(value)) {
+      retVal = ValueToken.Null;
     } else {
       retVal = new ValueToken(value);
     }
@@ -46,7 +50,9 @@ export default class TokenUtil {
    */
   static getFiled(object, filedName) {
     const value = object && filedName in object ? object[filedName] : null;
-    return value ? TokenUtil.ToToken(value) : ValueToken.Null;
+    return Util.isNullOrUndefined(value)
+      ? ValueToken.Null
+      : TokenUtil.ToToken(value);
   }
 
   /**

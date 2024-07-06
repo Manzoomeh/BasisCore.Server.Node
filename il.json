@@ -1,0 +1,240 @@
+{
+  "$type": "group",
+  "core": "group",
+  "name": "ROOT_GROUP",
+  "Commands": [
+    {
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "py_basiscore",
+      "name": "db",
+      "extra-attribute": {
+        "lid": "1",
+        "mid": "1",
+        "usedforid": {
+          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+        }
+      },
+      "Members": [
+        { "extra-attribute": { "type": "view" }, "name": "article_view" }
+      ]
+    },
+    {
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "py_basiscore",
+      "name": "db",
+      "extra-attribute": {
+        "lid": "1",
+        "mid": "1",
+        "usedforid": {
+          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+        }
+      },
+      "Members": [
+        { "extra-attribute": { "type": "list" }, "name": "article_date" }
+      ]
+    },
+    {
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "basiscore",
+      "name": "db",
+      "extra-attribute": {
+        "lid": "1",
+        "mid": "1",
+        "usedforid": {
+          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+        }
+      },
+      "Members": [
+        {
+          "extra-attribute": { "request": "navigationcat", "type": "tree" },
+          "name": "navigationcat",
+          "postsql": "select * from [db.navigationcat] where parentid = parentcatid"
+        }
+      ]
+    },
+    {
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "py_basiscore",
+      "name": "db",
+      "extra-attribute": {
+        "mid": "1",
+        "lid": "1",
+        "usedforid": {
+          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
+        }
+      },
+      "Members": [
+        {
+          "name": "data2",
+          "extra-attribute": { "type": "view", "request": "rdfa" }
+        }
+      ]
+    },
+    {
+      "$type": "dbsource",
+      "core": "dbsource",
+      "ConnectionName": "hosting",
+      "name": "tag",
+      "extra-attribute": {
+        "urlid": {
+          "Params": [{ "Source": "cms", "Member": "seo", "Column": "urlid" }]
+        }
+      },
+      "Members": [
+        {
+          "extra-attribute": { "type": "list", "request": "taglist" },
+          "name": "list",
+          "postsql": "select * from [tag.list] where key = 'canonical'"
+        }
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": [
+        "\r\n<!DOCTYPE html >\r\n<html lang=\"fa\">\r\n <head> \r\n <meta charset=\"utf-8\">\r\n <title>",
+        {
+          "Params": [{ "Source": "cms", "Member": "seo", "Column": "title" }]
+        },
+        "</title>\r\n <meta name=\"description\" content=\"",
+        {
+          "Params": [
+            { "Source": "cms", "Member": "seo", "Column": "description" }
+          ]
+        },
+        "\"/>\r\n \r\n "
+      ]
+    },
+    { "$type": "call", "core": "call", "FileName": "style_desktop.html" },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "tag.list",
+      "faces": [
+        {
+          "content": [
+            "\r\n\t\t\t<link rel=\"canonical\" href=\"https://",
+            {
+              "Params": [
+                { "Source": "cms", "Member": "request", "Column": "host" }
+              ]
+            },
+            "/@value\" />\r\n\t\t"
+          ]
+        }
+      ],
+      "else-layout-content": [
+        "\r\n\t\t\t<link rel=\"canonical\" href=\"https://",
+        {
+          "Params": [{ "Source": "cms", "Member": "request", "Column": "host" }]
+        },
+        "/",
+        {
+          "Params": [{ "Source": "cms", "Member": "request", "Column": "url" }]
+        },
+        "\" />\r\n\t\t"
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "\r\n </head>\r\n <body>\r\n "
+    },
+    { "$type": "call", "core": "call", "FileName": "header_desktop.html" },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "\r\n <div class=\"article_list_resize\">\r\n <div class=\"article_list\">\r\n <div class=\"article_header\">\r\n <div class=\"breadcrumb\">\r\n <ul>\r\n <li>\r\n <a href=\"/طرز-تهیه\">وبلاگ</a>\r\n </li>\r\n <li>\r\n /\r\n </li>\r\n "
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db.navigationcat",
+      "faces": [
+        {
+          "filter": "parentcatid not in ('52544') ",
+          "content": "\r\n <li>\r\n <a href=\"/@link\">@title</a>\r\n </li>\r\n <li>\r\n /\r\n </li>\r\n "
+        }
+      ]
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db.article_view",
+      "faces": [
+        {
+          "filter": "typeid = 150",
+          "content": "\r\n <li>\r\n <span>\r\n @answer\r\n </span>\r\n </li>\r\n "
+        }
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": [
+        "\r\n \r\n </ul>\r\n </div>\r\n <!-- <div class=\"article_cats\">\r\n <ul>\r\n <li>\r\n <a href=\"\">غذای ملل</a>\r\n </li>\r\n <li>\r\n <a href=\"\">غذای ملل</a>\r\n </li>\r\n <li>\r\n <a href=\"\">غذای ملل</a>\r\n </li><li>\r\n <a href=\"\">غذای ملل</a>\r\n </li>\r\n </ul>\r\n </div> -->\r\n </div>\r\n <div class=\"clr\"></div>\r\n <div class=\"content_resize\" itemscope=\"",
+        {
+          "Params": [
+            { "Source": "db", "Member": "data2", "Column": "vocabulary" }
+          ]
+        },
+        "\" itemtype=\"",
+        {
+          "Params": [{ "Source": "db", "Member": "data2", "Column": "link" }]
+        },
+        "\">\r\n <div class=\"content\" >\r\n <div class=\"article_title\">\r\n "
+      ]
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db.article_view",
+      "faces": [
+        {
+          "filter": "typeid = 150",
+          "content": "\r\n <h1 itemprop=\"@vocabulary\" >\r\n @answer\r\n </h1>\r\n "
+        }
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": [
+        "\r\n </div>\r\n <div class=\"article_date\">\r\n <span class=\"num\" itemprop=\"@vocabulary\" >",
+        {
+          "Params": [
+            { "Source": "db", "Member": "article_date", "Column": "date" }
+          ]
+        },
+        "</span>\r\n <i class=\"fa fa-clock-o\"></i> \r\n \r\n </div>\r\n <div class=\"clr\"></div>\r\n <article class=\"show_article\">\r\n "
+      ]
+    },
+    {
+      "$type": "print",
+      "core": "print",
+      "data-member-name": "db.article_view",
+      "faces": [
+        {
+          "filter": "typeid not in ('150','161','160','162','159')",
+          "content": "\r\n <article>\r\n <div class=\"article_sub_title\" itemprop=\"@vocabulary\" >\r\n @text\r\n </div>\r\n <div class=\"article_text\" itemprop=\"@vocabulary\" >\r\n @largetext\r\n </div>\r\n </article>\r\n "
+        }
+      ]
+    },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "\r\n \r\n \r\n </article>\r\n </div>\r\n </div>\r\n\r\n \r\n </div>\r\n </div>\r\n \r\n \r\n \r\n \r\n \r\n \r\n "
+    },
+    { "$type": "call", "core": "call", "FileName": "footer_desktop.html" },
+    { "$type": "call", "core": "call", "FileName": "script_desktop.html" },
+    {
+      "$type": "rawtext",
+      "core": "rawtext",
+      "content": "\r\n <script src=\"js/slick.js\" ></script>\r\n <script>\r\n \r\n $(\".filter_title .filters_item_link\").click(function(x){\r\n x.preventDefault()\r\n $ (this).closest(\"li\").find(\".filter_list\").slideToggle()\r\n })\r\n \r\n \r\n </script>\r\n \r\n </body>\r\n</html>"
+    }
+  ]
+}

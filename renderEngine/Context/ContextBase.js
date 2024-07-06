@@ -1,10 +1,24 @@
 import IDataSource from "../Source/IDataSource.js";
+import DebugContext from "./DebugContext.js";
 import IContext from "./IContext.js";
+import IDebugContext from "./IDebugContext.js";
 import SourceRepository from "./SourceRepository.js";
 
 export default class ContextBase extends IContext {
   /** @type {SourceRepository} */
-  repository = new SourceRepository();
+  repository;
+  /** @type {IDebugContext} */
+  debugContext;
+  /**
+   * @param {SourceRepository?} repository,
+   * @param {string} domainId
+   * @param {DebugContext} debugContext
+   */
+  constructor(repository, domainId,debugContext) {
+    super(domainId);
+    this.repository = new SourceRepository(repository);
+    this.debugContext = debugContext;
+  }
 
   /** @param {IDataSource} dataSource */
   addSource(dataSource) {
@@ -34,4 +48,10 @@ export default class ContextBase extends IContext {
    * @returns {Promise<DataSourceCollection>}
    */
   loadDataAsync(sourceName, connectionName, parameters) {}
+
+    /**
+   * @param {Object} commandIl
+   * @returns {CommandBase}
+   */
+    createCommand(commandIl) {}
 }

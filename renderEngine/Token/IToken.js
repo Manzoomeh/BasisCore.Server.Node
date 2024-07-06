@@ -8,4 +8,11 @@ export default class IToken {
   getValueAsync(context) {
     throw new Error("Method not implemented.");
   }
+
+  /**
+   * @returns {boolean}
+   */
+  get IsNotNull() {
+    throw new Error("Method not implemented.");
+  }
 }

@@ -1,6 +1,7 @@
 import alasql from "alasql";
 import IDataSource from "./IDataSource.js";
 import IContext from "../Context/IContext.js";
+import StringUtil from "../Token/StringUtil.js";
 
 export default class SourceUtil {
   /**
@@ -10,7 +11,10 @@ export default class SourceUtil {
    */
   static applySql(source, sql) {
     source.data = alasql(
-      sql.replace(`[${source.id}]`, "?").replace(source.id, "?"),
+      StringUtil.replace(
+        StringUtil.replace(sql, `(\\[${source.id}\\])`, "?"),
+        `(${source.id}),"?"`
+      ),
       [source.data]
     );
   }
@@ -29,9 +33,14 @@ export default class SourceUtil {
    */
   static addRowNumber(source) {
     let index = 1;
-    source.data.forEach((row) => {
-      row["RowNumber"] = index++;
-    });
+    if (Array.isArray(source.data)) {
+      source.data.forEach((row) => {
+        row["RowNumber"] = index++;
+      });
+    } else {
+      source.data["RowNumber"] = index;
+      source.data = [source.data];
+    }
   }
 
   /**
@@ -53,5 +62,6 @@ export default class SourceUtil {
     if (preview) {
     }
     context.addSource(source);
+    context.debugContext.addDebugInformation(source.id,source.data);
   }
 }

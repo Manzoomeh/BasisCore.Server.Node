@@ -1,0 +1,6 @@
+CREATE TABLE cache_results (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    key TEXT,
+    content TEXT,
+    properties TEXT
+);

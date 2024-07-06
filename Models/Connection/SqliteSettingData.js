@@ -1,4 +1,4 @@
-export default class SqlSettingData {
+export default class SqliteSettingData {
   /** @type {string} */
   dbPath;
   /** @type {string} */

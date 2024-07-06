@@ -1,0 +1,83 @@
+{
+  "Actions": [
+    {
+      "Name": "resize image",
+      "Type": "resize",
+      "options": {
+        "Width": 100,
+        "Height": 200,
+        "IgnoreAspectRatio": true
+      }
+    },
+    {
+      "Name": "convert to gzip",
+      "Type": "gzip",
+      "options": {
+        "Level": 1
+      }
+    },
+    {
+      "Name": "resize rename",
+      "Type": "rename",
+      "options": {
+        "FileNameFormat": "{0}-resize.{1}"
+      }
+    },
+    {
+      "Name": "resize rename webp",
+      "Type": "rename",
+      "options": {
+        "FileNameFormat": "{0}-resize.webp"
+      }
+    },
+    {
+      "Name": "resize rename webp gzip",
+      "Type": "rename",
+      "options": {
+        "FileNameFormat": "{0}-resize-compressed-webp"
+      }
+    },
+    {
+      "Name": "save resize in storage",
+      "Type": "save",
+      "options": {
+        "location": "F:\\AliBazregar\\BasisCore.Server.Node\\test\\fileStreamer\\output"
+      }
+    },
+    {
+      "Name": "convert To webp",
+      "Type": "convert",
+      "options" : {
+        "Format" : "webp"
+      }
+    }
+  ],
+  "Permissions": [
+    {
+      "Mimes": ["video/mp4", "image/png"],
+      "MinSize": 1,
+      "MaxSize": 100000000
+    },
+    {
+      "Mimes": [""],
+      "MinSize": 1,
+      "MaxSize": 640999
+    }
+  ],
+  "Process": [
+    [
+      "select image/jpg",
+      "resize image",
+      "convert To webp",
+      "resize rename webp",
+      "save resize in storage"
+    ],
+    [
+      "select image/png",
+      "resize image",
+      "convert To webp",
+      "convert to gzip",
+      "save resize in storage"
+    ]
+  ]
+}

@@ -53,8 +53,7 @@ export default class ServiceSettings {
    * @returns {string}
    */
   getDefault(key, defaultValue = null) {
-    const defaultKey = `default.${key}`;
-    console.log("sdsd");
+    const defaultKey = `Default.${key}`;
     const value = this._options?.Settings
       ? this._options.Settings[defaultKey]
       : defaultValue;

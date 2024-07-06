@@ -7,7 +7,10 @@ import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import StreamerEngine from "../fileStreamer/StreamerEngine.js";
 import { HostServiceOptions } from "../models/model.js";
 import IRoutingRequest from "../models/IRoutingRequest.js";
-
+import ServiceSettings from "../models/ServiceSettings.js";
+import Index4Response from "../models/Index4Response.js";
+import LoadCommand from "../renderEngine/LoadCommand.js";
+import CommandUtil from "../renderEngine/CommandUtil.js";
 export default class HostService {
   /**@type {string} */
   name;
@@ -15,7 +18,10 @@ export default class HostService {
   _options;
   /** @type {StreamerEngine} */
   _engine = null;
-
+  /** @type {ServiceSettings} */
+  settings;
+  /**@type {Object<string,any>} */
+  _commands;
   /**
    * @param {string} name
    *@param {HostServiceOptions} options
@@ -26,8 +32,8 @@ export default class HostService {
     if (this._options.Streamer) {
       this._engine = new StreamerEngine(this._options.Streamer);
     }
+    this.settings = new ServiceSettings(options);
   }
-
   /**
    * @param {BinaryContent[]} contents
    * @param {Request} request
@@ -61,6 +67,12 @@ export default class HostService {
   processAsync(request, fileContents) {
     throw new Error("Not implemented!");
   }
+  async initializeAsync() {
+    this._commands = {
+      ...CommandUtil.addDefaultCommands(),
+      ...await LoadCommand.process(this._options.Settings.LibPath),
+    };
+  }
 
   /**
    * @param {IRoutingRequest} request
@@ -71,19 +83,19 @@ export default class HostService {
     let retVal = null;
     switch (request.webserver.index) {
       case "1": {
-        retVal = new Index1Response(request);
+        retVal = new Index1Response(request, this.settings, this._commands);
         break;
       }
       case "2": {
-        retVal = new Index2Response(request);
+        retVal = new Index2Response(request, this.settings);
         break;
       }
       case "4": {
-        retVal = new Index2Response(request);
+        retVal = new Index4Response(request, this.settings);
         break;
       }
       case "5": {
-        retVal = new Index5Response(request);
+        retVal = new Index5Response(request, this.settings);
         break;
       }
       default: {

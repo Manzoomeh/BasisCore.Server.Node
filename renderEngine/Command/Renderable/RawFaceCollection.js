@@ -6,6 +6,7 @@ import Face from "./Face.js";
 import FaceCollection from "./FaceCollection.js";
 import FaceRowType from "./FaceRowType.js";
 import RawFace from "./RawFace.js";
+import CommandElement from "../CommandElement.js";
 
 export default class RawFaceCollection {
   /**@type {RawFace[]} */
@@ -99,5 +100,25 @@ export default class RawFaceCollection {
       retVal = [];
     }
     return retVal;
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  get IsNotNull() {
+    return this.faces.length > 0;
+  }
+
+  /**
+   * @param {CommandElement} ownerTag
+   * @param {IContext} context
+   * @returns {Promise<void>}
+   */
+  async addHtmlElementAsync(ownerTag, context) {
+    await Promise.all(
+      this.faces.map(async (face) => {
+        ownerTag.addChild(await face.createHtmlElementAsync(context));
+      })
+    );
   }
 }

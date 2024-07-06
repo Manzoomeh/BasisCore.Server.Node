@@ -1,3 +1,15 @@
 {
-  "cSpell.words": ["Manzoomeh", "Negaran"]
+  "cSpell.words": ["Manzoomeh", "Negaran"],
+  "jestrunner.jestCommand": "npm run test --",
+  "jestrunner.debugOptions": {
+    "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/react-scripts",
+    "runtimeArgs": [
+      "test",
+      "${fileBasename}",
+      "--runInBand",
+      "--no-cache",
+      "--watchAll=false",
+      "--color"
+    ]
+  }
 }

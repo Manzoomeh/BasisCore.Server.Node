@@ -48,25 +48,24 @@ export default class Member {
    * @returns {Promise<CommandElement>}
    */
   async createHtmlElementAsync(context) {
-    const retVal = new CommandElement("member");
+    const tag = new CommandElement("member");
+    tag.addAttributeIfExist("name", this.name);
     await Promise.all([
-      retVal.addAttributeIfExistAsync("name", this.name, context),
-      retVal.addAttributeIfExistAsync("preview", this.preview, context),
-      retVal.addAttributeIfExistAsync("sort", this.sort, context),
-      retVal.addAttributeIfExistAsync("postsql", this.postSql, context),
+      tag.addAttributeIfExistAsync("preview", this.preview, context),
+      tag.addAttributeIfExistAsync("sort", this.sort, context),
+      tag.addAttributeIfExistAsync("postsql", this.postSql, context),
     ]);
     if (this.extraAttributes) {
-      for (const key in this.extraAttributes) {
-        if (Object.hasOwn(this.extraAttributes, key)) {
-          const attribute = this.extraAttributes[key];
-          await retVal.addAttributeIfExistAsync(key, attribute, context);
-        }
+      if (this.extraAttributes) {
+        await Promise.all(
+          Object.entries(this.extraAttributes).map((pair) =>
+            tag.addAttributeIfExistAsync(pair[0], pair[1], context)
+          )
+        );
       }
     }
-    if (this.rawContent) {
-      await retVal.addRawContentIfExistAsync(this.rawContent, context);
-    }
-    return retVal;
+    await tag.addRawContentIfExistAsync(this.rawContent, context);
+    return tag;
   }
 
   /**

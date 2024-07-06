@@ -17,6 +17,13 @@ export default class ArrayToken extends IToken {
   async getValueAsync(context) {
     const tasks = this.values.map((x) => x.getValueAsync(context));
     const values = await Promise.all(tasks);
-    return values.join();
+    return values.join("");
+  }
+
+  /**
+   * @returns {boolean}
+   */
+  get IsNotNull() {
+    return true;
   }
 }
