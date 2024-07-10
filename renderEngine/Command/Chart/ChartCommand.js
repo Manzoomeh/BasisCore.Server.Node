@@ -8,32 +8,41 @@ import BarChart from "./BarChart.js";
 import LineChart from "./LineChart.js";
 import ICommandResult from "../../Models/ICommandResult.js";
 import FunnelChart from "./FunnelChart.js";
+import DonutChart from "./DonutChart.js";
+import HalfDonutChart from "./HalfDonutChart.js";
 export default class ChartCommand extends SourceBaseCommand {
   /** @type {IChartSetting} */
   chartSetting;
   /** @type {string} */
   layout;
-  /**@type {object} */
+  /** @type {d3} */
+
   chart;
-  /**@type {BarChart | LineChart | FunnelChart} */
+
+  /**
+   * @param {object} chartCommandIl
+  */
+  chartCommandIl
+  /**@type {BarChart | LineChart | FunnelChart | DonutChart} */
 
   chartManager;
   /**
-   * @param {object} chartCommandIl
-   */
+  * @type {object}
+  */
+  style = {
+    color: ["#004B85", "#FF7A00", "#00A693", "#B40020"],
+    width: 800,
+    height: 400,
+    marginY: 40,
+    marginX: 40,
+
+  };
   constructor(chartCommandIl) {
     super(chartCommandIl);
+    this.chartCommandIl = chartCommandIl
     this.layout = TokenUtil.getFiled(chartCommandIl, "layout-content");
+    this.style = { ...this.style, ...this.chartCommandIl.chartStyle }
 
-    this.chartSetting = chartCommandIl.setting || {
-      chartType: "bar",
-      style: {
-        width: 800,
-        height: 400,
-        marginY: 40,
-        marginX: 40,
-      },
-    };
   }
   /**
    * @param {IDataSource} source
@@ -56,8 +65,8 @@ export default class ChartCommand extends SourceBaseCommand {
 
   createChart(data) {
     const dom = new JSDOM("", { pretendToBeVisual: true });
-    const { width, height, marginX, marginY, backgroundColor, textColor } =
-      this.chartSetting.style;
+    const { width, height, marginX, marginY, backgroundColor } =
+      this.style
 
     const document = dom.window.document;
 
@@ -66,20 +75,33 @@ export default class ChartCommand extends SourceBaseCommand {
     this.chart = d3
       .select(svg)
       .attr("width", width + 2 * marginX)
-      .attr("height", height + 2 * marginY)
+      .attr("height", this.chartCommandIl.legend == 'true' ? height + 2 * marginY + 20 : height + 2 * marginY)
 
       .style("background-color", backgroundColor)
       .append("g")
       .attr("transform", "translate(" + marginX + "," + marginY + ")");
+    let chartSetting = {
+      chartType: this.chartCommandIl.chartType,
+      group: this.chartCommandIl.group,
+      y: this.chartCommandIl.y,
+      x: this.chartCommandIl.x,
+      chartTitle: this.chartCommandIl.chartTitle,
+      legend: this.chartCommandIl.legend == "true",
+      hover: this.chartCommandIl.hover == "true",
+      grid: this.chartCommandIl.grid == "true",
 
+      style: this.style,
+      axisLabel: this.chartCommandIl.axisLabel == 'true'
+    };
     document.body.appendChild(svg);
-
     // Create the chart based on the chart type
-    switch (this.chartSetting.chartType) {
+    switch (chartSetting.chartType) {
       case "bar":
+        chartSetting.horizontal = this.chartCommandIl.horizontal == 'true'
+
         this.chartManager = new BarChart(
           data,
-          this.chartSetting,
+          chartSetting,
           this.chart,
           document
         );
@@ -87,7 +109,7 @@ export default class ChartCommand extends SourceBaseCommand {
       case "line":
         this.chartManager = new LineChart(
           data,
-          this.chartSetting,
+          chartSetting,
           this.chart,
           document
         );
@@ -95,7 +117,27 @@ export default class ChartCommand extends SourceBaseCommand {
       case "funnel":
         this.chartManager = new FunnelChart(
           data,
-          this.chartSetting,
+          chartSetting,
+          this.chart,
+          document
+        );
+        break;
+      case "donut":
+        this.chartContent ? chartSetting.chartContent = this.chartContent : null
+
+        this.chartManager = new DonutChart(
+          data,
+          chartSetting,
+          this.chart,
+          document
+        );
+        break;
+      case "halfdonut":
+        this.chartContent ? chartSetting.chartContent = this.chartContent : null
+
+        this.chartManager = new HalfDonutChart(
+          data,
+          chartSetting,
           this.chart,
           document
         );

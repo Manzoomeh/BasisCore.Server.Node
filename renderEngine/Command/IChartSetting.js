@@ -1,19 +1,27 @@
-import IChartStyle from "./IChartStyle";
+import IChartStyle from "./IChartStyle.js";
 
-export default class IChartSetting {
+export class IChartSetting {
   /** @type {'bar'|'line'} */
   chartType;
   /** @type {string} */
-  columnKey;
+  group;
   /** @type {string} */
-  xKey;
+  x;
   /** @type {string} */
-  yKey;
+  y;
   chartTitle;
   /** @type {boolean?} */
   legend;
   /** @type {boolean?} */
+  hover;
+  /** @type {boolean?} */
   axisLabel;
   /** @type {IChartStyle?} */
   style;
+  /** @type {boolean?} */
+
+  grid
+
 }
+
+

@@ -19,8 +19,7 @@ const il = {
         <row column="february"  y="1"  />
         <row column="march"  y="8"  />
         <row column="april"  y="6" />
-        <row column="may"  y="7"  />
-       <row column="june"  y="4" />`,
+`,
     },
   ],
 };
@@ -29,19 +28,21 @@ const chartIl = {
   core: "chart",
   "data-member-name": "chart.data",
   "layout-content": "<div>@child</div >",
-  chartType: "bar",
+  //available chart types : line | bar | funnel
+  chartType: "donut",
   group: "column",
-  y: "y",
+   y: "y",
   chartTitle: "chart title",
+  hover: 'true', axisLabel: 'true',
   chartStyle: {
     backgroundColor: "#ffffff",
     width: 800,
     height: 400,
     marginY: 40,
-    marginX: 40,
+    marginX: 40, color: ["#004B85", "#FF7A00", "#00A693", "#B40020"],
+    opacity: 0.2,
     textColor: "blue",
   },
-  hover: 'true',
 };
 const db = new InlineSourceCommand(il);
 await db.executeAsync(context);

@@ -3,6 +3,7 @@ import ContextBase from "../../../renderEngine/Context/ContextBase.js";
 import ChartCommand from "../../../renderEngine/Command/Chart/ChartCommand.js";
 import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
 import VoidContext from "../../../renderEngine/Context/VoidContext.js";
+import util from 'util'
 
 const context = new ContextBase(null, null, new VoidContext());
 context.cancellation = new CancellationToken();
@@ -19,8 +20,7 @@ const il = {
         <row column="february"  y="1"  />
         <row column="march"  y="8"  />
         <row column="april"  y="6" />
-        <row column="may"  y="7"  />
-       <row column="june"  y="4" />`,
+`,
     },
   ],
 };
@@ -32,18 +32,20 @@ const chartIl = {
   chartType: "bar",
   group: "column",
   y: "y",
-  chartTitle: "chart title",
+  chartTitle: "chart title", horizontal: 'true',
+  axisLabel: 'true', grid: 'true', legend: 'true',
   chartStyle: {
     backgroundColor: "#ffffff",
     width: 800,
     height: 400,
     marginY: 40,
     marginX: 40,
-    textColor: "blue",
+    textColor: "blue", opacity: 0.2
   },
   hover: 'true',
 };
 const db = new InlineSourceCommand(il);
 await db.executeAsync(context);
 const chart = new ChartCommand(chartIl);
-console.log(await chart.executeAsync(context));
+
+console.log(util.inspect(await chart.executeAsync(context), true, null, true /* enable colors */));

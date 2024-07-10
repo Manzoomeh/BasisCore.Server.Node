@@ -15,12 +15,19 @@ const il = {
     {
       name: "data",
       preview: "true",
-      content: `<row column="january"  y="3" /> 
-        <row column="february"  y="1"  />
-        <row column="march"  y="8"  />
-        <row column="april"  y="6" />
-        <row column="may"  y="7"  />
-       <row column="june"  y="4" />`,
+      content: `<row x="0"  y="3" column='male'/> 
+        <row x="1"  y="1"  column='male'/>
+        <row x="2"  y="8"  column='male'/>
+        <row x="3"  y="6" column='male'/>
+        <row x="4"  y="7"  column='male'/>
+       <row x="5"  y="4" column='male'/>
+       <row x="0"  y="5" column='female'/> 
+        <row x="1"  y="2"  column='female'/>
+        <row x="2"  y="2"  column='female'/>
+        <row x="3"  y="1" column='female'/>
+        <row x="4"  y="4"  column='female'/>
+       <row x="5"  y="6" column='female'/>
+       `,
     },
   ],
 };
@@ -29,10 +36,12 @@ const chartIl = {
   core: "chart",
   "data-member-name": "chart.data",
   "layout-content": "<div>@child</div >",
-  chartType: "bar",
+  chartType: "line",
   group: "column",
-  y: "y",
+  x: "x",
+   y: "y",
   chartTitle: "chart title",
+  axisLabel: 'true',
   chartStyle: {
     backgroundColor: "#ffffff",
     width: 800,

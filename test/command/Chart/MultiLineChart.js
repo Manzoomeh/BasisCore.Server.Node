@@ -2,8 +2,9 @@ import CancellationToken from "../../../renderEngine/Cancellation/CancellationTo
 import ContextBase from "../../../renderEngine/Context/ContextBase.js";
 import ChartCommand from "../../../renderEngine/Command/Chart/ChartCommand.js";
 import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
-
-const context = new ContextBase();
+import VoidContext from "../../../renderEngine/Context/VoidContext.js";
+import fs from 'fs'
+const context = new ContextBase(null, null, new VoidContext());
 context.cancellation = new CancellationToken();
 
 const il = {
@@ -35,26 +36,31 @@ const chartIl = {
   core: "chart",
   "data-member-name": "chart.data",
   "layout-content": "<div>@child</div >",
-  setting: {
-    //available chart types : line | bar | funnel
-    chartType: "line",
-    columnKey: "column",
-    xKey: "x",
-    yKey: "y",
-    chartTitle: "chart title",
-    axisLabel: true,
-    style: {
-      backgroundColor: "#ffffff",
-      width: 800,
-      height: 400,
-      marginY: 40,
-      marginX: 40,
-      textColor: "blue",
-    },
-    hover: true,
+  chartType: "line",
+  group: "column",
+  x: "x",
+  y: "y",
+  chartTitle: "chart title",
+  axisLabel: 'true', grid: 'true', legend: 'true',
+  chartStyle: {
+    backgroundColor: "#ffffff",
+    width: 800,
+    height: 400,
+    marginY: 40,
+    marginX: 40,
+    textColor: "blue", thickness: 3, curveTension: 0.6
   },
+  hover: 'true',
 };
 const db = new InlineSourceCommand(il);
 await db.executeAsync(context);
 const chart = new ChartCommand(chartIl);
+const html = await chart.executeAsync(context)
+fs.writeFile('my-file.html', html._result, (err) => {
+  if (err) {
+    console.error('Error writing to file:', err);
+  } else {
+    console.log('HTML file created successfully!');
+  }
+});
 console.log(await chart.executeAsync(context));

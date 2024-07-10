@@ -3,7 +3,8 @@ import ContextBase from "../../../renderEngine/Context/ContextBase.js";
 import ChartCommand from "../../../renderEngine/Command/Chart/ChartCommand.js";
 import InlineSourceCommand from "../../../renderEngine/Command/Source/InlineSourceCommand.js";
 import fs from "fs";
-const context = new ContextBase();
+import VoidContext from "../../../renderEngine/Context/VoidContext.js";
+const context = new ContextBase(null, null, new VoidContext());
 context.cancellation = new CancellationToken();
 
 const il = {
@@ -28,23 +29,20 @@ const chartIl = {
   core: "chart",
   "data-member-name": "chart.data",
   "layout-content": "<div>@child</div >",
-  setting: {
-    //available chart types : line | bar | funnel
-    chartType: "funnel",
-    columnKey: "column",
-    yKey: "y",
-    chartTitle: "chart title",
-    axisLabel: true,
-    style: {
-      backgroundColor: "#ffffff",
-      width: 800,
-      height: 400,
-      marginY: 40,
-      marginX: 40,
-      textColor: "black",
-    },
-    hover: true,
+  chartType: "funnel",
+  group: "column",
+  y: "y",
+  chartTitle: "chart title",
+  axisLabel: 'true', legend: 'true',
+  chartStyle: {
+    backgroundColor: "#ffffff",
+    width: 800,
+    height: 400,
+    marginY: 40,
+    marginX: 40,
+    opacity: 0.2,
   },
+  hover: 'true',
 };
 const db = new InlineSourceCommand(il);
 await db.executeAsync(context);
