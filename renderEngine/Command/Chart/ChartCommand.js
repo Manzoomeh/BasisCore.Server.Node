@@ -42,7 +42,12 @@ export default class ChartCommand extends SourceBaseCommand {
     this.chartCommandIl = chartCommandIl
     this.layout = TokenUtil.getFiled(chartCommandIl, "layout-content");
     this.style = { ...this.style, ...this.chartCommandIl.chartStyle }
-
+    Object.keys(this.chartCommandIl).map(e => {
+      if (e.startsWith('style_')) {
+        this.style[e.split('_')[1]] = this.chartCommandIl[e]
+      }
+    })
+    console.log('this.style', this.style)
   }
   /**
    * @param {IDataSource} source
@@ -50,6 +55,7 @@ export default class ChartCommand extends SourceBaseCommand {
    * @returns {Promise<ICommandResult>}
    */
   async _renderAsync(source, context) {
+
     const renderResult = await this.renderInternallyAsync(source, context);
     let result = null;
     if ((renderResult?.length ?? 0) > 0) {

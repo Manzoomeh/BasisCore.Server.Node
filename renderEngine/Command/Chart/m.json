@@ -1,0 +1,419 @@
+{
+    "name": "",
+    "nodes": [
+        {
+            "id": "1",
+            "type": "signaler",
+            "name": "ticket",
+            "position": {
+                "x": 195,
+                "y": 353
+            },
+            "inputs": [
+                {
+                    "node": "2",
+                    "input": "output_1"
+                }
+            ],
+            "outputs": [
+                {
+                    "node": "3",
+                    "output": "input_1"
+                }
+            ],
+            "config": {
+                "signalerId": 1,
+                "inputSchema": "درخواست بررسی مرخصی",
+                "outputSchema": "درخواست بررسی مرخصی",
+                "bindings": {
+                    "body": {
+                        "receivers": [
+                            {
+                                "category": {
+                                    "value": "163",
+                                    "type": "field",
+                                    "itemId": "root-receivers-0-category"
+                                }
+                            }
+                        ],
+                        "subject": [
+                            {
+                                "value": "درخواست بررسی مرخصی",
+                                "type": "hardcode",
+                                "itemId": "root-0-subject"
+                            }
+                        ],
+                        "general_labels": [],
+                        "content": {
+                            "user": {
+                                "value": "165",
+                                "type": "field",
+                                "itemId": "root-content-0-user"
+                            },
+                            "start_day": {
+                                "value": "157",
+                                "type": "field",
+                                "itemId": "root-content-0-start_day"
+                            },
+                            "end_day": {
+                                "value": "158",
+                                "type": "field",
+                                "itemId": "root-content-0-end_day"
+                            },
+                            "duration": {
+                                "value": "159",
+                                "type": "field",
+                                "itemId": "root-content-0-duration"
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "id": "2",
+            "type": "rootSignaler",
+            "name": "ticket",
+            "position": {
+                "x": -50,
+                "y": 97
+            },
+            "outputs": [
+                {
+                    "node": "1",
+                    "output": "input_1"
+                }
+            ],
+            "config": {
+                "signalerId": 0,
+                "outputSchema": "مرخصی استعلاجی"
+            }
+        },
+        {
+            "id": "3",
+            "type": "predicate",
+            "name": "predicate",
+            "position": {
+                "x": 597,
+                "y": 475.3333333333333
+            },
+            "inputs": [
+                {
+                    "node": "1",
+                    "input": "output_1"
+                }
+            ],
+            "outputs": [
+                {
+                    "node": "4",
+                    "output": "input_1"
+                }
+            ],
+            "negativeOutputs": [
+                {
+                    "node": "9",
+                    "output": "input_1"
+                }
+            ],
+            "config": {
+                "predicate": {
+                    "type": "section",
+                    "items": [
+                        {
+                            "type": "fieldCondition",
+                            "operator": "contains",
+                            "prpId": "169",
+                            "value": "69",
+                            "itemId": "0",
+                            "dataType": "string"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "4",
+            "type": "signaler",
+            "name": "ticket",
+            "position": {
+                "x": 846.3333333333334,
+                "y": 295
+            },
+            "inputs": [
+                {
+                    "node": "3",
+                    "input": "output_1"
+                }
+            ],
+            "outputs": [
+                {
+                    "node": "5",
+                    "output": "input_1"
+                }
+            ],
+            "config": {
+                "signalerId": 1,
+                "inputSchema": "درخواست بررسی مرخصی",
+                "outputSchema": "درخواست بررسی مرخصی",
+                "bindings": {
+                    "body": {
+                        "receivers": {
+                            "catid": {
+                                "value": "163",
+                                "type": "field",
+                                "itemId": "root-receivers-0-catid"
+                            },
+                            "userid": {
+                                "value": "165",
+                                "type": "field",
+                                "itemId": "root-receivers-0-userid"
+                            }
+                        },
+                        "subject": [
+                            {
+                                "value": "تایید مرخصی",
+                                "type": "hardcode",
+                                "itemId": "root-0-subject"
+                            }
+                        ],
+                        "general_labels": [],
+                        "content": {
+                            "user": {
+                                "value": "165",
+                                "type": "field",
+                                "itemId": "root-content-0-user"
+                            },
+                            "start_day": {},
+                            "end_day": {},
+                            "duration": {}
+                        }
+                    }
+                }
+            }
+        },
+        {
+            "id": "5",
+            "type": "predicate",
+            "name": "predicate",
+            "position": {
+                "x": 1150,
+                "y": 440
+            },
+            "inputs": [
+                {
+                    "node": "4",
+                    "input": "output_1"
+                }
+            ],
+            "outputs": [
+                {
+                    "node": "6",
+                    "output": "input_1"
+                }
+            ],
+            "negativeOutputs": [
+                {
+                    "node": "7",
+                    "output": "input_1"
+                }
+            ],
+            "config": {
+                "predicate": {
+                    "type": "section",
+                    "items": [
+                        {
+                            "type": "fieldCondition",
+                            "operator": "contains",
+                            "prpId": "169",
+                            "value": "69",
+                            "itemId": "0",
+                            "dataType": "string"
+                        }
+                    ]
+                }
+            }
+        },
+        {
+            "id": "6",
+            "type": "signaler",
+            "name": "email",
+            "position": {
+                "x": 1489,
+                "y": 311
+            },
+            "inputs": [
+                {
+                    "node": "5",
+                    "input": "output_1"
+                }
+            ],
+            "outputs": [],
+            "config": {
+                "signalerId": 3,
+                "inputSchema": "ایمیل",
+                "outputSchema": "ایمیل",
+                "bindings": {
+                    "body": {
+                        "receivers": {
+                            "catid": {
+                                "value": "163",
+                                "type": "field",
+                                "itemId": "root-receivers-0-catid"
+                            },
+                            "userid": {
+                                "value": "165",
+                                "type": "field",
+                                "itemId": "root-receivers-0-userid"
+                            }
+                        },
+                        "target_emails": [],
+                        "subject": [
+                            {
+                                "value": "تایید مرخصی",
+                                "type": "hardcode",
+                                "itemId": "root-0-subject"
+                            }
+                        ],
+                        "message": [
+                            {
+                                "value": "مرخصی شما تایید شد",
+                                "type": "hardcode",
+                                "itemId": "root-0-message"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "id": "7",
+            "type": "signaler",
+            "name": "email",
+            "position": {
+                "x": 1484,
+                "y": 641
+            },
+            "inputs": [
+                {
+                    "node": "5",
+                    "input": "output_2"
+                }
+            ],
+            "outputs": [],
+            "config": {
+                "signalerId": 3,
+                "inputSchema": "ایمیل",
+                "outputSchema": "ایمیل",
+                "bindings": {
+                    "body": {
+                        "receivers": {
+                            "catid": {
+                                "value": "163",
+                                "type": "field",
+                                "itemId": "root-receivers-0-catid"
+                            },
+                            "userid": {
+                                "value": "165",
+                                "type": "field",
+                                "itemId": "root-receivers-0-userid"
+                            }
+                        },
+                        "target_emails": [],
+                        "subject": [
+                            {
+                                "value": "عدم تایید مرخصی",
+                                "type": "hardcode",
+                                "itemId": "root-0-subject"
+                            }
+                        ],
+                        "message": [
+                            {
+                                "value": "مرخصی شما تایید نشد",
+                                "type": "hardcode",
+                                "itemId": "root-0-message"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "id": "8",
+            "type": "signaler",
+            "name": "email",
+            "position": {
+                "x": 1226,
+                "y": 848
+            },
+            "inputs": [
+                {
+                    "node": "9",
+                    "input": "output_1"
+                }
+            ],
+            "outputs": [],
+            "config": {
+                "signalerId": 3,
+                "inputSchema": "ایمیل",
+                "outputSchema": "ایمیل",
+                "bindings": {
+                    "body": {
+                        "receivers": {
+                            "catid": {
+                                "value": "163",
+                                "type": "field",
+                                "itemId": "root-receivers-0-catid"
+                            },
+                            "userid": {
+                                "value": "165",
+                                "type": "field",
+                                "itemId": "root-receivers-0-userid"
+                            }
+                        },
+                        "target_emails": [],
+                        "subject": [
+                            {
+                                "value": "درخواست مرخصی رد شد",
+                                "type": "hardcode",
+                                "itemId": "root-0-subject"
+                            }
+                        ],
+                        "message": [
+                            {
+                                "value": "مرخصی شما رد شد",
+                                "type": "hardcode",
+                                "itemId": "root-0-message"
+                            }
+                        ]
+                    }
+                }
+            }
+        },
+        {
+            "id": "9",
+            "type": "timing",
+            "name": "Timing",
+            "position": {
+                "x": 892,
+                "y": 871
+            },
+            "inputs": [
+                {
+                    "node": "3",
+                    "input": "output_2"
+                }
+            ],
+            "outputs": [
+                {
+                    "node": "8",
+                    "output": "input_1"
+                }
+            ],
+            "config": {
+                "unit": "m",
+                "amount": "6",
+                "relation": "a"
+            }
+        }
+    ]
+}

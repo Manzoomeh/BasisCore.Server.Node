@@ -39,6 +39,7 @@
     "tree": "node test/command/tree/simple.js",
     "barchart": "node test/command/chart/BarChart.js",
     "custombarchart": "node test/command/chart/BarChartCustomStyle.js",
+    "groupedbarchart": "node test/command/chart/groupedBarChart.js",
     "funnelchart": "node test/command/chart/FunnelChart.js",
     "donutchart": "node test/command/chart/DonutChart.js",
     "halfdonutchart": "node test/command/chart/HalfDonutchart.js",

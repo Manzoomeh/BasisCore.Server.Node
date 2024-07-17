@@ -63,4 +63,4 @@ fs.writeFile('my-file.html', html._result, (err) => {
     console.log('HTML file created successfully!');
   }
 });
-console.log(await chart.executeAsync(context));
+console.log(html);
