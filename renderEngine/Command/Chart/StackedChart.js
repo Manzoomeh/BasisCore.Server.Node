@@ -53,7 +53,6 @@ export default class StackedChart {
         .attr("title", (d) => d[group])
         .attr("class", "bar")
         .attr("d", (item) => {
-          console.log("d :>> ", item);
           return (
             "M" +
             0 +
@@ -93,7 +92,6 @@ export default class StackedChart {
         .attr("title", (d) => d[group])
         .attr("class", "bar")
         .attr("d", (item) => {
-          console.log("d :>> ", item);
           return (
             "M" +
             this.xScale(item[group]) +

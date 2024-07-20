@@ -117,6 +117,8 @@ export default class LineChart {
         .selectAll('line')
         .attr('stroke-dasharray', '3, 3')
         .attr('opacity', 0.5);
+      this.chart.selectAll('.grid').selectAll('text').remove()
+
     }
     if (legend && group) {
       if (group) {

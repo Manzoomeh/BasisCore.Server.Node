@@ -47,7 +47,6 @@ export default class ChartCommand extends SourceBaseCommand {
         this.style[e.split('_')[1]] = this.chartCommandIl[e]
       }
     })
-    console.log('this.style', this.style)
   }
   /**
    * @param {IDataSource} source
