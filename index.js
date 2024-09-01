@@ -6,37 +6,24 @@ const host = {
   Lazy: true,
   EndPoints: {
     Main01: {
-      Type: "http",
-      id: "fingerfood",
+      Type: "websocket",
+      id: "chat",
       Addresses: [
         {
-          EndPoint: "0.0.0.0:443",
+          EndPoint: "127.0.0.1:3000",
         },
-        { EndPoint: "0.0.0.0:80" },
+        { EndPoint: "127.0.0.1:8080" },
       ],
       Active: true,
-      Routing: "mainService",
-      CacheSettings: {
-        requestMethods: "GET",
-        responseHeaders: ["content-type"],
-        isEnabled: true,
-        connectionType: "sqlite",
-        connectionSetting: {
-          dbPath: "test.db",
-          tableName: "cache_results",
-          isFileBase: true,
-          filesPath: "C:\\webservercache",
-        },
-      },
+      Routing: "chat",
     },
   },
   Services: {
-    mainService: {
-      Type: "http",
+    chat: {
+      Type: "websocket",
       Settings: {
-        LibPath : "F:\\AliBazregar\\BasisCore.Server.Node\\ExternalCommands",
-        "Connections.edge.RoutingData": {
-          endpoint: "127.0.0.1:2002",
+        "Connections.ws.wsmain": {
+          endpoint: "ws://localhost:8080/time",
         },
       },
     },
