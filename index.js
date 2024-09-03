@@ -10,9 +10,9 @@ const host = {
       id: "chat",
       Addresses: [
         {
-          EndPoint: "127.0.0.1:3000",
+          EndPoint: "127.0.0.1:2020",
         },
-        { EndPoint: "127.0.0.1:8080" },
+        { EndPoint: "127.0.0.1:1010" },
       ],
       Active: true,
       Routing: "chat",
@@ -23,7 +23,7 @@ const host = {
       Type: "websocket",
       Settings: {
         "Connections.ws.wsmain": {
-          endpoint: "ws://localhost:8080/time",
+          endpoint: "ws://localhost:8000/",
         },
       },
     },

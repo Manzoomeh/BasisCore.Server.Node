@@ -1,8 +1,7 @@
 import http from "http";
 import https from "https";
-import ws from "ws";
+import  { WebSocketServer } from "ws";
 import HostEndPoint from "./hostEndPoint.js";
-import MessageType from "../Models/WSMessageType.js";
 import WebsocketService from "../Services/WebsocketService.js";
 import WebServerException from "../models/Exceptions/WebServerException.js";
 
@@ -32,43 +31,26 @@ export default class WebsocketEndPoint extends HostEndPoint {
   }
 
   _createServer() {
-    if (this.#options && Object.keys(this.#options).length > 0) {
-      this.server = https.createServer(this.#options);
-    } else {
-      this.server = http.createServer();
-    }
-    server.on("request", (req, res) => {
-      res.setHeader("Access-Control-Allow-Origin", "*");
-      res.setHeader("Access-Control-Allow-Methods", "GET, POST");
-      res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-      res.end();
-    });
-
-    const wss = new WebSocket.Server({ server: server });
-    this._service.socket.on("message", (data) => {
-      const recievedData = JSON.parse(data);
-      io.to(recievedData.socketId).emit("message", data);
-    });
-
-    io.on("connection", (socket) => {
-      console.log("A user connected");
-      this._service.createSession(socket.id);
-      socket.on("message", (data) => {
-        this._service.sendMessage(sessionId, data);
+    
+    const wss = new WebSocketServer({ ip: this._ip, port :this._port });
+   
+    wss.on("connection", (clientSocket) => { 
+      
+      const sessionId = this._service.createSession(clientSocket);
+      this._service.init(sessionId,clientSocket);
+      clientSocket.on("message", (message) => {
+        this._service.sendMessage(sessionId,message.toString())
       });
-      //ask about other event handlers
-      socket.on("disconnect", () => {
-        console.log("Client disconnected:", socket.id);
-        this._service.disconnect(sessionId);
+      clientSocket.on("close", () => {
+        this._service.disconnect(sessionId)
+      });
+      clientSocket.on("error", (err) => {
+        console.error("Client socket error:", err);
       });
     });
-    console.log("33");
     return this.server;
   }
   listenAsync() {
     this._createServer();
-    this.server.listen(this._port, this._ip, () => {
-      console.log(`websocket listening on ws://${this._ip}:${this._port}`);
-    });
   }
 }
