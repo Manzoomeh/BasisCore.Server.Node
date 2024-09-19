@@ -7,6 +7,8 @@ import Util from "../../Util.js";
 import CommandBase from "../Command/CommandBase.js";
 import LocalContext from "./LocalContext.js";
 import UnknownCommand from "../Command/UnknownCommand.js";
+import VoidContext from "./VoidContext.js";
+import CancellationToken from "../Cancellation/CancellationToken.js";
 
 export default class TestContext extends ContextBase {
   /** @type {ServiceSettings} */
@@ -19,10 +21,11 @@ export default class TestContext extends ContextBase {
    * @param {Object.<string, any>} commands
    */
   constructor(settings, domainId, commands) {
-    super(null, domainId);
+    super(null, domainId, new VoidContext("nothing"));
     this._settings = settings;
     this.isSecure = false;
     this._commands = commands;
+    this.cancellation = new CancellationToken();
   }
 
   /**
@@ -73,10 +76,7 @@ export default class TestContext extends ContextBase {
       //TODO: IL must implement
     }
     /** @type {CommandBase} */
-    return this.createCommand(
-      JSON.parse(result.page_il),
-      this._commands
-    );
+    return this.createCommand(JSON.parse(result.page_il), this._commands);
   }
 
   /**

@@ -57,7 +57,7 @@ export default class RawFaceCollection {
     if (template && source) {
       source.columns.forEach((col, index) => {
         const replacement = `{${index}}`;
-        const pattern = `(?:@${col}|@col${index + 1}(?!\\d))`;
+        const pattern = `(?:@${col}|@col${index + 1}(?!\\d))|${col}`;
         template = StringUtil.replace(template, pattern, replacement);
       });
     }
@@ -72,7 +72,7 @@ export default class RawFaceCollection {
   formatFilter(source, filter) {
     if (filter && source.columns) {
       source.columns.forEach((col, index) => {
-        const pattern = `(?:@${col}|@col${index + 1}(?!\\d))`;
+        const pattern = `(?:@${col}|@col${index + 1}(?!\\d))|${col}`;
         filter = StringUtil.replace(filter, pattern, col);
       });
     }

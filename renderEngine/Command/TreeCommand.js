@@ -5,6 +5,7 @@ import RenderParam from "./RenderParam.js";
 import FaceCollection from "./Renderable/FaceCollection.js";
 import StringUtil from "../Token/StringUtil.js";
 import Util from "../../Util.js";
+import SourceUtil from "../Source/SourceUtil.js";
 
 export default class TreeCommand extends RenderableCommand {
   /** @type {IToken} */
@@ -53,7 +54,7 @@ export default class TreeCommand extends RenderableCommand {
       retVal = "";
       /** @type {Array<object>} */
       const processedRows = [];
-      const [relationColumnName, foreignKey, principalKey, tempNullValue] =
+      let [relationColumnName, foreignKey, principalKey, tempNullValue] =
         await Promise.all([
           await TokenUtil.getValueOrDefaultAsync(
             this.relationColumnName,
@@ -71,6 +72,8 @@ export default class TreeCommand extends RenderableCommand {
           ),
           await TokenUtil.getValueOrDefaultAsync(this.nullValue, context, "0"),
         ]);
+      foreignKey = SourceUtil.getExactColumnName(source, foreignKey);
+      principalKey = SourceUtil.getExactColumnName(source, principalKey);
 
       const nullValue =
         typeof source.data[0][foreignKey] === "number"
