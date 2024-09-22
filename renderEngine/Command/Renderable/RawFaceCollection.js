@@ -39,7 +39,8 @@ export default class RawFaceCollection {
       retVal.formattedContent = this.formatTemplate(source, await template);
       retVal.relatedRows = this.getRelatedRows(
         source,
-        this.formatFilter(source, await filter)
+        this.formatFilter(source, await filter
+      )
       );
       const strLevel = await level;
       retVal.levels = strLevel ? strLevel.split("|") : null;
@@ -57,7 +58,7 @@ export default class RawFaceCollection {
     if (template && source) {
       source.columns.forEach((col, index) => {
         const replacement = `{${index}}`;
-        const pattern = `(?:@${col}|@col${index + 1}(?!\\d))|${col}`;
+        const pattern = `(?:@${col}|@col${index + 1}(?!\\d))|@${col}`;
         template = StringUtil.replace(template, pattern, replacement);
       });
     }

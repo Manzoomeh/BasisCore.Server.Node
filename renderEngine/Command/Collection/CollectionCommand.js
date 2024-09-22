@@ -14,6 +14,9 @@ export default class CollectionCommand extends CommandBase {
    */
   constructor(collectionCommandIl) {
     super(collectionCommandIl);
+    if(!collectionCommandIl["Commands"]){
+      console.log(collectionCommandIl)
+    }
     this.commandsObjects = collectionCommandIl["Commands"];
   }
 

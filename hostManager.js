@@ -126,17 +126,17 @@ export default class HostManager {
             sniOptions.Hosts.forEach((host) => {
               /**@type {tls.SecureContextOptions}*/
               const options = {};
-              if (sniOptions.FilePath) {
+              if (host.FilePath) {
                 options.cert = fs.readFileSync(host.FilePath);
               }
-              if (sniOptions.KeyPath) {
+              if (host.KeyPath) {
                 options.key = fs.readFileSync(host.KeyPath);
               }
-              if (sniOptions.PfxPath) {
+              if (host.PfxPath) {
                 options.pfx = fs.readFileSync(host.PfxPath);
               }
-              if (sniOptions.PfxPassword) {
-                options.passphrase = fs.readFileSync(host.PfxPassword);
+              if (host.PfxPassword) {
+                options.passphrase = host.PfxPassword;
               }
               host.HostNames.forEach((hostName) => {
                 hostLookup[hostName.toLowerCase()] = options;
@@ -145,13 +145,26 @@ export default class HostManager {
             const sniCallback = (serverName, callback) => {
               const set = hostLookup[serverName.toLowerCase()];
               if (set) {
-                callback(
-                  null,
-                  new tls.createSecureContext({
-                    cert: set.cert,
-                    key: set.key,
-                  })
-                );
+                console.log("set", set);
+                if (set.cert) {
+                  callback(
+                    null,
+                    new tls.createSecureContext({
+                      cert: set.cert,
+                      key: set.key,
+                    })
+                  );
+                } else {
+                  if (set.pfx) {
+                    callback(
+                      null,
+                      new tls.createSecureContext({
+                        pfx: set.pfx,
+                        passphrase: set.passphrase,
+                      })
+                    );
+                  }
+                }
               } else {
                 console.log(
                   `In sni setting no certificate found fot '${serverName}'`

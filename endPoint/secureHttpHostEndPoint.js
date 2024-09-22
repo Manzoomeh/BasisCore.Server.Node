@@ -72,12 +72,16 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
                   rawRequest,
                   debugCondition ? cms.dict : undefined
                 );
-                this.addCacheContentAsync(
-                  `${req.headers.host}${req.url}`,
+                const statuscode = Number(result._request.webserver.headercode.split(" ")[0])
+                if(statuscode!=301 && statuscode!=302 ){
+                  this.addCacheContentAsync(
+                  `https://${req.headers.host}${req.url}`,
                   body,
                   headers,
                   req.method
                 );
+                }
+
                 res.writeHead(code, headers);
                 res.end(body);
               };

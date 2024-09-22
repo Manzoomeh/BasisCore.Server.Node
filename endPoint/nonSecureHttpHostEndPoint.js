@@ -56,12 +56,15 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                   rawRequest,
                   debugCondition ? cms.dict : undefined
                 );
-                this.addCacheContentAsync(
-                  `${req.headers.host}${req.url}`,
-                  body,
-                  headers,
-                  req.method
-                );
+                const statuscode = Number(result._request.webserver.headercode.split(" ")[0])
+                if(statuscode!=301 && statuscode!=302 ){
+                  this.addCacheContentAsync(
+                    `http://${req.headers.host}${req.url}`,
+                    body,
+                    headers,
+                    req.method
+                  );
+                }
                 res.writeHead(code, headers);
                 res.end(body);
               };
