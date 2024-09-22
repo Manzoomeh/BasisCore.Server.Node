@@ -20,6 +20,19 @@ export default class SourceUtil {
   }
 
   /**
+   * fix mis-match camel case a column name or over a query
+   * @param {IDataSource} source
+   * @param {string} columnOrQuery
+   * @returns {string}
+   */
+  static getExactColumnName(source, columnOrQuery) {
+    source.columns.forEach((col) => {
+      columnOrQuery = StringUtil.replace(columnOrQuery, col, col);
+    });
+    return columnOrQuery;
+  }
+
+  /**
    * @param {IDataSource} source
    * @param {string} sort
    */
@@ -62,6 +75,6 @@ export default class SourceUtil {
     if (preview) {
     }
     context.addSource(source);
-    context.debugContext.addDebugInformation(source.id,source.data);
+    context.debugContext.addDebugInformation(source.id, source.data);
   }
 }

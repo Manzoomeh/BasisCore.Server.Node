@@ -1,9 +1,10 @@
+import alasql from "alasql";
 import InMemoryMember from "./InMemoryMember.js";
 import JsonSource from "../../../Source/JsonSource.js";
 import IContext from "../../../Context/IContext.js";
-import alasql from "alasql";
-import ContextBase from "../../../Context/ContextBase.js";
 import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
+import SourceUtil from "../../../Source/SourceUtil.js";
+
 export default class SqlMember extends InMemoryMember {
   /**
    * @param {object} memberIL
@@ -18,8 +19,9 @@ export default class SqlMember extends InMemoryMember {
    */
   async _parseDataAsync(context) {
     try {
+      /** @type {lasql.Database} */
       let db = new alasql.Database();
-      const content = await this.rawContent.getValueAsync(context);
+      let content = await this.rawContent.getValueAsync(context);
       const dataMemberNames = this.findDataMembersInContent(content);
       const getSourcePromises = dataMemberNames.map((dataMemberName) =>
         context.waitToGetSourceAsync(dataMemberName)
@@ -42,6 +44,7 @@ export default class SqlMember extends InMemoryMember {
           return this.executeQueryAsync(db, insertSql);
         });
         await Promise.all(insertPromises);
+        content = SourceUtil.getExactColumnName(source, content);
       });
       await Promise.all(insertPromises);
       const queryResult = await this.executeQueryAsync(db, content);
