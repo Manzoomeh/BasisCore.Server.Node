@@ -43,12 +43,13 @@ export default class ViewCommand extends RenderableCommand {
     let retVal = null;
     if ((source.data?.length ?? 0) > 0) {
       retVal = "";
-      const groupColumn = await TokenUtil.getValueOrSystemDefaultAsync(
+      let groupColumn = await TokenUtil.getValueOrSystemDefaultAsync(
         this.groupColumn,
         "ViewCommand.GroupColumn",
         context,
         "prpid"
       );
+      groupColumn = SourceUtil.getExactColumnName(source, groupColumn);
       const groupKeyList = alasql(
         `SELECT ${groupColumn} AS key FROM ? GROUP BY ${groupColumn}`,
         [source.data]

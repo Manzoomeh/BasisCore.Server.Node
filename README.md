@@ -91,7 +91,44 @@ npm install basiscore.webserver
 ```
 ```javascript
 import HostManager from "basiscore.webserver";
-/** @type {HostManagerOptions} */
+
+const host = {
+  Lazy: true,
+  EndPoints: {
+    Main: {
+      Type: "http",
+      Addresses: [
+        {
+          EndPoint: "127.0.0.1:1565",
+          Certificate: {
+            Type: "ssl",
+            FilePath: "test-cert/server.cert",
+            KeyPath: "test-cert/server.key",
+            Http2: true,
+          },
+        },
+      ],
+      Active: true,
+      Routing: "fileService",
+    },
+  },
+  Services: {
+    fileService: {
+      Type: "file",
+      Settings: {
+        Directory: "D:/Programming/test",
+      },
+    },
+  },
+};
+
+const service = HostManager.fromJson(host);
+service.listenAsync();
+
+```
+or for using edge for example :
+```javascript
+import HostManager from "basiscore.webserver";
 const host = {
     Lazy: true,
     EndPoints: {
