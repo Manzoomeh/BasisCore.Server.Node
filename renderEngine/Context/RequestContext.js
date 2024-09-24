@@ -45,7 +45,6 @@ export default class RequestContext extends ContextBase {
         cookieObj[key] = value;
       });
     }
-    console.log(cookieObj)
     this.addSource(new JsonSource([cookieObj], "cms.cookie"));
   }
 
