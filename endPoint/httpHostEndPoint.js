@@ -26,7 +26,7 @@ class HttpHostEndPoint extends HostEndPoint {
   /** @type {CacheConnectionBase?} */
   _cacheConnection;
   /** @type {http.Server} */
-  _server
+  _server;
   /**
    *
    * @param {string} ip
@@ -34,7 +34,7 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {HostService}
    * @param {CacheSettings}cacheOptions
    */
-  constructor(ip, port, service,cacheOptions) {
+  constructor(ip, port, service, cacheOptions) {
     super(ip, port);
     this._service = service;
     this._cacheOptions = cacheOptions;
@@ -112,7 +112,7 @@ class HttpHostEndPoint extends HostEndPoint {
     headers["url"] = decodeURIComponent(urlObject.pathname ?? "");
     headers["full-url"] = decodeURIComponent(`${headers["host"]}${urlStr}`);
     headers["hostip"] = socket.localAddress;
-    headers["hostport"] = socket.localPort.toString();
+    headers["hostport"] = socket.localPort?.toString();
     headers["clientip"] = socket.remoteAddress;
     headers[":path"] = "/" + decodeURIComponent(rawUrl);
     if (Object.keys(jsonHeaders).length > 0) {
@@ -147,6 +147,25 @@ class HttpHostEndPoint extends HostEndPoint {
     }
     request["form"] = formFields;
     return request;
+  }
+  /**
+   *
+   * @param {IncomingMessage} req
+   * @param {ServerResponse} res
+   */
+  _securityHeadersMiddleware(req, res, next) {
+    req.url = req.url.replace(/[\n\r]|%0a|%0d/gi, " ");
+    res.setHeader(
+      "Strict-Transport-Security",
+      "max-age=15552000; includeSubDomains; preload"
+    );
+    res.setHeader("X-Content-Type-Options", "nosniff");
+    res.setHeader("X-Frame-Options", "DENY");
+    res.setHeader("X-XSS-Protection", "1; mode=block");
+
+    if (typeof next === "function") {
+      next();
+    }
   }
   /**
    *
@@ -289,12 +308,27 @@ class HttpHostEndPoint extends HostEndPoint {
         this._cacheOptions.responseHeaders
       );
       await this._cacheConnection.addCacheContentAsync(
-        key,
+        this.removeQueryParam(key, 'refresh'),
         content,
         savedHeaders
       );
     }
   }
+  sanitizeInput(input) {
+    let inputStr = String(input);
+    inputStr = inputStr.replace(/[\n\r]|%0a|%0d/gi, "");
+
+    return inputStr;
+  }
+  removeQueryParam(url, param) {
+    let [baseUrl, queryString] = url.split('?');
+    if (!queryString) return url; // No query string
+
+    let queryParams = queryString.split('&');
+    queryParams = queryParams.filter(pair => !pair.startsWith(param + '='));
+
+    return queryParams.length ? `${baseUrl}?${queryParams.join('&')}` : baseUrl;
+}
   /**
    *
    * @param {NodeJS.Dict} headers
@@ -313,9 +347,9 @@ class HttpHostEndPoint extends HostEndPoint {
   initializeAsync() {
     return this._service.initializeAsync();
   }
-  kill(){
-     this._server.close()
-     console.log(`server ip ${this._ip} and port ${this._port} killed`)
+  kill() {
+    this._server.close();
+    console.log(`server ip ${this._ip} and port ${this._port} killed`);
   }
 }
 export default HttpHostEndPoint;

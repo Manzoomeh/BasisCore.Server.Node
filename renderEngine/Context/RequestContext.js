@@ -12,6 +12,7 @@ import CookieItem from "../Models/CookieItem.js";
 import IContext from "./IContext.js";
 import IDebugContext from "./IDebugContext.js";
 import UnknownCommand from "../Command/UnknownCommand.js";
+import CommandUtil from "../CommandUtil.js";
 
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
@@ -149,6 +150,9 @@ export default class RequestContext extends ContextBase {
   createCommand(commandIl) {
     /** @type {CommandBase?} */
     let retVal = null;
+    if(!this._commands){
+      this._commands = CommandUtil.addDefaultCommands()
+    }
     const CommandClass = this._commands[commandIl.$type.toLowerCase()]?.default;
     if (CommandClass) {
       return new CommandClass(commandIl);

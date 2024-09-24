@@ -8,6 +8,7 @@ import RenderParam from "./RenderParam.js";
 import FaceCollection from "./Renderable/FaceCollection.js";
 import ReplaceCollection from "./Renderable/ReplaceCollection.js";
 import StringUtil from "../Token/StringUtil.js";
+import SourceUtil from "../Source/SourceUtil.js";
 
 export default class ViewCommand extends RenderableCommand {
   /** @type {IToken} */
@@ -48,7 +49,7 @@ export default class ViewCommand extends RenderableCommand {
         "ViewCommand.GroupColumn",
         context,
         "prpid"
-      );
+      )?? "prpID"
       groupColumn = SourceUtil.getExactColumnName(source, groupColumn);
       const groupKeyList = alasql(
         `SELECT ${groupColumn} AS key FROM ? GROUP BY ${groupColumn}`,
