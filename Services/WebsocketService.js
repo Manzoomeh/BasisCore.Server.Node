@@ -1,5 +1,4 @@
 import HostService from "./hostService.js";
-import { io as clientIO, Socket } from "socket.io-client";
 import WebServerException from "../models/Exceptions/WebServerException.js";
 import { HostServiceOptions } from "../models/model.js";
 import WSMessageType from "../Models/WSMessageType.js";

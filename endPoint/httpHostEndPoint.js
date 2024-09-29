@@ -112,7 +112,7 @@ class HttpHostEndPoint extends HostEndPoint {
     headers["url"] = decodeURIComponent(urlObject.pathname ?? "");
     headers["full-url"] = decodeURIComponent(`${headers["host"]}${urlStr}`);
     headers["hostip"] = socket.localAddress;
-    headers["hostport"] = socket.localPort.toString();
+    headers["hostport"] = socket.localPort?.toString();
     headers["clientip"] = socket.remoteAddress;
     headers[":path"] = "/" + decodeURIComponent(rawUrl);
     if (Object.keys(jsonHeaders).length > 0) {

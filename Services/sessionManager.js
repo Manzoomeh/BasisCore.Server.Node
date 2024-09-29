@@ -1,4 +1,6 @@
-let lastSessionId = 0;
+import { randomUUID } from "crypto";
+
+
 export default class SessionManager {
   /** @type {Map<string,WebSocket>} */
   sessionMap;
@@ -8,8 +10,8 @@ export default class SessionManager {
   }
 
   addSession(session) {
-    let sessionId = lastSessionId + 1;
-    this.sessionMap.set(sessionId.toString(), session);
+    let sessionId = randomUUID();
+    this.sessionMap.set(sessionId, session);
     return sessionId;
   }
   deleteSession(sessionId) {
@@ -17,5 +19,8 @@ export default class SessionManager {
   }
   findSession(sessionId) {
     return this.sessionMap.get(sessionId);
+  }
+  findOtherSessions(sessionId){
+    return Array.from(this.sessionMap).filter(([key]) => key !== sessionId);
   }
 }
