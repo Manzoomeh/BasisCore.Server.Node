@@ -2,7 +2,6 @@ import HostService from "./hostService.js";
 import WebServerException from "../models/Exceptions/WebServerException.js";
 import Request from "../models/request.js";
 import Response from "../models/response.js";
-
 export class HttpHostService extends HostService {
   /**
    * @param {string} name

@@ -3,8 +3,11 @@ import ServiceSettings from "../../../models/ServiceSettings.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 import GroupCommand from "../../../renderEngine/Command/Collection/GroupCommand.js";
 import TestContext from "../../../renderEngine/Context/TestContext.js";
+import VoidContext from "../../../renderEngine/Context/VoidContext.js";
+import CommandUtil from "../../../renderEngine/CommandUtil.js";
 var setting = new ServiceSettings({});
-const context = new TestContext(setting);
+const context = new TestContext(setting,"1",CommandUtil.addDefaultCommands());
+context.debugContext = new VoidContext("test")
 context.cancellation = new CancellationToken();
 
 const il = {
@@ -119,8 +122,9 @@ const il = {
           name: "face1",
           replace: true,
           function: true,
+          filter: "valueId = '12688740'",
           content:
-            "<td style='color:green' id='usedforid'><p> @valueID @mid @groupid @prpid @usedforid @typeid @multi @ord<br></td>",
+            "<td style='color:green' id='usedforid'><p> @valueID @mid @groupId @prpid @usedforId @typeId @multi @ord<br></td>",
         },
       ],
       replaces: [
