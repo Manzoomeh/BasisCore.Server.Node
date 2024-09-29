@@ -38,8 +38,8 @@ export default class WebsocketService extends HostService {
     });
   }
   /** @param {WebSocket} socket */
-  createSession() {
-    let sessionId = this.sessionManager.addSession(this.socket);
+  createSession(socket) {
+    let sessionId = this.sessionManager.addSession(socket);
     this.socket.send(
       JSON.stringify({
         messageType: WSMessageType.CONNECT,

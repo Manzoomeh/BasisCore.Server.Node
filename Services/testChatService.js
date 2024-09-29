@@ -23,8 +23,8 @@ export default class TestChatService extends HostService {
   init(sessionId, serverSocket) {
   }
   /** @param {WebSocket} socket */
-  createSession() {
-    let sessionId = this.sessionManager.addSession(this.socket);
+  createSession(socket) {
+    let sessionId = this.sessionManager.addSession(socket);
     const otherSessions = this.sessionManager.findOtherSessions(sessionId);
     otherSessions.map((session) => {
       session[1].send(

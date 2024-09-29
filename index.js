@@ -20,12 +20,7 @@ const host = {
   },
   Services: {
     chat: {
-      Type: "websocket",
-      Settings: {
-        "Connections.ws.wsmain": {
-          endpoint: "ws://localhost:8000/",
-        },
-      },
+      Type: "testchat"
     },
   },
 };

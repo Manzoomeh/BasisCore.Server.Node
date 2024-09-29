@@ -25,6 +25,7 @@ import { HttpHostService } from "./services/HttpHostService.js";
 import EndPointController from "./EndpointController.js";
 import WebsocketEndPoint from "./endPoint/WebsocketEndpoint.js";
 import WebsocketService from "./Services/WebsocketService.js";
+import TestChatService from "./Services/testChatService.js";
 
 export default class HostManager {
   /**@type {HostEndPoint[]} */
@@ -66,19 +67,21 @@ export default class HostManager {
               services
             );
           }
-          console.log("ssssss",service)
           if (service) {
             switch ((endPointsOptions.Type || "http").toLowerCase()) {
               case "http": {
                 this.#createHttpEndPoint(name, endPointsOptions, service);
                 break;
               }
-              case "websocket" : {
-                this.#createwebsocketEndPoint(name,endPointsOptions,service)
+              case "websocket": {
+                this.#createwebsocketEndPoint(name, endPointsOptions, service)
+                break;
+              }
+              case "testchat": {
+                this.#createTestChatEndPoint(name, endPointsOptions, service)
                 break;
               }
               default: {
-                console.log("tttttttttttttttttttttttttttt")
                 console.error(
                   `${endPointsOptions.Type} not support in this version of web server`
                 );
@@ -153,7 +156,6 @@ export default class HostManager {
             const sniCallback = (serverName, callback) => {
               const set = hostLookup[serverName.toLowerCase()];
               if (set) {
-                console.log("set", set);
                 if (set.cert) {
                   callback(
                     null,
@@ -217,12 +219,17 @@ export default class HostManager {
       }
     });
   }
-  #createwebsocketEndPoint(name, options, service){
-        options.Addresses.forEach((address) => {
+  #createwebsocketEndPoint(name, options, service) {
+    options.Addresses.forEach((address) => {
       const [ip, port] = address.EndPoint.split(":", 2);
-       this.hosts.push(new WebsocketEndPoint(ip,port,service,options))
+      this.hosts.push(new WebsocketEndPoint(ip, port, service, options))
     });
-    
+  }
+  #createTestChatEndPoint(name, options, service) {
+    options.Addresses.forEach((address) => {
+      const [ip, port] = address.EndPoint.split(":", 2);
+      this.hosts.push(new WebsocketEndPoint(ip, port, service, options))
+    });
   }
   /**
    * @param {NodeJS.Dict<HostServiceOptions>} services
@@ -244,8 +251,13 @@ export default class HostManager {
               retVal.push(this.#createFileDispatcher(name, serviceOptions));
               break;
             }
-            case "websocket" : {
-              retVal.push(new WebsocketService(name,serviceOptions))
+            case "websocket": {
+              retVal.push(new WebsocketService(name, serviceOptions))
+              break;
+            }
+            case "testchat": {
+              retVal.push(new TestChatService(name, serviceOptions))
+              break;
             }
             default: {
               console.error(
@@ -308,7 +320,6 @@ export default class HostManager {
     } catch (ex) {
       console.error(ex);
     }
-    console.log(1)
     this.#createHttpEndPoint(name, options, serviceClass, true);
   }
   stopHost(name, endPoints) {

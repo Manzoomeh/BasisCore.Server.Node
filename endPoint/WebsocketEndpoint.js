@@ -4,8 +4,7 @@ import  { WebSocketServer } from "ws";
 import HostEndPoint from "./hostEndPoint.js";
 import WebsocketService from "../Services/WebsocketService.js";
 import WebServerException from "../models/Exceptions/WebServerException.js";
-
-let sessionId = 0;
+import TestChatService from "../Services/testChatService.js";
 
 export default class WebsocketEndPoint extends HostEndPoint {
   /** @type {import("tls").SecureContextOptions} */
@@ -22,7 +21,7 @@ export default class WebsocketEndPoint extends HostEndPoint {
   constructor(ip, port, service, options) {
     super(ip, port);
     this.#options = options;
-    if (!(service instanceof WebsocketService)) {
+    if (!(service instanceof WebsocketService || TestChatService)) {
       throw new WebServerException(
         "The service for Web Socket endpoint must be Websocket Service only."
       );
