@@ -25,6 +25,16 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   constructor(ip, port, service, options, cacheSettings) {
     super(ip, port, service, null, cacheSettings);
     this.#options = options;
+    this.#options.ciphers = [
+      "TLS_AES_256_GCM_SHA384",
+      "TLS_CHACHA20_POLY1305_SHA256",
+      "TLS_AES_128_GCM_SHA256",
+      "ECDHE-RSA-AES256-GCM-SHA384",
+      "ECDHE-RSA-AES128-GCM-SHA256",
+    ].join(":");
+    this.#options.honorCipherOrder = true;
+    this.#options.minVersion = "TLSv1.2";
+    this.#options.allowHTTP1 = true;
   }
 
   /**
@@ -83,20 +93,18 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
 
           const createCmsAndCreateResponseAsync = async () => {
             const { query: queryObj } = url.parse(reqUrl, true);
-            let rawRequest =
+            let debugCondition =
               queryObj.debug == "true" ||
               queryObj.debug == "1" ||
-              queryObj.debug == "2"
-                ? this.addStringTable("Raw Request", JSON.stringify(headers))
-                : null;
-            let routingDataStep =
-              queryObj.debug == "true" ||
-              queryObj.debug == "1" ||
-              queryObj.debug == "2"
-                ? new LightgDebugStep(null, "Get Routing Data")
-                : null;
+              queryObj.debug == "2";
+            let rawRequest = debugCondition
+              ? this.addStringTable("Raw Request", JSON.stringify(headers))
+              : null;
+            let routingDataStep = debugCondition
+              ? new LightgDebugStep(null, "Get Routing Data")
+              : null;
             cms = await this._createCmsObjectAsync(
-              reqUrl,
+              reqUrl.replace(/[\n\r]|%0a|%0d/gi, " "),
               method,
               headers,
               formFields,
@@ -110,11 +118,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             const [code, headerList, body] = await result.getResultAsync(
               routingDataStep,
               rawRequest,
-              queryObj.debug == "true" ||
-                queryObj.debug == "1" ||
-                queryObj.debug == "2"
-                ? cms.dict
-                : undefined
+              debugCondition ? cms.dict : undefined
             );
             await this.addCacheContentAsync(
               `${headers.host}${headers[":path"]}`,
@@ -123,7 +127,14 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
               headers[":method"]
             );
             headerList[":status"] = code;
-            stream.respond(headerList);
+            stream.respond({
+              ...headerList,
+              "Strict-Transport-Security":
+                "max-age=15552000; includeSubDomains; preload",
+              "X-Content-Type-Options": "nosniff",
+              "X-Frame-Options": "DENY",
+              "X-XSS-Protection": "1; mode=block",
+            });
             stream.end(body);
           };
 

@@ -8,6 +8,8 @@ import CommandElement from "../../CommandElement.js";
 import MemberCollection from "./MemberCollection.js";
 import ParamItemCollection from "./ParamItemCollection.js";
 import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
+import { Encoder } from "node-html-encoder";
+const encoder = new Encoder("entity");
 
 export default class SourceCommand extends CommandBase {
   /** @type {ParamItemCollection}   */
@@ -74,6 +76,12 @@ export default class SourceCommand extends CommandBase {
       dmnid: context.domainId,
       params: paramList,
     };
+    let debugParams = {
+      command: encoder.htmlEncode(command),
+      dmnid: context.domainId,
+      params: JSON.stringify(paramList),
+    }
+    context.debugContext.addDebugInformation(`Parameter(s) Send To '${sourceName}' From Command '${connectionName}' in 180 ms`,[debugParams])
     const memberNames = this.members.items.map((item)=>{
       return item.name
     })

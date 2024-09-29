@@ -1,6 +1,6 @@
 {
   "name": "basiscore.server",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "java script version of Manzoomeh Negaran http  web server for nodejs",
   "main": "hostManager.js",
   "keywords": [
