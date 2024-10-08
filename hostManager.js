@@ -43,7 +43,7 @@ export default class HostManager {
   listenAsync() {
     const tasks = this.hosts.map((x) =>
        x.listenAsync()
-    // ?.catch((err) => console.error(err))
+    .catch((err) => console.error(err))
     );
     return Promise.all(tasks);
   }

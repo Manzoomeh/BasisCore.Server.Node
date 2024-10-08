@@ -55,7 +55,6 @@ export default class SqlConnectionInfo extends ConnectionInfo {
         }
       }
     }
-    console.log((await request.execute(this.settings.procedure)).recordsets)
     return new DataSourceCollection(
       (await request.execute(this.settings.procedure)).recordsets
     );
