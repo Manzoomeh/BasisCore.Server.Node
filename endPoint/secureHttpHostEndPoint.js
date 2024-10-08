@@ -39,7 +39,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
         let cms = null;
         this._securityHeadersMiddleware(req, res, async () => {
           this._handleContentTypes(req, res, async () => {
-            this._checkCacheAsync(req, res, async () => {
+            this._checkCacheAsync(req, res, true,async () => {
               const createCmsAndCreateResponseAsync = async () => {
                 const queryObj = url.parse(req.url, true).query;
                 let debugCondition =
@@ -78,7 +78,8 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
                   `https://${req.headers.host}${req.url}`,
                   body,
                   headers,
-                  req.method
+                  req.method,
+                  cms
                 );
                 }
 

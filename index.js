@@ -1,29 +1,50 @@
 import HostManager from "./hostManager.js";
 import { HostManagerOptions } from "./models/model.js";
 
-/** @type {HostManagerOptions} */
 const host = {
   Lazy: true,
   EndPoints: {
-    Main01: {
-      Type: "websocket",
-      id: "chat",
+    Main06: {
+      Type: "http",
       Addresses: [
         {
-          EndPoint: "127.0.0.1:2020",
+          EndPoint: "185.44.38.83:443",
         },
-        { EndPoint: "127.0.0.1:1010" },
       ],
       Active: true,
-      Routing: "chat",
+      Routing: "mainservice",
+      CacheSettings: {
+        requestMethods: "GET",
+        responseHeaders: ["content-type"],
+        isEnabled: true,
+        connectionType: "sqlite",
+        connectionSetting: {
+          dbPath: "./cache/",
+          filesPath : "./cachefiles/",
+          isFileBase : true
+        },
+      },
     },
   },
   Services: {
-    chat: {
-      Type: "testchat"
+    mainservice: {
+      Type: "http",
+      Settings: {
+        LibPath: "C:\\Users\\senka\\OneDrive\\Desktop\\projects\\BasisCore.Server.Node\\ExternalCommands",
+        "Connections.edge.RoutingData": {
+          endpoint: "127.0.0.1:8000",
+        },
+        "Default.MultiPart.CookieName": "uploadcookie",
+        "Default.ViewCommand.GroupColumn": "prpid",
+        "Default.PythonPath": "c:\\Python\\Python38-32\\python.exe",
+        "Connections.socket.mydbsource": {
+          endpoint: "127.0.0.1:9090",
+        },
+        "Default.ScriptEngine.PythonPath":
+          "C:\\Services\\Server user.basiscore.com 217\\Service\\PythonScriptEngine.py",
+      },
     },
   },
 };
-
 const service = HostManager.fromJson(host);
 service.listenAsync();

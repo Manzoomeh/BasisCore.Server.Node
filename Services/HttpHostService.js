@@ -19,7 +19,7 @@ export class HttpHostService extends HostService {
   /**
    * @param {Request} request
    * @param {BinaryContent[]} fileContents
-   * @returns {Promise<Response>}
+   * @returns {Promise<{result :Response,responseCms:NodeJS.Dict<any}>}
    */
   async processAsync(request, fileContents) {
     try {
@@ -29,7 +29,8 @@ export class HttpHostService extends HostService {
         null
       );
       data.isSecure = request.isSecure;
-      return this._createResponse(data);
+    
+      return {result:this._createResponse(data),responseCms : data}
     } catch (er) {
       console.error(er);
       throw er;
