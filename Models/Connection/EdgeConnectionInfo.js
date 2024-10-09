@@ -6,12 +6,8 @@ import Request from "../request.js";
 import IEdgeSettingData from "./IEdgeSettingData.js";
 import EdgeMessage from "../../edge/edgeMessage.js";
 import WebServerException from "../Exceptions/WebServerException.js";
-/**
- * @typedef {Object} LoadDataRequest
- * @property {string} dmnid --domainID
- * @property {string} command --the basis core command
- * @property {NodeJS.Dict<string>} params -- other parameters
- */
+import LoadDataRequest from "../LoadDataRequest.js";
+
 export default class EdgeConnectionInfo extends ConnectionInfo {
   /** @type {IEdgeSettingData} */
   settings;
