@@ -57,6 +57,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     body,
     isSecure
   ) {
+    console.log(formFields,fileContents)
     const cms = await super._createCmsObjectAsync(
       urlStr,
       method,
@@ -114,6 +115,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
               true
             );
             const result = await this._service.processAsync(cms, fileContents);
+
             if (routingDataStep) routingDataStep.complete();
             const [code, headerList, body] = await result.getResultAsync(
               routingDataStep,
@@ -139,7 +141,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           };
 
           stream.on("data", (chunk) => {
-            if (headers["content-type"] === "application/json") {
+            if (headers["content-type"] === "application/json" || headers["content-type"]=="application/javascript"||headers["content-type"].startsWith("application/x-www-form-urlencoded")) {
               bodyStr += chunk;
             }
           });
@@ -173,6 +175,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
                   });
                 });
                 bb.on("field", (name, val, info) => {
+                  console.log(name,val)
                   formFields[name] = val;
                   if (name.startsWith("_")) {
                     jsonHeaders[name] = val;
@@ -181,7 +184,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
                 bb.on("close", createCmsAndCreateResponseAsync);
                 stream.pipe(bb);
               } else {
-                await createCmsAndCreateResponseAsync();
+                // await createCmsAndCreateResponseAsync();
               }
             }
           } catch (ex) {

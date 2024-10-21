@@ -5,6 +5,7 @@ import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import StringResult from "../renderEngine/Models/StringResult.js";
+import fs from "fs";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /**
@@ -19,6 +20,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
 
   _createServer() {
     this._server = http.createServer(async (req, res) => {
+      console.log("request " + req.url);
       try {
         this._securityHeadersMiddleware(req, res, async () => {
           this._handleContentTypes(req, res, async () => {
@@ -51,13 +53,15 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                   req.fileContents
                 );
                 routingDataStep?.complete();
-                const [code, headers, body] = await result.getResultAsync(
+                let[code, headers, body] = await result.getResultAsync(
                   routingDataStep,
                   rawRequest,
                   debugCondition ? cms.dict : undefined
                 );
-                const statuscode = Number(result._request.webserver.headercode.split(" ")[0])
-                if(statuscode!=301 && statuscode!=302 ){
+                const statuscode = Number(
+                  result._request.webserver.headercode.split(" ")[0]
+                );
+                if (statuscode != 301 && statuscode != 302) {
                   this.addCacheContentAsync(
                     `http://${req.headers.host}${req.url}`,
                     body,

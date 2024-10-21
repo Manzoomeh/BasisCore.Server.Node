@@ -1,4 +1,4 @@
-import alasql from "alasql";
+
 import TokenUtil from "../Token/TokenUtil.js";
 import RenderableCommand from "./RenderableCommand.js";
 import RenderParam from "./RenderParam.js";
@@ -6,6 +6,9 @@ import FaceCollection from "./Renderable/FaceCollection.js";
 import StringUtil from "../Token/StringUtil.js";
 import Util from "../../Util.js";
 import SourceUtil from "../Source/SourceUtil.js";
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const alasql = require ("./../../../alasql")
 
 export default class TreeCommand extends RenderableCommand {
   /** @type {IToken} */

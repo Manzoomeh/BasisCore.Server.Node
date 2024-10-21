@@ -51,7 +51,7 @@ export default class RenderableCommand extends SourceBaseCommand {
     );
     this.layout = TokenUtil.getFiled(renderableCommandIl, "layout-content");
     this.rawFaces = new RawFaceCollection(renderableCommandIl["faces"]);
-    this.replaces = new RawReplaceCollection(renderableCommandIl["replaces"]);
+    this.replaces =renderableCommandIl["replaces"] ?new RawReplaceCollection(renderableCommandIl["replaces"]) : new RawReplaceCollection(renderableCommandIl["Replaces"]) ;
   }
 
   /**

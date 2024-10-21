@@ -1,4 +1,7 @@
-import alasql from "alasql";
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const alasql = require ("./../../../../../alasql")
+
 import InMemoryMember from "./InMemoryMember.js";
 import JsonSource from "../../../Source/JsonSource.js";
 import IContext from "../../../Context/IContext.js";
