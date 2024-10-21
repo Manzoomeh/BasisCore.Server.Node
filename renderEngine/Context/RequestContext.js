@@ -13,8 +13,6 @@ import IContext from "./IContext.js";
 import IDebugContext from "./IDebugContext.js";
 import UnknownCommand from "../Command/UnknownCommand.js";
 import CommandUtil from "../CommandUtil.js";
-import { Encoder } from "node-html-encoder";
-let encoder = new Encoder("entity")
 
 export default class RequestContext extends ContextBase {
   /** @type {ServiceSettings} */
@@ -26,7 +24,7 @@ export default class RequestContext extends ContextBase {
    * @param {IRoutingRequest} request
    * @param {Object.<string, any>} commands
    */
-  constructor(settings, request, commands, debugContext) {
+  constructor(settings, request,commands, debugContext) {
     super(null, Number(request.cms?.dmnid), debugContext);
     this._settings = settings;
     this.isSecure = request.isSecure;
@@ -44,10 +42,7 @@ export default class RequestContext extends ContextBase {
     if (request.request.cookie) {
       request.request.cookie.split(";").forEach((element) => {
         const [key, value] = element.split("=");
-        if (cookieObj) {
-          //cookieObj[key] = value;
-          cookieObj[key.replace(/\s+/g, "")] = value
-        }
+        cookieObj[key] = value;
       });
     }
     this.addSource(new JsonSource([cookieObj], "cms.cookie"));
@@ -82,7 +77,7 @@ export default class RequestContext extends ContextBase {
       );
       result.items.forEach((item, index) => {
         this.debugContext.addDebugInformation(
-          sourceName + "." + memberNames[index]
+          sourceName + "." + memberNames[index],
         );
       });
       return result;
@@ -120,14 +115,7 @@ export default class RequestContext extends ContextBase {
     );
     if (result.il_call == 1 || Util.isNullOrEmpty(result.page_il)) {
       //TODO: IL must implement
-      const response = await fetch("http://localhost:8080/ilparser", {
-        body: result.content,
-        method: "POST",
-      });
-      const responseJson = await response.json()
-      return this.createCommand(responseJson);
     }
-    this.debugContext.addDebugInformation(`result from load page ${pageName}`,{content : encoder.htmlEncode(result.content) })
     /** @type {CommandBase} */
     return this.createCommand(JSON.parse(result.page_il));
   }
@@ -162,8 +150,8 @@ export default class RequestContext extends ContextBase {
   createCommand(commandIl) {
     /** @type {CommandBase?} */
     let retVal = null;
-    if (!this._commands) {
-      this._commands = CommandUtil.addDefaultCommands();
+    if(!this._commands){
+      this._commands = CommandUtil.addDefaultCommands()
     }
     const CommandClass = this._commands[commandIl.$type.toLowerCase()]?.default;
     if (CommandClass) {
