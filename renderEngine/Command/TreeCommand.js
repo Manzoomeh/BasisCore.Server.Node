@@ -6,9 +6,7 @@ import FaceCollection from "./Renderable/FaceCollection.js";
 import StringUtil from "../Token/StringUtil.js";
 import Util from "../../Util.js";
 import SourceUtil from "../Source/SourceUtil.js";
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const alasql = require ("./../../../alasql")
+import alasql from "./../../alasql-ex.js"
 
 export default class TreeCommand extends RenderableCommand {
   /** @type {IToken} */

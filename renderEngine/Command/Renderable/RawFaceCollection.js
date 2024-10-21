@@ -6,9 +6,7 @@ import FaceCollection from "./FaceCollection.js";
 import FaceRowType from "./FaceRowType.js";
 import RawFace from "./RawFace.js";
 import CommandElement from "../CommandElement.js";
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const alasql = require ("./../../../../alasql")
+import alasql  from "./../../../alasql-ex.js";
 
 export default class RawFaceCollection {
   /**@type {RawFace[]} */

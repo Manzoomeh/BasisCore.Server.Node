@@ -3,9 +3,7 @@ import JsonSource from "../../../Source/JsonSource.js";
 import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
 import IContext from "../../../Context/IContext.js";
 import IToken from "../../../Token/IToken.js";
-import { createRequire } from 'module';
-const require = createRequire(import.meta.url);
-const alasql = require ("./../../../../../alasql")
+import alasql from "./../../../../alasql-ex.jsalasql";
 export default class JoinMember extends InMemoryMember {
   /**
    * @param {object} memberIL
