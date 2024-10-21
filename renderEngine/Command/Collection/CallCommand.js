@@ -4,7 +4,6 @@ import TokenUtil from "../../Token/TokenUtil.js";
 import CommandBase from "../CommandBase.js";
 import GroupCommand from "../Collection/GroupCommand.js";
 import RunTypes from "../../Enums/RunTypes.js";
-
 export default class CallCommand extends CommandBase {
   /** @type {IToken} */
   file;
@@ -47,10 +46,11 @@ export default class CallCommand extends CommandBase {
       const loadPageStep = context.debugContext.newStep(
         `Load ${pageName} From DB`
       );
+      let htmlContent = html.getHtml()
       try {
         command = await context.loadPageAsync(
           pageName,
-          html.getHtml(),
+          htmlContent,
           pageSize,
           this.callDepth + 1
         );
@@ -62,6 +62,7 @@ export default class CallCommand extends CommandBase {
       if (command instanceof CallCommand) {
         command.callDepth = this.callDepth + 1;
         retVal = await command.callAsync(context);
+
       } else if (command instanceof GroupCommand) {
         retVal = [];
         for (let i = 0; i < command.commandsObjects?.length; i++) {
@@ -76,7 +77,6 @@ export default class CallCommand extends CommandBase {
         retVal = [command];
       }
     }
-
     return retVal;
   }
 
