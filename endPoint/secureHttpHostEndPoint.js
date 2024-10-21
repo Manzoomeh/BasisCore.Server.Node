@@ -34,7 +34,6 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
 
   _createServer() {
     this._server = https
-    this._server = https
       .createServer(this.#options, async (req, res) => {
         /** @type {Request} */
         let cms = null;
@@ -73,15 +72,17 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
                   rawRequest,
                   debugCondition ? cms.dict : undefined
                 );
-                const statuscode = Number(result._request.webserver.headercode.split(" ")[0])
-                if(statuscode!=301 && statuscode!=302 ){
-                  this.addCacheContentAsync(
-                  `https://${req.headers.host}${req.url}`,
-                  body,
-                  headers,
-                  req.method,
-                  cms
+                const statuscode = Number(
+                  result._request.webserver.headercode.split(" ")[0]
                 );
+                if (statuscode != 301 && statuscode != 302) {
+                  this.addCacheContentAsync(
+                    `https://${req.headers.host}${req.url}`,
+                    body,
+                    headers,
+                    req.method,
+                    cms
+                  );
                 }
 
                 res.writeHead(code, headers);
