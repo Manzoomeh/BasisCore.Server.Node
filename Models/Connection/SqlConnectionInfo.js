@@ -27,7 +27,7 @@ export default class SqlConnectionInfo extends ConnectionInfo {
           : "")
     );
     this.connectionPool.connect().catch((err)=>{
-      console.log("error in connect",this.name,this.settings.connectionString ,err)
+      console.log("error in connect",this.name,err)
     })
     
   }

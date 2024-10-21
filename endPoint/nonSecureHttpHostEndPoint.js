@@ -20,7 +20,6 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
 
   _createServer() {
     this._server = http.createServer(async (req, res) => {
-      console.log("request " + req.url);
       try {
         this._securityHeadersMiddleware(req, res, async () => {
           this._handleContentTypes(req, res, async () => {
@@ -53,7 +52,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                   req.fileContents
                 );
                 routingDataStep?.complete();
-                let[code, headers, body] = await result.getResultAsync(
+                const [code, headers, body] = await result.getResultAsync(
                   routingDataStep,
                   rawRequest,
                   debugCondition ? cms.dict : undefined

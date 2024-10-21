@@ -117,7 +117,6 @@ class HttpHostEndPoint extends HostEndPoint {
     headers["clientip"] = socket.remoteAddress;
     headers[":path"] = "/" + decodeURIComponent(rawUrl);
     if (Object.keys(jsonHeaders).length > 0) {
-      console.log(ObjectUtil.convertObjectToNestedStructure(jsonHeaders))
       headers["json"] = {
         header: ObjectUtil.convertObjectToNestedStructure(jsonHeaders),
       };
