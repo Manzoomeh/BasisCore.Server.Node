@@ -34,6 +34,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
 
   _createServer() {
     this._server = https
+    this._server = https
       .createServer(this.#options, async (req, res) => {
         /** @type {Request} */
         let cms = null;
@@ -78,7 +79,8 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
                   `https://${req.headers.host}${req.url}`,
                   body,
                   headers,
-                  req.method
+                  req.method,
+                  cms
                 );
                 }
 

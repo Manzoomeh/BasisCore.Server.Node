@@ -1,19 +1,20 @@
-import ConnectionInfo from "../Connection/ConnectionInfo.js";
 import BaseCacheManager from "./BaseCacheManager.js";
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const amqp = require("amqplib/callback_api");
 import RabbitMQSetting from "./RabbitMqSetting.js";
+import CacheConnectionBase from "./CacheConnection/CacheConnectionBase.js";
+
 export default class RabbitMQCacheManager extends BaseCacheManager {
-  /**@type {ConnectionInfo}*/
-  connectionInfo;
+  /**@type {CacheConnectionBase}*/
+  connection;
   /**@type {RabbitMQSetting} */
   settings;
   /** @type {amqp.Channel} */
   channel;
 
   /**
-   * @param {ConnectionInfo}
+   * @param {CacheConnectionBase} connectionInfo
    * @param {RabbitMQSetting} settings
    */
   constructor(connectionInfo, settings) {
@@ -48,8 +49,46 @@ export default class RabbitMQCacheManager extends BaseCacheManager {
       durable: true,
     });
     this.channel.consume(queueName, async function (msg) {
-      console.log("cache deleted")
       await this.connection.deleteAllCache();
+    });
+  }
+  /**
+ * @param {string} queueName
+ * @returns {Promise<void>}
+ */
+  createUpdateExpiration(queueName) {
+    this.channel.assertQueue(queueName, {
+      durable: true,
+    });
+    this.channel.consume(queueName, async function (msg) {
+      const { ownerId, newExpireDateString } = JSON.parse(msg.content.toString())
+      await this.connection.extendOwnerDomainsExpireDate(ownerId, newExpireDateString)
+    });
+  }
+  /**
+ * @param {string} queueName
+ * @returns {Promise<void>}
+ */
+  createUpdateAssetExpiration(queueName) {
+    this.channel.assertQueue(queueName, {
+      durable: true,
+    });
+    this.channel.consume(queueName, async function (msg) {
+      const { key, newExpireDateString } = JSON.parse(msg.content.toString())
+      await this.connection.changeAssetCacheExpire(key, newExpireDateString)
+    });
+  }
+  /**
+ * @param {string} queueName
+ * @returns {Promise<void>}
+ */
+  createUpdateAssetExpiration(queueName) {
+    this.channel.assertQueue(queueName, {
+      durable: true,
+    });
+    this.channel.consume(queueName, async function (msg) {
+      const { dmnid, newExpireDateString } = JSON.parse(msg.content.toString())
+      await this.connection.changeHostCacheExpire(dmnid, newExpireDateString)
     });
   }
 }

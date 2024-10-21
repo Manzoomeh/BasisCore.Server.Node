@@ -253,7 +253,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
             ":status": 200,
             ...JSON.parse(this._cacheOptions.properties),
           });
-          stream.end(cacheOptions.file);
+          stream.end(cacheOptions.content);
         } catch (err) {
           next();
         }

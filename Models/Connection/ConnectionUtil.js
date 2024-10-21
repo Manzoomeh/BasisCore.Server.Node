@@ -55,9 +55,13 @@ export default class ConnectionUtil {
             break;
           }
           default: {
-            throw new WebServerException(
-              `Provider type '${parts[1]}' not support in connection manager`
-            );
+            if (parts[1] == "ws") {
+              continue;
+            } else {
+              throw new WebServerException(
+                `Provider type '${parts[1]}' not support in connection manager`
+              );
+            }
           }
         }
         retVal.push(connection);
