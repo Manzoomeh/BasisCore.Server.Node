@@ -21,8 +21,12 @@ export default class CommandBase {
   renderTo;
   /**@type {IToken} */
   renderType;
+  /**@type {IToken} */
+  method;
   /** @type {NodeJS.Dict<IToken>} */
   extraAttributes;
+  /** @type {IToken} */
+  datamembername
 
   /**
    * @param {object} commandIl
@@ -34,6 +38,8 @@ export default class CommandBase {
     this.runType = TokenUtil.getFiled(commandIl, "run");
     this.renderType = TokenUtil.getFiled(commandIl, "renderType");
     this.renderTo = TokenUtil.getFiled(commandIl, "renderTo");
+    this.method = TokenUtil.getFiled(commandIl, "method");
+    this.datamembername = TokenUtil.getFiled(commandIl, "data-member-name");
     this.extraAttributes = null;
     /**@type {NodeJS.Dict?} */
     const items = commandIl["extra-attribute"];
@@ -155,6 +161,8 @@ export default class CommandBase {
       tag.addAttributeIfExistAsync("if", this.if, context),
       tag.addAttributeIfExistAsync("renderto", this.renderTo, context),
       tag.addAttributeIfExistAsync("rendertype", this.renderType, context),
+      tag.addAttributeIfExistAsync("method", this.method, context),
+      tag.addAttributeIfExistAsync("datamembername",this.datamembername,context)
     ]);
     if (this.runType) {
       const runType = await this._getRunTypeValueAsync(context);

@@ -6,6 +6,7 @@ import path from "path";
 import Pako from "pako";
 import Util from "../Util.js";
 import WebServerException from "./Exceptions/WebServerException.js";
+import sharp from "sharp";
 
 export default class Index4Response extends RequestBaseResponse {
   /**
@@ -100,7 +101,6 @@ export default class Index4Response extends RequestBaseResponse {
     const stats = fs.statSync(filepath);
     return stats.mtime;
   }
-
   /**
    * @param {Buffer} content
    * @param {string} size
@@ -108,52 +108,48 @@ export default class Index4Response extends RequestBaseResponse {
    * @returns {Promise<Buffer>}
    */
   static _resizeImageAsync(content, size, deform) {
-    return new Promise((resolve) => {
-      var op = ["-", "-resize", `${size}${deform ? "!" : ""}`, "-"];
-      const process = im.convert(op, function (err, stdout) {
-        if (err) {
-          throw new WebServerException("Error in resize index 4 image", err);
-        }
-        try {
-          content = Buffer.from(stdout, "binary");
-        } catch (err) {
-          throw new WebServerException("Error in resize index 4 image", err);
-        }
-        resolve(content);
-      });
-      process.stdin.end(content);
+    return new Promise((resolve, reject) => {
+      const splitedSize = size.split("X"); 
+      const width = Number(splitedSize[0]);
+      const height = Number(splitedSize[1]);
+  
+      const resizeOptions = {
+        width: width,
+        height: height,
+        fit: deform ? sharp.fit.fill : sharp.fit.inside, 
+        withoutEnlargement: true, 
+      };
+  
+      sharp(content)
+        .resize(resizeOptions)
+        .toBuffer()
+        .then(resizedBuffer => {
+          resolve(resizedBuffer);
+        })
+        .catch(err => {
+          reject(new WebServerException("Error in resizing image", err));
+        });
     });
   }
-
-  /**
-   * @param {Buffer} content
-   * @param {number} quality
-   * @returns {Promise<Buffer>}
-   */
-  static _mackWebpAsync(content, quality) {
-    return new Promise((resolve) => {
-      var op = [
-        "-",
-        "-quality",
-        `${quality}`,
-        "-define",
-        "webp:lossless=true",
-        "-",
-      ];
-      const process = im.convert(op, function (err, stdout) {
-        if (err) {
-          throw new WebServerException("Error in create webp image", err);
-        }
-        try {
-          content = Buffer.from(stdout, "binary");
-        } catch (err) {
-          throw new WebServerException("Error in create webp image", err);
-        }
-        resolve(content);
+/**
+ * @param {Buffer} content
+ * @param {number} quality
+ * @returns {Promise<Buffer>}
+ */
+static _mackWebpAsync(content, quality) {
+  return new Promise((resolve, reject) => {
+    // Configure sharp for converting to WebP
+    sharp(content)
+      .webp({ quality: quality, lossless: true }) // Set quality and lossless option
+      .toBuffer()
+      .then(webpBuffer => {
+        resolve(webpBuffer);
+      })
+      .catch(err => {
+        reject(new WebServerException("Error in creating WebP image", err));
       });
-      process.stdin.end(content);
-    });
-  }
+  });
+}
 
   /**
    * @param {string} filePath

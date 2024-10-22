@@ -39,7 +39,7 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
         let cms = null;
         this._securityHeadersMiddleware(req, res, async () => {
           this._handleContentTypes(req, res, async () => {
-            this._checkCacheAsync(req, res, true,async () => {
+            this._checkCacheAsync(req, res, async () => {
               const createCmsAndCreateResponseAsync = async () => {
                 const queryObj = url.parse(req.url, true).query;
                 let debugCondition =
@@ -72,15 +72,17 @@ export default class SecureHttpHostEndPoint extends HttpHostEndPoint {
                   rawRequest,
                   debugCondition ? cms.dict : undefined
                 );
-                const statuscode = Number(result._request.webserver.headercode.split(" ")[0])
-                if(statuscode!=301 && statuscode!=302 ){
-                  this.addCacheContentAsync(
-                  `https://${req.headers.host}${req.url}`,
-                  body,
-                  headers,
-                  req.method,
-                  cms
+                const statuscode = Number(
+                  result._request.webserver.headercode.split(" ")[0]
                 );
+                if (statuscode != 301 && statuscode != 302) {
+                  this.addCacheContentAsync(
+                    `https://${req.headers.host}${req.url}`,
+                    body,
+                    headers,
+                    req.method,
+                    cms
+                  );
                 }
 
                 res.writeHead(code, headers);

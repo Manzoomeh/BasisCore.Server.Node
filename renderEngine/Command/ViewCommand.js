@@ -3,7 +3,7 @@ import IToken from "../Token/IToken.js";
 import TokenUtil from "../Token/TokenUtil.js";
 import RenderableCommand from "./RenderableCommand.js";
 import IDataSource from "../Source/IDataSource.js";
-import alasql from "alasql";
+import alasql from "./../../alasql-ex.js";
 import RenderParam from "./RenderParam.js";
 import FaceCollection from "./Renderable/FaceCollection.js";
 import ReplaceCollection from "./Renderable/ReplaceCollection.js";

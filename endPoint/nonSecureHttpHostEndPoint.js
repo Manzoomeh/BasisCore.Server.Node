@@ -5,6 +5,7 @@ import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import StringResult from "../renderEngine/Models/StringResult.js";
+import fs from "fs";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /**
@@ -22,7 +23,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
       try {
         this._securityHeadersMiddleware(req, res, async () => {
           this._handleContentTypes(req, res, async () => {
-            this._checkCacheAsync(req, res, false ,async () => {
+            this._checkCacheAsync(req, res, async () => {
               const createCmsAndCreateResponseAsync = async () => {
                 const queryObj = url.parse(req.url, true).query;
                 let debugCondition =
@@ -46,7 +47,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                   req.bodyStr,
                   false
                 );
-                const {result,responseCms} = await this._service.processAsync(
+                const result = await this._service.processAsync(
                   cms,
                   req.fileContents
                 );
@@ -56,14 +57,15 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                   rawRequest,
                   debugCondition ? cms.dict : undefined
                 );
-                const statuscode = Number(result._request.webserver.headercode.split(" ")[0])
-                if(statuscode!=301 && statuscode!=302 ){
+                const statuscode = Number(
+                  result._request.webserver.headercode.split(" ")[0]
+                );
+                if (statuscode != 301 && statuscode != 302) {
                   this.addCacheContentAsync(
                     `http://${req.headers.host}${req.url}`,
                     body,
                     headers,
-                    req.method,
-                    responseCms.cms
+                    req.method
                   );
                 }
                 res.writeHead(code, headers);

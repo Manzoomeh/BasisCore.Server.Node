@@ -21,7 +21,7 @@ export default class RawFace {
     this.applyReplace = TokenUtil.getFiled(ilObject, "replace");
     this.applyFunction = TokenUtil.getFiled(ilObject, "function");
     this.level = TokenUtil.getFiled(ilObject, "level");
-    this.rowType = TokenUtil.getFiled(ilObject, "row-type");
+    this.rowType = TokenUtil.getFiled(ilObject, "rowtype");
     this.filter = TokenUtil.getFiled(ilObject, "filter");
     this.content = TokenUtil.getFiled(ilObject, "content");
   }
