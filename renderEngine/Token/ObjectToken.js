@@ -1,5 +1,6 @@
 import Util from "../../Util.js";
 import IContext from "../Context/IContext.js";
+import SourceUtil from "../Source/SourceUtil.js";
 import IToken from "./IToken.js";
 import SimpleTokenElement from "./SimpleTokenElement.js";
 
@@ -44,7 +45,14 @@ export default class ObjectToken extends IToken {
               continue;
             }
           }
-          const columnName = item.column ?? dataSource.Columns[0];
+
+          /**@type{string} */
+          const tmpColumnName =
+            Util.isNullOrEmpty(item.column) ||
+            dataSource.columns.includes(item.column)
+              ? item.column
+              : SourceUtil.getExactColumnName(dataSource, item.column);
+          const columnName = tmpColumnName ?? dataSource.columns[0];
           if (!dataSource.columns.includes(columnName)) {
             if (isLastItem) {
               break;
