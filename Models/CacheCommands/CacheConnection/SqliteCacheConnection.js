@@ -6,22 +6,36 @@ import fs from "fs/promises";
 import { existsSync, mkdirSync } from "fs";
 import path from "path";
 import crypto from "crypto";
-import { open, Database } from "sqlite"
-import { dirname } from 'path';
-import { fileURLToPath } from 'url';
+import { open, Database } from "sqlite";
+import { dirname } from "path";
+import { fileURLToPath } from "url";
 import BasisCoreException from "../../Exceptions/BasisCoreException.js";
 import { StorageTypeEnum } from "../../../enums/StorageTypeEnum.js";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+class UserAgentRow {
+  /** @type {number} */
+  id;
+  /** @type  {string} */
+  user_agent;
+  /**@type {number} */
+  device_id;
+}
+class IChanges {
+  /** @type {Array<UserAgentRow>} */
+  added;
+  /** @type {Array<UserAgentRow>} */
+  edited;
+}
 
 export default class SqliteCacheConnection extends CacheConnectionBase {
   /** @type {SqliteCacheSetting} */
   settings;
   /** @type {Database} */
-  fileDB
+  fileDB;
   /** @type {Database} */
-  memoryDB
+  memoryDB;
   /**
    * @param {SqliteCacheSetting} settings
    */
@@ -36,31 +50,39 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
       driver: sqlite3.Database,
     });
     if (!dbExists) {
-      console.log(`Database at ${this.settings.dbPath} does not exist. Creating tables...`);
+      console.log(
+        `Database at ${this.settings.dbPath} does not exist. Creating tables...`
+      );
       await this.createTables(fileDB);
     }
-    this.memoryDB = await this.#loadInMemoryDataBase(fileDB)
-    console.log('Database backed up to in-memory database.');
+    this.memoryDB = await this.#loadInMemoryDataBase(fileDB);
+    console.log("Database backed up to in-memory database.");
     this.fileDB = fileDB;
-    this.deleteExpiredCachesAsync()
+    this.deleteExpiredCachesAsync();
   }
   async #loadInMemoryDataBase() {
     const memoryDB = await open({
-      filename: ':memory:',
+      filename: ":memory:",
       driver: sqlite3.Database,
     });
-    await memoryDB.exec(`ATTACH DATABASE '${this.settings.dbPath + "cachedb.sql"}' AS fileDB`);
-    const tables = await memoryDB.all("SELECT name FROM fileDB.sqlite_master WHERE type='table'");
+    await memoryDB.exec(
+      `ATTACH DATABASE '${this.settings.dbPath + "cachedb.sql"}' AS fileDB`
+    );
+    const tables = await memoryDB.all(
+      "SELECT name FROM fileDB.sqlite_master WHERE type='table'"
+    );
     for (const table of tables) {
       const tableExists = await memoryDB.get(
         `SELECT name FROM sqlite_master WHERE type='table' AND name='${table.name}'`
       );
       if (!tableExists && table.name != "sqlite_sequence") {
-        await memoryDB.exec(`CREATE TABLE ${table.name} AS SELECT * FROM fileDB.${table.name}`);
+        await memoryDB.exec(
+          `CREATE TABLE ${table.name} AS SELECT * FROM fileDB.${table.name}`
+        );
         console.log(`Table ${table.name} copied to in-memory database.`);
       }
     }
-    await memoryDB.exec('DETACH DATABASE fileDB');
+    await memoryDB.exec("DETACH DATABASE fileDB");
     return memoryDB;
   }
 
@@ -74,17 +96,17 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
     const query = `SELECT * FROM  cache_results  WHERE key = ?`;
     const result = await this.#executeSqliteQuery(this.memoryDB, query, [key]);
     if (result.length < 1) {
-      return
+      return;
     }
     let retVal;
     try {
       result[0].content =
         result[0]?.storage_type == StorageTypeEnum.FileBase
           ? await fs.readFile(
-            path.join(__dirname, "../../../", result[0]?.content)
-          )
+              path.join(__dirname, "../../../", result[0]?.content)
+            )
           : result[0].content;
-      retVal = result[0]
+      retVal = result[0];
     } catch (error) {
       console.log("cache file was deleted for" + key);
     }
@@ -95,34 +117,44 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
    * @param {string} key
    * @param {string} content
    * @param {NodeJS.Dict<string>} properties
-   * @param {NodeJS.Dict<string>} cms 
+   * @param {NodeJS.Dict<string>} cms
    * @returns {Promise<void>}
    */
   async addCacheContentAsync(key, content, properties, cms) {
     try {
-      let { isCachingAllowed,
+      let {
+        isCachingAllowed,
         assetExpireAfterDays,
         expireDate,
         ownerId,
         dmnid,
-        hostexpiredate } = cms
-      await this.#addOrUpdateHost(dmnid, hostexpiredate, isCachingAllowed, ownerId, expireDate)
-      await this.#executeSqliteQueryOnBothDBs(`DELETE FROM cache_results WHERE key = ?`,
-        [key])
+        hostexpiredate,
+      } = cms;
+      await this.#addOrUpdateHost(
+        dmnid,
+        hostexpiredate,
+        isCachingAllowed,
+        ownerId,
+        expireDate
+      );
+      await this.#executeSqliteQueryOnBothDBs(
+        `DELETE FROM cache_results WHERE key = ?`,
+        [key]
+      );
       const query = `INSERT INTO cache_results (key, content, properties , expire_at, dmnid  ,storage_type) VALUES (?, ?, ?,?,?,?)`;
 
-      let filePath
-      let filename
+      let filePath;
+      let filename;
       if (this.settings.isFileBase) {
-
         filename =
           crypto.createHash("sha256").update(key).digest("hex") + ".bin";
-        filePath = path.join(this.settings.filesPath, ownerId.toString(), dmnid.toString())
-        await fs.mkdir(path.dirname(filePath), { recursive: true })
-        await fs.writeFile(
-          path.join(filePath, filename),
-          content
+        filePath = path.join(
+          this.settings.filesPath,
+          ownerId.toString(),
+          dmnid.toString()
         );
+        await fs.mkdir(path.dirname(filePath), { recursive: true });
+        await fs.writeFile(path.join(filePath, filename), content);
       }
       await this.#executeSqliteQueryOnBothDBs(query, [
         key,
@@ -130,8 +162,8 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
         JSON.stringify(properties),
         assetExpireAfterDays,
         dmnid,
-        this.settings.isFileBase ? 1 : 0
-      ])
+        this.settings.isFileBase ? 1 : 0,
+      ]);
     } catch (err) {
       throw new Error("error in add cache  : " + err);
     }
@@ -149,8 +181,8 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
         mkdirSync(hostDir, { recursive: true });
       }
     } catch (error) {
-      console.error('Error creating directories:', error);
-      throw new BasisCoreException("Error creating directories", error)
+      console.error("Error creating directories:", error);
+      throw new BasisCoreException("Error creating directories", error);
     }
   }
   /**
@@ -163,15 +195,15 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
     try {
       return db.all(query, params);
     } catch (err) {
-      console.error('Error running query:', query, err.message);
-      throw new BasisCoreException("Error running query", err)
+      console.error("Error running query:", query, err.message);
+      throw new BasisCoreException("Error running query", err);
     }
   }
   async #executeSqliteQueryOnBothDBs(query, params) {
     return Promise.all([
       this.#executeSqliteQuery(this.fileDB, query, params),
-      this.#executeSqliteQuery(this.memoryDB, query, params)
-    ])
+      this.#executeSqliteQuery(this.memoryDB, query, params),
+    ]);
   }
   async deleteExpiredCachesAsync() {
     if (this.settings.isFileBase) {
@@ -185,15 +217,21 @@ WHERE cr.storage_type = 1
   );
 
 `;
-      const result = await this.#executeSqliteQuery(this.memoryDB, selectQuery, [])
+      const result = await this.#executeSqliteQuery(
+        this.memoryDB,
+        selectQuery,
+        []
+      );
       const deleteFilePromises = result.map((element) => {
         try {
-          fs.unlink(element.content)
+          fs.unlink(element.content);
         } catch (err) {
-          console.log(`file not found or no access to tis file : ${element.content}`)
+          console.log(
+            `file not found or no access to tis file : ${element.content}`
+          );
         }
-      })
-      await Promise.all(deleteFilePromises)
+      });
+      await Promise.all(deleteFilePromises);
     }
     const query = `DELETE FROM cache_results
 WHERE (
@@ -204,22 +242,31 @@ WHERE (
     ))
   );
 `;
-    await this.#executeSqliteQueryOnBothDBs(query, [])
+    await this.#executeSqliteQueryOnBothDBs(query, []);
   }
 
   /** @returns {Promise<void>} */
   async deleteAllCache() {
-    return await this.#executeSqliteQueryOnBothDBs(`DELETE FROM cache_results`, [])
+    return await this.#executeSqliteQueryOnBothDBs(
+      `DELETE FROM cache_results`,
+      []
+    );
   }
   async extendOwnerhostsExpireDate(ownerId, newExpireDateString) {
-    this.#executeSqliteQuery(db, `UPDATE hosts_list
+    this.#executeSqliteQuery(
+      db,
+      `UPDATE hosts_list
         SET expire_date = ${newExpireDateString}
         WHERE owner_id = ${ownerId}
-      `, [])
+      `,
+      []
+    );
   }
 
   async createTables(db) {
-    await this.#executeSqliteQuery(db, `
+    await this.#executeSqliteQuery(
+      db,
+      `
 CREATE TABLE IF NOT EXISTS cache_results (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     key TEXT,
@@ -231,16 +278,43 @@ CREATE TABLE IF NOT EXISTS cache_results (
     storage_type INTEGER,
     FOREIGN KEY (dmnid) REFERENCES hosts_list(id) ON DELETE CASCADE
 );
- `
-      , [])
-    await this.#executeSqliteQuery(db, `
-CREATE TABLE IF NOT EXISTS hosts_list (
+ `,
+      []
+    );
+    await this.#executeSqliteQuery(
+      db,
+      `
+CREATE TABLE IF NOT EXISTS user_devices (
+    id INTEGER PRIMARY KEY,
+    useragent TEXT,
+    deviceid INTEGER,
+    updatedat
+);
+ `,
+      []
+    );
+    const latestdevice = await this.#executeSqliteQuery(
+      db,
+      `
+      SELECT *
+      FROM user_devices
+      ORDER BY lastupdate DESC
+      LIMIT 1;`,
+      []
+    );
+    this.latestCacheUpdateDateStr = latestdevice[0]?.lastupdate ?? undefined;
+    await this.#executeSqliteQuery(
+      db,
+      `
+    CREATE TABLE IF NOT EXISTS hosts_list (
     id INTEGER PRIMARY KEY UNIQUE,
     expire_date number,
     owner_expire_date DATETIME,
     is_caching_allowed INTEGER,
     owner_id INTEGER
- ); `, [])
+ ); `,
+      []
+    );
   }
   /** @returns {Promise<void>} */
   async deleteExpiredCachehostsAsync() {
@@ -252,16 +326,22 @@ CREATE TABLE IF NOT EXISTS hosts_list (
             hosts_list hl ON cr.dmnid = hl.id
             WHERE 
             cr.expire_at < CURRENT_TIMESTAMP
-            AND cr.storage_type = 1;`
-    let expiredFileBasedCaches = await this.#executeSqliteQuery(this.memoryDB, selectQuery, [])
+            AND cr.storage_type = 1;`;
+    let expiredFileBasedCaches = await this.#executeSqliteQuery(
+      this.memoryDB,
+      selectQuery,
+      []
+    );
     const deleteFilePromises = expiredFileBasedCaches.map((element) => {
       try {
-        return fs.unlink(element.content)
+        return fs.unlink(element.content);
       } catch (err) {
-        console.log(`unexpected error to delete ${element.content}. file deleted or the webserver have no access to delete the cache.`)
+        console.log(
+          `unexpected error to delete ${element.content}. file deleted or the webserver have no access to delete the cache.`
+        );
       }
-    })
-    await promise.all(deleteFilePromises)
+    });
+    await promise.all(deleteFilePromises);
     await this.#executeSqliteQueryOnBothDBs(
       `DELETE 
       cr
@@ -270,21 +350,31 @@ CREATE TABLE IF NOT EXISTS hosts_list (
       JOIN 
       hosts_list hl ON cr.dmnid = hl.id
       WHERE 
-      cr.expire_at < CURRENT_TIMESTAMP;`, [])
+      cr.expire_at < CURRENT_TIMESTAMP;`,
+      []
+    );
     const query = `DELETE FROM hosts_list WHERE expire_date <= CURRENT_TIMESTAMP`;
-    await this.#executeSqliteQueryOnBothDBs(query, [])
+    await this.#executeSqliteQueryOnBothDBs(query, []);
   }
   /**
-   * 
-   * @param {number} dmnId 
-   * @param {string} hostexpiredate 
-   * @param {boolean} isCachingAllowed 
-   * @param {number} ownerId 
+   *
+   * @param {number} dmnId
+   * @param {string} hostexpiredate
+   * @param {boolean} isCachingAllowed
+   * @param {number} ownerId
    * @returns {Promise<void>}
    */
-  async #addOrUpdateHost(dmnId, hostexpiredate, isCachingAllowed, ownerId, ownerExpireDate, setting) {
-    const existingHost = await this.#executeSqliteQuery(this.memoryDB,
-      'SELECT * FROM hosts_list WHERE id = ?',
+  async #addOrUpdateHost(
+    dmnId,
+    hostexpiredate,
+    isCachingAllowed,
+    ownerId,
+    ownerExpireDate,
+    setting
+  ) {
+    const existingHost = await this.#executeSqliteQuery(
+      this.memoryDB,
+      "SELECT * FROM hosts_list WHERE id = ?",
       [dmnId]
     );
     if (existingHost.length > 0) {
@@ -300,8 +390,12 @@ CREATE TABLE IF NOT EXISTS hosts_list (
     } else {
       // Insert a new record
       if (this.settings.isFileBase) {
-        console.log(`create sub-directories`)
-        this.#createDirectories(this.settings.filesPath, ownerId.toString(), dmnId.toString())
+        console.log(`create sub-directories`);
+        this.#createDirectories(
+          this.settings.filesPath,
+          ownerId.toString(),
+          dmnId.toString()
+        );
       }
 
       await this.#executeSqliteQueryOnBothDBs(
@@ -317,7 +411,7 @@ CREATE TABLE IF NOT EXISTS hosts_list (
     SET expire_at = DATETIME(created_at, ?)
     WHERE id = ?;
     `;
-    await this.#executeSqliteQueryOnBothDBs(query, [numberOfDays, dmnid])
+    await this.#executeSqliteQueryOnBothDBs(query, [numberOfDays, dmnid]);
   }
   async changeOwnerCacheExpire(numberOfDays, dmnid) {
     const query = `
@@ -325,12 +419,12 @@ CREATE TABLE IF NOT EXISTS hosts_list (
     SET owner_expire_at = DATETIME(created_at, ?)
     WHERE id = ?;
     `;
-    await this.#executeSqliteQueryOnBothDBs(query, [numberOfDays, dmnid])
+    await this.#executeSqliteQueryOnBothDBs(query, [numberOfDays, dmnid]);
   }
   /**
-   * 
-   * @param {number} numberOfDays 
-   * @param {string} key 
+   *
+   * @param {number} numberOfDays
+   * @param {string} key
    * @returns {Promise<void>}
    */
   async changeAssetCacheExpire(numberOfDays, key) {
@@ -338,6 +432,83 @@ CREATE TABLE IF NOT EXISTS hosts_list (
     UPDATE cache_results
     SET expire_at = DATETIME(created_at, ?)
     WHERE key = ?;`;
-    await this.#executeSqliteQueryOnBothDBs(query, [numberOfDays, key])
+    await this.#executeSqliteQueryOnBothDBs(query, [numberOfDays, key]);
+  }
+  async addUserAgentsAsync() {
+    let pagesize = 30;
+    let isFetchRequired = true;
+    while (isFetchRequired) {
+      let response = await fetch(
+        this.settings.UserAgentsApiUrl + "?pagesize=" + pagesize,
+        {
+          method: "POST",
+          headers: {
+            "content-type": "application/json",
+          },
+          body: JSON.stringify({
+            lastUpdateDate: this.latestCacheUpdateDateStr ?? undefined,
+          }),
+        }
+      );
+      /** @type {IChanges} */
+      const data = await response.json();
+      if (data.edited.length > 0) {
+        await this.#upsertDataAsync(db, data.edited, "edit");
+      }
+      if (data.added.length > 0) {
+        await this.#upsertDataAsync(db, data.added, "insert");
+      }
+      if (data.added.length + data.edited.length < pagesize) {
+        isFetchRequired = false;
+      }
+    }
+    this.latestCacheUpdateDateStr = this.compareFormattedDates(
+      data.added[data.added.length - 1],
+      data.edited[data.edited.length - 1]
+    );
+  }
+
+  /**
+   *
+   * @param {sqlite3.Database} db
+   * @param {Array<Object>} dataArray
+   * @param {"insert"|"edit"} mode
+   */
+  async #upsertDataAsync(db, dataArray, mode) {
+    const insertSql = `INSERT INTO user_devices (id, deviceid, useragent,lastupdate) VALUES (?,?, ?,?)`;
+    const updateSql = `UPDATE user_devices SET lastupdate = ?,deviceid = ?, useragent = ? WHERE id = ?`;
+    db.serialize(() => {
+      dataArray.forEach((data) => {
+        const { id, deviceid, useragent, lastupdate } = data;
+
+        if (mode === "insert") {
+          db.run(
+            insertSql,
+            [id, deviceid, useragent, lastupdate],
+            function (err) {
+              if (err) {
+                console.error("Insert error:", err.message);
+              } else {
+                console.log(`Inserted row with id ${this.lastID}`);
+              }
+            }
+          );
+        } else if (mode === "edit") {
+          db.run(
+            updateSql,
+            [lastupdate, deviceid, useragent, id],
+            function (err) {
+              if (err) {
+                console.error("Update error:", err.message);
+              } else {
+                console.log(`Updated row with id ${id}`);
+              }
+            }
+          );
+        } else {
+          console.error('Invalid mode. Use "insert" or "edit".');
+        }
+      });
+    });
   }
 }
