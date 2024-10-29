@@ -1,3 +1,4 @@
+import {createRequire} from "module"
 const require = createRequire(import.meta.url);
 const alasql = require("../alasql");
 alasql.fn.REVERSE = function (str) {
