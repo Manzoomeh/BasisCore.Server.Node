@@ -1,4 +1,5 @@
-import alasql from "alasql";
+import alasql from './../../../../alasql-ex.js';
+
 import InMemoryMember from "./InMemoryMember.js";
 import JsonSource from "../../../Source/JsonSource.js";
 import IContext from "../../../Context/IContext.js";

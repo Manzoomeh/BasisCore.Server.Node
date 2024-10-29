@@ -139,7 +139,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           };
 
           stream.on("data", (chunk) => {
-            if (headers["content-type"] === "application/json") {
+            if (headers["content-type"] === "application/json" || headers["content-type"]=="application/javascript"||headers["content-type"].startsWith("application/x-www-form-urlencoded")) {
               bodyStr += chunk;
             }
           });
@@ -180,9 +180,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
                 });
                 bb.on("close", createCmsAndCreateResponseAsync);
                 stream.pipe(bb);
-              } else {
-                await createCmsAndCreateResponseAsync();
-              }
+              } 
             }
           } catch (ex) {
             if (ex.code != "ERR_HTTP2_INVALID_STREAM") {
