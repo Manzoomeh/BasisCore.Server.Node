@@ -25,7 +25,7 @@ export default class GroupCommand extends CollectionCommand {
    * @returns {Promise<CommandElement>}
    */
   async createHtmlElementAsync(context) {
-    this.commands = this.commandsObjects.map(context.createCommand);
+    this.commands = this.commandsObjects.map((x) => context.createCommand(x));
     const tag = await super.createHtmlElementAsync(context);
     const childTags = await Promise.all(
       this.commands.map((x) => x.createHtmlElementAsync(context))
