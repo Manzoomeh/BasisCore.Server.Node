@@ -1,6 +1,7 @@
 import TokenUtil from "../Token/TokenUtil.js";
 import StringResult from "../Models/StringResult.js";
 import CommandBase from "./CommandBase.js";
+import RawHtmlElement from "./RawHtmlElement.js";
 
 export default class RawText extends CommandBase {
   /**@type {IToken} */
@@ -20,5 +21,8 @@ export default class RawText extends CommandBase {
   async executeAsync(context) {
     const content = await this.content.getValueAsync(context);
     return new StringResult(content);
+  }
+  async createHtmlElementAsync(context){
+      return new RawHtmlElement((await this.content.getValueAsync(context)))
   }
 }
