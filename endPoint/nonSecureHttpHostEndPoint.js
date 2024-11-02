@@ -23,7 +23,7 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
       try {
         this._securityHeadersMiddleware(req, res, async () => {
           this._handleContentTypes(req, res, async () => {
-            this._checkCacheAsync(req, res, async () => {
+            this._checkCacheAsync(req, res, false, async () => {
               const createCmsAndCreateResponseAsync = async () => {
                 const queryObj = url.parse(req.url, true).query;
                 let debugCondition =
@@ -47,10 +47,16 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                   req.bodyStr,
                   false
                 );
-                const result = await this._service.processAsync(
+                let result = await this._service.processAsync(
                   cms,
                   req.fileContents
                 );
+                let cachecms;
+                if (result.result) {
+                 
+                  cachecms = result.responseCms;
+                   result = result.result;
+                }
                 routingDataStep?.complete();
                 const [code, headers, body] = await result.getResultAsync(
                   routingDataStep,
@@ -65,7 +71,8 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                     `http://${req.headers.host}${req.url}`,
                     body,
                     headers,
-                    req.method
+                    req.method,
+                    cachecms
                   );
                 }
                 res.writeHead(code, headers);
