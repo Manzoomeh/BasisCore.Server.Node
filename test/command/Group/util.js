@@ -12,7 +12,7 @@ const context = new TestContext(
   CommandUtil.addDefaultCommands()
 );
 context.cancellation = new CancellationToken();
-context.addSource(new JsonSource([{ dmntokrn: "ttttdggdgg" }], "db.dmntoken"));
+context.addSource(new JsonSource([{ dmntoken: "ttttdggdgg" }], "db.dmntoken"));
 
 const il = {
   $type: "group",
