@@ -22,7 +22,7 @@ const host = {
           dbPath: "./cache/",
           filesPath : "./cachefiles/",
           isFileBase : true,
-          hostDetailsApiUrl: "127.0.0.1:3000"
+          hostDetailsApiUrl: "http://127.0.0.1:3000"
 
         },
       },
@@ -32,7 +32,7 @@ const host = {
     mainservice: {
       Type: "http",
       Settings: {
-        LibPath: "C:\\apps\\testwebserver\\BasisCore.Server.Node\\ExternalCommands",
+        LibPath: "D:\\alibazregar\\BasisCore.Server.Node\\ExternalCommands",
         "Connections.edge.RoutingData": {
           endpoint: "127.0.0.1:8000",
         },

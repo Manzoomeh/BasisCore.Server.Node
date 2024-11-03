@@ -69,15 +69,16 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
       });
       memoryDB.getDatabaseInstance().serialize(() => {
         memoryDB.run(`
-          CREATE TABLE IF NOT EXISTS memory_cache_result (
+          CREATE TABLE memory_cache_result (
               id INTEGER,
               key TEXT,
+              content TEXT,
               properties TEXT,
               storage_type INTEGER,
               profileid INTEGER,
               profiles TEXT,
-              default_profile_id INTEGER
-              dmnid ,
+              default_profile_id INTEGER,
+              dmnid INTEGER,
               created_at DATETIME DEFAULT CURRENT_TIMESTAMP
           );
       `);
@@ -86,6 +87,7 @@ export default class SqliteCacheConnection extends CacheConnectionBase {
   SELECT 
     cr.id, 
     cr.key, 
+    cr.content,
     cr.properties, 
     cr.storage_type, 
     cr.profileid, 
@@ -102,17 +104,19 @@ JOIN
             if (err) throw err;
             memoryDB.run(
               `
-              INSERT INTO memory_cache_result (id, key, properties, storage_type, profileid,profiles,default_profile_id)
-              VALUES (?, ?, ?, ?, ?,?,?);
+              INSERT INTO memory_cache_result (id, content,key, properties, storage_type, profileid,profiles,default_profile_id,dmnid)
+              VALUES (?, ?, ?, ?, ?,?,?,?,?);
           `,
               [
                 row.id,
+                row.content,
                 row.key,
                 row.properties,
                 row.storage_type,
                 row.profileid,
                 row.profiles,
                 row.default_profile_id,
+                row.dmnid
               ]
             );
           }
@@ -136,7 +140,7 @@ JOIN
     const useragentDetails = await this.#executeSqliteQuery(
       this.fileDB,
       useragentDetailsQuery,
-      [key]
+      [useragent]
     );
     if (useragentDetails.length < 1) {
       return;
@@ -146,7 +150,12 @@ JOIN
       key,
       useragentDetails[0].profileid,
     ]);
-    if (result.length < 1) {
+    if (result.length == 0 && !result[0]) {
+      const urlprofilesQuery = `SELECT * FROM memory_cache_result WHERE key = ?`;
+      result = await this.#executeSqliteQuery(this.memoryDB, urlprofilesQuery, [
+        key,
+      ]);
+      if (!result[0]) return
       /** @type {Array<string>} */
       const hostProfiles = JSON.parse(result[0].profiles);
       if (hostProfiles.includes(useragentDetails[0].profileid)) return;
@@ -163,8 +172,8 @@ JOIN
       result[0].content =
         result[0]?.storage_type == StorageTypeEnum.FileBase
           ? await fs.readFile(
-              path.join(__dirname, "../../../", result[0]?.content)
-            )
+            path.join(__dirname, "../../../", result[0]?.content)
+          )
           : result[0].content;
       retVal = result[0];
     } catch (error) {
@@ -181,49 +190,57 @@ JOIN
    * @returns {Promise<void>}
    */
   async addCacheContentAsync(key, content, properties, cms) {
-    try {
-      let { assetExpireAfterDays, ownerId, dmnid } = cms;
-      let { domains, default_profile_id, expireAfter } =
-        await this.#addOrUpdateHost(dmnid, ownerId);
-      await this.#executeSqliteQuery(
-        this.fileDB`DELETE FROM cache_results WHERE key = ?`,
-        [key]
+    // try {
+    let { assetExpireAfterDays, ownerId, dmnid } = cms.cms;
+    let { domains, default_profile_id, expireAfter, profiles } =
+      await this.#addOrUpdateHost(dmnid, ownerId);
+    await this.#executeSqliteQuery(
+      this.fileDB, `DELETE FROM cache_results WHERE key = ?`,
+      [key]
+    );
+    const query = `INSERT INTO cache_results (key, content, properties , expire_at, dmnid  ,storage_type,profileid) VALUES (?, ?, ?,?,?,?,?)`;
+    const inMemoryQuery = `INSERT INTO memory_cache_result (key,content,properties,dmnid,storage_type,default_profile_id,profileid,profiles) VALUES (?,?, ?,?,?,?,?,?)`;
+    let filePath;
+    let filename;
+    if (this.settings.isFileBase) {
+      filename =
+        crypto.createHash("sha256").update(key).digest("hex") + ".bin";
+      filePath = path.join(
+        this.settings.filesPath,
+        ownerId.toString(),
+        dmnid.toString()
       );
-      const query = `INSERT INTO cache_results (key, content, properties , expire_at, dmnid  ,storage_type,profileid) VALUES (?, ?, ?,?,?,?,?)`;
-      const inMemoryQuery = `INSERT INTO memory_cache_result (key,content,properties,dmnid,storage_type,profileid,default_profile_id) VALUES (?,?, ?,?,?,?,?,?)`;
-      let filePath;
-      let filename;
-      if (this.settings.isFileBase) {
-        filename =
-          crypto.createHash("sha256").update(key).digest("hex") + ".bin";
-        filePath = path.join(
-          this.settings.filesPath,
-          ownerId.toString(),
-          dmnid.toString()
-        );
-        await fs.mkdir(path.dirname(filePath), { recursive: true });
-        await fs.writeFile(path.join(filePath, filename), content);
-      }
-      await this.#executeSqliteQuery(this.fileDB, query, [
-        key,
-        this.settings.isFileBase ? path.join(filePath, filename) : content,
-        JSON.stringify(properties),
-        assetExpireAfterDays,
-        dmnid,
-        this.settings.isFileBase ? 1 : 0,
-      ]);
-      await this.#executeSqliteQuery(this.memoryDB, inMemoryQuery, [
-        key,
-        this.settings.isFileBase ? path.join(filePath, filename) : content,
-        JSON.stringify(properties),
-        assetExpireAfterDays,
-        dmnid,
-        this.settings.isFileBase ? 1 : 0,
-        default_profile_id,
-      ]);
-    } catch (err) {
-      throw new Error("error in add cache  : " + err);
+      await fs.mkdir(path.dirname(filePath), { recursive: true });
+      await fs.writeFile(path.join(filePath, filename), content);
     }
+    const useragentDetailsQuery = `SELECT * FROM  user_devices  WHERE useragent = ?`;
+    const useragentDetails = await this.#executeSqliteQuery(
+      this.fileDB,
+      useragentDetailsQuery,
+      [cms.request["user-agent"]]
+    );
+    await this.#executeSqliteQuery(this.fileDB, query, [
+      key,
+      this.settings.isFileBase ? path.join(filePath, filename) : content,
+      JSON.stringify(properties),
+      assetExpireAfterDays,
+      dmnid,
+      this.settings.isFileBase ? 1 : 0,
+      useragentDetails[0].profileid ?? 1
+    ]);
+    await this.#executeSqliteQuery(this.memoryDB, inMemoryQuery, [
+      key,
+      this.settings.isFileBase ? path.join(filePath, filename) : content,
+      JSON.stringify(properties),
+      dmnid,
+      this.settings.isFileBase ? 1 : 0,
+      default_profile_id,
+      useragentDetails[0].profileid ?? 1,
+      JSON.stringify(profiles)
+    ]);
+    // } catch (err) {
+    //   throw new Error("error in add cache  : " + err);
+    // }
   }
   #createDirectories(dirPath, ownerId, hostId) {
     dirPath = dirPath.trim();
@@ -250,16 +267,16 @@ JOIN
    */
   async #executeSqliteQuery(db, query, params = []) {
     try {
-      console.log(query)
-      return db.all(query, params);
+
+      const result = await db.all(query, params);
+      return result
     } catch (err) {
       console.error("Error running query:", query, err.message);
-      throw new BasisCoreException("Error running query", err);
+      throw new BasisCoreException("Error running query", err, params);
     }
   }
   async deleteExpiredCachesAsync() {
-    if (this.settings.isFileBase) {
-      const selectQuery = `SELECT *
+    const selectQuery = `SELECT *
 FROM cache_results cr
 JOIN hosts_list hl ON cr.dmnid = hl.id
 WHERE cr.storage_type = 1
@@ -269,40 +286,29 @@ WHERE cr.storage_type = 1
   );
 
 `;
-      const result = await this.#executeSqliteQuery(
-        this.fileDB,
-        selectQuery,
-        []
-      );
-      const deleteInMemoryCachePromises = [];
-      const deleteFilePromises = result.map((element) => {
-        try {
-          deleteInMemoryCachePromises.push(
-            this.#executeSqliteQuery(
-              this.memoryDB,
-              "DELETE FROM memory_cache_result WHERE key = ? AND profileid = ?",
-              [element.key, element.profileid]
-            )
-          );
-          return fs.unlink(element.content);
-        } catch (err) {
-          console.log(
-            `file not found or no access to tis file : ${element.content}`
-          );
-        }
-      });
-      await Promise.all(deleteFilePromises);
-    }
-    const query = `DELETE FROM cache_results
-WHERE (
-    (expire_at IS NOT NULL AND DATE(created_at, '+' || expire_at || ' days') < DATE('now'))
-    OR (expire_at IS NULL AND dmnid IN (
-        SELECT id FROM hosts_list
-        WHERE DATE(created_at, '+' || expire_date || ' days') < DATE('now')
-    ))
-  );
-`;
-    await this.#executeSqliteQuery(this.fileDB, query, []);
+    const result = await this.#executeSqliteQuery(
+      this.fileDB,
+      selectQuery,
+      []
+    );
+    const deleteInMemoryCachePromises = [];
+    const deleteFilePromises = result.map((element) => {
+      try {
+        deleteInMemoryCachePromises.push(
+          this.#executeSqliteQuery(
+            this.memoryDB,
+            "DELETE FROM memory_cache_result WHERE key = ? AND profileid = ?",
+            [element.key, element.profileid]
+          )
+        );
+        if (element.storage_type == 1) return fs.unlink(element.content);
+      } catch (err) {
+        console.log(
+          `file not found or no access to tis file : ${element.content}`
+        );
+      }
+    });
+    await Promise.all(deleteFilePromises);
   }
 
   /** @returns {Promise<void>} */
@@ -349,7 +355,7 @@ CREATE TABLE IF NOT EXISTS user_devices (
     id INTEGER PRIMARY KEY,
     useragent TEXT,
     profileid INTEGER,
-    lastupdate
+    lastupdate TEXT
 );
  `,
       []
@@ -391,14 +397,21 @@ CREATE TABLE IF NOT EXISTS user_devices (
             WHERE 
             cr.expire_at < CURRENT_TIMESTAMP
             AND cr.storage_type = 1;`;
-    let expiredFileBasedCaches = await this.#executeSqliteQuery(
+    let expiredCaches = await this.#executeSqliteQuery(
       this.fileDB,
       selectQuery,
       []
     );
-    const deleteFilePromises = expiredFileBasedCaches.map((element) => {
+    const deleteFilePromises = expiredCaches.map(async (element) => {
       try {
-        return fs.unlink(element.content);
+        await this.#executeSqliteQuery(
+          this.memoryDB,
+          "DELETE FROM memory_cache_result WHERE key = ? && profileid = ?",
+          [element.key, element.profileid]
+        );
+        if (element.storage_type == 1) {
+          return fs.unlink(element.content);
+        }
       } catch (err) {
         console.log(
           `unexpected error to delete ${element.content}. file deleted or the webserver have no access to delete the cache.`
@@ -432,12 +445,13 @@ CREATE TABLE IF NOT EXISTS user_devices (
       "SELECT * FROM hosts_list WHERE id = ?",
       [dmnId]
     );
-    if (existingHost.length <= 0) {
+    if (existingHost.length == 0) {
       let hostDetailResponse = await fetch(this.settings.hostDetailsApiUrl, {
         body: JSON.stringify({
           dmnId,
           ownerId,
         }),
+        method: "POST"
       });
       const hostDetailData = await hostDetailResponse.json();
       if (this.settings.isFileBase) {
@@ -451,29 +465,31 @@ CREATE TABLE IF NOT EXISTS user_devices (
 
       await this.#executeSqliteQuery(
         this
-          .fileDB`INSERT INTO hosts_list (id, expire_date, is_caching_allowed, owner_id, owner_expire_date,profiles,default_profile_id,domains) 
-            VALUES (?, ?, ?, ?, ?)`,
+          .fileDB, `INSERT INTO hosts_list (id, expire_date, is_caching_allowed, owner_id, owner_expire_date,profiles,default_profile_id,domains) 
+            VALUES (?, ?, ?, ?, ?,?,?,?)`,
         [
           dmnId,
           hostDetailData.defaultCacheExpire,
           hostDetailData.isCachingAllowed,
           ownerId,
           hostDetailData.expireAt,
-          hostDetailData.profiles,
+          JSON.stringify(hostDetailData.profiles),
           hostDetailData.defaultIndexID,
-          hostDetailData.domains,
+          JSON.stringify(hostDetailData.domains),
         ]
       );
       return {
-        default_profile_id: existingHost.defaultIndexID,
+        default_profile_id: hostDetailData.defaultIndexID,
         expireAfter: hostDetailData.defaultCacheExpire,
         domains: hostDetailData.domains,
+        profiles: hostDetailData.profiles,
       };
     }
     return {
-      default_profile_id: existingHost[0].defaultIndexID,
+      default_profile_id: existingHost[0].default_profile_id,
       expireAfter: existingHost[0].defaultCacheExpire,
       domains: existingHost[0].domains,
+      profiles: JSON.parse(existingHost[0].profiles),
     };
   }
   async changeHostCacheExpire(numberOfDays, dmnid) {
