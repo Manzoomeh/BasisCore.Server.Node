@@ -8,7 +8,7 @@ const host = {
       Type: "http",
       Addresses: [
         {
-          EndPoint: "185.44.38.83:443",
+          EndPoint: "127.0.0.1:443",
         },
       ],
       Active: true,
@@ -21,7 +21,9 @@ const host = {
         connectionSetting: {
           dbPath: "./cache/",
           filesPath : "./cachefiles/",
-          isFileBase : true
+          isFileBase : true,
+          hostDetailsApiUrl: "http://127.0.0.1:3000"
+
         },
       },
     },
@@ -30,7 +32,7 @@ const host = {
     mainservice: {
       Type: "http",
       Settings: {
-        LibPath: "C:\\Users\\senka\\OneDrive\\Desktop\\projects\\BasisCore.Server.Node\\ExternalCommands",
+        LibPath: "D:\\alibazregar\\BasisCore.Server.Node\\ExternalCommands",
         "Connections.edge.RoutingData": {
           endpoint: "127.0.0.1:8000",
         },

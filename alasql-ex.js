@@ -1,4 +1,4 @@
-import {createRequire} from "module"
+import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const alasql = require("./alasql/alasql.fs.cjs");
 alasql.fn.REVERSE = function (str) {

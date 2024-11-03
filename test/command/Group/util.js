@@ -12,7 +12,7 @@ const context = new TestContext(
   CommandUtil.addDefaultCommands()
 );
 context.cancellation = new CancellationToken();
-
+context.addSource(new JsonSource([{ dmntoken: "ttttdggdgg" }], "db.dmntoken"));
 
 const il = {
   $type: "group",
@@ -20,21 +20,13 @@ const il = {
   name: "ROOT_GROUP",
   Commands: [
     {
-      $type: "schema",
-      core: "schema",
-      run: "AtClient",
-      "data-member-name": "answer.data",
-      "extra-attribute": {
-        schemaurl: "https://basispanel.ir/schema/freeform",
-        displaymode: "edit",
-        button: "[data-btn-edit]",
-        triggers: "db.showOrder ",
-        resultsourceid: "demo.data",
-        qs_state: "استان",
-        qs_culture: "fa",
-        qs_city: "شهر",
-        qs_token: "69701A1A-6C18-4F69-AD05-938CC8CB7E29",
-      },
+      $type: "rawtext",
+      core: "rawtext",
+      content: [
+        '{"dmnToken": "',
+        { Params: [{ Source: "db", Member: "dmntoken", Column: "dmnToken" }] },
+        '"}',
+      ],
     },
   ],
 };

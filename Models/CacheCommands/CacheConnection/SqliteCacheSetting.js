@@ -5,4 +5,6 @@ export default class SqliteCacheSetting {
     isFileBase
     /** @type {string} */
     filesPath
+    /** @type {string} */
+    UserAgentsApiUrl
   }

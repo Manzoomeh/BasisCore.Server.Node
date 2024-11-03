@@ -274,7 +274,7 @@ class HttpHostEndPoint extends HostEndPoint {
     ) {
       const fullUrl = `${isSecure ? "https://" : "http://"}${req.headers.host}${req.url}`;
       const cacheResults = await this._cacheConnection.loadContentAsync(
-        fullUrl
+        fullUrl,req.headers["user-agent"]
       );
       if (cacheResults) {
         res.writeHead(200, {
@@ -303,7 +303,7 @@ class HttpHostEndPoint extends HostEndPoint {
       this._cacheOptions &&
       this._cacheOptions.isEnabled &&
       this._cacheOptions.requestMethods.includes(method) &&
-      this._cacheConnection && cms.isCachingAllowed
+      this._cacheConnection 
       
     ) {
       const savedHeaders = this.findProperties(
