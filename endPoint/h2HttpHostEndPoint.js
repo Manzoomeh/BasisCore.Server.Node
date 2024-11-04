@@ -36,7 +36,14 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     this.#options.minVersion = "TLSv1.2";
     this.#options.allowHTTP1 = true;
   }
-
+  _sqlInjectionMiddleware = (stream, headers) => {
+    const reqUrl = headers[http2.constants.HTTP2_HEADER_PATH] || '';
+    const host = headers[http2.constants.HTTP2_HEADER_AUTHORITY] || 'localhost';
+    const url = new URL(reqUrl, `https://${host}`);
+    const queryString = this._decodeURIComponentSafe(url.search); 
+    const sqlInjectionPattern = /(?:\b(SELECT|INSERT|DELETE|UPDATE|WHERE|DROP|EXEC|UNION|--|\*|#)\b.*?[=;]|\b(OR|AND)\b\s*?['"\d])/i;
+    return sqlInjectionPattern.test(queryString);
+};
   /**
    * @param {string} urlStr
    * @param {string} method
@@ -79,6 +86,20 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
         this._checkCacheAsync(stream, headers, async () => {
+          if (this._sqlInjectionMiddleware(stream, headers)) {
+            stream.respond({ ':status': 400, 'content-type': 'text/plain' });
+           return stream.end('Bad Request: Potential SQL injection detected.');
+        }
+        const ip = stream.session.socket.remoteAddress;
+        try{
+          await this.rateLimiter.consume(ip)
+        }catch(err){
+          stream.respond({
+            ':status': 429,
+            'retry-after': 60,
+          });
+          stream.end("Too many requests - try again later");
+        }
           /** @type {Request} */
           let cms = null;
           /** @type {BinaryContent[]} */
