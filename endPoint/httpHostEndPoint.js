@@ -16,6 +16,7 @@ import CacheConnectionBase from "../models/CacheCommands/CacheConnection/CacheCo
 import { HostEndPointOptions } from "../models/model.js";
 import SqliteCacheConnection from "../models/CacheCommands/CacheConnection/SqliteCacheConnection.js";
 import CacheSettings from "../models/options/CacheSettings.js";
+import {RateLimiterMemory} from "rate-limiter-flexible"
 
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
@@ -27,6 +28,8 @@ class HttpHostEndPoint extends HostEndPoint {
   _cacheConnection;
   /** @type {http.Server} */
   _server;
+  /** @type {RateLimiterMemory} */
+  rateLimiter;
   /**
    *
    * @param {string} ip
@@ -38,6 +41,10 @@ class HttpHostEndPoint extends HostEndPoint {
     super(ip, port);
     this._service = service;
     this._cacheOptions = cacheOptions;
+    this.rateLimiter =new RateLimiterMemory({
+      points: 10,
+      duration: 60, 
+    });
     if (cacheOptions && cacheOptions.connectionType) {
       switch (cacheOptions.connectionType) {
         case "sqlite": {
@@ -353,5 +360,23 @@ class HttpHostEndPoint extends HostEndPoint {
     this._server.close();
     console.log(`server ip ${this._ip} and port ${this._port} killed`);
   }
+  _decodeURIComponentSafe = (s) => {
+    try {
+        return decodeURIComponent(s);
+    } catch {
+        return s; // Return as-is if decoding fails
+    }
+};
+  _sqlInjectionMiddleware = (req, res, next) => {
+    const url = new URL(req.url, `https://${req.headers.host}`);
+    const queryString = url.search;
+    const sqlInjectionPattern = /[\s'";()&|]|(SELECT|select|INSERT|insert|DELETE|delete|UPDATE|update|WHERE|where|DROP|drop|EXEC|exec|UNION|union|--|\*|#|\/\*|\/\*.*?\*\/)/;
+    if (sqlInjectionPattern.test(queryString)) {
+        res.writeHead(400, { 'Content-Type': 'text/plain' });
+        res.end('Bad Request: Potential SQL injection detected.');
+    } else {
+        next();
+    }
+};
 }
 export default HttpHostEndPoint;

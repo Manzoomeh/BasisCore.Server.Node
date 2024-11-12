@@ -4,8 +4,6 @@ import { StatusCodes } from "http-status-codes";
 import HttpHostEndPoint from "./HttpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
-import StringResult from "../renderEngine/Models/StringResult.js";
-import fs from "fs";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /**
@@ -17,71 +15,82 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   constructor(ip, port, service, cacheOptions) {
     super(ip, port, service, cacheOptions);
   }
-
   _createServer() {
     this._server = http.createServer(async (req, res) => {
       try {
-        this._securityHeadersMiddleware(req, res, async () => {
-          this._handleContentTypes(req, res, async () => {
-            this._checkCacheAsync(req, res, false, async () => {
-              const createCmsAndCreateResponseAsync = async () => {
-                const queryObj = url.parse(req.url, true).query;
-                let debugCondition =
-                  queryObj.debug == "true" ||
-                  queryObj.debug == "1" ||
-                  queryObj.debug == "2";
-                let routingDataStep = debugCondition
-                  ? new LightgDebugStep(null, "Get Routing Data")
-                  : null;
-                let rawRequest = debugCondition
-                  ? this.joinHeaders(req.rawHeaders)
-                  : null;
-                /** @type {Request} */
-                let cms = await this._createCmsObjectAsync(
-                  req.url,
-                  req.method,
-                  req.headers,
-                  req.formFields,
-                  req.jsonHeaders ? req.jsonHeaders : {},
-                  req.socket,
-                  req.bodyStr,
-                  false
-                );
-                let result = await this._service.processAsync(
-                  cms,
-                  req.fileContents
-                );
-                let cachecms;
-                if (result.result) {
-                 
-                  cachecms = result.responseCms;
-                   result = result.result;
-                }
-                routingDataStep?.complete();
-                const [code, headers, body] = await result.getResultAsync(
-                  routingDataStep,
-                  rawRequest,
-                  debugCondition ? cms.dict : undefined
-                );
-                const statuscode = Number(
-                  result._request.webserver.headercode.split(" ")[0]
-                );
-                if (statuscode != 301 && statuscode != 302) {
-                  this.addCacheContentAsync(
-                    `http://${req.headers.host}${req.url}`,
-                    body,
-                    headers,
+        const ip = req.socket.remoteAddress;
+        try{
+          await this.rateLimiter.consume(ip)
+        }catch(err){
+          res.writeHead(429, {
+            'Content-Type': 'text/plain',
+            'Retry-After': 60,
+          });
+          return res.end("Too many requests - try again later");
+        }
+        this._sqlInjectionMiddleware(req, res, async () => {
+          this._securityHeadersMiddleware(req, res, async () => {
+            this._handleContentTypes(req, res, async () => {
+              this._checkCacheAsync(req, res, false, async () => {
+                const createCmsAndCreateResponseAsync = async () => {
+                  const queryObj = url.parse(req.url, true).query;
+                  let debugCondition =
+                    queryObj.debug == "true" ||
+                    queryObj.debug == "1" ||
+                    queryObj.debug == "2";
+                  let routingDataStep = debugCondition
+                    ? new LightgDebugStep(null, "Get Routing Data")
+                    : null;
+                  let rawRequest = debugCondition
+                    ? this.joinHeaders(req.rawHeaders)
+                    : null;
+                  /** @type {Request} */
+                  let cms = await this._createCmsObjectAsync(
+                    req.url,
                     req.method,
-                    cachecms
+                    req.headers,
+                    req.formFields,
+                    req.jsonHeaders ? req.jsonHeaders : {},
+                    req.socket,
+                    req.bodyStr,
+                    false
                   );
-                }
-                res.writeHead(code, headers);
-                res.end(body);
-              };
-              await createCmsAndCreateResponseAsync();
+                  let result = await this._service.processAsync(
+                    cms,
+                    req.fileContents
+                  );
+                  let cachecms;
+                  if (result.result) {
+
+                    cachecms = result.responseCms;
+                    result = result.result;
+                  }
+                  routingDataStep?.complete();
+                  const [code, headers, body] = await result.getResultAsync(
+                    routingDataStep,
+                    rawRequest,
+                    debugCondition ? cms.dict : undefined
+                  );
+                  const statuscode = Number(
+                    result._request.webserver.headercode.split(" ")[0]
+                  );
+                  if (statuscode != 301 && statuscode != 302) {
+                    this.addCacheContentAsync(
+                      `http://${req.headers.host}${req.url}`,
+                      body,
+                      headers,
+                      req.method,
+                      cachecms
+                    );
+                  }
+                  res.writeHead(code, headers);
+                  res.end(body);
+                };
+                await createCmsAndCreateResponseAsync();
+              });
             });
           });
-        });
+        })
       } catch (ex) {
         console.error(ex);
         res.writeHead(StatusCodes.INTERNAL_SERVER_ERROR);
