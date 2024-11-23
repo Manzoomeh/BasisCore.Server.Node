@@ -1,7 +1,6 @@
 import fs from "fs";
 import { StatusCodes } from "http-status-codes";
 import RequestBaseResponse from "./requestBaseResponse.js";
-import im from "imagemagick";
 import path from "path";
 import Pako from "pako";
 import Util from "../Util.js";
@@ -44,6 +43,8 @@ export default class Index4Response extends RequestBaseResponse {
         size,
         setting.deform
       );
+      const dirPath = path.dirname(destinationPath);
+      await fs.promises.mkdir(dirPath, { recursive: true });
       await fs.promises.writeFile(destinationPath, newContent);
       finalPath = destinationPath;
       if (gzip) {
@@ -58,6 +59,8 @@ export default class Index4Response extends RequestBaseResponse {
         finalPath = zipPath;
         Index4Response._createDirectoryIfNotExist(zipPath);
         const zipContent = Index4Response._makeGzip(newContent, 9);
+        const zipdirPath = path.dirname(zipPath);
+        await fs.promises.mkdir(zipdirPath, { recursive: true });
         await fs.promises.writeFile(zipPath, zipContent);
       }
       /**@type {string} */

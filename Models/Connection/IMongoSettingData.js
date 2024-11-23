@@ -1,12 +1,12 @@
 export default class IMongoSettingData {
-  /** @type {string} */
-  dataBase;
   /** @type {string}*/
-  endpoint;
-  /** @type {string}*/
-  collection;
-  /** @type {string}*/
-  method;
-  /**@type {object} */
-  query;
+  address;
+  /** @type {?string}*/
+  databaseName;
+  /** @type {?string}*/
+  collectionName;
+    /** @type {string}*/
+    method;
+    /**@type {object} */
+    query;
 }

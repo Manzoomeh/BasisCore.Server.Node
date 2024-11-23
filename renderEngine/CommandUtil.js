@@ -12,6 +12,7 @@ import CallCommand from "./Command/Collection/CallCommand.js";
 import CookieCommand from "./Command/CookieCommand.js";
 import ClientComponent from "./Command/ClientComponent.js";
 import RepeaterCommand from "./Command/Collection/RepeaterCommand.js";
+import TrackerCommand from "./Command/TrackerCommand.js";
 export default class CommandUtil {
   /**
    * @returns {Object.<string, any>}
@@ -33,6 +34,7 @@ export default class CommandUtil {
       cookie: { default: CookieCommand },
       clientcomponent: { default: ClientComponent },
       repeater: { default: RepeaterCommand },
+      tracker : {default : TrackerCommand}
     };
     return retVal;
   }

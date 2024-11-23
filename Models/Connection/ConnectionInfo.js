@@ -27,7 +27,7 @@ export default class ConnectionInfo {
    * @param {CancellationToken} cancellationToken
    * @returns {Promise<DataSourceCollection>}
    */
-  loadDataAsync(parameters, cancellationToken) {
+  loadDataAsync(parameters, cancellationToken,options) {
     throw new Error("ConnectionInfo.loadDataAsync() method not implemented.");
   }
 
@@ -51,6 +51,18 @@ export default class ConnectionInfo {
   loadPageAsync(pageName, rawCommand, pageSize, domainId, cancellationToken) {
     throw new Error("ConnectionInfo.loadPageAsync() method not implemented.");
   }
+/**
+ * Insert a document into a MongoDB collection.
+ * @param {string} sourceName
+ * @param {string} connectionName 
+ * @param {string} databaseName 
+ * @param {string} collectionName 
+ * @param {Object} data 
+ * @returns {Promise<Object>} 
+ */
+async insertAsync(sourceName, connectionName, databaseName, collectionName, data) {
+  throw new Error("ConnectionInfo.insertAsync() method not implemented.");
+}
   /**
    *
    * @param {string} jsonString

@@ -27,11 +27,10 @@ export default class LocalContext extends ContextBase {
    * @param {string} sourceName
    * @param {string} connectionName
    * @param {NodeJS.Dict<object|string|number>} parameters
-   * @param {string[]} memberNames
    * @returns {Promise<DataSourceCollection>}
    */
-  async loadDataAsync(sourceName, connectionName, parameters,memberNames) {
-    return this._owner.loadDataAsync(sourceName, connectionName, parameters,memberNames);
+  async loadDataAsync(sourceName, connectionName, parameters) {
+    return this._owner.loadDataAsync(sourceName, connectionName, parameters);
   }
 
   /**
