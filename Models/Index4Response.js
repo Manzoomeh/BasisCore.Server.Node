@@ -44,7 +44,7 @@ export default class Index4Response extends RequestBaseResponse {
         setting.deform
       );
       const dirPath = path.dirname(destinationPath);
-      await fs.promises.mkdir(dirPath, { recursive: true });
+      Index4Response._createDirectoryIfNotExist(dirPath)
       await fs.promises.writeFile(destinationPath, newContent);
       finalPath = destinationPath;
       if (gzip) {
@@ -59,8 +59,6 @@ export default class Index4Response extends RequestBaseResponse {
         finalPath = zipPath;
         Index4Response._createDirectoryIfNotExist(zipPath);
         const zipContent = Index4Response._makeGzip(newContent, 9);
-        const zipdirPath = path.dirname(zipPath);
-        await fs.promises.mkdir(zipdirPath, { recursive: true });
         await fs.promises.writeFile(zipPath, zipContent);
       }
       /**@type {string} */
@@ -160,7 +158,7 @@ static _mackWebpAsync(content, quality) {
   static _createDirectoryIfNotExist(filePath) {
     const pathDirectory = path.dirname(filePath);
     if (!fs.existsSync(pathDirectory)) {
-      fs.mkdirSync(pathDirectory);
+      fs.mkdirSync(pathDirectory,{recursive : true});
     }
   }
 

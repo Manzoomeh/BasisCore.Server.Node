@@ -27,7 +27,7 @@ export default class ConnectionInfo {
    * @param {CancellationToken} cancellationToken
    * @returns {Promise<DataSourceCollection>}
    */
-  loadDataAsync(parameters, cancellationToken,options) {
+  loadDataAsync(parameters, cancellationToken) {
     throw new Error("ConnectionInfo.loadDataAsync() method not implemented.");
   }
 
