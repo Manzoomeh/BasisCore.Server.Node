@@ -59,6 +59,7 @@ export default class ConnectionInfo {
   convertJSONToDataSet(content) {
     if (content?.sources && Array.isArray(content?.sources)) {
       let retVal = [];
+      
       content.sources.forEach((source) => {
         retVal.push(source.data);
       });

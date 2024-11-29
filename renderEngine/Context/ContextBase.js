@@ -14,7 +14,7 @@ export default class ContextBase extends IContext {
    * @param {string} domainId
    * @param {DebugContext} debugContext
    */
-  constructor(repository, domainId,debugContext) {
+  constructor(repository, domainId, debugContext) {
     super(domainId);
     this.repository = new SourceRepository(repository);
     this.debugContext = debugContext;
@@ -23,6 +23,9 @@ export default class ContextBase extends IContext {
   /** @param {IDataSource} dataSource */
   addSource(dataSource) {
     this.repository.addSource(dataSource);
+    this.debugContext.addDebugInformation(
+      dataSource.id,dataSource.data
+    );
   }
 
   /**
@@ -49,9 +52,9 @@ export default class ContextBase extends IContext {
    */
   loadDataAsync(sourceName, connectionName, parameters) {}
 
-    /**
+  /**
    * @param {Object} commandIl
    * @returns {CommandBase}
    */
-    createCommand(commandIl) {}
+  createCommand(commandIl) {}
 }
