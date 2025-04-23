@@ -6,6 +6,7 @@ import IToken from "../../../Token/IToken.js";
 import { createRequire } from 'module';
 const require = createRequire(import.meta.url);
 const alasql = require ("./../../../../../alasql")
+import TokenUtil from "../../../Token/TokenUtil.js";
 export default class JoinMember extends InMemoryMember {
   /**
    * @param {object} memberIL
@@ -18,9 +19,9 @@ export default class JoinMember extends InMemoryMember {
   joinType;
   constructor(memberIL) {
     super(memberIL);
-    this.leftTableColumn = TokenUtil.getFiled(commandIL, "left-data-member");
-    this.rightTableColumn = TokenUtil.getFiled(commandIL, "right-data-member");
-    this.joinType = TokenUtil.getFiled(commandIL, "jointype");
+    this.leftTableColumn = TokenUtil.getFiled(memberIL, "left-data-member");
+    this.rightTableColumn = TokenUtil.getFiled(memberIL, "right-data-member");
+    this.joinType = TokenUtil.getFiled(memberIL, "jointype");
   }
   /**
    * @param {IContext} context
@@ -54,8 +55,8 @@ export default class JoinMember extends InMemoryMember {
           rightTable.data,
           rightDataMemberName
         );
-        switch (await this.joinType.getValueAsync()) {
-          case "InnerJoin":
+        switch ((await this.joinType.getValueAsync()).toLowerCase()) {
+          case "innerjoin":
             resultArray = await this.innerJoin(
               leftArray,
               rightArray,
@@ -66,7 +67,7 @@ export default class JoinMember extends InMemoryMember {
               db
             );
             break;
-          case "LeftJoin":
+          case "leftjoin":
             resultArray = await this.leftJoin(
               leftArray,
               rightArray,
@@ -77,7 +78,7 @@ export default class JoinMember extends InMemoryMember {
               db
             );
             break;
-          case "RightJoin":
+          case "rightjoin":
             resultArray = await this.rightJoin(
               leftArray,
               rightArray,
@@ -89,7 +90,7 @@ export default class JoinMember extends InMemoryMember {
             );
           default:
             return new BasisCoreException(
-              `Invalid Join Type : ${this.joinType} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
+              `Invalid Join Type : ${await this.joinType.getValueAsync()} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
             );
         }
         return new JsonSource(resultArray, this.name);

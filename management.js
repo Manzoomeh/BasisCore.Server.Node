@@ -6,7 +6,7 @@ HostManager.startManagementServer(
    Type: "http",
     Settings: {
       LibPath:
-        "C:\\Users\\bazrgar\\Desktop\\finger\\BasisCore.Server.Node\\ExternalCommands",
+        "C:\\apps\\BasisCore.Server.Node\\ExternalCommands",
       "Connections.edge.RoutingData": {
         endpoint: "185.44.36.77:1025",
       },
@@ -14,6 +14,6 @@ HostManager.startManagementServer(
   },
   "185.44.36.77",
   2020,{
-    LibPath : "C:\\Users\\bazrgar\\Desktop\\FINGERFOOD-MAIN\\BasisCore.Server.Node\\ExternalCommands"
+    LibPath : "C:\\apps\\BasisCore.Server.Node\\ExternalCommands"
   }
 );

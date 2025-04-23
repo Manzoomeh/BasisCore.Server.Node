@@ -82,7 +82,7 @@ export default class RequestContext extends ContextBase {
       );
       result.items.forEach((item, index) => {
         this.debugContext.addDebugInformation(
-          sourceName + "." + memberNames[index]
+          sourceName + "." + memberNames[index],item.data
         );
       });
       return result;

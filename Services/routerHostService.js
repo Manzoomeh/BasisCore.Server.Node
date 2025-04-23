@@ -20,7 +20,7 @@ export default class RouterHostService extends HostService {
       if (service) {
         this.#routes.push(new RouterOptions(service, option));
       } else {
-        console.log(`host service '${option.service}' not found!`);
+        console.log(`host service '${option.Service}' not found!`,);
       }
     });
   }

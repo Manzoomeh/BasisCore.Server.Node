@@ -27,7 +27,7 @@ export default class Index4Response extends RequestBaseResponse {
     const destinationPath = this._request.index4.destination;
     let finalPath = destinationPath;
     const lastModifiedDate = new Date(this._request.webserver.lastmodified);
-    const fileLastModifiedDate = fs.existsSync(destinationPath)
+    const fileLastModifiedDate = fs.existsSync(destinationPath)    
       ? this._getLastModifiedDate(destinationPath)
       : null;
     if (
@@ -44,6 +44,8 @@ export default class Index4Response extends RequestBaseResponse {
         size,
         setting.deform
       );
+      const dirPath = path.dirname(destinationPath);
+      await fs.promises.mkdir(dirPath, { recursive: true });
       await fs.promises.writeFile(destinationPath, newContent);
       finalPath = destinationPath;
       if (gzip) {

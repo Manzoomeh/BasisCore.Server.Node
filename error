@@ -1,0 +1,10 @@
+TypeError: Cannot read properties of undefined (reading 'executeAsync')
+    at CollectionCommandItem.executeAsync (file:///C:/apps/BasisCore.Server.Node/renderEngine/Command/Collection/CollectionCommand.js:80:38)
+    at file:///C:/apps/BasisCore.Server.Node/renderEngine/Command/Collection/CollectionCommand.js:52:23
+    at Array.map (<anonymous>)
+    at GroupCommand.executeCommandBlocks (file:///C:/apps/BasisCore.Server.Node/renderEngine/Command/Collection/CollectionCommand.js:52:10)
+    at async GroupCommand._executeCommandAsync (file:///C:/apps/BasisCore.Server.Node/renderEngine/Command/Collection/GroupCommand.js:19:20)
+    at async GroupCommand.executeAsync (file:///C:/apps/BasisCore.Server.Node/renderEngine/Command/CommandBase.js:67:24)
+    at async Index1Response.getResultAsync (file:///C:/apps/BasisCore.Server.Node/Models/Index1Response.js:119:22)
+    at async createCmsAndCreateResponseAsync (file:///C:/apps/BasisCore.Server.Node/endPoint/h2HttpHostEndPoint.js:119:46)
+    at async ServerHttp2Stream.<anonymous> (file:///C:/apps/BasisCore.Server.Node/endPoint/h2HttpHostEndPoint.js:149:13)

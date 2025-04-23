@@ -1,4 +1,3 @@
-
 import TokenUtil from "../Token/TokenUtil.js";
 import RenderableCommand from "./RenderableCommand.js";
 import RenderParam from "./RenderParam.js";
@@ -6,9 +5,9 @@ import FaceCollection from "./Renderable/FaceCollection.js";
 import StringUtil from "../Token/StringUtil.js";
 import Util from "../../Util.js";
 import SourceUtil from "../Source/SourceUtil.js";
-import { createRequire } from 'module';
+import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const alasql = require ("./../../../alasql")
+const alasql = require("./../../../alasql");
 
 export default class TreeCommand extends RenderableCommand {
   /** @type {IToken} */
@@ -87,7 +86,9 @@ export default class TreeCommand extends RenderableCommand {
         source.data,
         nullValue,
       ]);
+
       if (rootRecord.length == 0) {
+       //console.log(source.data, nullValue,foreignKey);
         throw new Error(
           `Tree command has no root record in data member '${source.id}' with '${nullValue}' value in '${foreignKey}' column that set in NullValue attribute!`
         );

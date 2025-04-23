@@ -1,240 +1,1649 @@
 {
-  "$type": "group",
-  "core": "group",
-  "name": "ROOT_GROUP",
-  "Commands": [
-    {
-      "$type": "dbsource",
-      "core": "dbsource",
-      "ConnectionName": "py_basiscore",
-      "name": "db",
-      "extra-attribute": {
-        "lid": "1",
-        "mid": "1",
-        "usedforid": {
-          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
-        }
-      },
-      "Members": [
-        { "extra-attribute": { "type": "view" }, "name": "article_view" }
-      ]
-    },
-    {
-      "$type": "dbsource",
-      "core": "dbsource",
-      "ConnectionName": "py_basiscore",
-      "name": "db",
-      "extra-attribute": {
-        "lid": "1",
-        "mid": "1",
-        "usedforid": {
-          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
-        }
-      },
-      "Members": [
-        { "extra-attribute": { "type": "list" }, "name": "article_date" }
-      ]
-    },
-    {
-      "$type": "dbsource",
-      "core": "dbsource",
-      "ConnectionName": "basiscore",
-      "name": "db",
-      "extra-attribute": {
-        "lid": "1",
-        "mid": "1",
-        "usedforid": {
-          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
-        }
-      },
-      "Members": [
+    "$type": "group",
+    "Commands": [
         {
-          "extra-attribute": { "request": "navigationcat", "type": "tree" },
-          "name": "navigationcat",
-          "postsql": "select * from [db.navigationcat] where parentid = parentcatid"
-        }
-      ]
-    },
-    {
-      "$type": "dbsource",
-      "core": "dbsource",
-      "ConnectionName": "py_basiscore",
-      "name": "db",
-      "extra-attribute": {
-        "mid": "1",
-        "lid": "1",
-        "usedforid": {
-          "Params": [{ "Source": "cms", "Member": "query", "Column": "id" }]
-        }
-      },
-      "Members": [
-        {
-          "name": "data2",
-          "extra-attribute": { "type": "view", "request": "rdfa" }
-        }
-      ]
-    },
-    {
-      "$type": "dbsource",
-      "core": "dbsource",
-      "ConnectionName": "hosting",
-      "name": "tag",
-      "extra-attribute": {
-        "urlid": {
-          "Params": [{ "Source": "cms", "Member": "seo", "Column": "urlid" }]
-        }
-      },
-      "Members": [
-        {
-          "extra-attribute": { "type": "list", "request": "taglist" },
-          "name": "list",
-          "postsql": "select * from [tag.list] where key = 'canonical'"
-        }
-      ]
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": [
-        "\r\n<!DOCTYPE html >\r\n<html lang=\"fa\">\r\n <head> \r\n <meta charset=\"utf-8\">\r\n <title>",
-        {
-          "Params": [{ "Source": "cms", "Member": "seo", "Column": "title" }]
-        },
-        "</title>\r\n <meta name=\"description\" content=\"",
-        {
-          "Params": [
-            { "Source": "cms", "Member": "seo", "Column": "description" }
-          ]
-        },
-        "\"/>\r\n \r\n "
-      ]
-    },
-    { "$type": "call", "core": "call", "FileName": "style_desktop.html" },
-    {
-      "$type": "print",
-      "core": "print",
-      "data-member-name": "tag.list",
-      "faces": [
-        {
-          "content": [
-            "\r\n\t\t\t<link rel=\"canonical\" href=\"https://",
-            {
-              "Params": [
-                { "Source": "cms", "Member": "request", "Column": "host" }
-              ]
+            "$type": "dbsource",
+            "ConnectionName": "hosting",
+            "core": "dbsource",
+            "extra-attribute": {
+                "urlid": {
+                    "Params": [
+                        {
+                            "Column": "urlid",
+                            "Member": "seo",
+                            "Source": "cms"
+                        }
+                    ]
+                }
             },
-            "/@value\" />\r\n\t\t"
-          ]
-        }
-      ],
-      "else-layout-content": [
-        "\r\n\t\t\t<link rel=\"canonical\" href=\"https://",
-        {
-          "Params": [{ "Source": "cms", "Member": "request", "Column": "host" }]
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "taglist",
+                        "type": "list"
+                    },
+                    "name": "list",
+                    "postsql": "select * from [tag.list] where key = 'canonical'"
+                }
+            ],
+            "name": "tag"
         },
-        "/",
         {
-          "Params": [{ "Source": "cms", "Member": "request", "Column": "url" }]
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "mid": "20",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "type": "view"
+                    },
+                    "name": "viewp"
+                },
+                {
+                    "extra-attribute": {
+                        "request": "rdfa",
+                        "type": "view"
+                    },
+                    "name": "data"
+                }
+            ],
+            "name": "db"
         },
-        "\" />\r\n\t\t"
-      ]
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "\r\n </head>\r\n <body>\r\n "
-    },
-    { "$type": "call", "core": "call", "FileName": "header_desktop.html" },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "\r\n <div class=\"article_list_resize\">\r\n <div class=\"article_list\">\r\n <div class=\"article_header\">\r\n <div class=\"breadcrumb\">\r\n <ul>\r\n <li>\r\n <a href=\"/طرز-تهیه\">وبلاگ</a>\r\n </li>\r\n <li>\r\n /\r\n </li>\r\n "
-    },
-    {
-      "$type": "print",
-      "core": "print",
-      "data-member-name": "db.navigationcat",
-      "faces": [
         {
-          "filter": "parentcatid not in ('52544') ",
-          "content": "\r\n <li>\r\n <a href=\"/@link\">@title</a>\r\n </li>\r\n <li>\r\n /\r\n </li>\r\n "
-        }
-      ]
-    },
-    {
-      "$type": "print",
-      "core": "print",
-      "data-member-name": "db.article_view",
-      "faces": [
-        {
-          "filter": "typeid = 150",
-          "content": "\r\n <li>\r\n <span>\r\n @answer\r\n </span>\r\n </li>\r\n "
-        }
-      ]
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": [
-        "\r\n \r\n </ul>\r\n </div>\r\n <!-- <div class=\"article_cats\">\r\n <ul>\r\n <li>\r\n <a href=\"\">غذای ملل</a>\r\n </li>\r\n <li>\r\n <a href=\"\">غذای ملل</a>\r\n </li>\r\n <li>\r\n <a href=\"\">غذای ملل</a>\r\n </li><li>\r\n <a href=\"\">غذای ملل</a>\r\n </li>\r\n </ul>\r\n </div> -->\r\n </div>\r\n <div class=\"clr\"></div>\r\n <div class=\"content_resize\" itemscope=\"",
-        {
-          "Params": [
-            { "Source": "db", "Member": "data2", "Column": "vocabulary" }
-          ]
+            "$type": "dbsource",
+            "ConnectionName": "userbehavior",
+            "core": "dbsource",
+            "extra-attribute": {
+                "triggers": "db.refreshlist",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "avgrate",
+                        "type": "scalar"
+                    },
+                    "name": "mainavgrate"
+                }
+            ],
+            "name": "db"
         },
-        "\" itemtype=\"",
         {
-          "Params": [{ "Source": "db", "Member": "data2", "Column": "link" }]
+            "$type": "dbsource",
+            "ConnectionName": "media",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "sourcemid": "product",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "format": "4",
+                        "type": "list"
+                    },
+                    "name": "image2"
+                }
+            ],
+            "name": "list"
         },
-        "\">\r\n <div class=\"content\" >\r\n <div class=\"article_title\">\r\n "
-      ]
-    },
-    {
-      "$type": "print",
-      "core": "print",
-      "data-member-name": "db.article_view",
-      "faces": [
         {
-          "filter": "typeid = 150",
-          "content": "\r\n <h1 itemprop=\"@vocabulary\" >\r\n @answer\r\n </h1>\r\n "
-        }
-      ]
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": [
-        "\r\n </div>\r\n <div class=\"article_date\">\r\n <span class=\"num\" itemprop=\"@vocabulary\" >",
-        {
-          "Params": [
-            { "Source": "db", "Member": "article_date", "Column": "date" }
-          ]
+            "$type": "dbsource",
+            "ConnectionName": "userbehavior",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "listcomment",
+                        "type": "list"
+                    },
+                    "name": "listcomment",
+                    "postsql": "select count(*) as countt from [db.listcomment]"
+                }
+            ],
+            "name": "db"
         },
-        "</span>\r\n <i class=\"fa fa-clock-o\"></i> \r\n \r\n </div>\r\n <div class=\"clr\"></div>\r\n <article class=\"show_article\">\r\n "
-      ]
-    },
-    {
-      "$type": "print",
-      "core": "print",
-      "data-member-name": "db.article_view",
-      "faces": [
         {
-          "filter": "typeid not in ('150','161','160','162','159')",
-          "content": "\r\n <article>\r\n <div class=\"article_sub_title\" itemprop=\"@vocabulary\" >\r\n @text\r\n </div>\r\n <div class=\"article_text\" itemprop=\"@vocabulary\" >\r\n @largetext\r\n </div>\r\n </article>\r\n "
+            "$type": "dbsource",
+            "ConnectionName": "userbehavior",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "listcomment",
+                        "type": "list"
+                    },
+                    "name": "listcomment1"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "call",
+            "core": "call",
+            "FileName": "userid.inc"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "trust_login",
+            "core": "dbsource",
+            "extra-attribute": {
+                "userid": {
+                    "Params": [
+                        {
+                            "Column": "userid",
+                            "Member": "userid",
+                            "Source": "db"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "userfavoritelist",
+                        "type": "list"
+                    },
+                    "name": "userfavoritelist",
+                    "postsql": [
+                        "select count(*) as countt from [db.userfavoritelist] where usedforid = ",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "id",
+                                    "Member": "query",
+                                    "Source": "cms"
+                                },
+                                {
+                                    "Value": "0"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "mid": "20",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "navigationcat",
+                        "type": "tree"
+                    },
+                    "name": "navigationcat"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "mid": "20",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "blgid": "218",
+                        "type": "list"
+                    },
+                    "name": "related",
+                    "postsql": "select * from [db.related] LIMIT 1"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "mid": "20",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "blgid": "18",
+                        "size": "230x120",
+                        "type": "list"
+                    },
+                    "name": "relatedpro"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "py_basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "mid": "1",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "related",
+                            "Source": "db"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "type": "view"
+                    },
+                    "name": "viewArticle"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "mid": "1",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "related",
+                            "Source": "db"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "rdfa",
+                        "type": "view"
+                    },
+                    "name": "data2"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "mid": "20",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "type": "list"
+                    },
+                    "name": "title"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "hosting",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "wordid": {
+                    "Params": [
+                        {
+                            "Column": "wordid",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "keywordinfo",
+                        "type": "view"
+                    },
+                    "name": "title"
+                }
+            ],
+            "name": "keyword"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "mid": "20",
+                "wordid": {
+                    "Params": [
+                        {
+                            "Column": "wordid",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "pageno": "1",
+                        "perpage": "100",
+                        "type": "list"
+                    },
+                    "name": "memberName"
+                }
+            ],
+            "name": "basisName"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "lid": "1",
+                "mid": "20",
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "navigationcat",
+                        "type": "tree"
+                    },
+                    "name": "currectcat",
+                    "postsql": "SELECT *\r\nFROM [db.currectcat]\r\nWHERE Parentid = Parentcatid and Title not like 'ریشه' LIMIT 1"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "Catid": {
+                    "Params": [
+                        {
+                            "Column": "Parentcatid",
+                            "Member": "currectcat",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "lid": "1",
+                "mid": "20"
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "perpage": "50",
+                        "request": "catid",
+                        "size": "330x160",
+                        "type": "list"
+                    },
+                    "name": "currectcatlist"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "rawtext",
+            "content": [
+                "\r\n\r\n<!DOCTYPE html >\r\n<html lang=\"fa\">\r\n\r\n<head>\r\n<meta charset=\"utf-8\">\r\n<title>",
+                {
+                    "Params": [
+                        {
+                            "Column": "title",
+                            "Member": "seo",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "</title>\r\n<meta name=\"description\" content=\"",
+                {
+                    "Params": [
+                        {
+                            "Column": "description",
+                            "Member": "seo",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "\" />\r\n"
+            ],
+            "core": "rawtext"
+        },
+        {
+            "$type": "call",
+            "core": "call",
+            "FileName": "style_desktop.html"
+        },
+        {
+            "$type": "rawtext",
+            "content": [
+                "\r\n<link rel=\"stylesheet\" href=\"",
+                {
+                    "Params": [
+                        {
+                            "Column": "cdn",
+                            "Member": "cms",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "/css/lightgallery.css\" media=\"screen\" />\r\n<link rel=\"stylesheet\" href=\"",
+                {
+                    "Params": [
+                        {
+                            "Column": "cdn",
+                            "Member": "cms",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "/css/slick-theme.css\" media=\"screen\" />\r\n"
+            ],
+            "core": "rawtext"
+        },
+        {
+            "$type": "print",
+            "core": "print",
+            "data-member-name": "tag.list",
+            "else-layout-content": [
+                "\r\n <link rel=\"canonical\" href=\"https://",
+                {
+                    "Params": [
+                        {
+                            "Column": "host",
+                            "Member": "request",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "/",
+                {
+                    "Params": [
+                        {
+                            "Column": "url",
+                            "Member": "request",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "\" />\r\n"
+            ],
+            "faces": [
+                {
+                    "content": [
+                        "\r\n <link rel=\"canonical\" href=\"https://",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "host",
+                                    "Member": "request",
+                                    "Source": "cms"
+                                }
+                            ]
+                        },
+                        "/@value\" />\r\n"
+                    ]
+                }
+            ]
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n<style>\r\n.product_schema{\r\n margin-top: 37px !important;\r\n}\r\n.support_section{\r\n height: 385px !important;\r\n}\r\n.related_product_resize{\r\npadding-top: 21px !important;\r\n}\r\n.submit_comment{\r\n display: flex;\r\nalign-items: center;\r\njustify-content: center;\r\n}\r\n\r\n\r\n</style>\r\n</head>\r\n\r\n<body>\r\n\r\n\r\n<!-- start header -->\r\n",
+            "core": "rawtext"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "basiscore",
+            "core": "dbsource",
+            "extra-attribute": {
+                "id": "cat",
+                "lid": "1",
+                "mid": "20"
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "cat",
+                        "type": "tree"
+                    },
+                    "name": "cat"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "call",
+            "core": "call",
+            "FileName": "header_desktop.html"
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n\r\n\r\n<div class=\"content_resize supplier_page render \" id=\"render_supplier\">\r\n\r\n<div class=\"content\" >\r\n <div class=\"clr\"></div>\r\n <div class=\"breadcrumb_resize\">\r\n <div class=\"breadcrumb\">\r\n <ul>\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "print",
+            "core": "print",
+            "data-member-name": "db.navigationcat",
+            "faces": [
+                {
+                    "content": "\r\n <li><a href=\"/\">صفحه اصلی</a></li>\r\n <li>/</li>\r\n ",
+                    "filter": "Parentcatid = 55933"
+                },
+                {
+                    "content": "\r\n <li><a href=\"/@Link\">@Title</a></li>\r\n <li>/</li>\r\n ",
+                    "filter": "Parentcatid not in (52543) and Link is not null"
+                }
+            ],
+            "layout-content": " @child "
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n \r\n </ul>\r\n <div class=\"clr\"></div>\r\n </div>\r\n <div class=\"socials\"> <span class=\"supplier_footer_addbookmark\">\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "group",
+            "Commands": [
+                {
+                    "$type": "rawtext",
+                    "content": "\r\n <i class=\"fa fa-heart\"></i>\r\n ",
+                    "core": "rawtext"
+                }
+            ],
+            "core": "group",
+            "if": [
+                "'",
+                {
+                    "Params": [
+                        {
+                            "Column": "countt",
+                            "Member": "userfavoritelist",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "' = '1'"
+            ],
+            "name": "one"
+        },
+        {
+            "$type": "group",
+            "Commands": [
+                {
+                    "$type": "rawtext",
+                    "content": "\r\n <i class=\"fa fa-heart-o\"></i>\r\n ",
+                    "core": "rawtext"
+                }
+            ],
+            "core": "group",
+            "if": [
+                "'",
+                {
+                    "Params": [
+                        {
+                            "Column": "countt",
+                            "Member": "userfavoritelist",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "' = '0'"
+            ],
+            "name": "two"
+        },
+        {
+            "$type": "rawtext",
+            "content": [
+                "\r\n </span>\r\n <div class=\"share_icon\" onclick=\"show_share_icon(this)\"> <i class=\"icon-share3\"></i> </div>\r\n <div class=\"share_icon_wrapper animation share_icon_wrapper_hide\" style=\"width: 0;\">\r\n <a class=\"twitter_link\" aria-label=\"twitter\" href=\"https://twitter.com/share?url=",
+                {
+                    "Params": [
+                        {
+                            "Column": "full-url",
+                            "Member": "request",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "\" target=\"_blank\" rel=\"noreferrer\"> <i class=\"icon-twitter\"></i> </a>\r\n <a class=\"telegram_link\" aria-label=\"telegram\" href=\"https://telegram.me/share/url?url=",
+                {
+                    "Params": [
+                        {
+                            "Column": "full-url",
+                            "Member": "request",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "\" target=\"_blank\" rel=\"noreferrer\"> <i class=\"icon-telegram\"></i> </a>\r\n <a class=\"telegram_link\" aria-label=\"whatsapp\" href=\"whatsapp://send?text=",
+                {
+                    "Params": [
+                        {
+                            "Column": "full-url",
+                            "Member": "request",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "\" target=\"_blank\" rel=\"noreferrer\"> <i class=\"icon-whatsapp\"></i> </a>\r\n </div>\r\n </div>\r\n </div>\r\n <div class=\"gallery_resize\">\r\n <div class=\"gallery_resize_right\">\r\n <div class=\"gallery\">\r\n <div id=\"lightgallery\" class=\"light_gallery\">\r\n "
+            ],
+            "core": "rawtext"
+        },
+        {
+            "$type": "print",
+            "core": "print",
+            "data-member-name": "list.image2",
+            "else-layout-content": "\r\n <div class=\"item item1 swiper-slide\" data-src=\"/@url\">\r\n <a href=\"\"> <img class=\"img-responsive\" alt=\"@description\" src=\"/images/no_food_pic2.jpg\" width=\"200\" height=\"200\" /> </a>\r\n </div>\r\n ",
+            "faces": [
+                {
+                    "content": "\r\n <div class=\"item item1 swiper-slide\" data-src=\"/@largeIMG\">\r\n <a href=\"\"> <img class=\"img-responsive\" alt=\"@description\" src=\"/@largeIMG\" width=\"200\" height=\"200\" /> </a>\r\n </div>\r\n ",
+                    "filter": "RowNumber= 1"
+                },
+                {
+                    "content": "\r\n <div style=\"display: none;\" class=\"item item1 swiper-slide\" data-src=\"/@largeIMG\">\r\n <a href=\"\"> <img class=\"img-responsive\" alt=\"@description\" src=\"/@largeIMG\" width=\"200\" height=\"200\" /> </a>\r\n </div>\r\n \r\n ",
+                    "filter": "RowNumber > 1"
+                }
+            ]
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n <div class=\"small-gallery\">\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "print",
+            "core": "print",
+            "data-member-name": "list.image2",
+            "faces": [
+                {
+                    "content": "\r\n <div class=\"slider_resize2\">\r\n <div class=\"lazy slider\" data-sizes=\"50vw\">\r\n <div class=\"small-pic\">\r\n <img class=\"img-responsive\" alt=\"@description\" src=\"/@largeIMG\" width=\"40\" height=\"40\" />\r\n </div>\r\n \r\n </div>\r\n </div>\r\n ",
+                    "filter": "rownumber <> 1"
+                }
+            ]
+        },
+        {
+            "$type": "rawtext",
+            "content": [
+                "\r\n </div>\r\n </div>\r\n \r\n <section class=\"product_info\" itemscope=\"",
+                {
+                    "Params": [
+                        {
+                            "Column": "vocabulary",
+                            "Member": "data",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "\" itemtype=\"",
+                {
+                    "Params": [
+                        {
+                            "Column": "link",
+                            "Member": "data",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "\">\r\n \r\n "
+            ],
+            "core": "rawtext"
+        },
+        {
+            "$type": "view",
+            "core": "view",
+            "data-member-name": "db.viewp",
+            "faces": [
+                {
+                    "content": "\r\n <h1 itemprop=\"@vocabulary\">\r\n @answer\r\n </h1>\r\n ",
+                    "filter": "TypeID = 150"
+                }
+            ]
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "userbehavior",
+            "core": "dbsource",
+            "extra-attribute": {
+                "usedforid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "userid": {
+                    "Params": [
+                        {
+                            "Column": "userid",
+                            "Member": "userid",
+                            "Source": "db"
+                        }
+                    ]
+                }
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "userrate",
+                        "type": "scalar"
+                    },
+                    "name": "userrateg"
+                }
+            ],
+            "name": "db"
+        },
+        {
+            "$type": "group",
+            "Commands": [
+                {
+                    "$type": "rawtext",
+                    "content": "\r\n <div class=\"product_rate\">\r\n \r\n <div class=\"num\"> <span>امتیاز این محصول : </span> <i class=\"icon-star3\"></i> <span class=\"render_result\">\r\n ",
+                    "core": "rawtext"
+                },
+                {
+                    "$type": "print",
+                    "core": "print",
+                    "data-member-name": "db.mainavgrate",
+                    "else-layout-content": "3.5",
+                    "faces": [
+                        {
+                            "content": "@average",
+                            "filter": "average > 0"
+                        }
+                    ]
+                },
+                {
+                    "$type": "rawtext",
+                    "content": "\r\n \r\n </span> </div> <a href=\"\" class=\"rate_this\">شما هم به این محصول امتیاز دهید</a>\r\n <div>\r\n <div class=\"give_rate\">\r\n <a class=\"star_o \" id=\"1\" data-rate=\"1\">\r\n <span class=\"tooltip_star\">بد</span>\r\n </a>\r\n <a class=\"star_o \" id=\"2\" data-text=\"متوسط\" data-rate=\"2\">\r\n <span class=\"tooltip_star\">متوسط</span>\r\n </a>\r\n <a class=\"star_o \" id=\"3\" data-text=\"خوب\" data-rate=\"3\">\r\n <span class=\"tooltip_star\">خوب</span>\r\n </a>\r\n <a class=\"star_o \" id=\"4\" data-text=\"خیلی خوب\" data-rate=\"4\">\r\n <span class=\"tooltip_star\">خیلی خوب</span>\r\n </a>\r\n <a class=\"star_o \\\" id=\"5\" data-text=\"عالی\" data-rate=\"5\">\r\n <span class=\"tooltip_star\">عالی</span>\r\n </a>\r\n <p class=\"rate_msg\"></p>\r\n </div>\r\n </div>\r\n <div class=\"clr\"></div>\r\n </div>\r\n ",
+                    "core": "rawtext"
+                }
+            ],
+            "core": "group",
+            "if": [
+                "'",
+                {
+                    "Params": [
+                        {
+                            "Column": "rate",
+                            "Member": "userrateg",
+                            "Source": "db"
+                        },
+                        {
+                            "Value": "0"
+                        }
+                    ]
+                },
+                "' = '0'"
+            ]
+        },
+        {
+            "$type": "group",
+            "Commands": [
+                {
+                    "$type": "rawtext",
+                    "content": "\r\n <div class=\"product_rate\">\r\n \r\n <div class=\"num\"> <span>امتیاز این محصول : </span> <i class=\"icon-star3\"></i> <span class=\"render_result\">\r\n ",
+                    "core": "rawtext"
+                },
+                {
+                    "$type": "print",
+                    "core": "print",
+                    "data-member-name": "db.mainavgrate",
+                    "else-layout-content": "3.5",
+                    "faces": [
+                        {
+                            "content": "@average",
+                            "filter": "average > 0"
+                        }
+                    ]
+                },
+                {
+                    "$type": "rawtext",
+                    "content": "\r\n \r\n </span> </div> <a href=\"\" class=\"rate_this\"> شما قبلا به این محصول امتیاز دادید</a>\r\n \r\n <div class=\"clr\"></div>\r\n </div>\r\n \r\n \r\n ",
+                    "core": "rawtext"
+                }
+            ],
+            "core": "group",
+            "if": [
+                "'",
+                {
+                    "Params": [
+                        {
+                            "Column": "rate",
+                            "Member": "userrateg",
+                            "Source": "db"
+                        },
+                        {
+                            "Value": "0"
+                        }
+                    ]
+                },
+                "' = '1'"
+            ]
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n\r\n <div class=\"clr\"></div>\r\n\r\n <ul class=\"schema_list\">\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "view",
+            "core": "view",
+            "data-member-name": "db.viewp",
+            "faces": [
+                {
+                    "content": "\r\n <li> <span class=\"question_span\">@Question : </span> <span>@child</span> </li>\r\n ",
+                    "filter": "TypeID not in (150,160,161,162,159) and prpID not in (87576)",
+                    "level": "1"
+                },
+                {
+                    "content": "<span itemprop=\"@vocabulary\"> @answer </span><span class=\"view_dot\"></span> ",
+                    "level": "2"
+                }
+            ]
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n </ul>\r\n </section>\r\n <!-- 11 -->\r\n </div>\r\n </div>\r\n <div class=\"gallery_resize_left\">\r\n <div class=\"gallery_resize_left_inside\">\r\n <!-- show add to basket -->\r\n <div class=\"clr\"></div>\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "accounting",
+            "core": "dbsource",
+            "extra-attribute": {
+                "cache": "refresh",
+                "lid": "1",
+                "mainid": {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "mid": "43"
+            },
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "type": "list",
+                        "typeid": "150,170"
+                    },
+                    "name": "anbar",
+                    "postsql": "select title,usedforid,id,type_170 from [db.anbar]"
+                }
+            ],
+            "name": "db",
+            "run": "atclient"
+        },
+        {
+            "_core": "component.local.ListOfChoices",
+            "$type": "clientcomponent",
+            "core": "clientcomponent",
+            "extra-attribute": {
+                "basket-result-id": "db.Listchoices",
+                "inventorysource": "db.anbar",
+                "localstoragesource": "local.basket"
+            },
+            "run": "atclient"
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n <div class=\"p_login1_wrapper\" id=\"ploading\">\r\n <div class=\"p_login1\" ></div>\r\n </div>\r\n <div id=\"inventory_wrapper\" style=\"display: none;\">\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "print",
+            "core": "print",
+            "data-member-name": "db.Listchoices",
+            "extra-attribute": {
+                "onrendered": "checkPrice"
+            },
+            "faces": [
+                {
+                    "content": [
+                        "\r\n <script type=\"text/template\">\r\n\r\n <tr>\r\n <td class=\"inventory_check\" >\r\n \r\n @title@ </td>\r\n <td class=\"num\"> @type_170@</td>\r\n <td class=\"last_td_tbl\">\r\n <div class=\"shop_products_btns\">\r\n <div class=\"minus_btn animation\" style=\"opacity: 1\" onclick=\"RemoveAssetAsync(this,'@usedforid@','@type_170@', '",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "title",
+                                    "Source": "db"
+                                }
+                            ]
+                        },
+                        "','@title@')\"> <i class=\" icon-minus\"></i> </div>\r\n <input type=\"text\" style=\"opacity: 1\" data-val=\"@quantity@\" onchange=\"EditAssetAsync(this,'@usedforid@','@type_170@', '",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "title",
+                                    "Source": "db"
+                                }
+                            ]
+                        },
+                        "','@title@')\" value=\"@quantity@\" id=\"basket_count\" class=\"animation num quantity basket_count\" />\r\n <div class=\"add_btn\" data-usedforid=\"@usedforid@\" data-price=\"@type_170@\" data-title=\"",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "title",
+                                    "Source": "db"
+                                }
+                            ]
+                        },
+                        "\" data-title2=\"@title@\" style=\"transform: translate(70px)\" onclick=\"AddAssetAsync(this,'@usedforid@','@type_170@', '",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "title",
+                                    "Source": "db"
+                                }
+                            ]
+                        },
+                        "','@title@')\"> <i class=\" icon-plus\"></i> </div>\r\n </div>\r\n </td>\r\n </tr>\r\n\r\n </script>\r\n "
+                    ],
+                    "filter": "quantity > 0"
+                },
+                {
+                    "content": "\r\n <script type=\"text/template\">\r\n <tr>\r\n <td class=\"inventory_check\" >\r\n \r\n @title@ </td>\r\n <td class=\"num\"> @type_170@</td>\r\n <td class=\"last_td_tbl\">\r\n <div class=\"shop_products_btns\">\r\n <div class=\"minus_btn animation add_btn_disabled\" > <i class=\" icon-minus\"></i> </div>\r\n <input type=\"text\" data-val=\"0\" value=\"0\" id=\"basket_count\" class=\"animation num quantity basket_count\" />\r\n <div class=\"add_btn add_btn_disabled\" > <i class=\" icon-plus\"></i></div>\r\n </div>\r\n </td>\r\n </tr>\r\n </script>\r\n ",
+                    "filter": "hasInventory = 0 "
+                },
+                {
+                    "content": [
+                        "\r\n <script type=\"text/template\">\r\n <tr>\r\n <td class=\"inventory_check\" >\r\n \r\n @title@ </td>\r\n <td class=\"num\"> @type_170@</td>\r\n <td class=\"last_td_tbl\">\r\n <div class=\"shop_products_btns\">\r\n <div class=\"minus_btn animation\" onclick=\"RemoveAssetAsync(this,'@usedforid@','@type_170@', '",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "title",
+                                    "Source": "db"
+                                }
+                            ]
+                        },
+                        "','@title@')\"> <i class=\" icon-minus\"></i> </div>\r\n <input type=\"text\" data-val=\"0\" value=\"0\" id=\"basket_count\" class=\"animation num quantity basket_count\" />\r\n <div class=\"add_btn\" data-usedforid=\"@usedforid@\" data-price=\"@type_170@\" data-title=\"",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "title",
+                                    "Source": "db"
+                                }
+                            ]
+                        },
+                        "\" data-title2=\"@title@\" onclick=\"AddAssetAsync(this,'@usedforid@','@type_170@', '",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "title",
+                                    "Source": "db"
+                                }
+                            ]
+                        },
+                        "','@title@')\"> <i class=\" icon-plus\"></i></div>\r\n </div>\r\n </td>\r\n </tr>\r\n </script>\r\n "
+                    ]
+                }
+            ],
+            "layout-content": "\r\n <script type=\"text/template\">\r\n <table id=\"inventories_tbl\">\r\n @child\r\n </table>\r\n </script>\r\n ",
+            "run": "atclient"
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n\r\n <div class=\"supplier_footer_call_wrapper\" id=\"supplier_footer_call_wrapper\">\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "print",
+            "core": "print",
+            "data-member-name": "db.Listchoices",
+            "faces": [
+                {
+                    "content": "\r\n <script type=\"text/template\">\r\n <div class=\"supplier_footer_call add_btn_disabled\" id=\"add_to_basket\" ><span > افزودن به سبد خرید</span></div>\r\n </script>\r\n ",
+                    "filter": "hasInventory = 0 and RowNumber = 1"
+                },
+                {
+                    "content": "\r\n <script type=\"text/template\">\r\n <div class=\"supplier_footer_call\" id=\"add_to_basket\" onclick=\"addTobasket1(this,event)\"><span > افزودن به سبد خرید</span></div>\r\n </script>\r\n ",
+                    "filter": "RowNumber = 1"
+                }
+            ],
+            "run": "atclient"
+        },
+        {
+            "$type": "rawtext",
+            "content": [
+                "\r\n </div>\r\n </div>\r\n \r\n <div class=\"clr\"></div>\r\n <!-- show add to basket -->\r\n </div>\r\n </div>\r\n </div>\r\n</div>\r\n</div>\r\n\r\n<div class=\"related-wrapper\">\r\n<div class=\"related_article_wrapper\">\r\n <div class=\"schemas_resize\">\r\n <article class=\"product_description\" itemscope=\"",
+                {
+                    "Params": [
+                        {
+                            "Column": "vocabulary",
+                            "Member": "data2",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "\" itemtype=\"",
+                {
+                    "Params": [
+                        {
+                            "Column": "link",
+                            "Member": "data2",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "\">\r\n "
+            ],
+            "core": "rawtext"
+        },
+        {
+            "$type": "print",
+            "core": "print",
+            "data-member-name": "db.viewarticle",
+            "else-layout-content": "\r\n <div class=\"no_article\">\r\n <p>نوشتن محتوای این صفحه هنوز تموم نشده !</p>\r\n <div class=\"no_article_img\">\r\n <img src=\"/images/no_artilce.png\" alt=\"فروشگاه اینترنتی فینگرفود\" />\r\n </div>\r\n </div>\r\n ",
+            "faces": [
+                {
+                    "content": "\r\n <div class=\"product_description_title\">\r\n <h2 itemprop=\"@vocabulary\">\r\n @answer\r\n </h2> </div>\r\n ",
+                    "filter": "TypeID = 150"
+                },
+                {
+                    "content": " \r\n <article>\r\n <h3 itemprop=\"@vocabulary\"> @text</h3>\r\n <div itemprop=\"@vocabulary\">@largetext</div>\r\n </article>\r\n ",
+                    "filter": "TypeID not in (150,159,160,161,162)"
+                }
+            ],
+            "layout-content": "\r\n @child\r\n "
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n </article>\r\n <div class=\"product_schema\">\r\n <div class=\"support_section\">\r\n <p>پذیرایی از مهمانان خود را به ما بسپارید</p>\r\n <a href=\"/تماس-با-ما\"><img alt=\"درخواست مشاوره فینگرفود\" src=\"/images/support_icon.png\" />درخواست مشاوره</a>\r\n </div>\r\n </div>\r\n </div>\r\n</div>\r\n</div>\r\n<div class=\"suggested_product_resize related_product_resize\" id=\"suggested_product_resize\">\r\n<div class=\"cats \">\r\n <div class=\"suggested_product_title\">محصولات مرتبط</div>\r\n <div class=\"offer\" style=\"height: 300px;\">\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "repeater",
+            "Commands": [
+                {
+                    "$type": "dbsource",
+                    "ConnectionName": "userbehavior",
+                    "core": "dbsource",
+                    "extra-attribute": {
+                        "usedforid": {
+                            "Params": [
+                                {
+                                    "Column": "id",
+                                    "Member": "current",
+                                    "Source": "rep1"
+                                }
+                            ]
+                        }
+                    },
+                    "Members": [
+                        {
+                            "extra-attribute": {
+                                "request": "avgrate",
+                                "type": "scalar"
+                            },
+                            "name": "avgrate"
+                        }
+                    ],
+                    "name": "db"
+                },
+                {
+                    "$type": "print",
+                    "core": "print",
+                    "data-member-name": "db.avgrate",
+                    "else-layout-content": [
+                        "\r\n <div class=\"pro_item \">\r\n <a class=\"pro_item_link\" aria-label=\"",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "current",
+                                    "Source": "rep1"
+                                }
+                            ]
+                        },
+                        "\" href=\"/",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "link",
+                                    "Member": "current",
+                                    "Source": "rep1"
+                                }
+                            ]
+                        },
+                        "\" tabindex=\"-1\"></a> <img src=\"",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "cdn",
+                                    "Member": "cms",
+                                    "Source": "cms"
+                                }
+                            ]
+                        },
+                        "/",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "00330X00160prp",
+                                    "Member": "current",
+                                    "Source": "rep1"
+                                }
+                            ]
+                        },
+                        "\" width=\"232\" height=\"120\" alt=\"",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "current",
+                                    "Source": "rep1"
+                                }
+                            ]
+                        },
+                        "\" />\r\n <div class=\"pro_title1\">\r\n <p class=\"pro_title\"> <a href=\"/",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "link",
+                                    "Member": "current",
+                                    "Source": "rep1"
+                                }
+                            ]
+                        },
+                        "\" tabindex=\"-1\">",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "title",
+                                    "Member": "current",
+                                    "Source": "rep1"
+                                }
+                            ]
+                        },
+                        " </a> </p>\r\n <div class=\"supplier_info_rate\"> <span class=\"num\">3.5</span> <span class=\"rates\">\r\n <i class=\"fa fa-star\"></i>\r\n </span> </div>\r\n <div class=\"clr\"></div>\r\n </div>\r\n <div class=\"clr\"></div>\r\n <div class=\"supplier_info\">\r\n <div>\r\n <div class=\"\"> <span class=\"shop_btn_list supplier_info_title\" style=\"position: relative; z-index: 9999;\" bc-value=\"",
+                        {
+                            "Params": [
+                                {
+                                    "Column": "id",
+                                    "Member": "current",
+                                    "Source": "rep1"
+                                }
+                            ]
+                        },
+                        "\" data-target=\"#frameModalBottom001\" bc-triggers=\"click\" name=\"db.shop\" data-toggle=\"modal\" ><i class=\"fa fa-shopping-cartt\"></i>افزودن به سبد خرید</span> </div>\r\n </div>\r\n <div> </div>\r\n </div>\r\n </div>\r\n "
+                    ],
+                    "faces": [
+                        {
+                            "content": [
+                                "\r\n <div class=\"pro_item \">\r\n <a class=\"pro_item_link\" aria-label=\"",
+                                {
+                                    "Params": [
+                                        {
+                                            "Column": "title",
+                                            "Member": "current",
+                                            "Source": "rep1"
+                                        }
+                                    ]
+                                },
+                                "\" href=\"/",
+                                {
+                                    "Params": [
+                                        {
+                                            "Column": "link",
+                                            "Member": "current",
+                                            "Source": "rep1"
+                                        }
+                                    ]
+                                },
+                                "\" tabindex=\"-1\"></a> <img src=\"",
+                                {
+                                    "Params": [
+                                        {
+                                            "Column": "cdn",
+                                            "Member": "cms",
+                                            "Source": "cms"
+                                        }
+                                    ]
+                                },
+                                "/",
+                                {
+                                    "Params": [
+                                        {
+                                            "Column": "00330X00160prp",
+                                            "Member": "current",
+                                            "Source": "rep1"
+                                        }
+                                    ]
+                                },
+                                "\" width=\"232\" height=\"120\" alt=\"",
+                                {
+                                    "Params": [
+                                        {
+                                            "Column": "title",
+                                            "Member": "current",
+                                            "Source": "rep1"
+                                        }
+                                    ]
+                                },
+                                "\" />\r\n <div class=\"pro_title1\">\r\n <p class=\"pro_title\"> <a href=\"/",
+                                {
+                                    "Params": [
+                                        {
+                                            "Column": "link",
+                                            "Member": "current",
+                                            "Source": "rep1"
+                                        }
+                                    ]
+                                },
+                                "\" tabindex=\"-1\">",
+                                {
+                                    "Params": [
+                                        {
+                                            "Column": "title",
+                                            "Member": "current",
+                                            "Source": "rep1"
+                                        }
+                                    ]
+                                },
+                                " </a> </p>\r\n <div class=\"supplier_info_rate\"> <span class=\"num\">",
+                                {
+                                    "Params": [
+                                        {
+                                            "Column": "average",
+                                            "Member": "avgrate",
+                                            "Source": "db"
+                                        },
+                                        {
+                                            "Value": "3.5"
+                                        }
+                                    ]
+                                },
+                                "</span> <span class=\"rates\">\r\n <i class=\"fa fa-star\"></i>\r\n </span> </div>\r\n <div class=\"clr\"></div>\r\n </div>\r\n <div class=\"clr\"></div>\r\n <div class=\"supplier_info\">\r\n <div>\r\n <div class=\"\"> <span class=\"shop_btn_list supplier_info_title\" style=\"position: relative; z-index: 9999;\" bc-value=\"",
+                                {
+                                    "Params": [
+                                        {
+                                            "Column": "id",
+                                            "Member": "current",
+                                            "Source": "rep1"
+                                        }
+                                    ]
+                                },
+                                "\" data-target=\"#frameModalBottom001\" bc-triggers=\"click\" name=\"db.shop\" data-toggle=\"modal\" ><i class=\"fa fa-shopping-cartt\"></i>افزودن به سبد خرید</span> </div>\r\n </div>\r\n <div> </div>\r\n </div>\r\n </div>\r\n "
+                            ]
+                        }
+                    ]
+                }
+            ],
+            "core": "repeater",
+            "data-member-name": "db.currectcatlist",
+            "name": "rep1"
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n </div>\r\n</div>\r\n</div>\r\n<div class=\"comment_wrapper\">\r\n<div class=\"comment_inside\">\r\n <div class=\"suggested_product_title\">\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "print",
+            "core": "print",
+            "data-member-name": "db.listcomment",
+            "else-layout-content": " نظرات (0) ",
+            "faces": [
+                {
+                    "content": " نظرات (@countt) "
+                }
+            ]
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n </div>\r\n <div class=\"comments\">\r\n <div class=\"comment_list comment_lists\">\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "print",
+            "core": "print",
+            "data-member-name": "db.listcomment1",
+            "else-layout-content": "\r\n \r\n <ul class=\"comment_list\">\r\n <li> برای این محصول نظر ثبت نشده است </li>\r\n </ul>\r\n \r\n ",
+            "faces": [
+                {
+                    "content": "\r\n \r\n <li>\r\n <article>\r\n <div class=\"avatar\"><img src=\"/images/avatar.png\" width=\"32\" height=\"32\" alt=\"نظرات کاربران\" /></div>\r\n <div class=\"comment_text\">\r\n <div class=\"comment_text_title\">\r\n <div class=\"comment_text_name\"><span>@username</span> (@createdate)</div>\r\n </div> \r\n <span class=\"comment_text\">@comment</span> </div>\r\n </article>\r\n </li>\r\n \r\n "
+                }
+            ],
+            "layout-content": "\r\n \r\n <ul class=\"comment_list\"> @child </ul>\r\n \r\n "
+        },
+        {
+            "$type": "rawtext",
+            "content": "</div>\r\n <div class=\"comments_form\">\r\n ",
+            "core": "rawtext"
+        },
+        {
+            "$type": "call",
+            "core": "call",
+            "extra-attribute": {
+                "triggers": "db.logoutflag"
+            },
+            "FileName": "comment_new.html?refresh=true",
+            "run": "atclient"
+        },
+        {
+            "$type": "call",
+            "core": "call",
+            "extra-attribute": {
+                "message": "{##cms.commentform.message##}",
+                "method": "post",
+                "onrendered": "showMessage",
+                "onrendering": "showLoading",
+                "title": "{##cms.commentform.title##}",
+                "triggers": "cms.commentform",
+                "userid": "{##cms.commentform.userid##}"
+            },
+            "FileName": [
+                "comment_get.html?id=",
+                {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                }
+            ],
+            "if": "{##cms.commentform.flag|(false)##}",
+            "run": "atclient"
+        },
+        {
+            "$type": "rawtext",
+            "content": "\r\n </div>\r\n </div>\r\n</div>\r\n</div>\r\n\r\n<div class=\"\">\r\n<div class=\"modal fade \" id=\"frameModalBottom1\" tabindex=\"-1\" role=\"dialog\">\r\n <div class=\"modal-dialog\" role=\"document\">\r\n <!--Content-->\r\n <div class=\"modal-content\" id=\"modal-content\">\r\n <!--Body-->\r\n <div class=\"modal-body\">\r\n <div class=\"row d-flex justify-content-center align-items-center\">\r\n <div class=\"comment_list_resize \">\r\n <div class=\"modal-header\">\r\n <div class=\"title_line\"></div>\r\n </div>\r\n <div class=\"clr\"></div>\r\n <div class=\"modal-body acc_render gallery_resize_left\">\r\n <div id=\"acc_render\"> </div>\r\n <div class=\"clr\"></div>\r\n </div>\r\n <div class=\"clr\"></div>\r\n </div>\r\n </div>\r\n </div>\r\n <div class=\"clr\"></div>\r\n </div>\r\n <!--/.Content-->\r\n </div>\r\n</div>\r\n</div>\r\n\r\n",
+            "core": "rawtext"
+        },
+        {
+            "$type": "call",
+            "core": "call",
+            "FileName": "footer_desktop.html"
+        },
+        {
+            "$type": "call",
+            "core": "call",
+            "FileName": "script_desktop.html"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "trust_loginapi",
+            "core": "dbsource",
+            "extra-attribute": {
+                "cache": "refresh",
+                "lid": "1",
+                "mid": "20",
+                "onrendered": "loadBookmarkCommand",
+                "triggers": "db.bookmark",
+                "usedforid": "{##db.bookmark.pid##}",
+                "userid": "{##db.bookmark.userid##}"
+            },
+            "if": "{##cms.bookmark.value|(false)##}",
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "userfavoritsabt",
+                        "type": "scalar"
+                    },
+                    "name": "favorit"
+                }
+            ],
+            "name": "db",
+            "run": "atclient"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "trust_loginapi",
+            "core": "dbsource",
+            "extra-attribute": {
+                "cache": "refresh",
+                "triggers": "db.delbookmark",
+                "usedforid": "{##db.delbookmark.pid##}",
+                "userid": "{##db.delbookmark.userid##}"
+            },
+            "if": "{##cms.delbookmark.value|(false)##}",
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "favoritedelete",
+                        "type": "scalar"
+                    },
+                    "name": "favoritedelete"
+                }
+            ],
+            "name": "db",
+            "run": "atclient"
+        },
+        {
+            "$type": "dbsource",
+            "ConnectionName": "userbehaviorapi",
+            "core": "dbsource",
+            "extra-attribute": {
+                "cache": "refresh",
+                "onrendered": "loadRateCommand",
+                "rate": "{##db.rate.rate|(0)##}",
+                "triggers": "db.rate",
+                "usedforid": "{##db.rate.id##}",
+                "userid": "{##db.rate.userid##}"
+            },
+            "if": "{##cms.rate.value|(false)##}",
+            "Members": [
+                {
+                    "extra-attribute": {
+                        "request": "rate",
+                        "type": "scalar"
+                    },
+                    "name": "submitrate"
+                }
+            ],
+            "name": "db",
+            "run": "atclient"
+        },
+        {
+            "$type": "rawtext",
+            "content": [
+                "\r\n</div>\r\n\r\n\r\n\r\n<script src=\"",
+                {
+                    "Params": [
+                        {
+                            "Column": "cdn",
+                            "Member": "cms",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "/js/slick.js\"></script>\r\n<script src=\"",
+                {
+                    "Params": [
+                        {
+                            "Column": "cdn",
+                            "Member": "cms",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "/js/lightgallery-all.min.js\"></script>\r\n<script>\r\n$('.offer').slick({\r\ninfinite: true,\r\nslidesToShow: 4,\r\nslidesToScroll: 1\r\n});\r\n$('#lightgallery').lightGallery({\r\nthumbnail: true,\r\nmode: 'lg-fade',\r\ndownload: false,\r\nclosable: true,\r\ncounter: false,\r\ncontrols: false,\r\nenableTouch: true,\r\ntoggleThumb: false,\r\nshowThumbByDefault: true,\r\nanimateThumb: false,\r\ncurrentPagerPosition: 'middle',\r\nloop: false,\r\nscale: false,\r\nrotate: false,\r\nzoom: false,\r\nfullScreen: false,\r\nenableDrag: true,\r\nenableSwipe: true,\r\nloop: true,\r\nshare: false,\r\nautoplay :false\r\n});\r\n\r\nfunction show_share_icon(e) {\r\n$(\".share_icon_wrapper\").toggleClass(\"share_icon_wrapper_show\", \"share_icon_wrapper_hide\")\r\n}\r\n$(\".supplier_footer_addbookmark\").click( function(x) {\r\nconst userid = \"",
+                {
+                    "Params": [
+                        {
+                            "Column": "userid",
+                            "Member": "userid",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "\";\r\nconst param = \"",
+                {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "\"\r\nconsole.log(\"userid for like\" , userid)\r\nif(userid == 0) {\r\n window.location = \"/login.bc\"\r\n} else {\r\n $bc.setSource(\"cms.bookmark\" , true)\r\n $bc.setSource(\"db.bookmark\", [{\"pid\" : param , \"userid\" : userid}])\r\n}\r\n});\r\nfunction loadBookmarkCommand(arg){\r\n\r\n$(\".supplier_footer_addbookmark\").find(\"i\").addClass(\"fa-heart\");\r\n$(\".supplier_footer_addbookmark\").find(\"i\").removeClass(\"fa-heart-o\");\r\n}\r\nfunction del_bookmark(a){\r\nconst userid = \"",
+                {
+                    "Params": [
+                        {
+                            "Column": "userid",
+                            "Member": "userid",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "\";\r\nconst pid = $(a).closest(\"li\").find(\".pid\").val()\r\nif(userid == 0) {\r\n window.location = \"/login.bc\"\r\n} else {\r\n $bc.setSource(\"cms.delbookmark\" , true)\r\n $bc.setSource(\"db.delbookmark\", [{\"pid\" : pid , \"userid\" : userid}])\r\n $(a).closest(\"li\").remove()\r\n}\r\n\r\n\r\n\r\n}\r\n\r\n\r\n$(\".star_o\").click(async function(e) {\r\ne.preventDefault();\r\n$(\".star_o\").removeClass(\"star_o_hover\")\r\nconst rate = $(this).attr(\"data-rate\");\r\n$(\"#rate_input\").val(rate)\r\nfor(var i = 0; i <= rate; i++) {\r\n $(\"#\" + i).addClass(\"star_o_hover\")\r\n}\r\nconst userid = \"",
+                {
+                    "Params": [
+                        {
+                            "Column": "userid",
+                            "Member": "userid",
+                            "Source": "db"
+                        }
+                    ]
+                },
+                "\"\r\nif(userid == \"0\") {\r\n window.location = \"/login.bc\"\r\n} else {\r\n $bc.setSource(\"cms.rate\" , true)\r\n $bc.setSource(\"db.rate\", [{\"rate\" : rate , \"userid\" : userid , \"id\": \"",
+                {
+                    "Params": [
+                        {
+                            "Column": "id",
+                            "Member": "query",
+                            "Source": "cms"
+                        }
+                    ]
+                },
+                "\"}])\r\n \r\n}\r\n\r\n\r\n});\r\nfunction loadRateCommand(arg){\r\n$(\".rate_msg\").empty().text(`امتیاز ${arg.source.rows[0].rate} برای این محصول ثبت شد `)\r\n setTimeout(function() {\r\n $(\".rate_msg\").empty()\r\n }, 2000);\r\n $bc.setSource(\"db.refreshlist\", true)\r\n}\r\n$(\".rate_this\").click(function(e) {\r\ne.preventDefault()\r\nconst userid = useridd();\r\nif(userid == 0) {\r\n window.location = \"/login.bc\"\r\n} else {\r\n $(\".give_rate\").slideDown()\r\n}\r\n})\r\nfunction showMessage(){\r\n$(\".comments_content\").empty().text(`نظر شما با موفقیت ثبت شد و پس از بررسی، نظر شما در سایت نمایش داده می‌شود.`)\r\nsetTimeout(() => {\r\n $(\".comments_content\").empty()\r\n}, 3000);\r\n$(\".loading_login1\").hide()\r\n $(\".submit_comment span\").show()\r\n}\r\nfunction getLogin(){\r\nwindow.location = \"/login.bc\"\r\n}\r\n\r\nconst classExists = document.getElementsByClassName('slick-slide').length > 0;\r\n\r\nif (!classExists) {\r\n document.getElementById('suggested_product_resize').style.display= 'none';\r\n}\r\n\r\nfunction checkPrice(args){\r\n if(args.result.length > 0){\r\n const tbl = document.getElementById(\"inventories_tbl\")\r\n const tr = tbl.querySelectorAll(\"tr\")\r\n tr.forEach(e => {\r\n const price = e.querySelector(\".num\").innerHTML\r\n const number = price.split(\" \")[0]\r\n if(number == 0){\r\n document.getElementById(\"add_to_basket\").removeAttribute(\"onclick\")\r\n document.getElementById(\"add_to_basket\").setAttribute(\"disable\" , true)\r\n document.getElementById(\"add_to_basket\").textContent=\"ناموجود\"\r\n $(e).find(\".add_btn\").removeAttr(\"onclick\")\r\n // e.closest(\"tr\").querySelector(\"add_btn\").removeAttribute(\"onclick\")\r\n $(e).find(\".add_btn\").attr(\"disable\" , true)\r\n \r\n }\r\n })\r\n document.getElementById(\"ploading\").style.display=\"none\"\r\n document.getElementById(\"inventory_wrapper\").style.display=\"block\"\r\n }\r\n}\r\nfunction showLoading(){\r\n \r\n $(\".loading_login1\").show()\r\n $(\".submit_comment span\").hide()\r\n}\r\n\r\n</script>\r\n\r\n\r\n\r\n</body>\r\n\r\n</html>"
+            ],
+            "core": "rawtext"
         }
-      ]
-    },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "\r\n \r\n \r\n </article>\r\n </div>\r\n </div>\r\n\r\n \r\n </div>\r\n </div>\r\n \r\n \r\n \r\n \r\n \r\n \r\n "
-    },
-    { "$type": "call", "core": "call", "FileName": "footer_desktop.html" },
-    { "$type": "call", "core": "call", "FileName": "script_desktop.html" },
-    {
-      "$type": "rawtext",
-      "core": "rawtext",
-      "content": "\r\n <script src=\"js/slick.js\" ></script>\r\n <script>\r\n \r\n $(\".filter_title .filters_item_link\").click(function(x){\r\n x.preventDefault()\r\n $ (this).closest(\"li\").find(\".filter_list\").slideToggle()\r\n })\r\n \r\n \r\n </script>\r\n \r\n </body>\r\n</html>"
-    }
-  ]
+    ],
+    "core": "group",
+    "name": "ROOT_GROUP"
 }

@@ -103,11 +103,21 @@ export default class DebugContext extends LogContext {
    * @returns {void}
    */
   addDebugInformation(title, info) {
+    console.log("tttt",title)
     const information = Array.isArray(info)
       ? info
       : typeof info == "object"
-      ? [info] :info ?
-       [{ content: info }] : null;
+      ? [info]
+      : info
+      ? [{ content: info }]
+      : null;
+    if (
+      this.tableCollection.findIndex((data) => {
+        return data.title.toLowerCase() == title.toLowerCase() ;
+      }) != -1
+    ) {
+      return;
+    }
     return this.tableCollection.push({ information, title });
   }
   /**
@@ -173,8 +183,9 @@ export default class DebugContext extends LogContext {
       .filter((object) => object.information != null)
       .map((object) => {
         let { information, title } = object;
-        return new StringResult(this.#arrayToHtmlTableWithTitle(information, title));
+        return new StringResult(
+          this.#arrayToHtmlTableWithTitle(information, title)
+        );
       });
   }
-  
 }

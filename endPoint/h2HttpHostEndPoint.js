@@ -9,7 +9,15 @@ import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import url from "url";
 import CacheSettings from "../models/options/CacheSettings.js";
 const { HTTP2_HEADER_AUTHORITY } = http2.constants;
+import querystring from "querystring";
 
+const decodeURIComponentSafe = (s) => {
+  try {
+      return decodeURIComponent(s);
+  } catch {
+      return s; // Return as-is if decoding fails
+  }
+}
 export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
   /** @type {import("tls").SecureContextOptions} */
   #options;
@@ -57,7 +65,6 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     body,
     isSecure
   ) {
-    console.log(formFields,fileContents)
     const cms = await super._createCmsObjectAsync(
       urlStr,
       method,
@@ -74,11 +81,27 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
     ] = `${cms.request["host"]}${requestHeaders[":path"]}`;
     return cms;
   }
+  _sqlInjectionMiddleware = (stream, headers) => {
+    // const reqUrl = headers[http2.constants.HTTP2_HEADER_PATH] || '';
+    // const host = headers[http2.constants.HTTP2_HEADER_AUTHORITY] || 'localhost';
+    // const url = new URL(reqUrl, `https://${host}`);
+    // const queryString = decodeURIComponentSafe(url.search); // Decode URI components
 
+    // // Case-insensitive regex pattern to match common SQL injection patterns
+    // const sqlInjectionPattern = /(?:\b(SELECT|INSERT|DELETE|UPDATE|WHERE|DROP|EXEC|UNION|--|\*|#)\b.*?[=;]|\b(OR|AND)\b\s*?['"\d])/i;
+
+    // // Check the query string for SQL injection patterns
+    // return sqlInjectionPattern.test(queryString);
+    return false
+};
   _createServer() {
     this._server = http2
       .createSecureServer(this.#options)
       .on("stream", async (stream, headers) => {
+        if (this._sqlInjectionMiddleware(stream, headers)) {
+          stream.respond({ ":status": 400, "content-type": "text/plain" });
+          return stream.end("Bad Request: Potential SQL injection detected.");
+        }
         this._checkCacheAsync(stream, headers, async () => {
           /** @type {Request} */
           let cms = null;
@@ -87,7 +110,7 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
           /** @type {NodeJS.Dict<string>} */
           const jsonHeaders = {};
           /** @type {NodeJS.Dict<string>} */
-          const formFields = {};
+          let formFields = {};
           const method = headers[":method"];
           const reqUrl = headers[":path"];
           let bodyStr = "";
@@ -134,19 +157,32 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
               "Strict-Transport-Security":
                 "max-age=15552000; includeSubDomains; preload",
               "X-Content-Type-Options": "nosniff",
-              "X-Frame-Options": "DENY",
+              // "X-Frame-Options": "DENY",
               "X-XSS-Protection": "1; mode=block",
             });
             stream.end(body);
           };
 
           stream.on("data", (chunk) => {
-            if (headers["content-type"] === "application/json" || headers["content-type"]=="application/javascript"||headers["content-type"].startsWith("application/x-www-form-urlencoded")) {
+            if (
+              headers["content-type"] === "application/json" ||
+              headers["content-type"] == "application/javascript" ||
+              headers["content-type"].startsWith(
+                "application/x-www-form-urlencoded"
+              )
+            ) {
               bodyStr += chunk;
             }
           });
 
           stream.on("end", async () => {
+            if (
+              headers["content-type"]?.startsWith(
+                "application/x-www-form-urlencoded"
+              )
+            ) {
+              formFields = querystring.parse(bodyStr);
+            }
             await createCmsAndCreateResponseAsync();
           });
 
@@ -175,7 +211,6 @@ export default class H2HttpHostEndPoint extends SecureHttpHostEndPoint {
                   });
                 });
                 bb.on("field", (name, val, info) => {
-                  console.log(name,val)
                   formFields[name] = val;
                   if (name.startsWith("_")) {
                     jsonHeaders[name] = val;

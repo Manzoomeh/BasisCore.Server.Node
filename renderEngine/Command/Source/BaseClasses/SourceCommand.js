@@ -85,6 +85,7 @@ export default class SourceCommand extends CommandBase {
     const memberNames = this.members.items.map((item)=>{
       return item.name
     })
+
     return await context.loadDataAsync(sourceName, connectionName, params,memberNames);
   }
 

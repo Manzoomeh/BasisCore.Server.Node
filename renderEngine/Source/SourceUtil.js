@@ -8,7 +8,14 @@ import StringUtil from "../Token/StringUtil.js";
 alasql.fn.REVERSE = function (str) {
   return str ?str.split("").reverse().join(""): null;
 };
+
+alasql.fn.reverse = function (str) {
+  return str ?str.split("").reverse().join(""): null;
+};
 alasql.fn.CHARINDEX = function(substring, string) {
+  return string ?string.indexOf(substring) + 1 : -1; 
+};
+alasql.fn.charindex = function(substring, string) {
   return string ?string.indexOf(substring) + 1 : -1; 
 };
 alasql.fn.SUBSTR = function (str, start, length) {
@@ -24,6 +31,26 @@ alasql.fn.INDEXOF = function (str, searchValue) {
   var index = str ?str.indexOf(searchValue) : -1;
   return index >= 0 ? index + 1 : -1; 
 };
+alasql.fn.cast = function(value, type) {
+  switch (type.toLowerCase()) {
+      case 'int':
+          return parseInt(value, 10);
+      case 'float':
+          return parseFloat(value);
+      case 'string':
+          return String(value);
+      case 'boolean':
+          return Boolean(value);
+      default:
+          return value; 
+  }
+}
+alasql.fn.max = function(arr) {
+  return Math.max.apply(null, arr);
+};
+alasql.fn.min = function(arr) {
+  return Math.min.apply(null, arr);
+};
 
 export default class SourceUtil {
   /**
@@ -32,6 +59,9 @@ export default class SourceUtil {
    * @param {string} sql
    */
   static applySql(source, sql) {
+    // sql = sql.toLowerCase()
+    // console.log(source,sql)
+    sql=SourceUtil.getExactColumnName(source,sql)
     source.data = alasql(
       StringUtil.replace(
         StringUtil.replace(sql, `(\\[${source.id}\\])`, "?"),
@@ -39,6 +69,7 @@ export default class SourceUtil {
       ),
       [source.data]
     );
+    // console.log("rtt",source)
   }
 
   /**
@@ -73,6 +104,9 @@ export default class SourceUtil {
         row["RowNumber"] = index++;
       });
     } else {
+      if(!source.data){
+        console.log(source)
+      }
       source.data["RowNumber"] = index;
       source.data = [source.data];
     }

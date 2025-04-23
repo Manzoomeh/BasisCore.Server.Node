@@ -145,7 +145,6 @@ export default class HostManager {
             const sniCallback = (serverName, callback) => {
               const set = hostLookup[serverName.toLowerCase()];
               if (set) {
-                console.log("set", set);
                 if (set.cert) {
                   callback(
                     null,

@@ -16,7 +16,8 @@ import CacheConnectionBase from "../models/CacheCommands/CacheConnection/CacheCo
 import { HostEndPointOptions } from "../models/model.js";
 import SqliteCacheConnection from "../models/CacheCommands/CacheConnection/SqliteCacheConnection.js";
 import CacheSettings from "../models/options/CacheSettings.js";
-
+import { contentType } from "mime-types";
+import querystring from "querystring"
 let requestId = 0;
 class HttpHostEndPoint extends HostEndPoint {
   /** @type {HostService} */
@@ -116,7 +117,6 @@ class HttpHostEndPoint extends HostEndPoint {
     headers["clientip"] = socket.remoteAddress;
     headers[":path"] = "/" + decodeURIComponent(rawUrl);
     if (Object.keys(jsonHeaders).length > 0) {
-      console.log(ObjectUtil.convertObjectToNestedStructure(jsonHeaders))
       headers["json"] = {
         header: ObjectUtil.convertObjectToNestedStructure(jsonHeaders),
       };
@@ -161,7 +161,7 @@ class HttpHostEndPoint extends HostEndPoint {
       "max-age=15552000; includeSubDomains; preload"
     );
     res.setHeader("X-Content-Type-Options", "nosniff");
-    res.setHeader("X-Frame-Options", "DENY");
+    // res.setHeader("X-Frame-Options", "DENY");
     res.setHeader("X-XSS-Protection", "1; mode=block");
 
     if (typeof next === "function") {
@@ -219,6 +219,9 @@ class HttpHostEndPoint extends HostEndPoint {
               next();
             } else {
               req.bodyStr = body;
+              if(req.headers["content-type"]?.startsWith("application/x-www-form-urlencoded")){
+                 req.formFields = querystring.parse(body);
+              }
               next();
             }
           });
@@ -352,5 +355,24 @@ class HttpHostEndPoint extends HostEndPoint {
     this._server.close();
     console.log(`server ip ${this._ip} and port ${this._port} killed`);
   }
+  _sqlInjectionMiddleware = (req, res, next) => {
+    next()
+// const url = new URL(req.url, `http://${req.headers.host}`);
+    
+//     const queryString = url.search; 
+
+
+//     const sqlInjectionPattern = /[\s'";()&|]|(SELECT|select|INSERT|insert|DELETE|delete|UPDATE|update|WHERE|where|DROP|drop|EXEC|exec|UNION|union|--|\*|#|\/\*|\/\*.*?\*\/)/;
+
+
+//     if (sqlInjectionPattern.test(queryString)) {
+
+//         res.writeHead(400, { 'Content-Type': 'text/plain' });
+//         res.end('Bad Request: Potential SQL injection detected.');
+//     } else {
+
+//         next();
+//     }
+};
 }
 export default HttpHostEndPoint;
