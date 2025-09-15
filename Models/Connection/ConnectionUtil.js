@@ -8,6 +8,7 @@ import MongoConnectionInfo from "./MongoConnectionInfo.js";
 import SqliteConnectionInfo from "./SqLiteConnectionInfo.js";
 import MySqlConnectionInfo from "./MySqlConnectionInfo.js";
 import SocketConnectionInfo from "./SocketConnectionInfo.js";
+import WebConnectionInfo from "./WebConnectionInfo.js";
 export default class ConnectionUtil {
   /**
    * @param {NodeJS.Dict<any>} settings
@@ -53,6 +54,9 @@ export default class ConnectionUtil {
           case "socket": {
             connection = new SocketConnectionInfo(parts[2], settings[item]);
             break;
+          }
+          case "web" : {
+            connection = new WebConnectionInfo(parts[2],settings[item])
           }
           default: {
             if (parts[1] == "ws") {

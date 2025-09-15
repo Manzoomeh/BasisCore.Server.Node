@@ -26,10 +26,9 @@ export default class SqlConnectionInfo extends ConnectionInfo {
           ? `;requestTimeout=${this.settings.requestTimeout}`
           : "")
     );
-    this.connectionPool.connect().catch((err)=>{
-      console.log("error in connect",this.name,err)
-    })
-    
+    this.connectionPool.connect().catch((err) => {
+      console.log("error in connect", this.name, err);
+    });
   }
 
   /**
@@ -70,9 +69,9 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    */
   async getRoutingDataAsync(request, cancellationToken) {
     const params = new sql.Table();
-    params.columns.add("ParamType", sql.NVarChar(50));  
-    params.columns.add("ParamName", sql.NVarChar(100)); 
-    params.columns.add("ParamValue", sql.NVarChar());   
+    params.columns.add("ParamType", sql.NVarChar(50));
+    params.columns.add("ParamName", sql.NVarChar(100));
+    params.columns.add("ParamValue", sql.NVarChar());
 
     for (const type in request) {
       const group = request[type];
@@ -82,9 +81,9 @@ export default class SqlConnectionInfo extends ConnectionInfo {
           for (const key in query) {
             params.rows.add(name, key, query[key]?.toString());
           }
-        } else if(name === "json"){
+        } else if (name === "json") {
           params.rows.add(type, name, JSON.stringify(group[name]));
-        }else {
+        } else {
           params.rows.add(type, name, group[name]?.toString());
         }
       }

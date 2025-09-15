@@ -1,7 +1,6 @@
 import fs from "fs";
 import { StatusCodes } from "http-status-codes";
 import RequestBaseResponse from "./requestBaseResponse.js";
-import im from "imagemagick";
 import path from "path";
 import Pako from "pako";
 import Util from "../Util.js";
@@ -44,6 +43,8 @@ export default class Index4Response extends RequestBaseResponse {
         size,
         setting.deform
       );
+      const dirPath = path.dirname(destinationPath);
+      Index4Response._createDirectoryIfNotExist(dirPath)
       await fs.promises.writeFile(destinationPath, newContent);
       finalPath = destinationPath;
       if (gzip) {
@@ -157,7 +158,7 @@ static _mackWebpAsync(content, quality) {
   static _createDirectoryIfNotExist(filePath) {
     const pathDirectory = path.dirname(filePath);
     if (!fs.existsSync(pathDirectory)) {
-      fs.mkdirSync(pathDirectory);
+      fs.mkdirSync(pathDirectory,{recursive : true});
     }
   }
 

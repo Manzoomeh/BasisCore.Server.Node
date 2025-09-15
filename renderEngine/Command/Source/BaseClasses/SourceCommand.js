@@ -82,10 +82,7 @@ export default class SourceCommand extends CommandBase {
       params: JSON.stringify(paramList),
     }
     context.debugContext.addDebugInformation(`Parameter(s) Send To '${sourceName}' From Command '${connectionName}' in 180 ms`,[debugParams])
-    const memberNames = this.members.items.map((item)=>{
-      return item.name
-    })
-    return await context.loadDataAsync(sourceName, connectionName, params,memberNames);
+    return await context.loadDataAsync(sourceName, connectionName, params);
   }
 
   /**
