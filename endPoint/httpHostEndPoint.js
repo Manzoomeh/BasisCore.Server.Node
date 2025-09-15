@@ -77,7 +77,7 @@ class HttpHostEndPoint extends HostEndPoint {
     }
     const server = this._createServer();
     await this.initializeAsync();
-    await this._cacheConnection.initializeAsync()
+    await this._cacheConnection?.initializeAsync();
     server
       .on("error", (x) => console.error(x))
       .listen(this._port, this._ip, () => {
@@ -264,17 +264,20 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {IncomingMessage} req
    * @param {ServerResponse} res
    */
-  async _checkCacheAsync(req, res,isSecure ,next) {
+  async _checkCacheAsync(req, res, isSecure, next) {
     const urlObject = url.parse(req.url, true);
     if (
       !urlObject?.query.refresh &&
       this._cacheOptions &&
       this._cacheOptions.isEnabled &&
-      this._cacheOptions.requestMethods.includes(req.method) 
+      this._cacheOptions.requestMethods.includes(req.method)
     ) {
-      const fullUrl = `${isSecure ? "https://" : "http://"}${req.headers.host}${req.url}`;
+      const fullUrl = `${isSecure ? "https://" : "http://"}${req.headers.host}${
+        req.url
+      }`;
       const cacheResults = await this._cacheConnection.loadContentAsync(
-        fullUrl,req.headers["user-agent"]
+        fullUrl,
+        req.headers["user-agent"]
       );
       if (cacheResults) {
         res.writeHead(200, {
@@ -294,24 +297,23 @@ class HttpHostEndPoint extends HostEndPoint {
    * @param {string} key
    * @param {string} content
    * @param {NodeJS.Dict<string>} headers
-   * @param {string} method 
-   * @param {NodeJS.Dict<string>} cms 
+   * @param {string} method
+   * @param {NodeJS.Dict<string>} cms
    * @returns {Promise<void>}
    */
-  async addCacheContentAsync(key, content, headers, method,cms) {
+  async addCacheContentAsync(key, content, headers, method, cms) {
     if (
       this._cacheOptions &&
       this._cacheOptions.isEnabled &&
       this._cacheOptions.requestMethods.includes(method) &&
-      this._cacheConnection 
-      
+      this._cacheConnection
     ) {
       const savedHeaders = this.findProperties(
         headers,
         this._cacheOptions.responseHeaders
       );
       await this._cacheConnection.addCacheContentAsync(
-        this.removeQueryParam(key, 'refresh'),
+        this.removeQueryParam(key, "refresh"),
         content,
         savedHeaders,
         cms
@@ -325,12 +327,12 @@ class HttpHostEndPoint extends HostEndPoint {
     return inputStr;
   }
   removeQueryParam(url, param) {
-    let [baseUrl, queryString] = url.split('?');
-    if (!queryString) return url; 
-    let queryParams = queryString.split('&');
-    queryParams = queryParams.filter(pair => !pair.startsWith(param + '='));
-    return queryParams.length ? `${baseUrl}?${queryParams.join('&')}` : baseUrl;
-}
+    let [baseUrl, queryString] = url.split("?");
+    if (!queryString) return url;
+    let queryParams = queryString.split("&");
+    queryParams = queryParams.filter((pair) => !pair.startsWith(param + "="));
+    return queryParams.length ? `${baseUrl}?${queryParams.join("&")}` : baseUrl;
+  }
   /**
    *
    * @param {NodeJS.Dict} headers

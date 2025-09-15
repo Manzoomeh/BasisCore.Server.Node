@@ -8,7 +8,7 @@ const host = {
       Type: "http",
       Addresses: [
         {
-          EndPoint: "127.0.0.1:443",
+          EndPoint: "127.0.0.1:8080",
         },
       ],
       Active: true,
@@ -20,10 +20,9 @@ const host = {
         connectionType: "sqlite",
         connectionSetting: {
           dbPath: "./cache/",
-          filesPath : "./cachefiles/",
-          isFileBase : true,
-          hostDetailsApiUrl: "http://127.0.0.1:3000"
-
+          filesPath: "./cachefiles/",
+          isFileBase: true,
+          hostDetailsApiUrl: "http://127.0.0.1:3000",
         },
       },
     },
@@ -32,7 +31,7 @@ const host = {
     mainservice: {
       Type: "http",
       Settings: {
-        LibPath: "D:\\alibazregar\\BasisCore.Server.Node\\ExternalCommands",
+        LibPath: "./ExternalCommands",
         "Connections.edge.RoutingData": {
           endpoint: "127.0.0.1:8000",
         },
@@ -42,8 +41,7 @@ const host = {
         "Connections.socket.mydbsource": {
           endpoint: "127.0.0.1:9090",
         },
-        "Default.ScriptEngine.PythonPath":
-          "C:\\Services\\Server user.basiscore.com 217\\Service\\PythonScriptEngine.py",
+        "Default.ScriptEngine.PythonPath": "./PythonScriptEngine.py",
       },
     },
   },

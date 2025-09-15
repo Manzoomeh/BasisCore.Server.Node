@@ -10,12 +10,15 @@ class LoadCommand {
 
   /**@param {string} commandDir */
   constructor(commandDir) {
-    this.commandDir = commandDir;
+    this.commandDir = path.isAbsolute(commandDir)
+      ? commandDir
+      : path.resolve(process.cwd(), commandDir);
   }
 
   /** @returns {string[]} */
   getJSFiles() {
     try {
+      console.log("Loading commands from:", this.commandDir);
       const files = fs.readdirSync(this.commandDir);
       const jsFiles = files
         .filter((file) => path.extname(file) === ".js")

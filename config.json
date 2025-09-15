@@ -5,8 +5,14 @@
       "Type": "http",
       "id": "fingerfood",
       "Addresses": [
-        { "id": "1", "EndPoint": "185.44.36.186:2020" },
-        { "id": "2", "EndPoint": "185.44.36.186:2021" }
+        {
+          "id": "1",
+          "EndPoint": "185.44.36.186:2020"
+        },
+        {
+          "id": "2",
+          "EndPoint": "185.44.36.186:2021"
+        }
       ],
       "Active": true,
       "Routing": "mainService"
@@ -15,8 +21,14 @@
       "Type": "http",
       "id": "testtt",
       "Addresses": [
-        { "id": "1", "EndPoint": "185.44.36.77:5005" },
-        { "id": "2", "EndPoint": "185.44.36.77:5003" }
+        {
+          "id": "1",
+          "EndPoint": "185.44.36.77:5005"
+        },
+        {
+          "id": "2",
+          "EndPoint": "185.44.36.77:5003"
+        }
       ],
       "Active": true,
       "Routing": "welcomeService"
@@ -24,7 +36,12 @@
     "google.com": {
       "Type": "http",
       "id": "testtt2",
-      "Addresses": [{ "id": "2", "EndPoint": "185.44.36.77:5006" }],
+      "Addresses": [
+        {
+          "id": "2",
+          "EndPoint": "185.44.36.77:5006"
+        }
+      ],
       "Active": true,
       "Routing": "welcomeService"
     },
@@ -38,7 +55,12 @@
     "goog": {
       "Type": "http",
       "id": "testtt234",
-      "Addresses": [{ "id": "1", "EndPoint": "185.44.36.77:5011" }],
+      "Addresses": [
+        {
+          "id": "1",
+          "EndPoint": "185.44.36.77:5011"
+        }
+      ],
       "Active": true,
       "Routing": "mainService"
     }
@@ -47,15 +69,19 @@
     "mainService": {
       "Type": "http",
       "Settings": {
-        "LibPath": "C:\\Users\\bazrgar\\Desktop\\finger\\BasisCore.Server.Node\\ExternalCommands",
-        "Connections.edge.RoutingData": { "endpoint": "192.168.96.76:2056" }
+        "LibPath": "/ExternalCommands",
+        "Connections.edge.RoutingData": {
+          "endpoint": "192.168.96.76:2056"
+        }
       }
     },
     "welcomeService": {
       "Type": "http",
       "Settings": {
-        "LibPath": "C:\\Users\\bazrgar\\Desktop\\finger\\BasisCore.Server.Node\\ExternalCommands",
-        "Connections.edge.RoutingData": { "endpoint": "185.44.36.77:1025" }
+        "LibPath": "./ExternalCommands",
+        "Connections.edge.RoutingData": {
+          "endpoint": "185.44.36.77:1025"
+        }
       }
     }
   }

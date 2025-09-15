@@ -1,6 +1,6 @@
 import https from "https";
 import { StatusCodes } from "http-status-codes";
-import HttpHostEndPoint from "./HttpHostEndPoint.js";
+import HttpHostEndPoint from "./httpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
 import url from "url";
