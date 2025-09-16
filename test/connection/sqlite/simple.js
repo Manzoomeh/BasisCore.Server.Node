@@ -1,4 +1,4 @@
-import SqliteConnectionInfo from "./../../../Models/Connection/SqliteConnectionInfo.js";
+import SqliteConnectionInfo from "./../../../models/Connection/SqliteConnectionInfo.js";
 const Sqlite = new SqliteConnectionInfo("test", {
   dbPath: "a.test.db",
   query: "SELECT * FROM table_name",

@@ -1,7 +1,7 @@
 import HostService from "./hostService.js";
 import Request from "../models/request.js";
-import Response from "../models/response.js";
-import RouterOptions from "./RouterOptions.js";
+import Response from "../models/Response.js";
+import RouterOptions from "./routerOptions.js";
 import { ServiceSelectorPredicateOptions } from "../models/model.js";
 
 export default class RouterHostService extends HostService {
@@ -13,7 +13,7 @@ export default class RouterHostService extends HostService {
    * @param {HostService[]} services
    */
   constructor(name, options, services) {
-    super(name,options);
+    super(name, options);
     this.#routes = [];
     options.Items.forEach((option) => {
       const service = services.find((x) => x.name == option.Service);

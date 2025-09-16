@@ -1,12 +1,12 @@
 import IRoutingRequest from "./IRoutingRequest.js";
-import RequestBaseResponse from "./requestBaseResponse.js";
+import RequestBaseResponse from "./RequestBaseResponse.js";
 
 export default class Index5Response extends RequestBaseResponse {
   /**
    * @param {IRoutingRequest} request
    */
-  constructor(request,setting) {
-    super(request,setting);
+  constructor(request, setting) {
+    super(request, setting);
   }
 
   /**

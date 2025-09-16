@@ -1,7 +1,7 @@
 import mime from "mime-types";
 import fs from "fs";
 import { StatusCodes } from "http-status-codes";
-import Response from "./response.js";
+import Response from "./Response.js";
 
 export default class FileResponse extends Response {
   /** @type {string}*/

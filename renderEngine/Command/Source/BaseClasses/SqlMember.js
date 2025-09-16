@@ -1,9 +1,8 @@
-import alasql from './../../../../alasql-ex.js';
-
+import alasql from "./../../../../alasql-ex.js";
 import InMemoryMember from "./InMemoryMember.js";
 import JsonSource from "../../../Source/JsonSource.js";
 import IContext from "../../../Context/IContext.js";
-import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
+import BasisCoreException from "../../../../models/Exceptions/BasisCoreException.js";
 import SourceUtil from "../../../Source/SourceUtil.js";
 
 export default class SqlMember extends InMemoryMember {

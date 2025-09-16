@@ -1,4 +1,4 @@
-import SqlConnectionInfo from "./../../../Models/Connection/SqlConnectionInfo.js";
+import SqlConnectionInfo from "./../../../models/Connection/SqlConnectionInfo.js";
 const Sql = new SqlConnectionInfo("test", {
   connectionString:
     "Server=.;Database=test;User Id=sa;Password=1234;trustServerCertificate=true",

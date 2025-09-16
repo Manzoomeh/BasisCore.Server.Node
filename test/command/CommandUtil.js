@@ -10,7 +10,7 @@ import ViewCommand from "../../renderEngine/Command/ViewCommand.js";
 import ListCommand from "../../renderEngine/Command/ListCommand.js";
 import CallCommand from "../../renderEngine/Command/Collection/CallCommand.js";
 import UnknownCommand from "../../renderEngine/Command/UnknownCommand.js";
-import RepeaterCommand from "../../renderEngine/Command/Collection/RepeaterCommand.js";
+import RepeaterCommand from "../../renderEngine/Command/Collection/repeaterCommand.js";
 import CookieCommand from "../../renderEngine/Command/CookieCommand.js";
 import ClientComponent from "../../renderEngine/Command/ClientComponent.js";
 import WsCommand from "../../renderEngine/Command/Source/ws.js";
@@ -77,9 +77,9 @@ export default class CommandUtil {
         retVal = new ClientComponent(commandIl);
         break;
       }
-      case "external.ws.ws":{
-        retVal = new WsCommand(commandIl)
-        break
+      case "external.ws.ws": {
+        retVal = new WsCommand(commandIl);
+        break;
       }
       default: {
         retVal = new UnknownCommand(commandIl);

@@ -1,5 +1,5 @@
 import IRoutingRequest from "./IRoutingRequest.js";
-import Response from "./response.js";
+import Response from "./Response.js";
 
 export default class RequestBaseResponse extends Response {
   /**@type {IRoutingRequest} request */
@@ -14,6 +14,6 @@ export default class RequestBaseResponse extends Response {
   constructor(request, settings) {
     super();
     this._request = request;
-    this._settings = settings
+    this._settings = settings;
   }
 }

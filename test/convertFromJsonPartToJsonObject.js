@@ -1,4 +1,4 @@
-import convertToNestedStructure from "../modules/convertToNestedObject.js";
+import convertToNestedStructure from "../modules/objectUtil.js";
 const array = [
   { "_root.Data__11.sample01": "test01" },
   { "_root.Data__12.sample02": "test02" },
@@ -13,4 +13,4 @@ const array = [
   { "_root.Data__15.sample05": "test05" },
 ];
 
-console.log(convertToNestedStructure(array))
+console.log(convertToNestedStructure.convertToNestedStructure(array));

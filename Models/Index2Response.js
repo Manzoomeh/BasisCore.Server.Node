@@ -1,14 +1,14 @@
 import fs from "fs";
 import { StatusCodes } from "http-status-codes";
-import RequestBaseResponse from "./requestBaseResponse.js";
+import RequestBaseResponse from "./RequestBaseResponse.js";
 import IRoutingRequest from "./IRoutingRequest.js";
 
 export default class Index2Response extends RequestBaseResponse {
   /**
    * @param {IRoutingRequest} request
    */
-  constructor(request,setting) {
-    super(request,setting);
+  constructor(request, setting) {
+    super(request, setting);
   }
   /**
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}

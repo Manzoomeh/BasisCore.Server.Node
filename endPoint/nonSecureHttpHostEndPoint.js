@@ -1,11 +1,9 @@
 import http from "http";
 import url from "url";
 import { StatusCodes } from "http-status-codes";
-import HttpHostEndPoint from "./HttpHostEndPoint.js";
+import HttpHostEndPoint from "./httpHostEndPoint.js";
 import { HostService } from "../services/hostServices.js";
 import LightgDebugStep from "../renderEngine/Models/LightgDebugStep.js";
-import StringResult from "../renderEngine/Models/StringResult.js";
-import fs from "fs";
 
 export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
   /**
@@ -53,9 +51,8 @@ export default class NonSecureHttpHostEndPoint extends HttpHostEndPoint {
                 );
                 let cachecms;
                 if (result.result) {
-                 
                   cachecms = result.responseCms;
-                   result = result.result;
+                  result = result.result;
                 }
                 routingDataStep?.complete();
                 const [code, headers, body] = await result.getResultAsync(

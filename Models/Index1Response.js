@@ -2,9 +2,9 @@ import CancellationToken from "../renderEngine/Cancellation/CancellationToken.js
 import RequestContext from "../renderEngine/Context/RequestContext.js";
 import IRoutingRequest from "./IRoutingRequest.js";
 import ServiceSettings from "./ServiceSettings.js";
-import RequestBaseResponse from "./requestBaseResponse.js";
+import RequestBaseResponse from "./RequestBaseResponse.js";
 import RequestDebugContext from "./../renderEngine/Context/RequestDebugContext.js";
-import RequestDebugMaxContext from "../renderEngine/Context/requestDebugMaxContext.js";
+import RequestDebugMaxContext from "../renderEngine/Context/RequestDebugMaxContext.js";
 import DebugContext from "../renderEngine/Context/DebugContext.js";
 import VoidContext from "../renderEngine/Context/VoidContext.js";
 import StringResult from "../renderEngine/Models/StringResult.js";
@@ -62,7 +62,7 @@ export default class Index1Response extends RequestBaseResponse {
       const getIlStep = requestDebugContext.newStep("Get IL");
       let commandIl;
       let command;
-      let context
+      let context;
       try {
         if (!this._request.cms.page_il) {
           //Update IL step
