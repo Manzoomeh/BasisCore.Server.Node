@@ -1,4 +1,4 @@
-import ServiceSettings from "../Models/ServiceSettings.js";
+import ServiceSettings from "../models/ServiceSettings.js";
 import CancellationToken from "../renderEngine/Cancellation/CancellationToken.js";
 import GroupCommand from "../renderEngine/Command/Collection/GroupCommand.js";
 import TestContext from "../renderEngine/Context/testContext.js";

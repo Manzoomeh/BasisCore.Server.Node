@@ -11,7 +11,7 @@ import ListCommand from "./Command/ListCommand.js";
 import CallCommand from "./Command/Collection/CallCommand.js";
 import CookieCommand from "./Command/CookieCommand.js";
 import ClientComponent from "./Command/ClientComponent.js";
-import RepeaterCommand from "./Command/Collection/RepeaterCommand.js";
+import RepeaterCommand from "./Command/Collection/repeaterCommand.js";
 export default class CommandUtil {
   /**
    * @returns {Object.<string, any>}

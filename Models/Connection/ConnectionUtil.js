@@ -5,7 +5,7 @@ import EdgeConnectionInfo from "./EdgeConnectionInfo.js";
 import InlineConnectionInfo from "./InlineConnectionInfo.js";
 import SqlConnectionInfo from "./SqlConnectionInfo.js";
 import MongoConnectionInfo from "./MongoConnectionInfo.js";
-import SqliteConnectionInfo from "./SqLiteConnectionInfo.js";
+import SqliteConnectionInfo from "./SqliteConnectionInfo.js";
 import MySqlConnectionInfo from "./MySqlConnectionInfo.js";
 import SocketConnectionInfo from "./SocketConnectionInfo.js";
 export default class ConnectionUtil {

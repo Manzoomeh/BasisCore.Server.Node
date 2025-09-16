@@ -1,10 +1,10 @@
-import JsonSingleValue from "../Models/JsonSingleValue.js";
-import JsonValue from "../Models/JsonValue.js";
-import JsonArray from "../Models/JsonArray.js";
-import ArrayObject from "../Models/ArrayObject.js";
-import JsonObject from "../Models/JsonObject.js";
-import FormJsonPart from "../Models/FormJsonPart.js";
-import { ModelObject } from "../Models/ModelObject.js";
+import JsonSingleValue from "../models/JsonSingleValue.js";
+import JsonValue from "../models/JsonValue.js";
+import JsonArray from "../models/JsonArray.js";
+import ArrayObject from "../models/ArrayObject.js";
+import JsonObject from "../models/JsonObject.js";
+import FormJsonPart from "../models/FormJsonPart.js";
+import { ModelObject } from "../models/ModelObject.js";
 export default class ObjectUtil {
   /**
    * @param {FormJsonPart[]} parts
@@ -56,7 +56,7 @@ export default class ObjectUtil {
     return JSON.stringify(this.convert(retVal));
   }
   static convertToNestedStructure(array) {
-     const objectUtil = new ObjectUtil();
+    const objectUtil = new ObjectUtil();
     const parts = array.map((element) => {
       for (let property in element) {
         return new FormJsonPart(property, element[property]);
@@ -65,7 +65,7 @@ export default class ObjectUtil {
     return objectUtil.ConvertFormJsonPartToJsonObject(parts);
   }
   static convertObjectToNestedStructure(object) {
-    const objectUtil = new ObjectUtil()
+    const objectUtil = new ObjectUtil();
     const parts = [];
     for (let property in object) {
       parts.push(new FormJsonPart(property, object[property]));

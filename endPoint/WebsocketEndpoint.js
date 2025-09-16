@@ -1,10 +1,8 @@
-import http from "http";
-import https from "https";
-import  { WebSocketServer } from "ws";
+import { WebSocketServer } from "ws";
 import HostEndPoint from "./hostEndPoint.js";
-import WebsocketService from "../Services/WebsocketService.js";
+import WebsocketService from "../services/WebsocketService.js";
 import WebServerException from "../models/Exceptions/WebServerException.js";
-import TestChatService from "../Services/testChatService.js";
+import TestChatService from "../services/testChatService.js";
 
 export default class WebsocketEndPoint extends HostEndPoint {
   /** @type {import("tls").SecureContextOptions} */
@@ -30,18 +28,16 @@ export default class WebsocketEndPoint extends HostEndPoint {
   }
 
   _createServer() {
-    
-    const wss = new WebSocketServer({ ip: this._ip, port :this._port });
-   
-    wss.on("connection", (clientSocket) => { 
-      
+    const wss = new WebSocketServer({ ip: this._ip, port: this._port });
+
+    wss.on("connection", (clientSocket) => {
       const sessionId = this._service.createSession(clientSocket);
-      this._service.init(sessionId,clientSocket);
+      this._service.init(sessionId, clientSocket);
       clientSocket.on("message", (message) => {
-        this._service.sendMessage(sessionId,message.toString())
+        this._service.sendMessage(sessionId, message.toString());
       });
       clientSocket.on("close", () => {
-        this._service.disconnect(sessionId)
+        this._service.disconnect(sessionId);
       });
       clientSocket.on("error", (err) => {
         console.error("Client socket error:", err);

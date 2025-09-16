@@ -1,8 +1,8 @@
-import Index2Response from "../models/index2Response.js";
-import Index5Response from "../models/index5Response.js";
-import Index1Response from "../Models/Index1Response.js";
+import Index2Response from "../models/Index2Response.js";
+import Index5Response from "../models/Index5Response.js";
+import Index1Response from "../models/Index1Response.js";
 import Request from "../models/request.js";
-import Response from "../models/response.js";
+import Response from "../models/Response.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import StreamerEngine from "../fileStreamer/StreamerEngine.js";
 import { HostServiceOptions } from "../models/model.js";
@@ -70,7 +70,7 @@ export default class HostService {
   async initializeAsync() {
     this._commands = {
       ...CommandUtil.addDefaultCommands(),
-      ...await LoadCommand.process(this._options.Settings.LibPath),
+      ...(await LoadCommand.process(this._options.Settings.LibPath)),
     };
   }
 

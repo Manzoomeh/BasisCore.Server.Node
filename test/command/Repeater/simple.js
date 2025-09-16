@@ -1,7 +1,7 @@
 import ServiceSettings from "../../../models/ServiceSettings.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 import GroupCommand from "../../../renderEngine/Command/Collection/GroupCommand.js";
-import TestContext from "../../../renderEngine/Context/TestContext.js";
+import TestContext from "../../../renderEngine/Context/testContext.js";
 
 var setting = new ServiceSettings({});
 const context = new TestContext(setting);
@@ -67,7 +67,7 @@ const groupIl = {
 const group = new GroupCommand(groupIl);
 try {
   const result = await group.executeAsync(context);
-  console.log("%%%%%%%%:",result._results[1]);
+  console.log("%%%%%%%%:", result._results[1]);
 } catch (ex) {
   console.error(ex);
 }

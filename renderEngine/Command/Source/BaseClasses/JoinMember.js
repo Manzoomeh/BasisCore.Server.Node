@@ -1,6 +1,6 @@
 import InMemoryMember from "./InMemoryMember.js";
 import JsonSource from "../../../Source/JsonSource.js";
-import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
+import BasisCoreException from "../../../../models/Exceptions/BasisCoreException.js";
 import IContext from "../../../Context/IContext.js";
 import IToken from "../../../Token/IToken.js";
 import alasql from "./../../../../alasql-ex.js";

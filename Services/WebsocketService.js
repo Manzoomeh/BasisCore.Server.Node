@@ -1,7 +1,7 @@
 import HostService from "./hostService.js";
 import WebServerException from "../models/Exceptions/WebServerException.js";
 import { HostServiceOptions } from "../models/model.js";
-import WSMessageType from "../Models/WSMessageType.js";
+import WSMessageType from "../models/WSMessageType.js";
 import WebSocket from "ws";
 import SessionManager from "./sessionManager.js";
 

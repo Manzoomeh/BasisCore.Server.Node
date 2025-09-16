@@ -1,8 +1,7 @@
-import alasql from "alasql";
 import ServiceSettings from "../../../models/ServiceSettings.js";
 import CancellationToken from "../../../renderEngine/Cancellation/CancellationToken.js";
 import GroupCommand from "../../../renderEngine/Command/Collection/GroupCommand.js";
-import TestContext from "../../../renderEngine/Context/TestContext.js";
+import TestContext from "../../../renderEngine/Context/testContext.js";
 var setting = new ServiceSettings({});
 const context = new TestContext(setting);
 context.cancellation = new CancellationToken();
@@ -34,7 +33,8 @@ const il = {
           name: "face1",
           replace: true,
           function: true,
-          content: "<td style='color:green' id='@RowNumber'><p> @Value<br></td>",
+          content:
+            "<td style='color:green' id='@RowNumber'><p> @Value<br></td>",
         },
       ],
     },
