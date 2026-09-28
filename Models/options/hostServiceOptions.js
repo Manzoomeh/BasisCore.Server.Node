@@ -2,7 +2,7 @@ import IStreamerEngineOptions from "./IStreamerEngineOptions.js";
 
 
 export default class HostServiceOptions {
-  /**@type {"Sql"|"Edge"|"File"} */
+  /**@type {"Sql"|"Edge"|"File"|"Proxy"} */
   Type;
   /**@type {number} */
   ReadBodyTimeOut;

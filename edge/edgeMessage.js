@@ -60,11 +60,48 @@ export default class EdgeMessage {
    * @returns {EdgeMessage}
    */
   static createFromBuffer(buffer) {
-    const msgType = buffer.readInt8();
+    if (!Buffer.isBuffer(buffer) || buffer.length < 9) {
+      throw new RangeError(
+        `Invalid edge message buffer length: ${buffer?.length ?? 0}`
+      );
+    }
+    if (buffer.subarray(0, 5).toString("ascii") === "HTTP/") {
+      const statusLine = buffer.toString("ascii").split("\r\n", 1)[0];
+      throw new Error(
+        `Edge endpoint returned HTTP instead of Edge protocol: ${statusLine}`
+      );
+    }
+
+    const msgType = buffer.readInt8(0);
     const idLen = buffer.readInt32BE(1);
-    const sessionId = buffer.toString("utf-8", 5, idLen);
-    const payloadLen = buffer.readInt32BE(5 + idLen);
-    const payload = buffer.toString("utf-8", 5 + idLen + 4);
+    if (idLen < 0) {
+      throw new RangeError(`Invalid edge session id length: ${idLen}`);
+    }
+
+    const sessionStart = 5;
+    const sessionEnd = sessionStart + idLen;
+    if (sessionEnd + 4 > buffer.length) {
+      throw new RangeError(
+        `Invalid edge session id length ${idLen} for ${buffer.length}-byte buffer.`
+      );
+    }
+
+    const payloadLen = buffer.readInt32BE(sessionEnd);
+    if (payloadLen < 0) {
+      throw new RangeError(`Invalid edge payload length: ${payloadLen}`);
+    }
+    const payloadStart = sessionEnd + 4;
+    const payloadEnd = payloadStart + payloadLen;
+    if (payloadEnd > buffer.length) {
+      throw new RangeError(
+        `Invalid edge payload length ${payloadLen}; only ${
+          buffer.length - payloadStart
+        } bytes are available.`
+      );
+    }
+
+    const sessionId = buffer.toString("utf-8", sessionStart, sessionEnd);
+    const payload = buffer.toString("utf-8", payloadStart, payloadEnd);
 
     return new EdgeMessage(msgType, sessionId, payload);
   }

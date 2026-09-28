@@ -6,6 +6,7 @@ import CancellationToken from "../../renderEngine/Cancellation/CancellationToken
 import Request from "../request.js";
 import WebServerException from "../Exceptions/WebServerException.js";
 import IRoutingRequest from "../IRoutingRequest.js";
+import { traceRequest } from "../../modules/requestTrace.js";
 
 export default class SqlConnectionInfo extends ConnectionInfo {
   /** @type {SqlSettingData} */
@@ -20,16 +21,27 @@ export default class SqlConnectionInfo extends ConnectionInfo {
   constructor(name, settings) {
     super(name);
     this.settings = settings;
-    this.connectionPool = new sql.ConnectionPool(
-      this.settings.connectionString +
-        (this.settings.requestTimeout
-          ? `;requestTimeout=${this.settings.requestTimeout}`
-          : "")
-    );
-    this.connectionPool.connect().catch((err)=>{
-      console.log("error in connect",this.name,err)
-    })
-    
+    this.connectionPool = new sql.ConnectionPool(this.settings.connectionString);
+    const requestTimeout = this._getRequestTimeout();
+    if (requestTimeout) {
+      this.connectionPool.config.requestTimeout = requestTimeout;
+    }
+    this.connectionPool.connect().catch((err) => {
+      console.log(
+        "error in connect",
+        this.name,
+        this.settings.connectionString,
+        err
+      );
+    });
+  }
+
+  /**
+   * @returns {number|null}
+   */
+  _getRequestTimeout() {
+    const parsed = Number(this.settings?.requestTimeout);
+    return Number.isFinite(parsed) && parsed > 0 ? parsed : null;
   }
 
   /**
@@ -39,6 +51,10 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    */
   async loadDataAsync(parameters, cancellationToken) {
     const request = this.connectionPool.request();
+    const requestTimeout = this._getRequestTimeout();
+    if (requestTimeout) {
+      request.timeout = requestTimeout;
+    }
     for (const key in parameters) {
       if (Object.hasOwnProperty.call(parameters, key)) {
         const value = parameters[key];
@@ -119,13 +135,61 @@ export default class SqlConnectionInfo extends ConnectionInfo {
     domainId,
     cancellationToken
   ) {
+    const startedAt = Date.now();
     const request = this.connectionPool.request();
+    const requestTimeout = this._getRequestTimeout();
+    if (requestTimeout) {
+      request.timeout = requestTimeout;
+    }
     request.input("fileNames", pageName);
     request.input("dmnid", domainId);
     request.input("sitesize", pageSize);
     request.input("command", rawCommand);
     /** @type {Array<ILoadPageResult>} */
     const rows = (await request.execute(this.settings.procedure)).recordset;
+    const durationMs = Date.now() - startedAt;
+    const baseLogPayload = {
+      connection: this.name,
+      procedure: this.settings.procedure,
+      pageName,
+      dmnid: domainId,
+      siteSize: pageSize,
+      requestTimeout: requestTimeout || 0,
+      commandLength: String(rawCommand || "").length,
+      rowCount: rows.length,
+      durationMs,
+    };
+
+    if (rows.length > 0) {
+      const firstRow = rows[0] || {};
+      const ilCallRaw =
+        firstRow.il_call ?? firstRow.IL_CALL ?? firstRow.ilCall ?? null;
+      const pageIl =
+        firstRow.page_il ?? firstRow.PAGE_IL ?? firstRow.pageIl ?? "";
+      const content =
+        firstRow.content ?? firstRow.CONTENT ?? "";
+      const enrichedPayload = {
+        ...baseLogPayload,
+        ilCall: ilCallRaw,
+        pageIlLength: String(pageIl || "").length,
+        hasPageIl: String(pageIl || "").trim().length > 0,
+        contentLength: String(content || "").length,
+      };
+      console.log(`[callcommand-load] ${JSON.stringify(enrichedPayload)}`);
+      traceRequest("callcommand.load_page", enrichedPayload);
+    } else {
+      console.warn(
+        `[callcommand-load] ${JSON.stringify({
+          ...baseLogPayload,
+          warn: "empty-recordset",
+        })}`
+      );
+      traceRequest("callcommand.load_page", {
+        ...baseLogPayload,
+        warn: "empty-recordset",
+      });
+    }
+
     if (rows.length != 1) {
       throw new WebServerException(
         `Call Command Expect 1 File '${pageName}' But Get ${rows.length} File(s) From '${this.settings.procedure}' Procedure`
@@ -139,12 +203,17 @@ export default class SqlConnectionInfo extends ConnectionInfo {
    */
   async testConnectionAsync() {
     try {
-      await sql.connect(
-        this.settings.connectionString +
-          (this.settings.testTimeOut
-            ? `;requestTimeout=${this.settings.testTimeOut}`
-            : "")
-      );
+      const pool = new sql.ConnectionPool(this.settings.connectionString);
+      const parsedTestTimeout = Number(this.settings?.testTimeOut);
+      const testTimeout =
+        Number.isFinite(parsedTestTimeout) && parsedTestTimeout > 0
+          ? parsedTestTimeout
+          : this._getRequestTimeout();
+      if (testTimeout) {
+        pool.config.requestTimeout = testTimeout;
+      }
+      await pool.connect();
+      await pool.close();
       return true;
     } catch (error) {
       return false;

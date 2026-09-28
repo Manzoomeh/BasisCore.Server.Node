@@ -5,7 +5,7 @@ import Status from "../../Models/Status.js";
 import Step from "../Step.js";
 import EdgeOptions from "./EdgeOptions.js";
 import EdgeMessage from "../../../edge/edgeMessage.js";
-import Request from "../../../models/request.js";
+import Request from "../../../Models/request.js";
 import EdgeResult from "./EdgeResult.js";
 
 export default class Edge extends Step {

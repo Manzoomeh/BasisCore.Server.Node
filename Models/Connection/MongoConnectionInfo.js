@@ -1,4 +1,5 @@
 import { MongoClient } from "mongodb";
+import { MongoClient as LegacyMongoClient } from "mongodb-server-3";
 import ConnectionInfo from "./ConnectionInfo.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
@@ -42,6 +43,50 @@ export default class MongoConnectionInfo extends ConnectionInfo {
    }
     finally {
     await this.client.close();
+    }
+  }
+
+  /**
+   * @param {string} databaseName
+   * @param {string} collectionName
+   * @param {object} document
+   * @param {CancellationToken} cancellationToken
+   * @returns {Promise<any>}
+   */
+  async insertOneAsync(
+    databaseName,
+    collectionName,
+    document,
+    cancellationToken
+  ) {
+    cancellationToken?.throwIfCancellationRequested?.();
+    // Use a per-operation client so concurrent tracking requests cannot close
+    // the shared client while another request is inserting.
+    // Tracking still targets a MongoDB 3.2 deployment (wire version 4).
+    // Keep the legacy-compatible driver isolated to this insert operation;
+    // the application's normal MongoDB client remains on the current driver.
+    const client = new LegacyMongoClient(this.settings.endpoint);
+    await client.connect();
+    try {
+      const configuredDatabase = this.settings.dataBase || this.settings.database;
+      const dbName = databaseName || configuredDatabase;
+      if (!dbName) {
+        throw new BasisCoreException(
+          `Mongo connection '${this.name}' requires a database name.`
+        );
+      }
+      if (!collectionName) {
+        throw new BasisCoreException(
+          `Mongo connection '${this.name}' requires a collection name.`
+        );
+      }
+      const result = await client
+        .db(dbName)
+        .collection(collectionName)
+        .insertOne(document);
+      return result.insertedId;
+    } finally {
+      await client.close();
     }
   }
 

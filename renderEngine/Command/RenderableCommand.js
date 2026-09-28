@@ -11,6 +11,7 @@ import RawFaceCollection from "./Renderable/RawFaceCollection.js";
 import RawReplaceCollection from "./Renderable/RawReplaceCollection.js";
 import ReplaceCollection from "./Renderable/ReplaceCollection.js";
 import SourceBaseCommand from "./SourceBaseCommand.js";
+import SourceUtil from "../Source/SourceUtil.js";
 
 export default class RenderableCommand extends SourceBaseCommand {
   /**@type {IToken} */
@@ -50,8 +51,8 @@ export default class RenderableCommand extends SourceBaseCommand {
       "else-layout-content"
     );
     this.layout = TokenUtil.getFiled(renderableCommandIl, "layout-content");
-    this.rawFaces = new RawFaceCollection(renderableCommandIl["faces"]);
-    this.replaces =renderableCommandIl["replaces"] ? new RawReplaceCollection(renderableCommandIl["replaces"]) : new RawReplaceCollection(renderableCommandIl["Replaces"]) ;
+      this.rawFaces = new RawFaceCollection(renderableCommandIl["faces"]??[]);
+    this.replaces =renderableCommandIl["replaces"] ?new RawReplaceCollection(renderableCommandIl["replaces"]) : new RawReplaceCollection(renderableCommandIl["Replaces"]) ;
   }
 
   /**
@@ -115,16 +116,17 @@ export default class RenderableCommand extends SourceBaseCommand {
     dividerTemplate,
     incompleteTemplate
   ) {
+    const rows = source ? SourceUtil.ensureDataArray(source, "render command") : [];
     const param = new RenderParam(
       replaces,
-      source?.data.length ?? 0,
+      rows.length,
       dividerRowCount,
       dividerTemplate,
       incompleteTemplate
     );
     let retVal = "";
     if (source) {
-      source.data.forEach((row) => {
+      rows.forEach((row) => {
         param.data = row;
         const renderResult = faces.render(param, context);
         if (renderResult) {

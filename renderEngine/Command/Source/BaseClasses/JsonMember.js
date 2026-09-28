@@ -1,5 +1,26 @@
 import InMemoryMember from "./InMemoryMember.js";
 import JsonSource from "../../../Source/JsonSource.js";
+
+function parseJsonOrLegacyLiteral(content) {
+  try {
+    return JSON.parse(content);
+  } catch (jsonError) {
+    const text = String(content ?? "").trim();
+    if (!/^[\[{]/.test(text)) {
+      throw jsonError;
+    }
+    const normalized = text
+      .replace(/\bNone\b/g, "null")
+      .replace(/\bTrue\b/g, "true")
+      .replace(/\bFalse\b/g, "false");
+    try {
+      // Legacy socket services may return Python reprs like [{'id': 1}].
+      return Function(`"use strict"; return (${normalized});`)();
+    } catch {
+      throw jsonError;
+    }
+  }
+}
 /**
  * @typedef {Object} JsonMemberOutPut
  * @property {number} Id
@@ -23,7 +44,7 @@ class JsonMember extends InMemoryMember {
    */
   async _parseDataAsync(context) {
     const content = await this.rawContent.getValueAsync(context);
-    const parsedJson = JSON.parse(content);
+    const parsedJson = parseJsonOrLegacyLiteral(content);
     return new JsonSource(
       this.convertObjectToJsonMemberOutPut(parsedJson),
       this.name
@@ -45,7 +66,7 @@ class JsonMember extends InMemoryMember {
         const result = this.processElementOrProperty(
           index,
           element,
-          parentId == 0 ? 0 : parentId + 1,
+          parentId,
           id,
           address,
           true
@@ -61,7 +82,7 @@ class JsonMember extends InMemoryMember {
         const result = this.processElementOrProperty(
           propertyKey,
           propertyValue,
-          parentId == null ? 0 : parentId + 1,
+          parentId ?? 0,
           id,
           address,
           false
@@ -117,7 +138,7 @@ class JsonMember extends InMemoryMember {
     if (value && jsType == "object") {
       const result = this.convertObjectToJsonMemberOutPut(
         value,
-        id - 1,
+        id,
         id + 1,
         path
       );

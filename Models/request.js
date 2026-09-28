@@ -7,6 +7,8 @@ export default class Request {
   query;
   /** @type {NodeJS.Dict<string|string[]>} */
   form;
+  /** @type {NodeJS.Dict<string|object>} */
+  json;
   /** @type {boolean} */
   isSecure;
   /**
@@ -28,6 +30,7 @@ export default class Request {
       request : this.request,
       query:this.query,
       form : this.form,
+      json : this.json,
     }
   }
 }

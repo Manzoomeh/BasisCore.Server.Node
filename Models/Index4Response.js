@@ -1,6 +1,6 @@
 import fs from "fs";
 import { StatusCodes } from "http-status-codes";
-import RequestBaseResponse from "./requestBaseResponse.js";
+import RequestBaseResponse from "./RequestBaseResponse.js";
 import im from "imagemagick";
 import path from "path";
 import Pako from "pako";
@@ -21,13 +21,17 @@ export default class Index4Response extends RequestBaseResponse {
   async getResultAsync() {
     /** @type {boolean} */
     const gzip = this._request.webserver.gzip.toLowerCase() === "true";
+    const sourceFile = this._resolveFilesystemPath(this._request.index4.source);
+    const destinationFile = this._resolveFilesystemPath(
+      this._request.index4.destination,
+    );
     /** @type {string} */
-    const sourcePath = this._request.index4.source;
+    const sourcePath = sourceFile.path;
     /** @type {string} */
-    const destinationPath = this._request.index4.destination;
+    const destinationPath = destinationFile.path;
     let finalPath = destinationPath;
     const lastModifiedDate = new Date(this._request.webserver.lastmodified);
-    const fileLastModifiedDate = fs.existsSync(destinationPath)
+    const fileLastModifiedDate = fs.existsSync(destinationPath)    
       ? this._getLastModifiedDate(destinationPath)
       : null;
     if (
@@ -44,11 +48,13 @@ export default class Index4Response extends RequestBaseResponse {
         size,
         setting.deform
       );
+      const dirPath = path.dirname(destinationPath);
+      await fs.promises.mkdir(dirPath, { recursive: true });
       await fs.promises.writeFile(destinationPath, newContent);
       finalPath = destinationPath;
       if (gzip) {
         /** @type {string} */
-        let zipPath = this._request.index4.zippath;
+        let zipPath = this._normalizeFilesystemPath(this._request.index4.zippath);
         const zipPathDirectory = path.dirname(zipPath);
         zipPath = path.join(
           zipPathDirectory,
@@ -61,7 +67,7 @@ export default class Index4Response extends RequestBaseResponse {
         await fs.promises.writeFile(zipPath, zipContent);
       }
       /**@type {string} */
-      const webpPath = this._request.index4.webppath;
+      const webpPath = this._normalizeFilesystemPath(this._request.index4.webppath);
       if (!Util.isNullOrEmpty(webpPath)) {
         Index4Response._createDirectoryIfNotExist(webpPath);
         const webpContent = await Index4Response._mackWebpAsync(newContent, 90);
@@ -157,7 +163,7 @@ static _mackWebpAsync(content, quality) {
   static _createDirectoryIfNotExist(filePath) {
     const pathDirectory = path.dirname(filePath);
     if (!fs.existsSync(pathDirectory)) {
-      fs.mkdirSync(pathDirectory);
+      fs.mkdirSync(pathDirectory, { recursive: true });
     }
   }
 

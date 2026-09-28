@@ -1,4 +1,4 @@
-import CancellationToken from "./CancellationToken";
+import CancellationToken from "./CancellationToken.js";
 
 class CancellationError extends Error {
   /**@type {CancellationToken} */

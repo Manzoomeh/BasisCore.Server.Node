@@ -6,7 +6,7 @@ import IStepOptions from "./Models/IStepOptions.js";
 import IStreamOptions from "./Models/IStreamOptions.js";
 import IStreamerActions from "./Models/IStreamerActions.js";
 import Status from "./Models/Status.js";
-import IStreamerEngineOptions from "../models/options/IStreamerEngineOptions.js";
+import IStreamerEngineOptions from "../Models/options/IStreamerEngineOptions.js";
 import CompositeProcess from "./Process/CompositeProcess.js";
 import InvalidProcessType from "./Process/InvalidProcessType.js";
 import IProcess from "./Process/IProcess.js";
@@ -147,18 +147,19 @@ export default class StreamerEngine {
           url += `?${queryString}`;
         }
         try {
-          const options = {
-            json: report,
-          };
-          resolve(
-            await fetch(url, {
-              method: "POST",
-              headers: {
-                "Content-Type": "application/json",
-              },
-              body: JSON.stringify(options),
-            })
-          );
+          const response = await fetch(url, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            // Keep report shape flat so downstream services can read `logs` at body root.
+            body: JSON.stringify(report),
+          });
+          resolve({
+            ...report,
+            __reportOk: !!response.ok,
+            __reportStatus: response.status,
+          });
         } catch (error) {
           reject(error);
         }
@@ -361,10 +362,18 @@ export default class StreamerEngine {
       const stepName = jsonElement.toString();
       const stepOptions = actionList[stepName];
       if (stepOptions) {
-        const step = this._steps[stepOptions.Type];
+        const rawStepType =
+          stepOptions && stepOptions.Type != null
+            ? stepOptions.Type.toString()
+            : "";
+        const normalizedStepType = rawStepType.trim().toLowerCase();
+        const step = this._steps[normalizedStepType];
         if (step) {
           return new SimpleProcess(stepName, stepOptions.options, step);
         } else {
+          console.error(
+            `[file-streamer] invalid step type '${rawStepType}' for action '${stepName}'`
+          );
           return new InvalidProcessType(stepOptions.Type);
         }
       } else {
@@ -375,3 +384,119 @@ export default class StreamerEngine {
     }
   }
 }
+/* Async report hardening for galleryUploadFile:
+ * - decouple /upload/report from critical upload response
+ * - keep payload shape unchanged
+ * - add one retry with short backoff
+ * - emit lightweight telemetry logs
+ */
+(function () {
+  try {
+    const installPatch = () => {
+      if (typeof StreamerEngine === "undefined" || !StreamerEngine.prototype) {
+        return false;
+      }
+      if (StreamerEngine.prototype.__asyncReportPatched) {
+        return true;
+      }
+      StreamerEngine.prototype.__asyncReportPatched = true;
+
+    StreamerEngine.prototype._sendReportBackgroundAsync = async function (report, queryString) {
+      const startedAt = Date.now();
+      let url = this._options && this._options.ReportUrl ? this._options.ReportUrl : "";
+      if (!this._isValidUrl(url)) {
+        return { queued: false, reason: "invalid-report-url" };
+      }
+      if (queryString) {
+        url += `?${queryString}`;
+      }
+
+      const correlation = {
+        id: report && report.queryString ? report.queryString.id : "",
+        rkey: report && report.queryString ? report.queryString.rkey : "",
+        uploadcookie: report && report.queryString ? report.queryString.uploadcookie : "",
+        level: report && report.queryString ? report.queryString.level : "",
+      };
+
+      const sendOnce = async () => {
+        const response = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(report),
+        });
+        return response;
+      };
+
+      // fire-and-forget flow with one retry
+      (async () => {
+        let attempt = 0;
+        let lastError = null;
+        while (attempt < 2) {
+          try {
+            attempt += 1;
+            const response = await sendOnce();
+            const elapsed = Date.now() - startedAt;
+            if (!response.ok) {
+              throw new Error(`report status ${response.status}`);
+            }
+            console.log(
+              `[upload-report-bg] ok attempt=${attempt} elapsedMs=${elapsed} ` +
+                `id=${correlation.id} uploadcookie=${correlation.uploadcookie} level=${correlation.level}`
+            );
+            return;
+          } catch (err) {
+            lastError = err;
+            if (attempt < 2) {
+              await new Promise((resolve) => setTimeout(resolve, 300));
+              continue;
+            }
+          }
+        }
+        const elapsed = Date.now() - startedAt;
+        console.error(
+          `[upload-report-bg] failed attempts=2 elapsedMs=${elapsed} ` +
+            `id=${correlation.id} uploadcookie=${correlation.uploadcookie} level=${correlation.level} ` +
+            `error=${lastError ? lastError.message || String(lastError) : "unknown"}`
+        );
+      })();
+
+      return { queued: true, reportQueued: true };
+    };
+
+      const originalSendReportAsync = StreamerEngine.prototype._sendReportAsync;
+      StreamerEngine.prototype._sendReportAsync = async function (report, queryString) {
+      // Keep backward-compatible return shape so downstream code can still attach
+      // result fields on report object and populate cms.cms.upload_log.
+      const queuedResult = await this._sendReportBackgroundAsync(report, queryString);
+      return {
+        ...report,
+        ...queuedResult,
+      };
+    };
+
+      const originalProcessUpload = StreamerEngine.prototype.processUploadFileAsync;
+      if (typeof originalProcessUpload === "function") {
+        StreamerEngine.prototype.processUploadFileAsync = async function (queryString) {
+          const t0 = Date.now();
+          const result = await originalProcessUpload.call(this, queryString);
+          const elapsed = Date.now() - t0;
+          console.log(`[upload-response] elapsedMs=${elapsed}`);
+          return result;
+        };
+      }
+      return true;
+    };
+
+    if (!installPatch()) {
+      let retries = 0;
+      const timer = setInterval(() => {
+        retries += 1;
+        if (installPatch() || retries > 60) {
+          clearInterval(timer);
+        }
+      }, 250);
+    }
+  } catch (ex) {
+    console.error("[upload-report-bg] patch-init-failed", ex);
+  }
+})();

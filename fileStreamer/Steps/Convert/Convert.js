@@ -1,8 +1,17 @@
 import im from "imagemagick";
+import { spawnSync } from "child_process";
 import BinaryContent from "../../Models/BinaryContent.js";
 import Step from "../Step.js";
 import ConvertOptions from "./ConvertOptions.js";
 import Status from "../../Models/Status.js";
+
+const HAS_CONVERT_BINARY = (() => {
+  try {
+    return spawnSync("convert", ["-version"], { stdio: "ignore" }).status === 0;
+  } catch {
+    return false;
+  }
+})();
 
 export default class Convert extends Step {
   /**
@@ -11,29 +20,61 @@ export default class Convert extends Step {
    * @returns {Promise<BinaryContent>}
    */
   async processContentAsync(content, options) {
-    return new Promise((resolve, reject) => {
-      var op = ["-", "-format", options.Format.toUpperCase(), "-"];
-      const process = im.convert(op, (err, stdout) => {
-        if (err) {
-          console.error(err);
-          content.status = Status.StepError;
-          content.AddLog("step-error", err.toString());
-        }
-        try {
-          content.payload = Buffer.from(stdout, "binary");
-          content.name = this._changeFileExtension(
-            content.name,
-            options.Format
-          );
-          content.AddLog("convert-to", options.Format);
-        } catch (err) {
-          console.error(err);
-          content.status = Status.StepError;
-          content.AddLog("step-error", err.toString());
-        }
+    return new Promise((resolve) => {
+      if (!HAS_CONVERT_BINARY) {
+        const message =
+          "ImageMagick binary 'convert' not found. Install imagemagick in container.";
+        console.error(message);
+        content.status = Status.StepError;
+        content.AddLog("step-error", message);
+        return resolve(content);
+      }
+
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
         resolve(content);
-      });
-      process.stdin.end(content.payload);
+      };
+
+      try {
+        var op = ["-", "-format", options.Format.toUpperCase(), "-"];
+        const process = im.convert(op, (err, stdout) => {
+          if (err) {
+            console.error(err);
+            content.status = Status.StepError;
+            content.AddLog("step-error", err.toString());
+            return finish();
+          }
+          try {
+            content.payload = Buffer.from(stdout, "binary");
+            content.name = this._changeFileExtension(
+              content.name,
+              options.Format
+            );
+            content.AddLog("convert-to", options.Format);
+          } catch (innerErr) {
+            console.error(innerErr);
+            content.status = Status.StepError;
+            content.AddLog("step-error", innerErr.toString());
+          }
+          finish();
+        });
+        if (process && typeof process.on === "function") {
+          process.on("error", (err) => {
+            console.error(err);
+            content.status = Status.StepError;
+            content.AddLog("step-error", err.toString());
+            finish();
+          });
+        }
+        process.stdin.end(content.payload);
+      } catch (err) {
+        console.error(err);
+        content.status = Status.StepError;
+        content.AddLog("step-error", err.toString());
+        finish();
+      }
     });
   }
 

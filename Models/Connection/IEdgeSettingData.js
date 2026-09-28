@@ -3,4 +3,10 @@ export default class IEdgeSettingData {
   endpoint;
   /** @type {number} */
   poolSize;
+  /** @type {string} */
+  source;
+  /** @type {string} */
+  name;
+  /** @type {number} */
+  ownerid;
 }

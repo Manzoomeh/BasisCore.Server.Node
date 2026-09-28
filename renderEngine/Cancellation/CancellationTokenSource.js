@@ -1,4 +1,4 @@
-import CancellationToken, { CANCEL } from "../Cancellation/CancellationToken";
+import CancellationToken, { CANCEL } from "../Cancellation/CancellationToken.js";
 
 export default class CancellationTokenSource {
   constructor() {

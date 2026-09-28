@@ -1,10 +1,40 @@
 import IContext from "../Context/IContext.js";
 import CommandBase from "./CommandBase.js";
 import * as mimeTypes from "mime-types";
-import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
+import BasisCoreException from "../../Models/Exceptions/BasisCoreException.js";
 import JsonSource from "../Source/JsonSource.js";
 import IToken from "../Token/IToken.js";
 import TokenUtil from "../Token/TokenUtil.js";
+import ValueToken from "../Token/ValueToken.js";
+
+function readApiAttribute(apiIl, ...attributeNames) {
+  const normalizedNames = new Set(
+    attributeNames.map((name) => String(name).replace(/[-_]/g, "").toLowerCase())
+  );
+  const containers = [
+    apiIl,
+    apiIl?.extraAttributes,
+    apiIl?.["extra-attribute"],
+  ];
+
+  for (const container of containers) {
+    if (!container || typeof container !== "object") {
+      continue;
+    }
+    const key = Object.keys(container).find((item) =>
+      normalizedNames.has(String(item).replace(/[-_]/g, "").toLowerCase())
+    );
+    if (key !== undefined) {
+      return container[key];
+    }
+  }
+  return null;
+}
+
+function toApiToken(value) {
+  return value == null ? ValueToken.Null : TokenUtil.ToToken(value);
+}
+
 export default class ApiCommand extends CommandBase {
   /*** @type {IToken}*/
   url;
@@ -21,11 +51,19 @@ export default class ApiCommand extends CommandBase {
    */
   constructor(apiIl) {
     super(apiIl);
-    this.url = TokenUtil.getFiled(apiIl.extraAttributes, "url");
-    this.method = TokenUtil.getFiled(apiIl.extraAttributes, "method");
-    this.body = TokenUtil.getFiled(apiIl.extraAttributes, "body");
-    this.contentType = TokenUtil.getFiled(apiIl.extraAttributes, "contentType");
-    this.noCache = TokenUtil.getFiled(apiIl.extraAttributes, "noCache");
+    // Different ILParser versions expose API attributes directly, under
+    // `extra-attribute`, or under the legacy `extraAttributes` property.
+    // Reading only the latter silently removed url/method/body from atclient
+    // API tags and left the browser requesting the configured origin root.
+    this.url = toApiToken(readApiAttribute(apiIl, "url"));
+    this.method = toApiToken(readApiAttribute(apiIl, "method"));
+    this.body = toApiToken(readApiAttribute(apiIl, "body"));
+    this.contentType = toApiToken(
+      readApiAttribute(apiIl, "content-type", "contentType")
+    );
+    this.noCache = toApiToken(
+      readApiAttribute(apiIl, "no-cache", "noCache")
+    );
   }
 
   /**
@@ -76,8 +114,8 @@ export default class ApiCommand extends CommandBase {
       tag.addAttributeIfExistAsync("method", this.method, context),
       tag.addAttributeIfExistAsync("url", this.url, context),
       tag.addAttributeIfExistAsync("body", this.body, context),
-      tag.addAttributeIfExistAsync("contentType", this.contentType, context),
-      tag.addAttributeIfExistAsync("noCache", this.noCache, context),
+      tag.addAttributeIfExistAsync("content-type", this.contentType, context),
+      tag.addAttributeIfExistAsync("no-cache", this.noCache, context),
     ]);
     return tag;
   }

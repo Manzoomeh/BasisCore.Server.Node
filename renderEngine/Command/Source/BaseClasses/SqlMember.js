@@ -1,4 +1,6 @@
-import alasql from './../../../../alasql-ex.js';
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const alasql = require("alasql")
 
 import InMemoryMember from "./InMemoryMember.js";
 import JsonSource from "../../../Source/JsonSource.js";
@@ -52,7 +54,7 @@ export default class SqlMember extends InMemoryMember {
       db = null;
       return new JsonSource(queryResult, this.name);
     } catch (err) {
-      return new BasisCoreException("Error in run sql member: " + err);
+      throw new BasisCoreException("Error in run sql member: " + err, err);
     }
   }
 

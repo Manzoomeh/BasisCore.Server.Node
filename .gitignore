@@ -1,13 +1,77 @@
-node_modules
-output
-StreamerEngine.report.json
-bug.js
-__tests__
-*.test.db
-il.json
-objCompare
-1.cs
-il.json
-test1.db
-report.json
-cache
+# Dependencies
+node_modules/
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# Logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+*.log
+logs/
+
+# Runtime / temp
+tmp/
+temp/
+*.pid
+*.seed
+*.db
+
+# Build caches
+.cache/
+coverage/
+
+# IDE / OS
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Certificates / secrets
+cert/
+ssl-basispanel.ae/
+*.pem
+*.key
+
+# Docker image archives
+*.tar
+*.tar.gz
+webserver-*.tar
+
+# Runtime deployment configuration
+deploy/config.json
+deploy/test.json
+deploy/test2.json
+deploy/test3.json
+deploy/config.json.bak-*
+deploy/*.bak
+deploy/*.backup
+Basispanel/deploy/config.json
+Basispanel/deploy/test.json
+Basispanel/deploy/test2.json
+Basispanel/deploy/test3.json
+Basispanel/deploy/config.json.bak-*
+Basispanel/deploy/*.bak
+Basispanel/deploy/*.backup
+
+# Certificates and private material
+certs/
+deploy/cert/
+deploy/certs/
+Basispanel/deploy/cert/
+Basispanel/deploy/certs/
+*.pfx
+*.p12
+*.crt
+*.cer
+*.keystore
+
+# Kubernetes local/generated files
+kubeconfig
+*.kubeconfig
+webserver-ci-precheck/
+*-before-ci.yaml
+.gitlab-ci.old.yml

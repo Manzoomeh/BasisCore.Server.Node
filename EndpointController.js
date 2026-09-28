@@ -5,9 +5,9 @@ import {
   HostManagerOptions,
   HostServiceOptions,
   ServiceSelectorPredicateItemOptions 
-} from "./models/model.js";
+} from "./Models/model.js";
 import DefaultManagerConfig from "./Models/DefaultConfig.js";
-import RouterHostService from "./services/routerHostService.js";
+import RouterHostService from "./Services/routerHostService.js";
 
 class EndPointController {
   /** @type {HostManagerOptions} */

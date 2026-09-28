@@ -1,12 +1,12 @@
 import CacheConnectionBase from "./CacheConnection/CacheConnectionBase.js";
 export default class BaseCacheManager {
   /**@type {CacheConnectionBase}*/
-  connection;
+  connectionInfo;
   channel;
 
   /**@param {CacheConnectionBase} */
   constructor(connectionInfo, settings) {
-    this.connection = connection;
+    this.connectionInfo = connectionInfo;
     this.settings = settings;
   }
 

@@ -3,6 +3,7 @@ import ConnectionUtil from "./Connection/ConnectionUtil.js";
 import BasisConnectionSourceNotFoundException from "./Exceptions/BasisConnectionSourceNotFoundException.js";
 import InvalidConfigException from "./Exceptions/InvalidConfigException.js";
 import { HostServiceOptions } from "./model.js";
+import { traceRequest } from "../modules/requestTrace.js";
 
 export default class ServiceSettings {
   /** @type {HostServiceOptions} */
@@ -24,6 +25,10 @@ export default class ServiceSettings {
     ConnectionUtil.loadConnections(options.Settings).forEach(
       (connection) => (this._connections[connection.name] = connection)
     );
+    traceRequest("service.settings.connections.loaded", {
+      serviceType: options?.Type || "",
+      connectionNames: Object.keys(this._connections),
+    });
     if ("routingdata" in this._connections) {
       this.routerConnection = this._connections.routingdata;
     }
@@ -57,8 +62,12 @@ export default class ServiceSettings {
     const value = this._options?.Settings
       ? this._options.Settings[defaultKey]
       : defaultValue;
-    if (!value) {
+    if (value === undefined || value === null || value === "") {
+      if (defaultValue !== null && defaultValue !== undefined) {
+        return defaultValue;
+      }
       throw new InvalidConfigException("host configuration file", defaultKey);
     }
+    return value;
   }
 }

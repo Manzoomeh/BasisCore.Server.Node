@@ -1,14 +1,14 @@
-import Index2Response from "../models/index2Response.js";
-import Index5Response from "../models/index5Response.js";
+import Index2Response from "../Models/Index2Response.js";
+import Index5Response from "../Models/Index5Response.js";
 import Index1Response from "../Models/Index1Response.js";
-import Request from "../models/request.js";
-import Response from "../models/response.js";
+import Request from "../Models/request.js";
+import Response from "../Models/Response.js";
 import BinaryContent from "../fileStreamer/Models/BinaryContent.js";
 import StreamerEngine from "../fileStreamer/StreamerEngine.js";
-import { HostServiceOptions } from "../models/model.js";
-import IRoutingRequest from "../models/IRoutingRequest.js";
-import ServiceSettings from "../models/ServiceSettings.js";
-import Index4Response from "../models/Index4Response.js";
+import { HostServiceOptions } from "../Models/model.js";
+import IRoutingRequest from "../Models/IRoutingRequest.js";
+import ServiceSettings from "../Models/ServiceSettings.js";
+import Index4Response from "../Models/Index4Response.js";
 import LoadCommand from "../renderEngine/LoadCommand.js";
 import CommandUtil from "../renderEngine/CommandUtil.js";
 export default class HostService {
@@ -81,7 +81,12 @@ export default class HostService {
   _createResponse(request) {
     /**@type {Response} */
     let retVal = null;
-    switch (request.webserver.index) {
+    if (!request.webserver && request?.cms?.webserver) {
+      request.webserver = request.cms.webserver;
+    }
+    // Routing services may serialize the index as either a JSON number or string.
+    const index = String(request?.webserver?.index ?? "").trim();
+    switch (index) {
       case "1": {
         retVal = new Index1Response(request, this.settings, this._commands);
         break;
@@ -100,7 +105,7 @@ export default class HostService {
       }
       default: {
         throw new Error(
-          `index type '${request.cms.webserver.index}' not supported in this version of web server.`
+          `index type '${request?.cms?.webserver?.index || index}' not supported in this version of web server.`
         );
       }
     }

@@ -3,7 +3,10 @@ import JsonSource from "../../../Source/JsonSource.js";
 import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
 import IContext from "../../../Context/IContext.js";
 import IToken from "../../../Token/IToken.js";
-import alasql from "./../../../../alasql-ex.js";
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const alasql = require("alasql")
+import TokenUtil from "../../../Token/TokenUtil.js";
 export default class JoinMember extends InMemoryMember {
   /**
    * @param {object} memberIL
@@ -16,9 +19,9 @@ export default class JoinMember extends InMemoryMember {
   joinType;
   constructor(memberIL) {
     super(memberIL);
-    this.leftTableColumn = TokenUtil.getFiled(commandIL, "left-data-member");
-    this.rightTableColumn = TokenUtil.getFiled(commandIL, "right-data-member");
-    this.joinType = TokenUtil.getFiled(commandIL, "jointype");
+    this.leftTableColumn = TokenUtil.getFiled(memberIL, "left-data-member");
+    this.rightTableColumn = TokenUtil.getFiled(memberIL, "right-data-member");
+    this.joinType = TokenUtil.getFiled(memberIL, "jointype");
   }
   /**
    * @param {IContext} context
@@ -52,8 +55,8 @@ export default class JoinMember extends InMemoryMember {
           rightTable.data,
           rightDataMemberName
         );
-        switch (await this.joinType.getValueAsync()) {
-          case "InnerJoin":
+        switch ((await this.joinType.getValueAsync()).toLowerCase()) {
+          case "innerjoin":
             resultArray = await this.innerJoin(
               leftArray,
               rightArray,
@@ -64,7 +67,7 @@ export default class JoinMember extends InMemoryMember {
               db
             );
             break;
-          case "LeftJoin":
+          case "leftjoin":
             resultArray = await this.leftJoin(
               leftArray,
               rightArray,
@@ -75,7 +78,7 @@ export default class JoinMember extends InMemoryMember {
               db
             );
             break;
-          case "RightJoin":
+          case "rightjoin":
             resultArray = await this.rightJoin(
               leftArray,
               rightArray,
@@ -85,19 +88,20 @@ export default class JoinMember extends InMemoryMember {
               rightDataMemberName,
               db
             );
+            break;
           default:
-            return new BasisCoreException(
-              `Invalid Join Type : ${this.joinType} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
+            throw new BasisCoreException(
+              `Invalid Join Type : ${await this.joinType.getValueAsync()} is not valid join types; valid join types are : [InnerJoin,"LeftJoin","RightJoin","FullJoin"]`
             );
         }
         return new JsonSource(resultArray, this.name);
       } else {
-        return new BasisCoreException(
+        throw new BasisCoreException(
           `fields not provided for joining ${this.leftDataMemberName} and ${this.rightDataMemberName}`
         );
       }
     } catch (error) {
-      return new BasisCoreException(
+      throw new BasisCoreException(
         `error in join ${await this.leftTableColumn.getValueAsync()} and ${await this.rightTableColumn.getValueAsync()} :`,
         error
       );
@@ -147,9 +151,8 @@ export default class JoinMember extends InMemoryMember {
   ) {
     const joinResult = await this.executeQueryAsync(
       db,
-      `SELECT * FROM ? AS [${leftDataMemberName}] RIGHT JOIN ? AS [${rightDataMemberName}] ON [${leftDataMemberName}].${fieldInLeftTable} = [${rightDataMemberName}].${fieldInRightTable}`[
-        (leftArray, rightArray)
-      ]
+      `SELECT * FROM ? AS [${leftDataMemberName}] RIGHT JOIN ? AS [${rightDataMemberName}] ON [${leftDataMemberName}].${fieldInLeftTable} = [${rightDataMemberName}].${fieldInRightTable}`,
+      [leftArray, rightArray]
     );
     return joinResult;
   }

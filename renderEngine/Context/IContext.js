@@ -55,6 +55,35 @@ export default class IContext {
   }
 
   /**
+   * Publishes a request-wide source that must be visible from sibling and
+   * nested contexts.
+   * @param {IDataSource} dataSource
+   */
+  addGlobalSource(dataSource) {
+    throw new Error("Method 'addGlobalSource' not implemented.");
+  }
+
+  /** @returns {object} */
+  createTrackingDocument() {
+    throw new Error("Method 'createTrackingDocument' not implemented.");
+  }
+
+  /**
+   * @param {string} connectionName
+   * @param {string} databaseName
+   * @param {string} collectionName
+   * @param {object} document
+   */
+  insertMongoDocumentAsync(
+    connectionName,
+    databaseName,
+    collectionName,
+    document
+  ) {
+    throw new Error("Method 'insertMongoDocumentAsync' not implemented.");
+  }
+
+  /**
    * @param {string} key
    * @param {string?} defaultValue
    * @returns {string}

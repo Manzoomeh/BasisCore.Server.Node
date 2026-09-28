@@ -73,7 +73,7 @@ export default class SourceRepository {
 
   /**
    * @param {string} sourceId
-   * @param {import("./SourceEventManager").SourceEventHandler} handler
+   * @param {import("./SourceEventManager.js").SourceEventHandler} handler
    */
   addHandler(sourceId, handler) {
     const key = sourceId.toLowerCase();
@@ -89,7 +89,7 @@ export default class SourceRepository {
 
   /**
    * @param {string} sourceId
-   * @param {import("./SourceEventManager").SourceEventHandler} handler
+   * @param {import("./SourceEventManager.js").SourceEventHandler} handler
    */
   removeHandler(sourceId, handler) {
     const key = sourceId?.toLowerCase();

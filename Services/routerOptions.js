@@ -1,9 +1,11 @@
-import HostService from "./HostService.js";
-import { ServiceSelectorPredicateItemOptions } from "../models/model.js";
+import HostService from "./hostService.js";
+import { ServiceSelectorPredicateItemOptions } from "../Models/model.js";
 
 export default class RouterOptions {
   /**@type {HostService} */
   service;
+  /**@type {string} */
+  pattern;
   /**@type {RegExp} */
   #url;
   /**@type {boolean} */
@@ -17,8 +19,11 @@ export default class RouterOptions {
   constructor(service, options) {
     this.service = service;
     this.empty = true;
-    if (options?.Url) {
-      this.#url = new RegExp(options.Url, "i");
+    this.pattern = "default";
+    const urlPattern = options?.Url || options?.url;
+    if (urlPattern) {
+      this.pattern = urlPattern;
+      this.#url = new RegExp(urlPattern, "i");
       this.empty = false;
     }
   }

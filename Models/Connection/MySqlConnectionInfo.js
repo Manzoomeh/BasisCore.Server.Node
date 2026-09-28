@@ -1,11 +1,11 @@
 import mySql from "mysql2";
 import ConnectionInfo from "./ConnectionInfo.js";
-import MySqlSettingData from "./MySqlSettingData.js";
+import MySqlSettingData from "./mySqlSettingData.js";
 import DataSourceCollection from "../../renderEngine/Source/DataSourceCollection.js";
 import CancellationToken from "../../renderEngine/Cancellation/CancellationToken.js";
 import Request from "../request.js";
 import WebServerException from "../Exceptions/WebServerException.js";
-import MysqlRow from "../mysqlRow.js";
+import MysqlRow from "../mySqlRow.js";
 import SqlSettingData from "./SqlSettingData.js";
 export default class MySqlConnectionInfo extends ConnectionInfo {
   /** @type {mySql.Pool<SqlSettingData>} */

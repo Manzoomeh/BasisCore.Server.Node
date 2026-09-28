@@ -1,9 +1,18 @@
 import path from "path";
 import im from "imagemagick";
+import { spawnSync } from "child_process";
 import BinaryContent from "../../Models/BinaryContent.js";
 import Step from "../Step.js";
 import ResizeOptions from "./ResizeOptions.js";
 import Status from "../../Models/Status.js";
+
+const HAS_CONVERT_BINARY = (() => {
+  try {
+    return spawnSync("convert", ["-version"], { stdio: "ignore" }).status === 0;
+  } catch {
+    return false;
+  }
+})();
 
 //https://github1s.com/dlemstra/Magick.NET/blob/HEAD/src/Magick.NET/Types/MagickGeometry.cs
 //https://imagemagick.org/script/command-line-processing.php
@@ -15,37 +24,69 @@ export default class Resize extends Step {
    */
   processContentAsync(content, options) {
     return new Promise((resolve) => {
-      var op = [
-        "-",
-        // "-set",
-        // "option:filter:blur",
-        // "0.8",
-        // "-filter",
-        // "Lagrange",
-        // "-strip",
-        "-resize",
-        this._optionsToString(options),
-        // "-quality",
-        // "80",
-        "-",
-      ];
-      const process = im.convert(op, function (err, stdout) {
-        if (err) {
-          console.error(err);
-          content.status = Status.StepError;
-          content.AddLog("step-error", err.toString());
-        }
-        try {
-          content.payload = Buffer.from(stdout, "binary");
-          content.AddLog("resize-to", JSON.stringify(options));
-        } catch (err) {
-          console.error(err);
-          content.status = Status.StepError;
-          content.AddLog("step-error", err.toString());
-        }
+      if (!HAS_CONVERT_BINARY) {
+        const message =
+          "ImageMagick binary 'convert' not found. Install imagemagick in container.";
+        console.error(message);
+        content.status = Status.StepError;
+        content.AddLog("step-error", message);
+        return resolve(content);
+      }
+
+      let done = false;
+      const finish = () => {
+        if (done) return;
+        done = true;
         resolve(content);
-      });
-      process.stdin.end(content.payload);
+      };
+
+      try {
+        var op = [
+          "-",
+          // "-set",
+          // "option:filter:blur",
+          // "0.8",
+          // "-filter",
+          // "Lagrange",
+          // "-strip",
+          "-resize",
+          this._optionsToString(options),
+          // "-quality",
+          // "80",
+          "-",
+        ];
+        const process = im.convert(op, function (err, stdout) {
+          if (err) {
+            console.error(err);
+            content.status = Status.StepError;
+            content.AddLog("step-error", err.toString());
+            return finish();
+          }
+          try {
+            content.payload = Buffer.from(stdout, "binary");
+            content.AddLog("resize-to", JSON.stringify(options));
+          } catch (innerErr) {
+            console.error(innerErr);
+            content.status = Status.StepError;
+            content.AddLog("step-error", innerErr.toString());
+          }
+          finish();
+        });
+        if (process && typeof process.on === "function") {
+          process.on("error", (err) => {
+            console.error(err);
+            content.status = Status.StepError;
+            content.AddLog("step-error", err.toString());
+            finish();
+          });
+        }
+        process.stdin.end(content.payload);
+      } catch (err) {
+        console.error(err);
+        content.status = Status.StepError;
+        content.AddLog("step-error", err.toString());
+        finish();
+      }
     });
   }
 

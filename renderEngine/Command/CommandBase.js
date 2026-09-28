@@ -8,6 +8,59 @@ import TokenUtil from "../Token/TokenUtil.js";
 import CommandElement from "./CommandElement.js";
 import StringResult from "../Models/StringResult.js";
 
+function normalizeLegacyIfExpression(expression) {
+  return String(expression ?? "").replace(
+    /((?:'[^']*'|"[^"]*"|`[^`]*`|[^\s()]+))\s+in\s*\(([^()]+)\)/gi,
+    (_, left, values) =>
+      `[${values}].map(function(item){ return String(item); }).includes(String(${left}))`
+  );
+}
+
+async function resolveLegacyClientIfTokens(expression, context) {
+  const tokenPattern = /\{##([\s\S]*?)##\}/g;
+  let result = "";
+  let lastIndex = 0;
+  let match;
+
+  while ((match = tokenPattern.exec(String(expression))) !== null) {
+    result += String(expression).slice(lastIndex, match.index);
+
+    const tokenBody = match[1].trim();
+    const fallbackMatch = tokenBody.match(/\|\s*\(([\s\S]*)\)\s*$/);
+    const reference = (
+      fallbackMatch ? tokenBody.slice(0, fallbackMatch.index) : tokenBody
+    ).trim();
+    const referenceParts = reference.split(".");
+
+    // Leave unknown client expressions untouched so the normal validation
+    // path reports them as false instead of resolving the wrong source.
+    if (referenceParts.length < 3) {
+      result += match[0];
+      lastIndex = tokenPattern.lastIndex;
+      continue;
+    }
+
+    const params = [
+      {
+        Source: referenceParts[0],
+        Member: referenceParts[1],
+        Column: referenceParts.slice(2).join("."),
+      },
+    ];
+    if (fallbackMatch) {
+      params.push({ Value: fallbackMatch[1].trim() });
+    }
+
+    const resolvedValue = await TokenUtil.ToToken({ Params: params }).getValueAsync(
+      context
+    );
+    result += resolvedValue ?? "";
+    lastIndex = tokenPattern.lastIndex;
+  }
+
+  return result + String(expression).slice(lastIndex);
+}
+
 export default class CommandBase {
   /**@type {IToken} */
   core;
@@ -78,8 +131,13 @@ export default class CommandBase {
           }
           case RunTypes.AtClient:
           case RunTypes.None: {
+            // Client commands can reference sources that are created only after
+            // BasisCore starts in the browser. Preserve those bindings instead
+            // of waiting for a source that cannot exist on the server.
+            const clientContext = context.createContext("atclient-render");
+            clientContext.preserveUnresolvedClientBindings = true;
             retVal = new StringResult(
-              (await this.createHtmlElementAsync(context)).getHtml()
+              (await this.createHtmlElementAsync(clientContext)).getHtml()
             );
             break;
           }
@@ -116,23 +174,35 @@ export default class CommandBase {
    */
   async _getIfValueAsync(context) {
     let retVal = false;
+    let value = null;
     try {
-      const value = await this.if.getValueAsync(context);
+      value = await this.if.getValueAsync(context);
       if (value) {
         let regex = /(?<!=[<>=!])=(?!=)|<>/g;
-        retVal = eval(
-          value.replace(regex, (match) => {
+        const resolvedExpression = await resolveLegacyClientIfTokens(
+          value,
+          context
+        );
+        const expression = normalizeLegacyIfExpression(resolvedExpression).replace(
+          regex,
+          (match) => {
             if (match === "=") {
               return "==";
             } else if (match === "<>") {
               return "!=";
             }
-          })
+          }
         );
+        retVal = eval(expression);
       } else {
         retVal = true;
       }
-    } catch {}
+    } catch (error) {
+      console.warn("basis if expression evaluated as false", {
+        value,
+        error: String(error?.message || error || ""),
+      });
+    }
     return retVal;
   }
 

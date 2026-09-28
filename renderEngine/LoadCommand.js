@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { pathToFileURL } from "url";
 /**
  * @typedef {Object.<string, any>} Commands
  * @description all commands object values must be classes that inherit to CommandBase
@@ -10,15 +11,12 @@ class LoadCommand {
 
   /**@param {string} commandDir */
   constructor(commandDir) {
-    this.commandDir = path.isAbsolute(commandDir)
-      ? commandDir
-      : path.resolve(process.cwd(), commandDir);
+    this.commandDir = commandDir;
   }
 
   /** @returns {string[]} */
   getJSFiles() {
     try {
-      console.log("Loading commands from:", this.commandDir);
       const files = fs.readdirSync(this.commandDir);
       const jsFiles = files
         .filter((file) => path.extname(file) === ".js")
@@ -36,12 +34,14 @@ class LoadCommand {
    * @returns {string}
    */
   _convertWindowsToLinuxPath(filePath) {
-    if (filePath.startsWith("/")) {
-      return filePath;
+    let normalized = filePath.replace(/\\/g, "/");
+    if (/^[A-Z]:\//i.test(normalized)) {
+      normalized = "/" + normalized.slice(3);
     }
-    return filePath.replace(/\\/g, "/").replace(/^[A-Z]:\//, function (match) {
-      return "/";
-    });
+    const absolutePath = path.isAbsolute(normalized)
+      ? normalized
+      : path.resolve(process.cwd(), normalized);
+    return pathToFileURL(absolutePath).href;
   }
   /**@returns {Promise<Commands>} */
   static async process(libPath) {

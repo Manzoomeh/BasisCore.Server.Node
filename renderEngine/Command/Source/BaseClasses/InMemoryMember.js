@@ -20,6 +20,14 @@ export default class InMemoryMember extends Member {
    */
   async addDataSourceAsync(sourceSchemaName, context) {
     var source = await this._parseDataAsync(context);
+    if (source instanceof Error) {
+      throw source;
+    }
+    if (!source || !("data" in source)) {
+      throw new Error(
+        `Member '${sourceSchemaName}.${this.name}' did not produce a valid data source.`
+      );
+    }
     if (source) {
       context.cancellation.throwIfCancellationRequested();
       await super.addDataSourceAsync(source, sourceSchemaName, context);
@@ -51,13 +59,29 @@ export default class InMemoryMember extends Member {
    */
   executeQueryAsync(db, sql, data) {
     return new Promise((resolve, reject) => {
-      db.exec(sql, data, (result, err) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(result);
-        }
-      });
+      const params = Array.isArray(data) ? data : [];
+      if (String(sql || "").includes("?") && params.some((item) => item == null)) {
+        reject(
+          new Error(
+            `AlaSQL query received undefined data source. sql=${String(sql || "").slice(
+              0,
+              500
+            )}`
+          )
+        );
+        return;
+      }
+      try {
+        db.exec(sql, params, (result, err) => {
+          if (err) {
+            reject(err);
+          } else {
+            resolve(result);
+          }
+        });
+      } catch (error) {
+        reject(error);
+      }
     });
   }
 }

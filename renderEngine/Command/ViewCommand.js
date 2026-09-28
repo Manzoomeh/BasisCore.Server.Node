@@ -3,7 +3,9 @@ import IToken from "../Token/IToken.js";
 import TokenUtil from "../Token/TokenUtil.js";
 import RenderableCommand from "./RenderableCommand.js";
 import IDataSource from "../Source/IDataSource.js";
-import alasql from "./../../alasql-ex.js";
+import { createRequire } from 'module';
+const require = createRequire(import.meta.url);
+const alasql = require("alasql")
 import RenderParam from "./RenderParam.js";
 import FaceCollection from "./Renderable/FaceCollection.js";
 import ReplaceCollection from "./Renderable/ReplaceCollection.js";
@@ -42,7 +44,8 @@ export default class ViewCommand extends RenderableCommand {
   ) {
     /** @type {string} */
     let retVal = null;
-    if ((source.data?.length ?? 0) > 0) {
+    const rows = SourceUtil.ensureDataArray(source, "render view");
+    if (rows.length > 0) {
       retVal = "";
       let groupColumn = await TokenUtil.getValueOrSystemDefaultAsync(
         this.groupColumn,
@@ -51,9 +54,14 @@ export default class ViewCommand extends RenderableCommand {
         "prpid"
       )?? "prpID"
       groupColumn = SourceUtil.getExactColumnName(source, groupColumn);
-      const groupKeyList = alasql(
+      const groupKeyList = SourceUtil.runQuery(
         `SELECT ${groupColumn} AS key FROM ? GROUP BY ${groupColumn}`,
-        [source.data]
+        [rows],
+        {
+          sourceId: source.id || "",
+          operation: "view-group",
+          rowCount: rows.length,
+        }
       );
       const rootRenderParam = new RenderParam(
         replaces,
@@ -64,9 +72,14 @@ export default class ViewCommand extends RenderableCommand {
       );
       rootRenderParam.setLevel("1");
       groupKeyList.forEach((item) => {
-        const groupItems = alasql(
+        const groupItems = SourceUtil.runQuery(
           `SELECT VALUE FROM ? WHERE ${groupColumn} = ?`,
-          [source.data, item.key]
+          [rows, item.key],
+          {
+            sourceId: source.id || "",
+            operation: "view-group-items",
+            rowCount: rows.length,
+          }
         );
         //send first row for create level 1
         rootRenderParam.data = groupItems[0];

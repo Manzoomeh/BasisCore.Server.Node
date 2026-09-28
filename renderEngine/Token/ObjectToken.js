@@ -1,8 +1,56 @@
 import Util from "../../Util.js";
 import IContext from "../Context/IContext.js";
-import SourceUtil from "../Source/SourceUtil.js";
 import IToken from "./IToken.js";
 import SimpleTokenElement from "./SimpleTokenElement.js";
+import SourceUtil from "../Source/SourceUtil.js";
+import {
+  getRequestTraceId,
+  traceError,
+  traceRequest,
+} from "../../modules/requestTrace.js";
+
+function resolveRootRequest(context) {
+  const visited = new Set();
+  let current = context;
+
+  while (current && !visited.has(current)) {
+    if (current._request) {
+      return current._request;
+    }
+    visited.add(current);
+    current = current._owner;
+  }
+
+  return null;
+}
+
+function toClientBinding(item) {
+  const path = [item.source, item.member, item.column]
+    .map((part) => String(part ?? "").trim())
+    .filter(Boolean)
+    .join(".");
+  return path ? `{##${path}##}` : "";
+}
+
+function serializeLegacyResult(data) {
+  const rows = Array.isArray(data) ? data : [data];
+  return JSON.stringify(
+    rows.map((row) => {
+      if (!row || typeof row !== "object") {
+        return row;
+      }
+      const normalized = { ...row };
+      delete normalized.RowNumber;
+      return normalized;
+    })
+  );
+}
+
+function serializeColumnValue(value) {
+  return value !== null && typeof value === "object"
+    ? JSON.stringify(value)
+    : Util.toString(value);
+}
 
 export default class ObjectToken extends IToken {
   /** @type {Array<SimpleTokenElement>} */
@@ -38,14 +86,47 @@ export default class ObjectToken extends IToken {
               if (dataMember.startsWith("cms.")) {
                 break;
               }
+              if (context.preserveUnresolvedClientBindings) {
+                const request = resolveRootRequest(context);
+                const binding = toClientBinding(item);
+                traceRequest("token.source.preserved", {
+                  traceId: getRequestTraceId(request),
+                  dataMember,
+                  binding,
+                });
+                retVal = binding;
+                break;
+              }
               //Only Wait For Last Item in List
-              dataSource = await context.waitToGetSourceAsync(dataMember);
-              context.cancellation.throwIfCancellationRequested();
+              const startedAt = Date.now();
+              const request = resolveRootRequest(context);
+              const tracePayload = {
+                traceId: getRequestTraceId(request),
+                dataMember,
+                source: item.source || "",
+                member: item.member || "",
+                column: item.column || "",
+              };
+              traceRequest("token.source.wait.start", tracePayload);
+              try {
+                dataSource = await context.waitToGetSourceAsync(dataMember);
+                context.cancellation.throwIfCancellationRequested();
+                traceRequest("token.source.wait.done", {
+                  ...tracePayload,
+                  elapsedMs: Date.now() - startedAt,
+                });
+              } catch (error) {
+                traceError("token.source.wait.error", error, {
+                  ...tracePayload,
+                  elapsedMs: Date.now() - startedAt,
+                });
+                throw error;
+              }
             } else {
               continue;
             }
           }
-
+          
           /**@type{string} */
           const tmpColumnName =
             Util.isNullOrEmpty(item.column) ||
@@ -54,6 +135,13 @@ export default class ObjectToken extends IToken {
               : SourceUtil.getExactColumnName(dataSource, item.column);
           const columnName = tmpColumnName ?? dataSource.columns[0];
           if (!dataSource.columns.includes(columnName)) {
+            if (
+              String(item.column || "").toLowerCase() === "result" &&
+              Array.isArray(dataSource.data)
+            ) {
+              retVal = serializeLegacyResult(dataSource.data);
+              break;
+            }
             if (isLastItem) {
               break;
             } else {
@@ -61,8 +149,8 @@ export default class ObjectToken extends IToken {
             }
           }
           if (dataSource.data.length == 1) {
-            const columnRawValue = dataSource.data[0][columnName];
-            const columnValue = Util.toString(columnRawValue);
+            const columnRawValue = dataSource.data[0][columnName]
+            const columnValue = serializeColumnValue(columnRawValue);
             if (Util.isNullOrEmpty(columnRawValue)) {
               //if value in source is null or blank,process next source
               if (!isLastItem) {
@@ -79,7 +167,7 @@ export default class ObjectToken extends IToken {
                   const columnValue = x[columnName];
                   return typeof columnValue === "string"
                     ? `'${columnValue}'`
-                    : Util.toString(columnValue);
+                    : serializeColumnValue(columnValue);
                 })
                 .join(",");
             } catch {

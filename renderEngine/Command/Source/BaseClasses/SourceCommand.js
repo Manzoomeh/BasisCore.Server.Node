@@ -9,7 +9,27 @@ import MemberCollection from "./MemberCollection.js";
 import ParamItemCollection from "./ParamItemCollection.js";
 import BasisCoreException from "../../../../Models/Exceptions/BasisCoreException.js";
 import { Encoder } from "node-html-encoder";
+import {
+  getRequestTraceId,
+  traceError,
+  traceRequest,
+} from "../../../../modules/requestTrace.js";
 const encoder = new Encoder("entity");
+
+function resolveRootRequest(context) {
+  const visited = new Set();
+  let current = context;
+
+  while (current && !visited.has(current)) {
+    if (current._request) {
+      return current._request;
+    }
+    visited.add(current);
+    current = current._owner;
+  }
+
+  return null;
+}
 
 export default class SourceCommand extends CommandBase {
   /** @type {ParamItemCollection}   */
@@ -85,7 +105,40 @@ export default class SourceCommand extends CommandBase {
     const memberNames = this.members.items.map((item)=>{
       return item.name
     })
-    return await context.loadDataAsync(sourceName, connectionName, params,memberNames);
+    const startedAt = Date.now();
+    const request = resolveRootRequest(context);
+    const tracePayload = {
+      traceId: getRequestTraceId(request),
+      sourceName,
+      connectionName,
+      procedureName: await this.procedureName.getValueAsync(context),
+      domainId: context.domainId,
+      memberNames,
+      commandLength: command.length,
+      paramNames: Object.keys(paramList),
+    };
+
+    traceRequest("source.load.start", tracePayload);
+    try {
+      const dataSet = await context.loadDataAsync(
+        sourceName,
+        connectionName,
+        params,
+        memberNames
+      );
+      traceRequest("source.load.done", {
+        ...tracePayload,
+        elapsedMs: Date.now() - startedAt,
+        resultSets: dataSet?.items?.length || 0,
+      });
+      return dataSet;
+    } catch (error) {
+      traceError("source.load.error", error, {
+        ...tracePayload,
+        elapsedMs: Date.now() - startedAt,
+      });
+      throw error;
+    }
   }
 
   /**

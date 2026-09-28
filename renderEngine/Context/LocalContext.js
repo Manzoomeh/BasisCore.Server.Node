@@ -11,6 +11,9 @@ export default class LocalContext extends ContextBase {
     super(owner.repository, owner.domainId,owner.debugContext);
     this._owner = owner;
     this.cancellation = owner.cancellation;
+    this.__executedTrackingCommands =
+      owner.__executedTrackingCommands ?? new Map();
+    owner.__executedTrackingCommands = this.__executedTrackingCommands;
   }
 
   /**
@@ -21,6 +24,43 @@ export default class LocalContext extends ContextBase {
     const retVal = new LocalContext(this);
     retVal.isSecure = this.isSecure;
     return retVal;
+  }
+
+  /** @returns {object} */
+  createTrackingDocument() {
+    return this._owner.createTrackingDocument();
+  }
+
+  /**
+   * @param {string} connectionName
+   * @param {string} databaseName
+   * @param {string} collectionName
+   * @param {object} document
+   * @returns {Promise<any>}
+   */
+  insertMongoDocumentAsync(
+    connectionName,
+    databaseName,
+    collectionName,
+    document
+  ) {
+    return this._owner.insertMongoDocumentAsync(
+      connectionName,
+      databaseName,
+      collectionName,
+      document
+    );
+  }
+
+  /**
+   * @param {IDataSource} dataSource
+   */
+  addGlobalSource(dataSource) {
+    if (typeof this._owner.addGlobalSource === "function") {
+      this._owner.addGlobalSource(dataSource);
+    } else {
+      this._owner.addSource(dataSource);
+    }
   }
 
   /**

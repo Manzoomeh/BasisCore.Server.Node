@@ -13,4 +13,18 @@ export default class Face {
   formattedContent;
   /** @type {Array<string>?} */
   levels;
+  /** @type {Array<string>?} */
+  columns;
+  /** @type {Array<object>?} */
+  sourceRows;
+  /** @type {number?} */
+  debugIndex;
+  /** @type {string?} */
+  sourceId;
+  /** @type {string?} */
+  rawFilter;
+  /** @type {string?} */
+  formattedFilter;
+  /** @type {string?} */
+  rawTemplate;
 }

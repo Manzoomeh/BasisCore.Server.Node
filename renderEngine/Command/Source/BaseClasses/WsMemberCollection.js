@@ -1,7 +1,7 @@
 import JoinMember from "./JoinMember.js";
 import Member from "./Member.js";
 import MemberCollection from "./MemberCollection.js";
-import WsMember from "./wsmember.js";
+import WsMember from "./WsMember.js";
 
 export default class WSMemberCollection extends MemberCollection {
   /** @param {object[]} membersIl */

@@ -1,6 +1,6 @@
 import fs from "fs";
 import { StatusCodes } from "http-status-codes";
-import RequestBaseResponse from "./requestBaseResponse.js";
+import RequestBaseResponse from "./RequestBaseResponse.js";
 import IRoutingRequest from "./IRoutingRequest.js";
 
 export default class Index2Response extends RequestBaseResponse {
@@ -14,9 +14,13 @@ export default class Index2Response extends RequestBaseResponse {
    *  @returns {Promise<[number,NodeJS.Dict<number | string | string[]>,*]>}
    */
   async getResultAsync() {
-    var path = this._request.webserver.filepath;
-    if (fs.existsSync(path)) {
-      const content = await fs.promises.readFile(path);
+    const rawPath = this._request.webserver.filepath;
+    const resolvedFile = this._resolveFilesystemPath(rawPath, {
+      includeZipFallback: true,
+    });
+    const filePath = resolvedFile.path;
+    if (resolvedFile.exists) {
+      const content = await fs.promises.readFile(filePath);
       return [
         parseInt(this._request.webserver.headercode.split(" ")[0]),
         {

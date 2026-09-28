@@ -1,8 +1,8 @@
-import ServiceSettings from "../../models/ServiceSettings.js";
+import ServiceSettings from "../../Models/ServiceSettings.js";
 import ContextBase from "./ContextBase.js";
-import ConnectionInfo from "../../models/Connection/ConnectionInfo.js";
+import ConnectionInfo from "../../Models/Connection/ConnectionInfo.js";
 import DataSourceCollection from "../Source/DataSourceCollection.js";
-import BasisCoreException from "../../models/Exceptions/BasisCoreException.js";
+import BasisCoreException from "../../Models/Exceptions/BasisCoreException.js";
 import Util from "../../Util.js";
 import CommandBase from "../Command/CommandBase.js";
 import LocalContext from "./LocalContext.js";
@@ -26,6 +26,7 @@ export default class TestContext extends ContextBase {
     this.isSecure = false;
     this._commands = commands;
     this.cancellation = new CancellationToken();
+    this.__executedTrackingCommands = new Map();
   }
 
   /**
@@ -105,6 +106,13 @@ export default class TestContext extends ContextBase {
    * @param {string} path
    */
   addCookie(name, value, maxAge, path) {}
+
+  /**
+   * @param {IDataSource} dataSource
+   */
+  addGlobalSource(dataSource) {
+    this.addSource(dataSource);
+  }
 
   /**
    * @param {Object} commandIl
